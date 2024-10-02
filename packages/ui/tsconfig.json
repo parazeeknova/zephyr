@@ -1,6 +1,6 @@
 {
-	"extends": "@zephyr/config/react.tsconfig.json",
-	"compilerOptions": {
-		"outDir": "dist"
-	}
+  "extends": "@zephyr/config/react.tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  }
 }
