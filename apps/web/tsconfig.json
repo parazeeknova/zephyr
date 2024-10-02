@@ -1,11 +1,17 @@
 {
-  "extends": "@repo/typescript-config/nextjs.json",
+  "extends": "@zephyr/config/react.tsconfig.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "plugins": [
       {
         "name": "next"
       }
     ]
+  },
+  "lib": ["DOM", "ESNext", "DOM.Iterable"],
+  "paths": {
+    "@ZC*": ["src/components*"],
+    "@ZP*": ["src/pages*"]
   },
   "include": [
     "next-env.d.ts",

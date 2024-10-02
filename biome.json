@@ -1,0 +1,70 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "organizeImports": {
+    "enabled": true
+  },
+  "files": {
+    "ignore": [
+      ".pnpm-store/*",
+      "**/.next/**",
+      "**/dist/**",
+      "**/artifacts/**",
+      "**/node_modules/**",
+      "**/.git/**",
+      "sw.js",
+      "**/cache/**",
+      ".openzeppelin",
+      "typechain-types",
+      "generated.ts"
+    ]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "a11y": {
+        "useKeyWithClickEvents": "off",
+        "useMediaCaption": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "correctness": {
+        "noUnusedVariables": "error",
+        "useExhaustiveDependencies": "off",
+        "noUnusedImports": {
+          "fix": "safe",
+          "level": "error"
+        }
+      },
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noAssignInExpressions": "off",
+        "noArrayIndexKey": "off"
+      },
+      "complexity": {
+        "noForEach": "warn",
+        "useLiteralKeys": "off"
+      },
+      "style": {
+        "noNegationElse": "error"
+      },
+      "nursery": {
+        "noDuplicatedFields": "error",
+        "useSortedClasses": {
+          "fix": "safe",
+          "level": "error",
+          "options": {}
+        }
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "trailingCommas": "none"
+    }
+  },
+  "formatter": {
+    "indentStyle": "space"
+  }
+}

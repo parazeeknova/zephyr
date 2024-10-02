@@ -10,21 +10,21 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
       {
         type: "input",
         name: "name",
-        message: "What is the name of the component?",
-      },
+        message: "What is the name of the component?"
+      }
     ],
     actions: [
       {
         type: "add",
         path: "src/{{kebabCase name}}.tsx",
-        templateFile: "templates/component.hbs",
+        templateFile: "templates/component.hbs"
       },
       {
         type: "append",
         path: "package.json",
         pattern: /"exports": {(?<insertion>)/g,
-        template: '    "./{{kebabCase name}}": "./src/{{kebabCase name}}.tsx",',
-      },
-    ],
+        template: '    "./{{kebabCase name}}": "./src/{{kebabCase name}}.tsx",'
+      }
+    ]
   });
 }
