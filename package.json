@@ -1,6 +1,7 @@
 {
   "name": "zephyr",
   "version": "0.0.01",
+  "license": "AGPL-3.0",
   "private": true,
   "scripts": {
     "biome:check": "biome check .",
