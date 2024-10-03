@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@zephyr/ui": "workspace:*",
-    "babel-plugin-react-compiler": "0.0.0-experimental-b4db8c3-20241001",
     "next": "15.0.0-rc.0",
     "react": "19.0.0-rc-459fd418-20241001",
     "react-dom": "19.0.0-rc-459fd418-20241001"

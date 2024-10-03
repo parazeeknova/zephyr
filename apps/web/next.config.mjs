@@ -1,16 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: "standalone",
   experimental: {
-    reactCompiler: {
-      compilationMode: 'annotation',
-    },
     staleTimes: {
-      dynamic: 30,
-    },
+      dynamic: 30
+    }
   },
   compiler: {
-    styledComponents: true,
+    styledComponents: true
   }
 };
 
