@@ -6,13 +6,13 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@zephyr-ui/*": ["./src/components/ui/*"]
+    }
   },
   "lib": ["DOM", "ESNext", "DOM.Iterable"],
-  "paths": {
-    "@ZC*": ["src/components*"],
-    "@ZP*": ["src/pages*"]
-  },
   "include": [
     "next-env.d.ts",
     "next.config.mjs",
