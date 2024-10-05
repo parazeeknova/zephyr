@@ -9,5 +9,12 @@ module.exports = {
     "./app/**/*.{ts,tsx}",
     "./app/*.{ts,tsx}"
   ],
+  theme: {
+    extend: {
+      fontFamily: {
+        custom: ["SofiaProReg", "sans-serif"]
+      }
+    }
+  },
   plugins: [require("@tailwindcss/aspect-ratio")]
 };

@@ -5,6 +5,9 @@ module.exports = {
   darkMode: "class",
   theme: {
     extend: {
+      fontFamily: {
+        custom: ["SofiaProReg", "sans-serif"]
+      },
       animation: {
         shimmer: "shimmer 2s cubic-bezier(0.4, 0, 0.6, 1) infinite"
       },
