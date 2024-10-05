@@ -1,0 +1,21 @@
+{
+  "name": "@zephyr/auth",
+  "version": "0.0.1",
+  "license": "AGPL-3.0",
+  "private": true,
+  "dependencies": {
+    "@lucia-auth/adapter-prisma": "^4.0.1",
+    "@zephyr/db": "workspace:*",
+    "i": "^0.3.7",
+    "lucia": "^3.2.0",
+    "next": "15.0.0-rc.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.4",
+    "@types/react": "^18.3.11",
+    "@zephyr/config": "workspace:*",
+    "react": "19.0.0-rc-459fd418-20241001",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
+  }
+}
