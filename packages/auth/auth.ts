@@ -55,8 +55,7 @@ export const validateRequest = cache(
     const result = await lucia.validateSession(sessionId);
 
     try {
-      // biome-ignore lint/complexity/useOptionalChain: <explanation>
-      if (result.session && result.session.fresh) {
+      if (result.session?.fresh) {
         const sessionCookie = lucia.createSessionCookie(result.session.id);
         cookies().set(
           sessionCookie.name,

@@ -9,7 +9,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@zephyr-ui/*": ["./src/components/ui/*"]
+      "@zephyr-ui/*": ["./src/components/*"],
+      "@zephyr-assets/*": ["./src/app/assets/*"]
     }
   },
   "lib": ["DOM", "ESNext", "DOM.Iterable"],

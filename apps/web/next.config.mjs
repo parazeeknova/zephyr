@@ -9,7 +9,8 @@ const nextConfig = {
   },
   compiler: {
     styledComponents: true
-  }
+  },
+  serverExternalPackages: ["@node-rs/argon2", "@prisma/client"]
 };
 
 export default nextConfig;

@@ -4,6 +4,12 @@
     "module": "commonjs",
     "noEmit": false,
     "outDir": "dist",
-    "baseUrl": "."
-  }
+    "baseUrl": ".",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "includes": ["**/*.ts", "./*.tsx", "./*.ts"]
 }
