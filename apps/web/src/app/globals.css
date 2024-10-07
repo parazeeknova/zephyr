@@ -3,52 +3,103 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@layer base {
-  :root {
-    --background: 24 9% 95%;
-    --foreground: 24 5% 10%;
-    --card: 24 9% 90%;
-    --card-foreground: 24 5% 15%;
-    --popover: 24 9% 95%;
-    --popover-foreground: 24 95% 10%;
-    --primary: 24 82.2% 73.5%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 24 10% 70%;
-    --secondary-foreground: 0 0% 0%;
-    --muted: -14 10% 85%;
-    --muted-foreground: 24 5% 40%;
-    --accent: -14 10% 80%;
-    --accent-foreground: 24 5% 15%;
-    --destructive: 0 50% 50%;
-    --destructive-foreground: 24 5% 90%;
-    --border: 24 20% 62%;
-    --input: 24 20% 50%;
-    --ring: 24 82.2% 73.5%;
-    --radius: 0.5rem;
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(249, 115, 22, 0.5);
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #f97316;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(249, 115, 22, 0.5) transparent;
+}
+
+body {
+  overflow-y: overlay;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  .dark {
-    --background: 24 10% 10%;
-    --foreground: 24 5% 90%;
-    --card: 24 9% 10%;
-    --card-foreground: 24 5% 90%;
-    --popover: 24 10% 5%;
-    --popover-foreground: 24 5% 90%;
-    --primary: 24 82.2% 73.5%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 24 10% 20%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: -14 10% 25%;
-    --muted-foreground: 24 5% 62%;
-    --accent: -14 10% 25%;
-    --accent-foreground: 24 5% 90%;
-    --destructive: 0 50% 50%;
-    --destructive-foreground: 24 5% 90%;
-    --border: 24 20% 50%;
-    --input: 24 20% 50%;
-    --ring: 24 82.2% 73.5%;
-    --radius: 0.5rem;
+  to {
+    opacity: 1;
   }
 }
+
+body:not(:hover)::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+body:hover::-webkit-scrollbar-thumb {
+  animation: fadeIn 0.3s ease;
+}
+@layer base {
+  :root {
+    --background: 0 0% 97.65%;
+    --foreground: 0 0% 12.55%;
+    --muted: 0 0% 93.73%;
+    --muted-foreground: 0 0% 39.22%;
+    --popover: 0 0% 98.82%;
+    --popover-foreground: 0 0% 12.55%;
+    --card: 0 0% 98.82%;
+    --card-foreground: 0 0% 12.55%;
+    --border: 0 0% 84.71%;
+    --input: 0 0% 94.12%;
+    --primary: 22.93 92.59% 52.35%;
+    --primary-foreground: 44 0% 100%;
+    --secondary: 34.05 100% 85.49%;
+    --secondary-foreground: 16.27 50.43% 22.94%;
+    --accent: 0 0% 90.98%;
+    --accent-foreground: 0 0% 12.55%;
+    --destructive: 10.16 77.87% 53.92%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 24.8 79.79% 63.14%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 6.67%;
+    --foreground: 0 0% 93.33%;
+    --muted: 0 0% 13.33%;
+    --muted-foreground: 0 0% 70.59%;
+    --popover: 0 0% 9.8%;
+    --popover-foreground: 0 0% 93.33%;
+    --card: 0 0% 9.8%;
+    --card-foreground: 0 0% 93.33%;
+    --border: 44 14% 11%;
+    --input: 0 0% 28.24%;
+    --primary: 22.93 92.59% 52.35%;
+    --primary-foreground: 29.51 0% 100%;
+    --secondary: 28.5 64.52% 12.16%;
+    --secondary-foreground: 29.51 100% 88.04%;
+    --accent: 0 0% 16.47%;
+    --accent-foreground: 0 0% 93.33%;
+    --destructive: 10.16 77.87% 53.92%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 23.11 59.8% 40%;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;

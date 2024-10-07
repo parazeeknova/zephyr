@@ -3,7 +3,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Check,
-  ChevronDown,
   LogOutIcon,
   Monitor,
   Moon,
@@ -48,8 +47,7 @@ export default function UserButton({ className }: UserButtonProps) {
           variant="ghost"
           className={cn("flex-none rounded-full", className)}
         >
-          <ChevronDown className="h-4 w-4" />
-          <UserAvatar avatarUrl={user.avatarUrl} size={40} />
+          <UserAvatar avatarUrl={user.avatarUrl} size={35} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">

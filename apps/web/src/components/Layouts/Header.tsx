@@ -1,10 +1,11 @@
 "use client";
 
-import { Bookmark, Home, MessageSquare } from "lucide-react";
+import { Bookmark, Home, MessageSquare, Search } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Cover } from "@/components/ui/cover";
+import { Input } from "@/components/ui/input";
 
 import UserButton from "@zephyr-ui/Layouts/UserButton";
 
@@ -12,8 +13,8 @@ const Header: React.FC = () => {
   return (
     <>
       {/* Header */}
-      <header className="flex items-center justify-between border-border border-b bg-background px-4 py-2">
-        <div className="ml-10 flex items-center space-x-4 pl-7">
+      <header className="flex items-center justify-between border-border border-b bg-background/60 px-6 py-1.5">
+        <div className="flex items-center space-x-4">
           <Link href="/">
             <h1 className="flex-grow text-center font-bold text-2xl">
               <Cover className="text-primary">Zephyr.</Cover>
@@ -22,6 +23,14 @@ const Header: React.FC = () => {
         </div>
 
         <div className="hidden items-center space-x-4 md:flex">
+          <div className="relative">
+            <Search className="-translate-y-1/2 absolute top-1/2 left-2 h-4 w-4 transform text-gray-400" />
+            <Input
+              type="search"
+              placeholder="Search..."
+              className="rounded-full bg-muted py-1 pr-4 pl-8 text-muted-foreground text-sm"
+            />
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -42,7 +51,9 @@ const Header: React.FC = () => {
               <MessageSquare className="h-5 w-5" />
             </Link>
           </Button>
-          <UserButton />
+          <div className="flex items-center">
+            <UserButton />
+          </div>
         </div>
       </header>
 

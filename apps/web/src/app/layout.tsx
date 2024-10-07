@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import localFont from "next/font/local";
 import "./globals.css";
+import ReactQueryProvider from "./ReactQueryProvider";
 
 const SofiaProSoft = localFont({
   src: "./fonts/SofiaProSoftReg.woff2",
@@ -63,14 +64,16 @@ export default function RootLayout({
       <body
         className={`${SofiaProSoft.variable} font-sofiaProSoft antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <ReactQueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

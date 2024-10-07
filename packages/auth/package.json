@@ -7,7 +7,7 @@
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@zephyr/db": "workspace:*",
     "i": "^0.3.7",
-    "lucia": "^3.2.0",
+    "lucia": "^3.2.1",
     "next": "15.0.0-rc.0",
     "zod": "^3.23.8"
   },
