@@ -47,6 +47,11 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))"
         }
       },
+      fontFamily: {
+        sofiaProSoft: ["SofiaProReg", "sans-serif"],
+        sofiaProSoftMed: ["SofiaProMed", "sans-serif"],
+        sofiaProSoftBold: ["SofiaProBold", "sans-serif"]
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

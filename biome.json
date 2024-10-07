@@ -15,7 +15,8 @@
       "**/cache/**",
       ".openzeppelin",
       "typechain-types",
-      "generated.ts"
+      "generated.ts",
+      "**/components/ui/**"
     ]
   },
   "linter": {
