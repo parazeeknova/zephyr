@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Prisma schema for the Zephyr database
+// Uses Supabase from vercel
 
 generator client {
   provider        = "prisma-client-js"
@@ -27,6 +24,7 @@ model User {
   bio          String?
   sessions     Session[]
   posts        Post[]
+  Vote         Vote[]
   following    Follow[]  @relation("Following")
   followers    Follow[]  @relation("Followers")
 
@@ -62,8 +60,24 @@ model Post {
   content String
   userId  String
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aura    Int    @default(0)
+  votes   Vote[]
 
   createdAt DateTime @default(now())
 
   @@map("posts")
+}
+
+model Vote {
+  id     String @id @default(cuid())
+  value  Int
+  userId String
+  postId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@map("votes")
 }

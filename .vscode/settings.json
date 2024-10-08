@@ -21,10 +21,10 @@
   "git.confirmSync": false,
   "git.enableSmartCommit": true,
   "[tailwindcss]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "bradlc.vscode-tailwindcss"
   },
   "[dockercompose]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
   },
   "[dockerfile]": {
     "editor.defaultFormatter": "ms-azuretools.vscode-docker"
