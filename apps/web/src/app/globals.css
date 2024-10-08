@@ -56,6 +56,7 @@ body:hover::-webkit-scrollbar-thumb {
 @layer base {
   :root {
     --background: 0 0% 97.65%;
+    --background-alt: 220 14% 96%;
     --foreground: 0 0% 12.55%;
     --muted: 0 0% 93.73%;
     --muted-foreground: 0 0% 39.22%;
@@ -79,6 +80,7 @@ body:hover::-webkit-scrollbar-thumb {
 
   .dark {
     --background: 0 0% 6.67%;
+    --background-alt: 240 6% 10%;
     --foreground: 0 0% 93.33%;
     --muted: 0 0% 13.33%;
     --muted-foreground: 0 0% 70.59%;
