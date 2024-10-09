@@ -22,6 +22,6 @@
     "@types/react-dom": "^18.3.0",
     "@zephyr/config": "workspace:*",
     "tailwindcss": "^3.4.13",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.3"
   }
 }
