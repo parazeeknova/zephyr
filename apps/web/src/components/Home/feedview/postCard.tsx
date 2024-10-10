@@ -28,6 +28,7 @@ import { useVoteMutation } from "@/posts/aura/auraMutations";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
 import type { PostData } from "@zephyr/db";
+
 interface PostCardProps {
   post: PostData;
 }
@@ -125,8 +126,6 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                {" "}
-                text-lg
                 <div className="mb-2 flex items-center font-semibold text-foreground text-lg">
                   <Flame className="mr-1 h-5 w-5 text-orange-500" />
                   {auraCount}
