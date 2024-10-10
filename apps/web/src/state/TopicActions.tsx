@@ -2,7 +2,7 @@
 
 import { unstable_cache } from "next/cache";
 
-import prisma from "@zephyr/db/prisma";
+import { prisma } from "@zephyr/db";
 
 export const getTrendingTopics = unstable_cache(
   async () => {

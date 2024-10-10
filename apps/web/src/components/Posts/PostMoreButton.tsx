@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import type { PostData } from "@zephyr/db/prisma/client";
+import type { PostData } from "@zephyr/db";
 
 import DeletePostDialog from "./DeletePostDialog";
 

@@ -8,7 +8,7 @@ import {
   DialogTitle
 } from "@/components/ui/dialog";
 import { useDeletePostMutation } from "@/posts/mutations";
-import type { PostData } from "@zephyr/db/prisma/client";
+import type { PostData } from "@zephyr/db";
 
 import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
 

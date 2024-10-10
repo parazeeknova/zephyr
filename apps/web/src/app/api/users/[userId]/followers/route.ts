@@ -1,6 +1,6 @@
 import { validateRequest } from "@zephyr/auth/auth";
-import prisma from "@zephyr/db/prisma";
-import type { FollowerInfo } from "@zephyr/db/prisma/client";
+import type { FollowerInfo } from "@zephyr/db";
+import { prisma } from "@zephyr/db";
 
 export async function GET(
   _req: Request,

@@ -1,7 +1,7 @@
 "use server";
 
 import { validateRequest } from "@zephyr/auth/auth";
-import prisma from "@zephyr/db/prisma";
+import { prisma } from "@zephyr/db";
 
 export async function getSuggestedConnections() {
   try {

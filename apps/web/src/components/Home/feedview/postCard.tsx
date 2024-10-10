@@ -27,7 +27,7 @@ import { formatRelativeDate } from "@/lib/utils";
 import { useVoteMutation } from "@/posts/aura/auraMutations";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
-import type { PostData } from "@zephyr/db/prisma/client";
+import type { PostData } from "@zephyr/db";
 interface PostCardProps {
   post: PostData;
 }

@@ -1,8 +1,7 @@
 import type { NextRequest } from "next/server";
 
 import { validateRequest } from "@zephyr/auth/auth";
-import prisma from "@zephyr/db/prisma";
-import { type PostsPage, getPostDataInclude } from "@zephyr/db/prisma/client";
+import { type PostsPage, getPostDataInclude, prisma } from "@zephyr/db";
 
 export async function GET(req: NextRequest) {
   try {

@@ -7,7 +7,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 
 import { useToast } from "@/hooks/use-toast";
-import type { PostsPage } from "@zephyr/db/prisma/client";
+import type { PostsPage } from "@zephyr/db";
 
 import { deletePost } from "./actions";
 

@@ -1,7 +1,6 @@
 "use server";
 
-import prisma from "@zephyr/db/prisma";
-import { getPostDataInclude } from "@zephyr/db/prisma/client";
+import { getPostDataInclude, prisma } from "@zephyr/db";
 
 import { validateRequest } from "@zephyr/auth/auth";
 

@@ -3,7 +3,7 @@
 import { verify } from "@node-rs/argon2";
 import { lucia } from "@zephyr/auth/auth";
 import { type LoginValues, loginSchema } from "@zephyr/auth/validation";
-import prisma from "@zephyr/db/prisma";
+import { prisma } from "@zephyr/db";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";

@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { PostData } from "@zephyr/db/prisma/client";
+import type { PostData } from "@zephyr/db";
 import PostCard from "./feedview/postCard";
 import StoryCard from "./feedview/storyCard";
 

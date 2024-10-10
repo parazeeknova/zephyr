@@ -3,8 +3,17 @@
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "private": true,
+  "exports": {
+    ".": "./index.ts"
+  },
   "dependencies": {
     "@prisma/client": "^5.20.0"
+  },
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:push": "prisma db push --skip-generate"
   },
   "devDependencies": {
     "@types/node": "^22.7.5",

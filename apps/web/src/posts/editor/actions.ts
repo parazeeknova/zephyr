@@ -2,8 +2,7 @@
 
 import { validateRequest } from "@zephyr/auth/auth";
 import { createPostSchema } from "@zephyr/auth/validation";
-import prisma from "@zephyr/db/prisma";
-import { getPostDataInclude } from "@zephyr/db/prisma/client";
+import { getPostDataInclude, prisma } from "@zephyr/db";
 
 export async function submitPost(input: string) {
   const { user } = await validateRequest();

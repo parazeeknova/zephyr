@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useToast } from "@/hooks/use-toast";
 import kyInstance from "@/lib/ky";
-import type { PostData } from "@zephyr/db/prisma/client";
+import type { PostData } from "@zephyr/db";
 
 export function useVoteMutation() {
   const queryClient = useQueryClient();

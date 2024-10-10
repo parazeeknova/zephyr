@@ -1,6 +1,5 @@
 import { validateRequest } from "@zephyr/auth/auth";
-import prisma from "@zephyr/db/prisma";
-import { getUserDataSelect } from "@zephyr/db/prisma/client";
+import { getUserDataSelect, prisma } from "@zephyr/db";
 
 export async function GET() {
   try {

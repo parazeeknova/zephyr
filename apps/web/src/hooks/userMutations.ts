@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useToast } from "@/hooks/use-toast";
 import kyInstance from "@/lib/ky";
-import type { UserData } from "@zephyr/db/prisma/client";
+import type { UserData } from "@zephyr/db";
 
 async function followUser(userId: string): Promise<UserData> {
   return kyInstance.post(`/api/users/${userId}/followers`).json<UserData>();

@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 
 import { lucia } from "@zephyr/auth/auth";
 import { type SignUpValues, signUpSchema } from "@zephyr/auth/validation";
-import prisma from "@zephyr/db/prisma";
+import { prisma } from "@zephyr/db";
 
 export async function signUp(
   credentials: SignUpValues

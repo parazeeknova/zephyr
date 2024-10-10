@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import kyInstance from "@/lib/ky";
-import type { FollowerInfo, UserData } from "@zephyr/db/prisma/client";
+import type { FollowerInfo, UserData } from "@zephyr/db";
 
 export default function useFollowerInfo(
   userId: string,

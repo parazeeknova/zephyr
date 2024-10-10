@@ -7,10 +7,10 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import type { UserData } from "@/db/client";
 import { useFollowedUsers } from "@/hooks/userFollowerInfo";
 import { useUnfollowUserMutation } from "@/hooks/userMutations";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import type { UserData } from "@zephyr/db/prisma/client";
 
 import UnfollowUserDialog from "@zephyr-ui/Layouts/UnfollowUserDialog";
 

@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-query";
 
 import { useToast } from "@/hooks/use-toast";
-import type { PostsPage } from "@zephyr/db/prisma/client";
+import type { PostsPage } from "@zephyr/db";
 
 import { submitPost } from "./actions";
 
