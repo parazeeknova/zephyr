@@ -11,6 +11,7 @@ import PostCard from "./feedview/postCard";
 import StoryCard from "./feedview/storyCard";
 
 import PostEditor from "@zephyr-ui/Posts/editor/PostEditor";
+import { Separator } from "../ui/separator";
 
 const stories = [
   {
@@ -218,29 +219,36 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts }) => {
 
               <TabsContent value="all">
                 <div className="flex justify-center">
-                  <div className="w-full max-w-6xl space-y-8">
+                  <div className="w-full max-w-3xl space-y-4">
                     {allPosts.map((post, index) => (
-                      <PostCard key={`all-${index}`} post={post} />
+                      <React.Fragment key={`all-${index}`}>
+                        {index > 0 && <Separator className="my-4" />}
+                        <PostCard post={post} isJoined={true} />
+                      </React.Fragment>
                     ))}
                   </div>
                 </div>
               </TabsContent>
               <TabsContent value="scribbles">
                 <div className="flex justify-center">
-                  <div className="w-full max-w-5xl">
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                      {scribbles.map((post, index) => (
-                        <PostCard key={`scribble-${index}`} post={post} />
-                      ))}
-                    </div>
+                  <div className="w-full max-w-3xl space-y-4">
+                    {scribbles.map((post, index) => (
+                      <React.Fragment key={`scribble-${index}`}>
+                        {index > 0 && <Separator className="my-4" />}
+                        <PostCard post={post} isJoined={true} />
+                      </React.Fragment>
+                    ))}
                   </div>
                 </div>
               </TabsContent>
               <TabsContent value="snapshots">
                 <div className="flex justify-center">
-                  <div className="w-full max-w-6xl space-y-8">
+                  <div className="w-full max-w-3xl space-y-4">
                     {snapshots.map((post, index) => (
-                      <PostCard key={`snapshot-${index}`} post={post} />
+                      <React.Fragment key={`snapshot-${index}`}>
+                        {index > 0 && <Separator className="my-4" />}
+                        <PostCard post={post} isJoined={true} />
+                      </React.Fragment>
                     ))}
                   </div>
                 </div>

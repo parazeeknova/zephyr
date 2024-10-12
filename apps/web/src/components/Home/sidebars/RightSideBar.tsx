@@ -37,12 +37,14 @@ const RightSidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-80 space-y-4 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-foreground">
-      <ProfileCard {...profileData} />
-      <SuggestedConnections />
-      <TrendingTopics />
-      <ThoughtShare />
-      <LatestActivity activities={activities} />
+    <aside className="min-h-screen w-80 bg-[hsl(var(--background-alt))] p-4 text-foreground">
+      <div className="space-y-4">
+        <ProfileCard {...profileData} />
+        <SuggestedConnections />
+        <TrendingTopics />
+        <ThoughtShare />
+        <LatestActivity activities={activities} />
+      </div>
     </aside>
   );
 };

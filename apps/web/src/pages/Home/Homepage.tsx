@@ -1,16 +1,20 @@
 "use client";
 
 import { HomeIcon, RocketIcon, TrendingUpIcon, UsersIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ForYouFeed from "@zephyr-ui/Home/ForYouFeed";
 import LeftSideBar from "@zephyr-ui/Home/sidebars/LeftSideBar";
 import RightSideBar from "@zephyr-ui/Home/sidebars/RightSideBar";
 import FollowingFeed from "@zephyr-ui/Layouts/Following";
+import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
 
 export default function ZephyrHomePage() {
   const [screenSize, setScreenSize] = useState("large");
+  const mainRef = useRef<HTMLDivElement>(null);
+  const rightSidebarRef = useRef<HTMLDivElement>(null);
+  const [isFooterSticky, setIsFooterSticky] = useState(false);
 
   const handleResize = useCallback(() => {
     if (window.innerWidth < 768) {
@@ -30,42 +34,46 @@ export default function ZephyrHomePage() {
     };
   }, [handleResize]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (mainRef.current && rightSidebarRef.current) {
+        const { top: sidebarTop, height: sidebarHeight } =
+          rightSidebarRef.current.getBoundingClientRect();
+        // Check if the entire sidebar is above the viewport
+        setIsFooterSticky(sidebarTop + sidebarHeight <= 0);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
       <div className="flex flex-1 overflow-hidden">
         <LeftSideBar />
-        <main className="flex-1 overflow-y-auto bg-background">
+        <main ref={mainRef} className="flex-1 overflow-y-auto bg-background">
           <Tabs
             defaultValue="for-you"
             className="mt-6 mb-0 w-full rounded-lg bg-card"
           >
             <div className="mb-2 flex justify-center">
               <TabsList className="inline-flex h-12 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground shadow-sm">
-                <TabsTrigger
-                  value="for-you"
-                  className="rounded-sm px-6 py-2 font-medium text-sm transition-all hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                >
+                <TabsTrigger value="for-you">
                   <HomeIcon className="mr-2 h-4 w-4" />
                   Globals
                 </TabsTrigger>
-                <TabsTrigger
-                  value="following"
-                  className="rounded-sm px-6 py-2 font-medium text-sm transition-all hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                >
+                <TabsTrigger value="following">
                   <UsersIcon className="mr-2 h-4 w-4" />
                   Following
                 </TabsTrigger>
-                <TabsTrigger
-                  value=""
-                  className="rounded-sm px-6 py-2 font-medium text-sm transition-all hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                >
+                <TabsTrigger value="">
                   <TrendingUpIcon className="mr-2 h-4 w-4" />
                   Trending
                 </TabsTrigger>
-                <TabsTrigger
-                  value=""
-                  className="rounded-sm px-6 py-2 font-medium text-sm transition-all hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                >
+                <TabsTrigger value="">
                   <RocketIcon className="mr-2 h-4 w-4" />
                   Recommended
                 </TabsTrigger>
@@ -79,7 +87,20 @@ export default function ZephyrHomePage() {
             </TabsContent>
           </Tabs>
         </main>
-        {screenSize !== "small" && <RightSideBar />}
+        {screenSize !== "small" && (
+          <div className="relative w-80 bg-[hsl(var(--background-alt))]">
+            <div ref={rightSidebarRef}>
+              <RightSideBar />
+            </div>
+            <div
+              className={`transition-all duration-300 ${
+                isFooterSticky ? "fixed top-0 right-0 mt-2 w-80" : ""
+              }`}
+            >
+              <StickyFooter />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
