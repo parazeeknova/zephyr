@@ -1,5 +1,7 @@
-> ![NOTE]
-> This repository is a part of Hactoberfext 2024. So Issues and PRs are welcome. As the porject is in very early stage, we are looking for contributors to help us build the platform. If you are interested in contributing or have any questions / suggestions, feel free to open an issue or a PR. We are looking forward to working with you. 🚀
+> [!NOTE]
+> This repository is a part of **Hacktoberfest** 2024. So Issues and PRs are welcome. As the porject is in very early stage, we are looking for contributors to help us build the platform. If you are interested in contributing or have any questions / suggestions, feel free to open an issue or a PR. We are looking forward to working with you. 🚀
+
+<br>
 
 <div align="center">
 
