@@ -1,17 +1,37 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader2, Users, X } from "lucide-react";
+import {
+  Loader2,
+  MessageSquare,
+  MoreHorizontal,
+  Tag,
+  User,
+  Users
+} from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import type { UserData } from "@/db/client";
 import { useFollowedUsers } from "@/hooks/userFollowerInfo";
 import { useUnfollowUserMutation } from "@/hooks/userMutations";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
+import type { UserData } from "@zephyr/db";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 import UnfollowUserDialog from "@zephyr-ui/Layouts/UnfollowUserDialog";
 
 interface FriendsProps {
@@ -27,7 +47,7 @@ const Friends: React.FC<FriendsProps> = ({ isCollapsed }) => {
   );
 
   const maxFriendsWithoutScroll = 10;
-  const friendItemHeight = 40;
+  const friendItemHeight = 44;
   const minHeight = friendItemHeight;
   const maxHeight = maxFriendsWithoutScroll * friendItemHeight;
 
@@ -85,7 +105,9 @@ const Friends: React.FC<FriendsProps> = ({ isCollapsed }) => {
                 }}
               >
                 {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <div className="flex h-full items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
                 ) : followedUsers && followedUsers.length > 0 ? (
                   <ul className="space-y-3">
                     {followedUsers.map((user: UserData) => (
@@ -93,19 +115,68 @@ const Friends: React.FC<FriendsProps> = ({ isCollapsed }) => {
                         key={user.id}
                         className="flex items-center justify-between"
                       >
-                        <div className="flex items-center space-x-3">
-                          <UserAvatar avatarUrl={user.avatarUrl} size={32} />
-                          <span className="font-medium text-foreground text-sm">
-                            {user.displayName}
-                          </span>
+                        <div className="flex flex-grow items-center space-x-3">
+                          <Link href={`/user/${user.username}`}>
+                            <UserAvatar avatarUrl={user.avatarUrl} size={32} />
+                          </Link>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="max-w-[120px] cursor-pointer truncate font-medium font-sofiaProSoftMed text-foreground text-sm">
+                                  {user.displayName}
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>@{user.username}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleUnfollow(user)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>
+                              <Link
+                                href={`/user/${user.username}`}
+                                className="flex w-full items-center"
+                              >
+                                <User className="mr-2 h-4 w-4" />
+                                <span>Profile</span>
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Link
+                                href="#"
+                                className="flex w-full items-center"
+                              >
+                                <MessageSquare className="mr-2 h-4 w-4" />
+                                <span>Chat</span>
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Link
+                                href="#"
+                                className="flex w-full items-center"
+                              >
+                                <Tag className="mr-2 h-4 w-4" />
+                                <span>Tag</span>
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-red-600 focus:bg-red-100 focus:text-red-600"
+                              onClick={() => handleUnfollow(user)}
+                            >
+                              <span className="flex w-full items-center">
+                                <User className="mr-2 h-4 w-4" />
+                                Unfollow
+                              </span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </li>
                     ))}
                   </ul>

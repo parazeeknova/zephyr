@@ -8,6 +8,7 @@ import ForYouFeed from "@zephyr-ui/Home/ForYouFeed";
 import LeftSideBar from "@zephyr-ui/Home/sidebars/LeftSideBar";
 import RightSideBar from "@zephyr-ui/Home/sidebars/RightSideBar";
 import FollowingFeed from "@zephyr-ui/Layouts/Following";
+import ScrollUpButton from "@zephyr-ui/Layouts/ScrollUpButton";
 import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
 
 export default function ZephyrHomePage() {
@@ -15,6 +16,7 @@ export default function ZephyrHomePage() {
   const mainRef = useRef<HTMLDivElement>(null);
   const rightSidebarRef = useRef<HTMLDivElement>(null);
   const [isFooterSticky, setIsFooterSticky] = useState(false);
+  const [showScrollUpButton, setShowScrollUpButton] = useState(false);
 
   const handleResize = useCallback(() => {
     if (window.innerWidth < 768) {
@@ -26,29 +28,27 @@ export default function ZephyrHomePage() {
     }
   }, []);
 
+  const handleScroll = useCallback(() => {
+    const scrollThreshold = 200;
+    setShowScrollUpButton(window.scrollY > scrollThreshold);
+
+    if (mainRef.current && rightSidebarRef.current) {
+      const { top: sidebarTop, height: sidebarHeight } =
+        rightSidebarRef.current.getBoundingClientRect();
+      // Check if the entire sidebar is above the viewport
+      setIsFooterSticky(sidebarTop + sidebarHeight <= 0);
+    }
+  }, []);
+
   useEffect(() => {
     window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleScroll);
     handleResize();
     return () => {
       window.removeEventListener("resize", handleResize);
-    };
-  }, [handleResize]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (mainRef.current && rightSidebarRef.current) {
-        const { top: sidebarTop, height: sidebarHeight } =
-          rightSidebarRef.current.getBoundingClientRect();
-        // Check if the entire sidebar is above the viewport
-        setIsFooterSticky(sidebarTop + sidebarHeight <= 0);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [handleResize, handleScroll]);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
@@ -102,6 +102,7 @@ export default function ZephyrHomePage() {
           </div>
         )}
       </div>
+      <ScrollUpButton isVisible={showScrollUpButton} />
     </div>
   );
 }
