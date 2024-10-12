@@ -37,7 +37,7 @@
 ###### _<div align="right"><sub>// Installation</sub></div>_
 
 <p align="left">
-We use **pnpm** and **turbo** for managing the dependencies and the monorepo structutre. To install the dependencies and start the development server, run the following commands:
+We use <strong>pnpm</strong> and <strong>turbo</strong> for managing the dependencies and the monorepo structutre. To install the dependencies and start the development server, run the following commands:
 </p>
 
 > [!IMPORTANT]
