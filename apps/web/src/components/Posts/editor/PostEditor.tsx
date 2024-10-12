@@ -46,7 +46,7 @@ export default function PostEditor() {
         <UserAvatar avatarUrl={user.avatarUrl} className="hidden sm:inline" />
         <EditorContent
           editor={editor}
-          className="editor-content max-h-[20rem] w-full flex-grow overflow-y-auto rounded-2xl bg-[hsl(var(--background-alt))] px-5 py-5"
+          className="editor-content max-h-[20rem] w-full flex-grow overflow-y-auto rounded-2xl bg-[hsl(var(--background-alt))] px-5 py-5 text-foreground"
         />
       </div>
       <div className="flex justify-end">

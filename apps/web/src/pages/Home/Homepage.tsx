@@ -57,7 +57,7 @@ export default function ZephyrHomePage() {
         <main ref={mainRef} className="flex-1 overflow-y-auto bg-background">
           <Tabs
             defaultValue="for-you"
-            className="mt-6 mb-0 w-full rounded-lg bg-card"
+            className="mt-6 mb-0 w-full rounded-lg bg-background"
           >
             <div className="mb-2 flex justify-center">
               <TabsList className="inline-flex h-12 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground shadow-sm">
