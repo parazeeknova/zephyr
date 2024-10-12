@@ -130,7 +130,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <p className="mb-4 text-foreground">{post.content}</p>
+      <p className="mb-4 whitespace-pre-wrap text-foreground">{post.content}</p>
       {post.images && post.images.length > 0 && (
         <div
           className={`mb-4 grid gap-4 ${post.images.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}
