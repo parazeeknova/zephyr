@@ -1,3 +1,6 @@
+> ![NOTE]
+> This repository is a part of Hactoberfext 2024. So Issues and PRs are welcome. As the porject is in very early stage, we are looking for contributors to help us build the platform. If you are interested in contributing or have any questions / suggestions, feel free to open an issue or a PR. We are looking forward to working with you. 🚀
+
 <div align="center">
 
   <a href="https://github.com/parazeeknova/zephyr">
@@ -53,6 +56,9 @@ turbo dev
 # Build the docker image for production and start the server
 docker-compose -f docker-compose.yml up -d or docker-compose build and docker-compose up
 ```
+
+#### _<div align="left"><sub>// Analytics</sub></div>_
+![Alt](https://repobeats.axiom.co/api/embed/21d8d944036757fcd0624e71d0b2598ca8b8041f.svg "Repobeats analytics image")
 
 #### _<div align="left"><sub>// License</sub></div>_
 
