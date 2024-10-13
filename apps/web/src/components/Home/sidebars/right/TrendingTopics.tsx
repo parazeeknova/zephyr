@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, LucideTrendingUp } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 import { useEffect, useState, useTransition } from "react";
@@ -30,6 +30,7 @@ const TrendingTopics: React.FC = () => {
       <CardContent className="p-4">
         <CardTitle className="mt-1 mb-4 flex items-center font-semibold text-muted-foreground text-sm uppercase">
           Trending Topics
+          <LucideTrendingUp className="ml-2" size={16} />
         </CardTitle>
         {isPending ? (
           <Loader2 className="mx-auto animate-spin" />

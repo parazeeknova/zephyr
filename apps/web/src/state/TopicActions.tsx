@@ -11,7 +11,7 @@ export const getTrendingTopics = unstable_cache(
             FROM posts
             GROUP BY (hashtag)
             ORDER BY count DESC, hashtag ASC
-            LIMIT 5
+            LIMIT 8
     `;
 
     return result.map((row) => ({
