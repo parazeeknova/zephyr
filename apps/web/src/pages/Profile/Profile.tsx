@@ -11,9 +11,14 @@ import type { UserData } from "@zephyr/db";
 interface ProfilePageProps {
   username: string;
   userData: UserData;
+  loggedInUserId: string;
 }
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ username, userData }) => {
+const ProfilePage: React.FC<ProfilePageProps> = ({
+  username,
+  userData,
+  loggedInUserId
+}) => {
   const [showLeftSidebar] = useState(true);
   const [showRightSidebar] = useState(true);
 
@@ -29,7 +34,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ username, userData }) => {
           </div>
         </main>
         {showRightSidebar && (
-          <RightSidebar username={username} userData={userData} />
+          <RightSidebar
+            username={username}
+            userData={userData}
+            loggedInUserId={loggedInUserId}
+          />
         )}
       </div>
     </div>

@@ -37,5 +37,11 @@ export default async function Page({ params: { username } }: PageProps) {
 
   const userData = await getUser(username, loggedInUser.id);
 
-  return <ProfilePage username={username} userData={userData} />;
+  return (
+    <ProfilePage
+      username={username}
+      userData={userData}
+      loggedInUserId={loggedInUser.id}
+    />
+  );
 }
