@@ -2,10 +2,10 @@
 
 import type React from "react";
 
+import Friends from "@zephyr-ui/Home/sidebars/left/Friends";
 import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
 import AIGeneratedPosts from "@zephyr-ui/Profile/sidebars/left/AiGeneratedPosts";
 import Analytics from "@zephyr-ui/Profile/sidebars/left/Analytics";
-import Friends from "@zephyr-ui/Profile/sidebars/left/FriendsProfile";
 import RecentActivity from "@zephyr-ui/Profile/sidebars/left/RecentActivity";
 
 // Temporary static data
@@ -30,29 +30,6 @@ const tempData = {
       views: 5678
     }
   },
-  friends: [
-    {
-      name: "Alice Johnson",
-      role: "UX Researcher",
-      avatar: "/user-boy-default.png"
-    },
-    { name: "Bob Smith", role: "UI Designer", avatar: "/user-boy-default.png" },
-    {
-      name: "Carol White",
-      role: "Product Manager",
-      avatar: "/user-boy-default.png"
-    },
-    {
-      name: "David Brown",
-      role: "Frontend Developer",
-      avatar: "/user-boyalt-default.png"
-    },
-    {
-      name: "Eva Green",
-      role: "UX Writer",
-      avatar: "/user-girlstyled-default.png"
-    }
-  ],
   recentActivity: [
     {
       action: "Commented on",
@@ -76,10 +53,10 @@ const LeftSidebar: React.FC = () => (
   <aside className="w-96 flex-shrink-0 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-card-foreground">
     <div className="space-y-4">
       <NavigationCard />
+      <Friends />
       <AIGeneratedPosts posts={tempData.aiGeneratedPosts} />
       <RecentActivity activities={tempData.recentActivity} />
       <Analytics data={tempData.analytics} />
-      <Friends friends={tempData.friends} />
     </div>
   </aside>
 );

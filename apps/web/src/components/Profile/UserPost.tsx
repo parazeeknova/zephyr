@@ -13,7 +13,7 @@ interface UserPostsProps {
   userId: string;
 }
 
-export default function UserPosts({ userId }: UserPostsProps) {
+const UserPosts: React.FC<UserPostsProps> = ({ userId }) => {
   const {
     data,
     fetchNextPage,
@@ -57,14 +57,21 @@ export default function UserPosts({ userId }: UserPostsProps) {
   }
 
   return (
-    <InfiniteScrollContainer
-      className="space-y-5"
-      onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
-    >
-      {posts.map((post) => (
-        <Post key={post.id} post={post} />
-      ))}
-      {isFetchingNextPage && <Loader2 className="mx-auto my-3 animate-spin" />}
-    </InfiniteScrollContainer>
+    <div className="space-y-4">
+      <h2 className="font-bold text-xl">User Posts</h2>
+      <InfiniteScrollContainer
+        className="space-y-5"
+        onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
+      >
+        {posts.map((post) => (
+          <Post key={post.id} post={post} />
+        ))}
+        {isFetchingNextPage && (
+          <Loader2 className="mx-auto my-3 animate-spin" />
+        )}
+      </InfiniteScrollContainer>
+    </div>
   );
-}
+};
+
+export default UserPosts;

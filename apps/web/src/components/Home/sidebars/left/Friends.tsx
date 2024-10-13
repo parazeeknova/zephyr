@@ -116,7 +116,7 @@ const Friends: React.FC<FriendsProps> = ({ isCollapsed }) => {
                         className="flex items-center justify-between"
                       >
                         <div className="flex flex-grow items-center space-x-3">
-                          <Link href={`/user/${user.username}`}>
+                          <Link href={`/users/${user.username}`}>
                             <UserAvatar avatarUrl={user.avatarUrl} size={32} />
                           </Link>
                           <TooltipProvider>
@@ -141,7 +141,7 @@ const Friends: React.FC<FriendsProps> = ({ isCollapsed }) => {
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem>
                               <Link
-                                href={`/user/${user.username}`}
+                                href={`/users/${user.username}`}
                                 className="flex w-full items-center"
                               >
                                 <User className="mr-2 h-4 w-4" />

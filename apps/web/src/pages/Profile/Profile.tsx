@@ -6,12 +6,14 @@ import { useState } from "react";
 import ProfileFeedView from "@zephyr-ui/Profile/ProfileFeedView";
 import LeftSidebar from "@zephyr-ui/Profile/sidebars/ProfileLeftSideBar";
 import RightSidebar from "@zephyr-ui/Profile/sidebars/ProfileRightSideBar";
+import type { UserData } from "@zephyr/db";
 
 interface ProfilePageProps {
   username: string;
+  userData: UserData;
 }
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ username }) => {
+const ProfilePage: React.FC<ProfilePageProps> = ({ username, userData }) => {
   const [showLeftSidebar] = useState(true);
   const [showRightSidebar] = useState(true);
 
@@ -23,10 +25,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ username }) => {
           className={`flex-1 overflow-y-auto ${!showLeftSidebar && !showRightSidebar ? "w-full" : ""}`}
         >
           <div className="mx-auto max-w-5xl p-4">
-            <ProfileFeedView username={username} />
+            <ProfileFeedView username={username} userData={userData} />
           </div>
         </main>
-        {showRightSidebar && <RightSidebar />}
+        {showRightSidebar && (
+          <RightSidebar username={username} userData={userData} />
+        )}
       </div>
     </div>
   );
