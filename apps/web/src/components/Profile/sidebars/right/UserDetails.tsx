@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from "@/components/ui/tooltip";
+import Linkify from "@/helpers/global/Linkify";
 import { formatNumber } from "@/lib/utils";
 import FollowButton from "@zephyr-ui/Layouts/FollowButton";
 import FollowerCount from "@zephyr-ui/Layouts/FollowerCount";
@@ -90,9 +91,11 @@ const UserDetails: React.FC<UserDetailsProps> = ({
         {userData.bio && (
           <>
             <hr />
-            <div className="overflow-hidden whitespace-pre-line break-words">
-              {userData.bio}
-            </div>
+            <Linkify>
+              <div className="overflow-hidden whitespace-pre-line break-words">
+                {userData.bio}
+              </div>
+            </Linkify>
           </>
         )}
       </CardContent>

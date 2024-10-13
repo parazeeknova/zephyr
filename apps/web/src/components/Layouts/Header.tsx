@@ -1,12 +1,12 @@
 "use client";
 
-import { Bookmark, Home, MessageSquare, Search } from "lucide-react";
+import { Bookmark, Home, MessageSquare } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Cover } from "@/components/ui/cover";
-import { Input } from "@/components/ui/input";
 
+import SearchField from "@zephyr-ui/Layouts/SearchField";
 import UserButton from "@zephyr-ui/Layouts/UserButton";
 
 const Header: React.FC = () => {
@@ -23,14 +23,7 @@ const Header: React.FC = () => {
         </div>
 
         <div className="hidden items-center space-x-4 md:flex">
-          <div className="relative">
-            <Search className="-translate-y-1/2 absolute top-1/2 left-2 h-4 w-4 transform text-gray-400" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="rounded-full bg-muted py-1 pr-4 pl-8 text-muted-foreground text-sm"
-            />
-          </div>
+          <SearchField />
           <Button
             variant="ghost"
             size="icon"

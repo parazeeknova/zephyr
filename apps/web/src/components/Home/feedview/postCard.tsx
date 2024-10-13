@@ -15,6 +15,7 @@ import type React from "react";
 import { useState } from "react";
 
 import { useSession } from "@/app/(main)/SessionProvider";
+import UserTooltip from "@/components/Layouts/UserTooltip";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -23,6 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from "@/components/ui/tooltip";
+import Linkify from "@/helpers/global/Linkify";
 import { formatRelativeDate } from "@/lib/utils";
 import { useVoteMutation } from "@/posts/aura/auraMutations";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
@@ -78,15 +80,19 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
     <>
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Link href={`/users/${post.user.username}`}>
-            <UserAvatar avatarUrl={post.user.avatarUrl} />
-          </Link>
-          <div>
+          <UserTooltip user={post.user}>
             <Link href={`/users/${post.user.username}`}>
-              <h3 className="font-semibold text-foreground">
-                {post.user.displayName}
-              </h3>
+              <UserAvatar avatarUrl={post.user.avatarUrl} />
             </Link>
+          </UserTooltip>
+          <div>
+            <UserTooltip user={post.user}>
+              <Link href={`/users/${post.user.username}`}>
+                <h3 className="font-semibold text-foreground">
+                  {post.user.displayName}
+                </h3>
+              </Link>
+            </UserTooltip>
             <Link href={`/posts/${post.id}`}>
               <p className="text-muted-foreground text-sm">
                 {formatRelativeDate(post.createdAt)}
@@ -130,7 +136,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <p className="mb-4 whitespace-pre-wrap text-foreground">{post.content}</p>
+      <Linkify>
+        <p className="mb-4 whitespace-pre-wrap text-foreground">
+          {post.content}
+        </p>
+      </Linkify>
       {post.images && post.images.length > 0 && (
         <div
           className={`mb-4 grid gap-4 ${post.images.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}
