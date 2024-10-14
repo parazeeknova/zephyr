@@ -41,7 +41,7 @@
     "clsx": "^2.1.1",
     "cn": "^0.1.1",
     "date-fns": "^4.1.0",
-    "framer-motion": "^11.11.7",
+    "framer-motion": "^11.11.8",
     "ky": "^1.7.2",
     "lucia": "^3.2.1",
     "lucide-react": "^0.447.0",
