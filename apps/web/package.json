@@ -52,7 +52,7 @@
     "react-hook-form": "^7.53.0",
     "react-intersection-observer": "^9.13.1",
     "react-linkify-it": "^1.0.8",
-    "tailwind-merge": "^2.5.3",
+    "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {

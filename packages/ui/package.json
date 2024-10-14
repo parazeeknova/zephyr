@@ -13,7 +13,7 @@
     "next": "15.0.0-rc.0",
     "react": "19.0.0-rc.0",
     "react-hook-form": "^7.53.0",
-    "tailwind-merge": "^2.5.3"
+    "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
     "@turbo/gen": "^2.1.3",
