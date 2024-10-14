@@ -1,9 +1,12 @@
 import { Toaster } from "@/components/ui/toaster";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import localFont from "next/font/local";
-import "./globals.css";
+import { extractRouterConfig } from "uploadthing/server";
 import ReactQueryProvider from "./ReactQueryProvider";
+import { fileRouter } from "./api/uploadthing/core";
+import "./globals.css";
 
 const SofiaProSoft = localFont({
   src: "./fonts/SofiaProSoftReg.woff2",
@@ -65,6 +68,7 @@ export default function RootLayout({
       <body
         className={`${SofiaProSoft.variable} font-sofiaProSoft antialiased`}
       >
+        <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
         <ReactQueryProvider>
           <ThemeProvider
             attribute="class"

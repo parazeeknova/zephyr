@@ -1,7 +1,8 @@
+import type { Config } from "tailwindcss";
 import colors from "tailwindcss/colors";
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+const config: Config = {
+  content: [],
   darkMode: "class",
   theme: {
     extend: {
@@ -30,11 +31,13 @@ module.exports = {
       },
       keyframes: {
         shimmer: {
-          "0%, 100%": { opacity: 1 },
-          "50%": { opacity: 0.5 }
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" }
         }
       }
     }
   },
   variants: { extend: {} }
 };
+
+export default config;

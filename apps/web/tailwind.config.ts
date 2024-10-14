@@ -1,7 +1,8 @@
-const base = require("@zephyr/ui/tailwind-preset");
+import base from "@zephyr/ui/tailwind-preset";
+import type { Config } from "tailwindcss";
+import { withUt } from "uploadthing/tw";
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+const config: Config = {
   darkMode: ["class"],
   ...base,
   content: [
@@ -75,3 +76,5 @@ module.exports = {
   },
   plugins: [require("tailwindcss-animate")]
 };
+
+export default withUt(config);

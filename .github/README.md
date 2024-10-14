@@ -1,5 +1,5 @@
 > [!NOTE]
-> This repository is a part of **Hacktoberfest** 2024. So Issues and PRs are welcome. As the porject is in very early stage, we are looking for contributors to help us build the platform. If you are interested in contributing or have any questions / suggestions, feel free to open an issue or a PR. We are looking forward to working with you. 🚀
+> This repository is a part of **Hacktoberfest** 2024. So Issues and PRs are welcome. As the project is in very early stage, we are looking for contributors to help us build the platform. If you are interested in contributing or have any questions / suggestions, feel free to open an issue or a PR. We are looking forward to working with you. 🚀
 
 <br>
 
@@ -42,6 +42,7 @@ We use <strong>pnpm</strong> and <strong>turbo</strong> for managing the depende
 
 > [!IMPORTANT]
 > Make sure you have the prerequisites installed before running the following commands and have `.env` file in the root directory.
+> `.env.example` file is provided as an example uses Vercel Postgres and Uploadthing.
 
 ```bash
 # Clone the repository

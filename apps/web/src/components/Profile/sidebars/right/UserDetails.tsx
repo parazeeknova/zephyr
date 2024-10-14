@@ -1,5 +1,6 @@
 "use client";
 
+import EditProfileButton from "@/components/Layouts/EditProfileButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -75,7 +76,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {userData.id === loggedInUserId ? (
-                <Button>Edit profile</Button>
+                <EditProfileButton user={userData} />
               ) : (
                 <FollowButton
                   userId={userData.id}
