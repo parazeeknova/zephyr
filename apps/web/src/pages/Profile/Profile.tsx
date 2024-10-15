@@ -3,6 +3,7 @@
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import VerifyEnv from "@/components/Tests/VerifyEnv";
 import ScrollUpButton from "@zephyr-ui/Layouts/ScrollUpButton";
 import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
 import ProfileFeedView from "@zephyr-ui/Profile/ProfileFeedView";
@@ -48,6 +49,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
 
   return (
     <div className="flex min-h-screen flex-col">
+      <VerifyEnv />
       <div className="flex flex-1">
         {showLeftSidebar && <LeftSidebar />}
         <main
