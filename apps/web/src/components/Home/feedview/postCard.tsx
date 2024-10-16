@@ -25,11 +25,11 @@ import {
   TooltipTrigger
 } from "@/components/ui/tooltip";
 import Linkify from "@/helpers/global/Linkify";
-import { formatRelativeDate } from "@/lib/utils";
+import { cn, formatRelativeDate } from "@/lib/utils";
 import { useVoteMutation } from "@/posts/aura/auraMutations";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
-import type { PostData } from "@zephyr/db";
+import type { Media, PostData } from "@zephyr/db";
 
 interface PostCardProps {
   post: PostData;
@@ -141,24 +141,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
           {post.content}
         </p>
       </Linkify>
-      {post.images && post.images.length > 0 && (
-        <div
-          className={`mb-4 grid gap-4 ${post.images.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}
-        >
-          {post.images.map((img, index) => (
-            <Image
-              key={index}
-              src={img}
-              alt={`Post image ${index + 1}`}
-              className="h-auto w-full rounded-lg object-cover"
-              width={1080}
-              height={1080}
-              unoptimized={img.endsWith(".gif")}
-            />
-          ))}
-        </div>
+
+      {!!post.attachments.length && (
+        <MediaPreviews attachments={post.attachments} />
       )}
-      <div className="flex items-center space-x-2">
+
+      <div className="mt-2 flex items-center space-x-2">
         <Button
           variant="ghost"
           size="sm"
@@ -222,5 +210,56 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
     </motion.div>
   );
 };
+
+interface MediaPreviewsProps {
+  attachments: Media[];
+}
+
+function MediaPreviews({ attachments }: MediaPreviewsProps) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-3",
+        attachments.length > 1 && "sm:grid sm:grid-cols-2"
+      )}
+    >
+      {attachments.map((m) => (
+        <MediaPreview key={m.id} media={m} />
+      ))}
+    </div>
+  );
+}
+
+interface MediaPreviewProps {
+  media: Media;
+}
+
+function MediaPreview({ media }: MediaPreviewProps) {
+  if (media.type === "IMAGE") {
+    return (
+      <Image
+        src={media.url}
+        alt="Attachment"
+        width={500}
+        height={500}
+        className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+      />
+    );
+  }
+
+  if (media.type === "VIDEO") {
+    return (
+      <div>
+        <video
+          src={media.url}
+          controls
+          className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+        />
+      </div>
+    );
+  }
+
+  return <p className="text-destructive">Unsupported media type</p>;
+}
 
 export default PostCard;
