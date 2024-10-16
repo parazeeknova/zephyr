@@ -53,9 +53,10 @@ This repository participates in Hacktoberfest! We welcome contributions througho
 3. **Set up development environment**
 
    ```bash
-   # Get an example / temp database from vercel for `.env` file and place it in `packages/db`.
+   # Use the format in `.env.example` file to create a `.env` file in the root directory in `apps/web/` as its a monorepo.
+   # Get an example / temp postgre database from vercel for `.env` file and place it in `packages/db`.
    # Get your storage bucket from uploadthing and add it to `.env` file, Will be replaced with amazon s3 bucket later.
-   # Format is in `.env.example` file
+   # Add a random string in CRON_SECRET in `.env` file for vercel cron jobs (Only works in production).
    ```
 
 4. **Run the development servers**

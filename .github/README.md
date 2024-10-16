@@ -43,7 +43,10 @@ We use <strong>pnpm</strong> and <strong>turbo</strong> for managing the depende
 
 > [!IMPORTANT]
 > Make sure you have the prerequisites installed before running the following commands and have `.env` file in the root directory.
-> `.env.example` file is provided as an example uses Vercel Postgres and Uploadthing.
+> Use the format in `.env.example` file to create a `.env` file in the root directory in `apps/web/` as its a monorepo.
+> Get an example / temp postgre database from vercel for `.env` file and place it in `packages/db`.
+> Get your storage bucket from uploadthing and add it to `.env` file, Will be replaced with amazon s3 bucket later.
+> Add a random string in CRON_SECRET in `.env` file for vercel cron jobs (Only works in production).
 
 ```bash
 # Clone the repository
