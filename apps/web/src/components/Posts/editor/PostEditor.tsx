@@ -12,9 +12,10 @@ import "./styles.css";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSubmitPostMutation } from "@/posts/editor/mutations";
+import { useDropzone } from "@uploadthing/react";
 import { ImageIcon, Loader2, X } from "lucide-react";
 import Image from "next/image";
-import { useRef } from "react";
+import { type ClipboardEvent, useRef } from "react";
 import useMediaUpload, { type Attachment } from "./useMediaUpload";
 
 export default function PostEditor() {
@@ -30,6 +31,12 @@ export default function PostEditor() {
     removeAttachment,
     reset: resetMediaUploads
   } = useMediaUpload();
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: startUpload
+  });
+
+  const { onClick, ...rootProps } = getRootProps();
 
   const editor = useEditor({
     extensions: [
@@ -63,14 +70,28 @@ export default function PostEditor() {
     );
   }
 
+  function onPaste(e: ClipboardEvent<HTMLInputElement>) {
+    const files = Array.from(e.clipboardData.items)
+      .filter((item) => item.kind === "file")
+      .map((item) => item.getAsFile()) as File[];
+    startUpload(files);
+  }
+
   return (
     <div className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-5 shadow-sm">
       <div className="flex gap-5">
         <UserAvatar avatarUrl={user.avatarUrl} className="hidden sm:inline" />
-        <EditorContent
-          editor={editor}
-          className="editor-content max-h-[20rem] w-full flex-grow overflow-y-auto rounded-2xl bg-[hsl(var(--background-alt))] px-5 py-5 text-foreground"
-        />
+        <div {...rootProps} className="w-full">
+          <EditorContent
+            editor={editor}
+            className={cn(
+              "max-h-[20rem] w-full overflow-y-auto rounded-2xl bg-[hsl(var(--background-alt))] px-5 py-3 text-foreground",
+              isDragActive && "outline-dashed"
+            )}
+            onPaste={onPaste}
+          />
+          <input {...getInputProps()} />
+        </div>
       </div>
       {!!attachments.length && (
         <AttachmentPreviews
