@@ -93,7 +93,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
                 </h3>
               </Link>
             </UserTooltip>
-            <Link href={`/posts/${post.id}`}>
+            <Link href={`/posts/${post.id}`} suppressHydrationWarning>
               <p className="text-muted-foreground text-sm hover:underline">
                 {formatRelativeDate(post.createdAt)}
               </p>

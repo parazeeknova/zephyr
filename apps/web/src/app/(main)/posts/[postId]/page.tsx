@@ -1,3 +1,4 @@
+import NavigationCard from "@/components/Home/sidebars/left/NavigationCard";
 import Linkify from "@/helpers/global/Linkify";
 import PostCard from "@zephyr-ui/Home/feedview/postCard";
 import FollowButton from "@zephyr-ui/Layouts/FollowButton";
@@ -54,19 +55,28 @@ export default async function Page({ params: { postId } }: PageProps) {
   const post = await getPost(postId, user.id);
 
   return (
-    <main className="flex w-full min-w-0 gap-5">
-      <div className="mt-5 w-full min-w-0 space-y-5">
-        <PostCard post={post} />
-      </div>
-      <div className="sticky top-[5.25rem] hidden h-fit w-80 flex-none lg:block">
-        <Suspense fallback={<Loader2 className="mx-auto animate-spin" />}>
-          <UserInfoSidebar user={post.user} />
-        </Suspense>
-        <div className="mt-4">
-          <StickyFooter />
+    <>
+      <main className="flex w-full min-w-0 gap-5">
+        <aside className="ml-1 w-64 flex-shrink-0">
+          <NavigationCard
+            isCollapsed={false}
+            className="h-[calc(100vh-4.5rem)]"
+            stickyTop="5rem"
+          />
+        </aside>
+        <div className="mt-5 w-full min-w-0 space-y-5">
+          <PostCard post={post} />
         </div>
-      </div>
-    </main>
+        <div className="sticky top-[5.25rem] hidden h-fit w-80 flex-none lg:block">
+          <Suspense fallback={<Loader2 className="mx-auto animate-spin" />}>
+            <UserInfoSidebar user={post.user} />
+          </Suspense>
+          <div className="mt-4">
+            <StickyFooter />
+          </div>
+        </div>
+      </main>
+    </>
   );
 }
 

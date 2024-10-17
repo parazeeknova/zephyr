@@ -10,9 +10,15 @@ import { Card, CardContent } from "@/components/ui/card";
 
 interface NavigationCardProps {
   isCollapsed: boolean;
+  className?: string;
+  stickyTop?: string;
 }
 
-const NavigationCard: React.FC<NavigationCardProps> = ({ isCollapsed }) => {
+const NavigationCard: React.FC<NavigationCardProps> = ({
+  isCollapsed,
+  className = "",
+  stickyTop = "0"
+}) => {
   const navItems = [
     { icon: Home, label: "Home", href: "/" },
     { icon: GlobeIcon, label: "Discover", href: "/discover" },
@@ -22,7 +28,10 @@ const NavigationCard: React.FC<NavigationCardProps> = ({ isCollapsed }) => {
 
   return (
     <Card
-      className={`bg-card transition-all duration-300 ease-in-out ${isCollapsed ? "w-12" : "w-full"}`}
+      className={`bg-card transition-all duration-300 ease-in-out ${
+        isCollapsed ? "w-12" : "w-full"
+      }${className} sticky`}
+      style={{ top: stickyTop }}
     >
       <CardContent
         className={`flex flex-col items-center space-y-2 ${isCollapsed ? "p-2" : "p-4"}`}
