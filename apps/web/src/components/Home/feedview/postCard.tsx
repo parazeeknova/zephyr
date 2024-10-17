@@ -94,7 +94,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
               </Link>
             </UserTooltip>
             <Link href={`/posts/${post.id}`}>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-sm hover:underline">
                 {formatRelativeDate(post.createdAt)}
               </p>
             </Link>
