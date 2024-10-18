@@ -1,13 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  ArrowUpRight,
-  Bookmark,
-  Flame,
-  MessageSquare,
-  Share2
-} from "lucide-react";
+import { ArrowUpRight, Bookmark, MessageSquare, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
@@ -17,15 +11,11 @@ import UserTooltip from "@/components/Layouts/UserTooltip";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from "@/components/ui/tooltip";
 import Linkify from "@/helpers/global/Linkify";
 import { cn, formatRelativeDate } from "@/lib/utils";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
+import AuraCount from "@zephyr-ui/Posts/AuraCount";
+import AuraVoteButton from "@zephyr-ui/Posts/AuraVoteButton";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
 import type { Media, PostData } from "@zephyr/db";
 
@@ -84,18 +74,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
           </Button>
         </div>
       </div>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <div className="mb-2 flex items-center font-semibold text-foreground text-lg">
-              <Flame className="mr-1 h-5 w-5 text-orange-500" />0
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Aura</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+
+      <AuraCount postId={post.id} initialAura={post.aura} />
+
       <Linkify>
         <p className="mb-4 whitespace-pre-wrap text-foreground">
           {post.content}
@@ -108,23 +89,33 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
 
       {!!post.attachments.length && <Separator className="mt-4" />}
 
-      <div className="mt-2 flex items-center space-x-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-muted-foreground hover:text-foreground"
-        >
-          <MessageSquare className="h-5 w-5" />
-        </Button>
-        <Link href={`/posts/${post.id}`} suppressHydrationWarning>
+      <div className="mt-2 flex items-center justify-between">
+        <AuraVoteButton
+          postId={post.id}
+          initialState={{
+            aura: post.aura,
+            userVote: post.vote[0]?.value || 0
+          }}
+          authorName={post.user.displayName}
+        />
+        <div className="flex items-center space-x-2">
           <Button
             variant="ghost"
             size="sm"
-            className="hover: text-muted-foreground"
+            className="text-muted-foreground hover:text-foreground"
           >
-            <ArrowUpRight className="h-5 w-5" />
+            <MessageSquare className="h-5 w-5" />
           </Button>
-        </Link>
+          <Link href={`/posts/${post.id}`} suppressHydrationWarning>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hover: text-muted-foreground"
+            >
+              <ArrowUpRight className="h-5 w-5" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </>
   );
