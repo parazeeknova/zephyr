@@ -14,19 +14,19 @@ datasource db {
 
 // User model
 model User {
-  id           String    @id
-  username     String    @unique
+  id           String     @id
+  username     String     @unique
   displayName  String
-  email        String?   @unique
+  email        String?    @unique
   passwordHash String?
-  googleId     String?   @unique
+  googleId     String?    @unique
   avatarUrl    String?
   bio          String?
   sessions     Session[]
   posts        Post[]
-  Vote         Vote[]
-  following    Follow[]  @relation("Following")
-  followers    Follow[]  @relation("Followers")
+  following    Follow[]   @relation("Following")
+  followers    Follow[]   @relation("Followers")
+  bookmarks    Bookmark[]
 
   createdAt DateTime @default(now())
 
@@ -56,33 +56,20 @@ model Follow {
 
 // Post model
 model Post {
-  id          String  @id @default(cuid())
+  id          String     @id @default(cuid())
   content     String
   userId      String
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  aura        Int     @default(0)
-  votes       Vote[]
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aura        Int        @default(0)
   attachments Media[]
+  bookmarks   Bookmark[]
 
   createdAt DateTime @default(now())
 
   @@map("posts")
 }
 
-model Vote {
-  id     String @id @default(cuid())
-  value  Int
-  userId String
-  postId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@unique([userId, postId])
-  @@map("votes")
-}
-
+// Media model for post attachments
 model Media {
   id     String    @id @default(cuid())
   postId String?
@@ -99,3 +86,19 @@ enum MediaType {
   IMAGE
   VIDEO
 }
+
+// Bookmark model
+model Bookmark {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@map("bookmarks")
+}
+
+// Prisma schema for the Zephyr database

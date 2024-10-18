@@ -16,7 +16,7 @@ import FollowerCount from "@zephyr-ui/Layouts/FollowerCount";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import type { UserData } from "@zephyr/db";
 import { formatDate } from "date-fns";
-import { Flame, MoreVertical } from "lucide-react";
+import { BadgeCheckIcon, Flame, MoreVertical } from "lucide-react";
 import type React from "react";
 
 interface UserDetailsProps {
@@ -60,7 +60,10 @@ const UserDetails: React.FC<UserDetailsProps> = ({
               </Tooltip>
             </TooltipProvider>
           </div>
-          <div className="text-muted-foreground">@{userData.username}</div>
+          <div className="flex items-center text-muted-foreground">
+            @{userData.username}
+            <BadgeCheckIcon className="ml-1 h-4 w-4" />
+          </div>
           <div className="text-muted-foreground">
             Member since {formatDate(userData.createdAt, "MMM d, yyyy")}
           </div>

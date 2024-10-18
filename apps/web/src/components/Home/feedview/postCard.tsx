@@ -2,8 +2,7 @@
 
 import { motion } from "framer-motion";
 import {
-  ArrowBigDown,
-  ArrowBigUp,
+  ArrowUpRight,
   Bookmark,
   Flame,
   MessageSquare,
@@ -12,12 +11,12 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
-import { useState } from "react";
 
 import { useSession } from "@/app/(main)/SessionProvider";
 import UserTooltip from "@/components/Layouts/UserTooltip";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
   Tooltip,
   TooltipContent,
@@ -26,7 +25,6 @@ import {
 } from "@/components/ui/tooltip";
 import Linkify from "@/helpers/global/Linkify";
 import { cn, formatRelativeDate } from "@/lib/utils";
-import { useVoteMutation } from "@/posts/aura/auraMutations";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
 import type { Media, PostData } from "@zephyr/db";
@@ -38,43 +36,6 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
   const { user } = useSession();
-  const voteMutation = useVoteMutation();
-
-  const [voteStatus, setVoteStatus] = useState<"up" | "down" | null>(() => {
-    if (!post.userVote) return null;
-    return post.userVote.value > 0 ? "up" : "down";
-  });
-  const [auraCount, setAuraCount] = useState(post.aura || 0);
-
-  const handleVote = async (value: "up" | "down") => {
-    if (!user) return;
-    const voteValue = value === "up" ? 1 : -1;
-
-    // Optimistic update
-    const previousVoteStatus = voteStatus;
-    const previousAuraCount = auraCount;
-
-    if (voteStatus === value) {
-      setVoteStatus(null);
-      setAuraCount((prev) => prev - voteValue);
-    } else {
-      setVoteStatus(value);
-      setAuraCount(
-        (prev) =>
-          prev +
-          voteValue +
-          (previousVoteStatus ? (previousVoteStatus === "up" ? -1 : 1) : 0)
-      );
-    }
-
-    try {
-      await voteMutation.mutateAsync({ postId: post.id, value: voteValue });
-    } catch (error) {
-      console.error("Error voting on post:", error);
-      setVoteStatus(previousVoteStatus);
-      setAuraCount(previousAuraCount);
-    }
-  };
 
   const PostContent = () => (
     <>
@@ -127,8 +88,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
         <Tooltip>
           <TooltipTrigger>
             <div className="mb-2 flex items-center font-semibold text-foreground text-lg">
-              <Flame className="mr-1 h-5 w-5 text-orange-500" />
-              {auraCount}
+              <Flame className="mr-1 h-5 w-5 text-orange-500" />0
             </div>
           </TooltipTrigger>
           <TooltipContent>
@@ -146,43 +106,25 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
         <MediaPreviews attachments={post.attachments} />
       )}
 
+      {!!post.attachments.length && <Separator className="mt-4" />}
+
       <div className="mt-2 flex items-center space-x-2">
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => handleVote("up")}
-          className={`${
-            voteStatus === "up"
-              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-              : "text-muted-foreground hover:text-blue-600 dark:hover:text-blue-300"
-          }`}
-          disabled={!user}
+          className="text-muted-foreground hover:text-foreground"
         >
-          <ArrowBigUp className="mr-1 h-5 w-5" />
-          Upvote
+          <MessageSquare className="h-5 w-5" />
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => handleVote("down")}
-          className={`${
-            voteStatus === "down"
-              ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
-              : "text-muted-foreground hover:text-red-600 dark:hover:text-red-300"
-          }`}
-          disabled={!user}
-        >
-          <ArrowBigDown className="mr-1 h-5 w-5" />
-          Downvote
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-muted-foreground hover:bg-secondary hover:text-foreground"
-        >
-          <MessageSquare className="mr-1 h-5 w-5" />
-          {post.comments?.length || 0}
-        </Button>
+        <Link href={`/posts/${post.id}`} suppressHydrationWarning>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="hover: text-muted-foreground"
+          >
+            <ArrowUpRight className="h-5 w-5" />
+          </Button>
+        </Link>
       </div>
     </>
   );

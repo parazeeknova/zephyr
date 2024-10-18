@@ -13,7 +13,7 @@ const Header: React.FC = () => {
   return (
     <>
       {/* Header */}
-      <header className="flex items-center justify-between border-border border-b bg-background/60 px-6 py-1.5">
+      <header className="flex items-center justify-between border-border border-b bg-background/90 px-6 py-1.5">
         <div className="flex items-center space-x-4">
           <Link href="/">
             <h1 className="flex-grow text-center font-bold text-2xl">

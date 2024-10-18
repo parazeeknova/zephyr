@@ -30,7 +30,15 @@ export function getPostDataInclude(loggedInUserId: string) {
     user: {
       select: getUserDataSelect(loggedInUserId)
     },
-    attachments: true
+    attachments: true,
+    bookmarks: {
+      where: {
+        userId: loggedInUserId
+      },
+      select: {
+        userId: true
+      }
+    }
   } satisfies Prisma.PostInclude;
 }
 
@@ -50,8 +58,8 @@ export interface FollowerInfo {
 
 export type PostData = Prisma.PostGetPayload<{
   include: ReturnType<typeof getPostDataInclude>;
-}> & {
-  userVote?: {
-    value: number;
-  } | null;
-};
+}>;
+
+export interface BookmarkInfo {
+  isBookmarkedByUser: boolean;
+}

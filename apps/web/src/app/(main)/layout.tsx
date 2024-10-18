@@ -1,7 +1,6 @@
-import { redirect } from "next/navigation";
-
-import Header from "@zephyr-ui/Layouts/Header";
 import { validateRequest } from "@zephyr/auth/auth";
+import { redirect } from "next/navigation";
+import Navbar from "./Navbar";
 import SessionProvider from "./SessionProvider";
 
 export default async function Layout({
@@ -13,7 +12,7 @@ export default async function Layout({
 
   return (
     <SessionProvider value={session}>
-      <Header />
+      <Navbar />
       <div className="flex h-screen flex-col font-sofiaProSoft">{children}</div>
     </SessionProvider>
   );
