@@ -111,34 +111,42 @@ export default function AuraVoteButton({
         variant="ghost"
         onClick={() => mutate(1)}
         className={cn(
-          "mr-1 rounded-md p-1 text-muted-foreground hover:border hover:border-border hover:bg-green-100",
-          data.userVote === 1 && "bg-green-100"
+          "group rounded-md p-1 text-muted-foreground hover:border hover:border-orange-500 hover:bg-orange-100 hover:bg-opacity-10 hover:shadow-md",
+          data.userVote === 1 && "bg-orange-100 bg-opacity-10"
         )}
       >
-        <ArrowBigUp
-          className={cn(
-            "mr-1 size-6",
-            data.userVote === 1 && "fill-green-500 text-green-500"
-          )}
-        />
-        <div className="mr-1 text-sm">Amplify</div>
+        <div className="flex items-center overflow-hidden hover:text-orange-500">
+          <ArrowBigUp
+            className={cn(
+              "size-6",
+              data.userVote === 1 && "fill-orange-500 text-orange-500"
+            )}
+          />
+          <span className="max-w-0 overflow-hidden whitespace-nowrap transition-all duration-300 group-hover:ml-2 group-hover:max-w-xs">
+            Amplify
+          </span>
+        </div>
       </Button>
       <Button
         type="button"
         variant="ghost"
         onClick={() => mutate(-1)}
         className={cn(
-          "mr-1 rounded-md p-1 text-muted-foreground hover:border hover:border-border hover:bg-red-100",
-          data.userVote === -1 && "bg-red-100"
+          "group rounded-md p-1 text-muted-foreground hover:border hover:border-violet-500 hover:bg-violet-100 hover:bg-opacity-10 hover:shadow-md",
+          data.userVote === -1 && "bg-violet-100 bg-opacity-10"
         )}
       >
-        <ArrowBigDown
-          className={cn(
-            "mr-1 size-6",
-            data.userVote === -1 && "fill-red-500 text-red-500"
-          )}
-        />
-        <div className="mr-1 text-sm">Mute</div>
+        <div className="flex items-center overflow-hidden hover:text-violet-500">
+          <ArrowBigDown
+            className={cn(
+              "size-6",
+              data.userVote === -1 && "fill-violet-500 text-violet-500"
+            )}
+          />
+          <span className="max-w-0 overflow-hidden whitespace-nowrap text-violet-500 transition-all duration-300 group-hover:ml-2 group-hover:max-w-xs">
+            Mute
+          </span>
+        </div>
       </Button>
     </div>
   );
