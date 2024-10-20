@@ -27,6 +27,7 @@ model User {
   following    Follow[]   @relation("Following")
   followers    Follow[]   @relation("Followers")
   bookmarks    Bookmark[]
+  comments     Comment[]
 
   createdAt DateTime @default(now())
   vote      Vote[]
@@ -64,6 +65,7 @@ model Post {
   aura        Int        @default(0)
   attachments Media[]
   bookmarks   Bookmark[]
+  comments    Comment[]
 
   createdAt DateTime @default(now())
   vote      Vote[]
@@ -114,6 +116,19 @@ model Bookmark {
 
   @@unique([userId, postId])
   @@map("bookmarks")
+}
+
+// Comment model
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("comments")
 }
 
 // Prisma schema for the Zephyr database
