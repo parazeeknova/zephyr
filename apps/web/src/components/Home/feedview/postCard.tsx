@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, Bookmark, MessageSquare, Share2 } from "lucide-react";
+import { ArrowUpRight, MessageSquare, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
@@ -16,6 +16,7 @@ import { cn, formatRelativeDate } from "@/lib/utils";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import AuraCount from "@zephyr-ui/Posts/AuraCount";
 import AuraVoteButton from "@zephyr-ui/Posts/AuraVoteButton";
+import BookmarkButton from "@zephyr-ui/Posts/BookmarkButton";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
 import type { Media, PostData } from "@zephyr/db";
 
@@ -65,13 +66,14 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
           >
             <Share2 className="h-4 w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <Bookmark className="h-4 w-4" />
-          </Button>
+          <BookmarkButton
+            postId={post.id}
+            initialState={{
+              isBookmarkedByUser: post.bookmarks.some(
+                (bookmark) => bookmark.userId === user.id
+              )
+            }}
+          />
         </div>
       </div>
 
