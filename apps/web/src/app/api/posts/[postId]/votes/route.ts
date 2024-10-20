@@ -69,6 +69,7 @@ export async function POST(
       });
 
       let voteChange = vote;
+      let shouldNotify = false;
 
       if (existingVote) {
         if (existingVote.value === vote) {
@@ -94,6 +95,7 @@ export async function POST(
             data: { value: vote }
           });
           voteChange = vote * 2; // -1 to 1 = +2, 1 to -1 = -2
+          shouldNotify = vote === 1; // Notify only for upvote
         }
       } else {
         // New vote
@@ -104,13 +106,33 @@ export async function POST(
             value: vote
           }
         });
+        shouldNotify = vote === 1; // Notify only for upvote
       }
 
-      return tx.post.update({
+      const updatedPost = await tx.post.update({
         where: { id: postId },
         data: { aura: { increment: voteChange } },
-        include: getPostDataInclude(loggedInUser.id)
+        include: {
+          ...getPostDataInclude(loggedInUser.id),
+          user: true // Include the post author
+        }
       });
+
+      // Create notification for upvote using AMPLIFY type
+      if (shouldNotify && updatedPost.userId !== loggedInUser.id) {
+        await tx.notification.create({
+          data: {
+            recipientId: updatedPost.userId,
+            issuerId: loggedInUser.id,
+            postId,
+            type: "AMPLIFY"
+          }
+        });
+      } else {
+        [] as any;
+      }
+
+      return updatedPost;
     });
 
     const voteInfo: VoteInfo = {
@@ -141,7 +163,22 @@ export async function DELETE(
     }
 
     const updatedPost = await prisma.$transaction(async (tx) => {
-      const vote = await tx.vote.findUnique({
+      const existingVote = await tx.vote.findUnique({
+        where: {
+          userId_postId: {
+            userId: loggedInUser.id,
+            postId
+          }
+        },
+        select: { value: true }
+      });
+
+      if (!existingVote) {
+        return null; // No vote to delete
+      }
+
+      // Delete the vote
+      await tx.vote.delete({
         where: {
           userId_postId: {
             userId: loggedInUser.id,
@@ -150,35 +187,57 @@ export async function DELETE(
         }
       });
 
-      if (vote) {
-        await tx.post.update({
-          where: { id: postId },
-          data: { aura: { decrement: vote.value } }
-        });
-
-        await tx.vote.delete({
+      // Delete the associated notification if it was an upvote
+      if (existingVote.value === 1) {
+        await tx.notification.deleteMany({
           where: {
-            userId_postId: {
-              userId: loggedInUser.id,
-              postId
-            }
+            issuerId: loggedInUser.id,
+            postId,
+            type: "AMPLIFY"
           }
         });
       }
 
-      return tx.post.findUnique({
+      // Update the post's aura
+      return tx.post.update({
         where: { id: postId },
-        include: getPostDataInclude(loggedInUser.id)
+        data: { aura: { decrement: existingVote.value } },
+        include: {
+          ...getPostDataInclude(loggedInUser.id),
+          user: {
+            include: {
+              followers: {
+                where: { followerId: loggedInUser.id },
+                select: { followerId: true }
+              },
+              _count: {
+                select: { posts: true, followers: true }
+              }
+            }
+          },
+          bookmarks: {
+            where: { userId: loggedInUser.id },
+            select: { id: true }
+          },
+          vote: {
+            where: { userId: loggedInUser.id },
+            select: { value: true }
+          },
+          _count: {
+            select: { bookmarks: true, comments: true }
+          },
+          attachments: true
+        }
       });
     });
 
     if (!updatedPost) {
-      return Response.json({ error: "Post not found" }, { status: 404 });
+      return Response.json({ error: "Vote not found" }, { status: 404 });
     }
 
     const voteInfo: VoteInfo = {
       aura: updatedPost.aura,
-      userVote: 0
+      userVote: 0 // Since we've just deleted the vote
     };
 
     const postData: PostData & VoteInfo = {

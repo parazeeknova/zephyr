@@ -5,6 +5,15 @@ import { prisma } from "@zephyr/db";
 export default async function Navbar() {
   const { user } = await validateRequest();
 
+  if (!user) return null;
+
+  const unreadNotificationCount = await prisma.notification.count({
+    where: {
+      recipientId: user.id,
+      read: false
+    }
+  });
+
   let bookmarkCount = 0;
   if (user) {
     bookmarkCount = await prisma.bookmark.count({
@@ -14,7 +23,10 @@ export default async function Navbar() {
 
   return (
     <div className="sticky top-0 z-50">
-      <Header bookmarkCount={bookmarkCount} />
+      <Header
+        bookmarkCount={bookmarkCount}
+        unreadCount={unreadNotificationCount}
+      />
     </div>
   );
 }

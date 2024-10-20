@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CalendarIcon, GlobeIcon, Home, UsersRoundIcon } from "lucide-react";
+import { Home, MessageCircle, TrendingUp, UsersRoundIcon } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 
@@ -21,9 +21,9 @@ const NavigationCard: React.FC<NavigationCardProps> = ({
 }) => {
   const navItems = [
     { icon: Home, label: "Home", href: "/" },
-    { icon: GlobeIcon, label: "Discover", href: "/discover" },
-    { icon: UsersRoundIcon, label: "People", href: "/people" },
-    { icon: CalendarIcon, label: "Events", href: "/events" }
+    { icon: MessageCircle, label: "Whispers", href: "/messages" },
+    { icon: UsersRoundIcon, label: "Zephyrians", href: "/people" },
+    { icon: TrendingUp, label: "Gusts", href: "/trending" }
   ];
 
   return (

@@ -9,12 +9,14 @@ import { Cover } from "@/components/ui/cover";
 
 import SearchField from "@zephyr-ui/Layouts/SearchField";
 import UserButton from "@zephyr-ui/Layouts/UserButton";
+import NotificationsButton from "./NotificationsButton";
 
 interface HeaderProps {
   bookmarkCount: number;
+  unreadCount: number;
 }
 
-const Header: React.FC<HeaderProps> = ({ bookmarkCount }) => {
+const Header: React.FC<HeaderProps> = ({ bookmarkCount, unreadCount }) => {
   return (
     <>
       {/* Header */}
@@ -29,32 +31,22 @@ const Header: React.FC<HeaderProps> = ({ bookmarkCount }) => {
 
         <div className="hidden items-center space-x-4 md:flex">
           <SearchField />
+          <NotificationsButton initialState={{ unreadCount: unreadCount }} />
           <Button
             variant="ghost"
             size="icon"
-            className="relative rounded-full bg-muted"
+            className="relative rounded-full bg-muted px-2"
             title="Bookmarks"
           >
             <Link href="/bookmarks">
-              <Bookmark className="h-5 w-5" />
-              {bookmarkCount > 0 && (
-                <Badge
-                  variant="default"
-                  className="-top-2 -right-2 absolute text-sm"
-                >
-                  {bookmarkCount}
-                </Badge>
-              )}
-            </Link>
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full bg-muted"
-            title="Chat"
-          >
-            <Link href="/chat">
-              <MessageSquare className="h-5 w-5" />
+              <div className="relative">
+                <Bookmark />
+                {bookmarkCount > 0 && (
+                  <span className="-right-1 -top-1 absolute rounded-full bg-primary px-1 font-medium text-primary-foreground text-xs tabular-nums">
+                    {bookmarkCount}
+                  </span>
+                )}
+              </div>
             </Link>
           </Button>
           <div className="flex items-center">
