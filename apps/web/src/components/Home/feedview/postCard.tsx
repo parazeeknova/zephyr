@@ -13,12 +13,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Linkify from "@/helpers/global/Linkify";
 import { cn, formatRelativeDate } from "@/lib/utils";
+import Comments from "@zephyr-ui/Comments/Comments";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import AuraCount from "@zephyr-ui/Posts/AuraCount";
 import AuraVoteButton from "@zephyr-ui/Posts/AuraVoteButton";
 import BookmarkButton from "@zephyr-ui/Posts/BookmarkButton";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
 import type { Media, PostData } from "@zephyr/db";
+import { useState } from "react";
 
 interface PostCardProps {
   post: PostData;
@@ -27,6 +29,8 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
   const { user } = useSession();
+
+  const [showComments, setShowComments] = useState(false);
 
   const PostContent = () => (
     <>
@@ -101,13 +105,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
           authorName={post.user.displayName}
         />
         <div className="flex items-center space-x-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <MessageSquare className="h-5 w-5" />
-          </Button>
+          <CommentButton
+            post={post}
+            onClick={() => setShowComments(!showComments)}
+          />
           <Link href={`/posts/${post.id}`} suppressHydrationWarning>
             <Button
               variant="ghost"
@@ -119,6 +120,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
           </Link>
         </div>
       </div>
+      {showComments && <Comments post={post} />}
     </>
   );
 
@@ -195,6 +197,27 @@ function MediaPreview({ media }: MediaPreviewProps) {
   }
 
   return <p className="text-destructive">Unsupported media type</p>;
+}
+
+interface CommentButtonProps {
+  post: PostData;
+  onClick: () => void;
+}
+
+function CommentButton({ post, onClick }: CommentButtonProps) {
+  return (
+    <Button
+      onClick={onClick}
+      className="flex items-center space-x-2 text-muted-foreground hover:text-foreground"
+      variant="ghost"
+      size="sm"
+    >
+      <MessageSquare className="size-5" />
+      <span className="font-medium text-sm tabular-nums">
+        {post._count.comments} <span className="hidden sm:inline">Eddies</span>
+      </span>
+    </Button>
+  );
 }
 
 export default PostCard;
