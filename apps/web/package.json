@@ -47,7 +47,7 @@
     "ky": "^1.7.2",
     "lucia": "^3.2.1",
     "lucide-react": "^0.452.0",
-    "next": "15.0.0-rc.0",
+    "next": "15.0.0-rc.1",
     "next-themes": "^0.3.0",
     "react": "19.0.0-rc-459fd418-20241001",
     "react-cropper": "^2.3.3",
