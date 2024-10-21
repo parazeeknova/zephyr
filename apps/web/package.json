@@ -45,7 +45,7 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^11.11.9",
     "ky": "^1.7.2",
-    "lucia": "^3.2.1",
+    "lucia": "^3.2.2",
     "lucide-react": "^0.452.0",
     "next": "15.0.0-rc.0",
     "next-themes": "^0.3.0",
