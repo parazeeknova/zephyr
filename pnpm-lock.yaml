@@ -209,7 +209,7 @@ importers:
     dependencies:
       '@lucia-auth/adapter-prisma':
         specifier: ^4.0.1
-        version: 4.0.1(@prisma/client@5.21.1(prisma@5.21.1))(lucia@3.2.1)
+        version: 4.0.1(@prisma/client@5.21.1(prisma@5.21.1))(lucia@3.2.2)
       '@zephyr/db':
         specifier: workspace:*
         version: link:../db
@@ -217,8 +217,8 @@ importers:
         specifier: ^0.3.7
         version: 0.3.7
       lucia:
-        specifier: ^3.2.1
-        version: 3.2.1
+        specifier: ^3.2.2
+        version: 3.2.2
       next:
         specifier: 15.0.0-rc.0
         version: 15.0.0-rc.0(react-dom@19.0.0-rc-459fd418-20241001(react@19.0.0-rc-459fd418-20241001))(react@19.0.0-rc-459fd418-20241001)
@@ -2808,8 +2808,8 @@ packages:
     resolution: {integrity: sha512-jumlc0BIUrS3qJGgIkWZsyfAM7NCWiBcCDhnd+3NNM5KbBmLTgHVfWBcg6W+rLUsIpzpERPsvwUP7CckAQSOoA==}
     engines: {node: '>=12'}
 
-  lucia@3.2.1:
-    resolution: {integrity: sha512-yIVBS/wU3R+8cLClh2ksBNxqHkAd0VUcjvib53azkSdRT1cPkKuFglkxFsghuspaioX+AHhmIECEkdOz/vIJsQ==}
+  lucia@3.2.2:
+    resolution: {integrity: sha512-P1FlFBGCMPMXu+EGdVD9W4Mjm0DqsusmKgO7Xc33mI5X1bklmsQb0hfzPhXomQr9waWIBDsiOjvr1e6BTaUqpA==}
 
   lucia@3.2.2:
     resolution: {integrity: sha512-P1FlFBGCMPMXu+EGdVD9W4Mjm0DqsusmKgO7Xc33mI5X1bklmsQb0hfzPhXomQr9waWIBDsiOjvr1e6BTaUqpA==}
@@ -4463,10 +4463,10 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@lucia-auth/adapter-prisma@4.0.1(@prisma/client@5.21.1(prisma@5.21.1))(lucia@3.2.1)':
+  '@lucia-auth/adapter-prisma@4.0.1(@prisma/client@5.21.1(prisma@5.21.1))(lucia@3.2.2)':
     dependencies:
       '@prisma/client': 5.21.1(prisma@5.21.1)
-      lucia: 3.2.1
+      lucia: 3.2.2
 
   '@mui/core-downloads-tracker@6.1.4': {}
 
@@ -6668,7 +6668,7 @@ snapshots:
 
   lru-cache@7.18.3: {}
 
-  lucia@3.2.1:
+  lucia@3.2.2:
     dependencies:
       '@oslojs/crypto': 1.0.1
       '@oslojs/encoding': 1.1.0
