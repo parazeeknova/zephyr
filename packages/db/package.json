@@ -16,7 +16,7 @@
     "db:push": "prisma db push --skip-generate"
   },
   "devDependencies": {
-    "@types/node": "^22.7.7",
+    "@types/node": "^22.7.8",
     "@zephyr/config": "workspace:*",
     "prisma": "^5.21.1",
     "ts-node": "^10.9.2",
