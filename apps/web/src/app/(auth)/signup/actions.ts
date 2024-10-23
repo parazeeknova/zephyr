@@ -6,6 +6,7 @@ import { isRedirectError } from "next/dist/client/components/redirect";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import streamServerClient from "@/lib/stream";
 import { lucia } from "@zephyr/auth/auth";
 import { type SignUpValues, signUpSchema } from "@zephyr/auth/validation";
 import { prisma } from "@zephyr/db";
@@ -55,14 +56,23 @@ export async function signUp(
       };
     }
 
-    await prisma.user.create({
-      data: {
+    // Create user and upsert user in Stream Chat as it does not exist in Postgres database after the prisma transaction
+    await prisma.$transaction(async (tx) => {
+      await tx.user.create({
+        data: {
+          id: userId,
+          username,
+          displayName: username,
+          email,
+          passwordHash
+        }
+      });
+
+      await streamServerClient.upsertUser({
         id: userId,
         username,
-        displayName: username,
-        email,
-        passwordHash
-      }
+        name: username
+      });
     });
 
     const session = await lucia.createSession(userId, {});

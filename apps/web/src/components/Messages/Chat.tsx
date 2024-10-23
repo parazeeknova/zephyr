@@ -5,12 +5,18 @@ import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
 import SuggestedConnections from "@zephyr-ui/Home/sidebars/right/SuggestedConnections";
 import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
 import { Loader2 } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useState } from "react";
 import { Chat as StreamChat } from "stream-chat-react";
 import ChatChannel from "./ChatChannel";
 import ChatSidebar from "./ChatSidebar";
 
 export default function Chat() {
   const chatClient = useInitializeChatClient();
+
+  const { resolvedTheme } = useTheme();
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (!chatClient) {
     return <Loader2 className="mx-auto my-3 animate-spin text-primary" />;
@@ -34,10 +40,23 @@ export default function Chat() {
         </div>
       </aside>
       <div className="mt-5 mr-2 mb-4 w-full min-w-0 space-y-5 overflow-hidden rounded-2xl border border-border shadow-md">
-        <StreamChat client={chatClient}>
+        <StreamChat
+          client={chatClient}
+          theme={
+            resolvedTheme === "dark"
+              ? "str-chat__theme-dark"
+              : "str-chat__theme-light"
+          }
+        >
           <div className="flex h-full w-full">
-            <ChatSidebar />
-            <ChatChannel />
+            <ChatSidebar
+              open={sidebarOpen}
+              onClose={() => setSidebarOpen(false)}
+            />
+            <ChatChannel
+              open={!sidebarOpen}
+              openSidebar={() => setSidebarOpen(true)}
+            />
           </div>
         </StreamChat>
       </div>
