@@ -16,7 +16,8 @@
       ".openzeppelin",
       "typechain-types",
       "generated.ts",
-      "**/components/ui/**"
+      "**/components/ui/**",
+      "globals.css"
     ]
   },
   "linter": {

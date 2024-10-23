@@ -1,0 +1,46 @@
+"use client";
+
+import useInitializeChatClient from "@/hooks/useInitializeChatClient";
+import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
+import SuggestedConnections from "@zephyr-ui/Home/sidebars/right/SuggestedConnections";
+import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
+import { Loader2 } from "lucide-react";
+import { Chat as StreamChat } from "stream-chat-react";
+import ChatChannel from "./ChatChannel";
+import ChatSidebar from "./ChatSidebar";
+
+export default function Chat() {
+  const chatClient = useInitializeChatClient();
+
+  if (!chatClient) {
+    return <Loader2 className="mx-auto my-3 animate-spin text-primary" />;
+  }
+
+  return (
+    <main className="flex h-[calc(100vh-4rem)] w-full min-w-0 gap-5 overflow-hidden shadow-sm">
+      <aside className="sticky top-[5rem] hidden h-full w-72 flex-shrink-0 overflow-y-auto bg-muted md:block">
+        <div className="mt-5 mr-2 ml-2">
+          <NavigationCard
+            isCollapsed={false}
+            className="h-[calc(100vh-6rem)]"
+            stickyTop="5rem"
+          />
+        </div>
+        <div className="mt-2 mr-2 ml-2">
+          <SuggestedConnections />
+        </div>
+        <div className="mt-4 mr-2 ml-2">
+          <StickyFooter />
+        </div>
+      </aside>
+      <div className="mt-5 mr-2 mb-4 w-full min-w-0 space-y-5 overflow-hidden rounded-2xl border border-border shadow-md">
+        <StreamChat client={chatClient}>
+          <div className="flex h-full w-full">
+            <ChatSidebar />
+            <ChatChannel />
+          </div>
+        </StreamChat>
+      </div>
+    </main>
+  );
+}

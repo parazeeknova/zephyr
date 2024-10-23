@@ -3,6 +3,7 @@ import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import localFont from "next/font/local";
+import "stream-chat-react/dist/css/v2/index.css";
 import { extractRouterConfig } from "uploadthing/server";
 import ReactQueryProvider from "./ReactQueryProvider";
 import { fileRouter } from "./api/uploadthing/core";
@@ -66,7 +67,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${SofiaProSoft.variable} font-sofiaProSoft antialiased`}
+        className={`${SofiaProSoft.variable} min-h-screen font-sofiaProSoft antialiased`}
       >
         <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
         <ReactQueryProvider>

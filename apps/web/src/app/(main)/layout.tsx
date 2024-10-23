@@ -13,7 +13,7 @@ export default async function Layout({
   return (
     <SessionProvider value={session}>
       <Navbar />
-      <div className="flex h-screen flex-col font-sofiaProSoft">{children}</div>
+      <div className="flex flex-1 flex-col font-sofiaProSoft">{children}</div>
     </SessionProvider>
   );
 }
