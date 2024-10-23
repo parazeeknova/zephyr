@@ -9,13 +9,9 @@ import Link from "next/link";
 
 interface MessagesButtonProps {
   initialState: MessageCountInfo;
-  isCollapsed: boolean;
 }
 
-export default function MessagesButton({
-  initialState,
-  isCollapsed
-}: MessagesButtonProps) {
+export default function MessagesButton({ initialState }: MessagesButtonProps) {
   const { data } = useQuery({
     queryKey: ["unread-messages-count"],
     queryFn: () =>
@@ -27,22 +23,18 @@ export default function MessagesButton({
   return (
     <Button
       variant="ghost"
-      size={isCollapsed ? "icon" : "lg"}
-      className={`w-full ${isCollapsed ? "justify-center" : "justify-start"}`}
+      className="relative rounded-full bg-muted"
       title="Whispers"
       asChild
     >
-      <Link href="/messages" className="block w-full">
+      <Link href="/messages" className="block">
         <div className="relative">
-          <MessageCircle
-            className={`text-muted-foreground ${isCollapsed ? "" : "mr-4"}`}
-          />
+          <MessageCircle />
           {!!data.unreadCount && (
             <span className="-right-1 -top-1 absolute rounded-full bg-primary px-1 font-medium text-primary-foreground text-xs tabular-nums">
               {data.unreadCount}
             </span>
           )}
-          {!isCollapsed && <span>Whispers</span>}
         </div>
       </Link>
     </Button>

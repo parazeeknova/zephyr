@@ -9,14 +9,20 @@ import { Cover } from "@/components/ui/cover";
 
 import SearchField from "@zephyr-ui/Layouts/SearchField";
 import UserButton from "@zephyr-ui/Layouts/UserButton";
+import MessagesButton from "../Messages/MessagesButton";
 import NotificationsButton from "./NotificationsButton";
 
 interface HeaderProps {
   bookmarkCount: number;
-  unreadCount: number;
+  unreadNotificationCount: number;
+  unreadMessageCount: number;
 }
 
-const Header: React.FC<HeaderProps> = ({ bookmarkCount, unreadCount }) => {
+const Header: React.FC<HeaderProps> = ({
+  bookmarkCount,
+  unreadNotificationCount,
+  unreadMessageCount
+}) => {
   return (
     <>
       {/* Header */}
@@ -31,7 +37,9 @@ const Header: React.FC<HeaderProps> = ({ bookmarkCount, unreadCount }) => {
 
         <div className="hidden items-center space-x-4 md:flex">
           <SearchField />
-          <NotificationsButton initialState={{ unreadCount: unreadCount }} />
+          <NotificationsButton
+            initialState={{ unreadCount: unreadNotificationCount }}
+          />
           <Button
             variant="ghost"
             size="icon"
@@ -49,6 +57,7 @@ const Header: React.FC<HeaderProps> = ({ bookmarkCount, unreadCount }) => {
               </div>
             </Link>
           </Button>
+          <MessagesButton initialState={{ unreadCount: unreadMessageCount }} />
           <div className="flex items-center">
             <UserButton />
           </div>
