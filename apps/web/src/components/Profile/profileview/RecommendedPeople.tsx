@@ -29,30 +29,31 @@ const Recommendations: React.FC<RecommendationsProps> = ({ people }) => (
         </Button>
       </div>
       <div className="space-y-4">
-        {people.map((rec, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="flex items-start space-x-4"
-          >
-            <Avatar>
-              <AvatarImage
-                src={rec.avatar}
-                alt={rec.name}
-                width={64}
-                height={64}
-              />
-              <AvatarFallback>{rec.name[0]}</AvatarFallback>
-            </Avatar>
-            <div>
-              <h3 className="font-semibold">{rec.name}</h3>
-              <p className="text-muted-foreground text-xs">{rec.role}</p>
-              <p className="mt-1 text-foreground text-sm">{rec.comment}</p>
-            </div>
-          </motion.div>
-        ))}
+        <div className="flex items-start space-x-4">
+          {people.map((rec, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Avatar>
+                <AvatarImage
+                  src={rec.avatar}
+                  alt={rec.name}
+                  width={64}
+                  height={64}
+                />
+                <AvatarFallback>{rec.name[0]}</AvatarFallback>
+              </Avatar>
+              <div>
+                <h3 className="font-semibold">{rec.name}</h3>
+                <p className="text-muted-foreground text-xs">{rec.role}</p>
+                <p className="mt-1 text-foreground text-sm">{rec.comment}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </CardContent>
   </Card>

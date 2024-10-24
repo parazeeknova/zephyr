@@ -17,7 +17,7 @@ interface ProfilePageProps {
   loggedInUserId: string;
 }
 
-const ProfilePage: React.FC<ProfilePageProps> = ({
+const ClientProfile: React.FC<ProfilePageProps> = ({
   username,
   userData,
   loggedInUserId
@@ -73,7 +73,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
             </div>
             <div
               className={`transition-all duration-300 ${
-                isFooterSticky ? "fixed top-0 right-0 mt-2 w-96" : ""
+                isFooterSticky ? "fixed top-0 right-0 mt-20 w-96" : ""
               }`}
             >
               <StickyFooter />
@@ -86,4 +86,4 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   );
 };
 
-export default ProfilePage;
+export default ClientProfile;

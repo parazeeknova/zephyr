@@ -13,13 +13,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Linkify from "@/helpers/global/Linkify";
 import { cn, formatRelativeDate } from "@/lib/utils";
+import type { Media } from "@prisma/client";
 import Comments from "@zephyr-ui/Comments/Comments";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import AuraCount from "@zephyr-ui/Posts/AuraCount";
 import AuraVoteButton from "@zephyr-ui/Posts/AuraVoteButton";
 import BookmarkButton from "@zephyr-ui/Posts/BookmarkButton";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
-import type { Media, PostData } from "@zephyr/db";
+import type { PostData } from "@zephyr/db";
 import { useState } from "react";
 
 interface PostCardProps {
@@ -129,7 +130,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="pb-0"
     >
       {isJoined ? (
         <div className="group/post">

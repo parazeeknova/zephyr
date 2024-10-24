@@ -22,11 +22,14 @@ const ThoughtShare: React.FC = () => {
 
   const handleSubmit = () => {
     if (input.trim()) {
-      mutation.mutate(input, {
-        onSuccess: () => {
-          setInput("");
+      mutation.mutate(
+        { content: input, mediaIds: [] },
+        {
+          onSuccess: () => {
+            setInput("");
+          }
         }
-      });
+      );
     }
   };
 

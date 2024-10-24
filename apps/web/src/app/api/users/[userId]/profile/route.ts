@@ -5,8 +5,12 @@ import { getUserDataSelect, prisma } from "@zephyr/db";
 
 export async function GET(
   _req: NextRequest,
-  { params: { userId } }: { params: { userId: string } }
+  props: { params: Promise<{ userId: string }> }
 ) {
+  const params = await props.params;
+
+  const { userId } = params;
+
   console.log("API route hit for userId:", userId);
 
   try {

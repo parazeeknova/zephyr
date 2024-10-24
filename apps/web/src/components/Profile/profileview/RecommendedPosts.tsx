@@ -43,29 +43,32 @@ const RecommendedPosts: React.FC<RecommendedPostsProps> = ({ posts }) => {
   }));
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="mt-4"
-    >
-      <motion.h2
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-        className="mt-10 mb-10 text-left font-bold text-2xl text-muted-foreground uppercase"
-      >
-        Curated chronicles
-      </motion.h2>
+    <div className="mt-4">
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
-        className="h-screen w-full overflow-auto rounded-xl border border-border bg-card text-card-foreground"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
       >
-        <LayoutGrid cards={cardsWithContent} />
+        <div className="mt-10 mb-10 text-left font-bold text-2xl text-muted-foreground uppercase">
+          <motion.h2
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            Curated chronicles
+          </motion.h2>
+        </div>
+        <div className="h-screen w-full overflow-auto rounded-xl border border-border bg-card text-card-foreground">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <LayoutGrid cards={cardsWithContent} />
+          </motion.div>
+        </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
 

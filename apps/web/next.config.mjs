@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ["@zephyr/auth", "@zephyr/db"],
   reactStrictMode: true,
   output: "standalone",
   experimental: {

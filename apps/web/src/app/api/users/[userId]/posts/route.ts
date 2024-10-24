@@ -5,8 +5,12 @@ import { type PostsPage, getPostDataInclude, prisma } from "@zephyr/db";
 
 export async function GET(
   req: NextRequest,
-  { params: { userId } }: { params: { userId: string } }
+  props: { params: Promise<{ userId: string }> }
 ) {
+  const params = await props.params;
+
+  const { userId } = params;
+
   try {
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
 

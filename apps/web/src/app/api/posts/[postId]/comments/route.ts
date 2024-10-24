@@ -4,8 +4,12 @@ import type { NextRequest } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params: { postId } }: { params: { postId: string } }
+  props: { params: Promise<{ postId: string }> }
 ) {
+  const params = await props.params;
+
+  const { postId } = params;
+
   try {
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
 

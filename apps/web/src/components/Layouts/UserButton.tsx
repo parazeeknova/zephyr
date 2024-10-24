@@ -55,6 +55,7 @@ export default function UserButton({ className }: UserButtonProps) {
           <div className="flex flex-col space-y-1">
             <p className="font-medium text-sm leading-none">@{user.username}</p>
             <p className="text-muted-foreground text-xs leading-none">
+              {/* @ts-expect-error */}
               {user.email}
             </p>
           </div>
