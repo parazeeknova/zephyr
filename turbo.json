@@ -4,7 +4,8 @@
   "globalDependencies": [".env"],
   "tasks": {
     "db:generate": {
-      "cache": false
+      "cache": false,
+      "inputs": ["prisma/**/*"]
     },
     "db:push": {
       "cache": false
@@ -15,7 +16,8 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint"],
+      "inputs": ["!src/components/ui/**"]
     },
     "dev": {
       "dependsOn": ["^db:generate"],

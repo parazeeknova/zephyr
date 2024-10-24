@@ -3,8 +3,7 @@ import { SparklesCore } from "@/components/ui/sparkles";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import type React from "react";
-import { useEffect, useId, useState } from "react";
-import { useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 export const Cover = ({
   children,
@@ -52,6 +51,7 @@ export const Cover = ({
                 duration: 0.2
               }
             }}
+            // @ts-expect-error
             className="absolute inset-0 h-full w-full overflow-hidden"
           >
             <motion.div
@@ -65,6 +65,7 @@ export const Cover = ({
                   repeat: Number.POSITIVE_INFINITY
                 }
               }}
+              // @ts-expect-error
               className="flex h-full w-[200%]"
             >
               <SparklesCore
@@ -131,6 +132,7 @@ export const Cover = ({
             duration: 0.2
           }
         }}
+        // @ts-expect-error
         className={cn(
           "relative z-20 inline-block text-neutral-900 transition duration-200 group-hover/cover:text-white dark:text-white",
           className

@@ -19,20 +19,21 @@ const InterestedCommunities: React.FC<InterestedCommunitiesProps> = ({
         Interested Communities
       </h2>
       <div className="space-y-4">
-        {communities.map((community, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="flex items-center justify-between"
-          >
-            <span>{community}</span>
-            <Button variant="outline" size="sm">
-              Join
-            </Button>
-          </motion.div>
-        ))}
+        <div className="flex items-center justify-between">
+          {communities.map((community, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <span>{community}</span>
+              <Button variant="outline" size="sm">
+                Join
+              </Button>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </CardContent>
   </Card>

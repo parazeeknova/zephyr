@@ -52,8 +52,8 @@ const tempData = {
 const LeftSidebar: React.FC = () => (
   <aside className="w-96 flex-shrink-0 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-card-foreground">
     <div className="space-y-4">
-      <NavigationCard />
-      <Friends />
+      <NavigationCard isCollapsed={false} />
+      <Friends isCollapsed={false} />
       <AIGeneratedPosts posts={tempData.aiGeneratedPosts} />
       <RecentActivity activities={tempData.recentActivity} />
       <Analytics data={tempData.analytics} />
