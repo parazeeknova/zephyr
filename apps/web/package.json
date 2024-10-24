@@ -38,6 +38,7 @@
     "@zephyr/auth": "workspace:*",
     "@zephyr/db": "workspace:*",
     "@zephyr/ui": "workspace:*",
+    "arctic": "^2.0.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cn": "^0.1.1",

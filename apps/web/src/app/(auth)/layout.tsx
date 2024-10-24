@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
-
 import { validateRequest } from "@zephyr/auth/auth";
+import { redirect } from "next/navigation";
 
 export default async function Layout({
   children

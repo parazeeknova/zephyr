@@ -6,6 +6,7 @@
   "dependencies": {
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@zephyr/db": "workspace:*",
+    "arctic": "^2.0.1",
     "i": "^0.3.7",
     "lucia": "^3.2.2",
     "next": "15.0.0-rc.0",

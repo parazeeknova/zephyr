@@ -94,7 +94,7 @@ export default function ZephyrHomePage() {
             </div>
             <div
               className={`transition-all duration-300 ${
-                isFooterSticky ? "fixed top-0 right-0 mt-2 w-80" : ""
+                isFooterSticky ? "fixed top-0 right-0 mt-20 w-80" : ""
               }`}
             >
               <StickyFooter />

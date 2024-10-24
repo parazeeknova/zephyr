@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import loginImage from "@zephyr-assets/login-image.jpg";
 import LoginForm from "@zephyr-ui/Auth/LoginForm";
+import GoogleSignInButton from "./GoogleSignInButton";
 
 export const metadata: Metadata = {
   title: "Login"
@@ -34,6 +35,14 @@ export default function LoginPage() {
             <h2 className="mb-2 text-center font-bold text-3xl text-primary sm:mb-4 sm:text-4xl">
               Welcome Back
             </h2>
+
+            <GoogleSignInButton />
+            <div className="mt-1 flex items-center gap-3">
+              <div className="h-px flex-1 bg-muted" />
+              <span>OR</span>
+              <div className="h-px flex-1 bg-muted" />
+            </div>
+
             <LoginForm />
 
             <div className="flex flex-col items-center justify-center">
