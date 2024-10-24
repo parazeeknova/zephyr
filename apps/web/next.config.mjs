@@ -24,6 +24,14 @@ const nextConfig = {
         pathname: "/**"
       }
     ]
+  },
+  rewrites: () => {
+    return [
+      {
+        source: "/hashtag/:tag",
+        destination: "/search?q=%23:tag"
+      }
+    ];
   }
 };
 
