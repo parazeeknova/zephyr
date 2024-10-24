@@ -13,8 +13,8 @@ export async function GET(req: NextRequest) {
   try {
     const code = req.nextUrl.searchParams.get("code");
     const state = req.nextUrl.searchParams.get("state");
-    const storedState = cookies().get("state")?.value;
-    const storedCodeVerifier = cookies().get("code_verifier")?.value;
+    const storedState = (await cookies()).get("state")?.value;
+    const storedCodeVerifier = (await cookies()).get("code_verifier")?.value;
 
     if (
       !code ||
@@ -41,6 +41,7 @@ export async function GET(req: NextRequest) {
       throw error;
     }
 
+    // @ts-expect-error Property 'access_token' does not exist on type 'object'.ts(2339)
     const accessToken = tokenResponse?.data?.access_token;
     if (!accessToken || typeof accessToken !== "string") {
       throw new Error("Invalid access token structure");
@@ -97,7 +98,7 @@ export async function GET(req: NextRequest) {
     if (existingGoogleUser) {
       const session = await lucia.createSession(existingGoogleUser.id, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
-      cookies().set(
+      (await cookies()).set(
         sessionCookie.name,
         sessionCookie.value,
         sessionCookie.attributes
@@ -136,7 +137,7 @@ export async function GET(req: NextRequest) {
 
       const session = await lucia.createSession(userId, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
-      cookies().set(
+      (await cookies()).set(
         sessionCookie.name,
         sessionCookie.value,
         sessionCookie.attributes

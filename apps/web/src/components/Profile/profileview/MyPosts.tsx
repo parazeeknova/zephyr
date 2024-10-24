@@ -83,33 +83,33 @@ const MyPosts: React.FC<MyPostsProps> = ({ data }) => (
         </TabsList>
         <TabsContent value="blogs">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {data.blogs.map((post, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.05 }}
-                className="relative overflow-hidden rounded-lg shadow-md"
-              >
-                <div className="relative h-128 w-full">
-                  <DirectionAwareHover
-                    imageUrl={post.image}
-                    className="h-full w-full object-cover"
-                  >
-                    <div className="p-0">
-                      <h3 className="font-semibold text-white">{post.title}</h3>
-                      <p className="text-gray-300 text-sm">{post.date}</p>
-                      <div className="mt-2 flex items-center space-x-4">
-                        <span className="text-sm text-white">
-                          {post.likes} likes
-                        </span>
-                        <span className="text-sm text-white">
-                          {post.comments} comments
-                        </span>
+            <div className="relative overflow-hidden rounded-lg shadow-md">
+              {data.blogs.map((post, index) => (
+                <motion.div key={index} whileHover={{ scale: 1.05 }}>
+                  <div className="relative h-128 w-full">
+                    <DirectionAwareHover
+                      imageUrl={post.image}
+                      className="h-full w-full object-cover"
+                    >
+                      <div className="p-0">
+                        <h3 className="font-semibold text-white">
+                          {post.title}
+                        </h3>
+                        <p className="text-gray-300 text-sm">{post.date}</p>
+                        <div className="mt-2 flex items-center space-x-4">
+                          <span className="text-sm text-white">
+                            {post.likes} likes
+                          </span>
+                          <span className="text-sm text-white">
+                            {post.comments} comments
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </DirectionAwareHover>
-                </div>
-              </motion.div>
-            ))}
+                    </DirectionAwareHover>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </TabsContent>
         <TabsContent value="research">

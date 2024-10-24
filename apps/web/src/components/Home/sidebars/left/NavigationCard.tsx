@@ -29,102 +29,94 @@ export default function NavigationCard({
           isCollapsed ? "p-2" : "p-4"
         }`}
       >
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="w-full"
-        >
-          <Link href="/" className="block w-full">
-            <Button
-              variant="ghost"
-              size={isCollapsed ? "icon" : "lg"}
-              className={`w-full ${
-                isCollapsed ? "justify-center" : "justify-start"
-              }`}
-              title="Home"
-            >
-              <Home
-                className={`h-5 w-5 text-muted-foreground ${
-                  isCollapsed ? "" : "mr-4"
+        <div className="block w-full">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link href="/" className="block w-full">
+              <Button
+                variant="ghost"
+                size={isCollapsed ? "icon" : "lg"}
+                className={`w-full ${
+                  isCollapsed ? "justify-center" : "justify-start"
                 }`}
-              />
-              {!isCollapsed && <span>Home</span>}
-            </Button>
-          </Link>
-        </motion.div>
+                title="Home"
+              >
+                <Home
+                  className={`h-5 w-5 text-muted-foreground ${
+                    isCollapsed ? "" : "mr-4"
+                  }`}
+                />
+                {!isCollapsed && <span>Home</span>}
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
 
         {/* Will be replaced by MessageButton in messages component*/}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="w-full"
-        >
-          <Link href="/messages" className="block w-full">
-            <Button
-              variant="ghost"
-              size={isCollapsed ? "icon" : "lg"}
-              className={`w-full ${
-                isCollapsed ? "justify-center" : "justify-start"
-              }`}
-              title="Whispers"
-            >
-              <MessageCircle
-                className={`h-5 w-5 text-muted-foreground ${
-                  isCollapsed ? "" : "mr-4"
+        <div className="block w-full">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link href="/messages" className="block w-full">
+              <Button
+                variant="ghost"
+                size={isCollapsed ? "icon" : "lg"}
+                className={`w-full ${
+                  isCollapsed ? "justify-center" : "justify-start"
                 }`}
-              />
-              {!isCollapsed && <span>Whispers</span>}
-            </Button>
-          </Link>
-        </motion.div>
+                title="Whispers"
+              >
+                <MessageCircle
+                  className={`h-5 w-5 text-muted-foreground ${
+                    isCollapsed ? "" : "mr-4"
+                  }`}
+                />
+                {!isCollapsed && <span>Whispers</span>}
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
 
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="w-full"
-        >
-          <Link href="/people" className="block w-full">
-            <Button
-              variant="ghost"
-              size={isCollapsed ? "icon" : "lg"}
-              className={`w-full ${
-                isCollapsed ? "justify-center" : "justify-start"
-              }`}
-              title="Zephyrians"
-            >
-              <UsersRoundIcon
-                className={`h-5 w-5 text-muted-foreground ${
-                  isCollapsed ? "" : "mr-4"
+        <div className="block w-full">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link href="/people" className="block w-full">
+              <Button
+                variant="ghost"
+                size={isCollapsed ? "icon" : "lg"}
+                className={`w-full ${
+                  isCollapsed ? "justify-center" : "justify-start"
                 }`}
-              />
-              {!isCollapsed && <span>Zephyrians</span>}
-            </Button>
-          </Link>
-        </motion.div>
+                title="Zephyrians"
+              >
+                <UsersRoundIcon
+                  className={`h-5 w-5 text-muted-foreground ${
+                    isCollapsed ? "" : "mr-4"
+                  }`}
+                />
+                {!isCollapsed && <span>Zephyrians</span>}
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
 
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="w-full"
-        >
-          <Link href="/trending" className="block w-full">
-            <Button
-              variant="ghost"
-              size={isCollapsed ? "icon" : "lg"}
-              className={`w-full ${
-                isCollapsed ? "justify-center" : "justify-start"
-              }`}
-              title="Gusts"
-            >
-              <TrendingUp
-                className={`h-5 w-5 text-muted-foreground ${
-                  isCollapsed ? "" : "mr-4"
+        <div className="block w-full">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link href="/trending" className="block w-full">
+              <Button
+                variant="ghost"
+                size={isCollapsed ? "icon" : "lg"}
+                className={`w-full ${
+                  isCollapsed ? "justify-center" : "justify-start"
                 }`}
-              />
-              {!isCollapsed && <span>Gusts</span>}
-            </Button>
-          </Link>
-        </motion.div>
+                title="Gusts"
+              >
+                <TrendingUp
+                  className={`h-5 w-5 text-muted-foreground ${
+                    isCollapsed ? "" : "mr-4"
+                  }`}
+                />
+                {!isCollapsed && <span>Gusts</span>}
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
       </CardContent>
     </Card>
   );

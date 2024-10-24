@@ -6,17 +6,22 @@ import type { Metadata } from "next";
 import SearchResults from "./SearchResult";
 
 interface PageProps {
-  searchParams: { q: string };
+  searchParams: Promise<{ q: string }>;
 }
 
-export function generateMetadata({ searchParams }: PageProps): Metadata {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const searchParams = await props.searchParams;
   return {
     title: `Search results for ${searchParams.q}`,
     description: `Search results for ${searchParams.q}`
   };
 }
 
-export default async function Page({ searchParams: { q } }: PageProps) {
+export default async function Page(props: PageProps) {
+  const searchParams = await props.searchParams;
+
+  const { q } = searchParams;
+
   return (
     <main className="flex w-full min-w-0 gap-5">
       <aside className="sticky top-[5rem] ml-1 h-[calc(100vh-5.25rem)] w-64 flex-shrink-0 overflow-y-auto ">

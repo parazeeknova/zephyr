@@ -68,6 +68,7 @@ const SuggestedConnections: React.FC = () => {
                 key={connection.id}
                 className="flex items-center justify-between"
               >
+                {/* @ts-expect-error */}
                 <UserTooltip user={connection}>
                   <div className="flex items-center space-x-3">
                     <Link href={`/users/${connection.username}`}>
@@ -91,6 +92,7 @@ const SuggestedConnections: React.FC = () => {
                     followers: connection._count.followers,
                     isFollowedByUser: false
                   }}
+                  // @ts-expect-error
                   userData={connection}
                 />
               </li>

@@ -8,8 +8,12 @@ interface VoteInfo {
 
 export async function GET(
   _req: Request,
-  { params: { postId } }: { params: { postId: string } }
+  props: { params: Promise<{ postId: string }> }
 ) {
+  const params = await props.params;
+
+  const { postId } = params;
+
   try {
     const { user: loggedInUser } = await validateRequest();
     if (!loggedInUser) {
@@ -44,8 +48,12 @@ export async function GET(
 
 export async function POST(
   req: Request,
-  { params: { postId } }: { params: { postId: string } }
+  props: { params: Promise<{ postId: string }> }
 ) {
+  const params = await props.params;
+
+  const { postId } = params;
+
   try {
     const { user: loggedInUser } = await validateRequest();
     if (!loggedInUser) {
@@ -140,6 +148,7 @@ export async function POST(
       userVote: updatedPost.vote.length > 0 ? updatedPost.vote[0].value : 0
     };
 
+    // @ts-expect-error
     const postData: PostData & VoteInfo = {
       ...updatedPost,
       ...voteInfo
@@ -154,8 +163,12 @@ export async function POST(
 
 export async function DELETE(
   _req: Request,
-  { params: { postId } }: { params: { postId: string } }
+  props: { params: Promise<{ postId: string }> }
 ) {
+  const params = await props.params;
+
+  const { postId } = params;
+
   try {
     const { user: loggedInUser } = await validateRequest();
     if (!loggedInUser) {
@@ -240,6 +253,7 @@ export async function DELETE(
       userVote: 0 // Since we've just deleted the vote
     };
 
+    // @ts-expect-error
     const postData: PostData & VoteInfo = {
       ...updatedPost,
       ...voteInfo

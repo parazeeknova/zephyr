@@ -5,8 +5,12 @@ import { prisma } from "@zephyr/db";
 
 export async function GET(
   _req: NextRequest,
-  { params: { username } }: { params: { username: string } }
+  props: { params: Promise<{ username: string }> }
 ) {
+  const params = await props.params;
+
+  const { username } = params;
+
   try {
     const { user: loggedInUser } = await validateRequest();
 

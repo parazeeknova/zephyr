@@ -4,8 +4,12 @@ import { prisma } from "@zephyr/db";
 
 export async function GET(
   _req: Request,
-  { params: { userId } }: { params: { userId: string } }
+  props: { params: Promise<{ userId: string }> }
 ) {
+  const params = await props.params;
+
+  const { userId } = params;
+
   try {
     const { user: loggedInUser } = await validateRequest();
 
@@ -50,8 +54,12 @@ export async function GET(
 
 export async function POST(
   _req: Request,
-  { params: { userId } }: { params: { userId: string } }
+  props: { params: Promise<{ userId: string }> }
 ) {
+  const params = await props.params;
+
+  const { userId } = params;
+
   try {
     const { user: loggedInUser } = await validateRequest();
 
@@ -91,8 +99,12 @@ export async function POST(
 
 export async function DELETE(
   _req: Request,
-  { params: { userId } }: { params: { userId: string } }
+  props: { params: Promise<{ userId: string }> }
 ) {
+  const params = await props.params;
+
+  const { userId } = params;
+
   try {
     const { user: loggedInUser } = await validateRequest();
 

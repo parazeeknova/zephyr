@@ -72,8 +72,8 @@ interface FeedViewProps {
 }
 
 export const FeedView: React.FC<FeedViewProps> = ({ posts }) => {
-  const storiesScrollRef = useRef<HTMLDivElement>(null);
-  const risingFleetsScrollRef = useRef<HTMLDivElement>(null);
+  const storiesScrollRef = useRef<HTMLDivElement | null>(null);
+  const risingFleetsScrollRef = useRef<HTMLDivElement | null>(null);
   const [showStoriesLeftButton, setShowStoriesLeftButton] = useState(false);
   const [showStoriesRightButton, setShowStoriesRightButton] = useState(true);
   const [showRisingLeftButton, setShowRisingLeftButton] = useState(false);
@@ -83,7 +83,7 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts }) => {
   const [hotPosts, setHotPosts] = useState<PostData[]>([]);
 
   const checkScrollButtons = (
-    ref: React.RefObject<HTMLDivElement>,
+    ref: React.RefObject<HTMLDivElement | null>,
     setLeft: React.Dispatch<React.SetStateAction<boolean>>,
     setRight: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
@@ -131,7 +131,7 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts }) => {
   }, [posts]);
 
   const scroll = (
-    ref: React.RefObject<HTMLDivElement>,
+    ref: React.RefObject<HTMLDivElement | null>,
     direction: "left" | "right"
   ) => {
     if (ref.current) {
@@ -250,9 +250,8 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-8"
       >
-        <Card className="bg-card shadow-lg">
+        <Card className="mb-8 bg-card shadow-lg">
           <CardContent className="p-4">
             <div className="mb-2 flex items-center justify-between">
               <h2 className="text-left font-semibold text-2xl text-foreground uppercase">

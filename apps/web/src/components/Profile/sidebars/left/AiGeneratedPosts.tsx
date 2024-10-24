@@ -20,21 +20,24 @@ const AIGeneratedPosts: React.FC<AIGeneratedPostsProps> = ({ posts }) => (
         Synthetic Posts
       </h2>
       <div className="space-y-4">
-        {posts.map((post, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="border-border border-b pb-4 last:border-b-0"
-          >
-            <h3 className="font-semibold">{post.title}</h3>
-            <p className="mt-1 text-muted-foreground text-sm">{post.summary}</p>
-            <Button variant="link" className="mt-2 p-0 text-primary">
-              Read more
-            </Button>
-          </motion.div>
-        ))}
+        <div className="border-border border-b pb-4 last:border-b-0">
+          {posts.map((post, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <h3 className="font-semibold">{post.title}</h3>
+              <p className="mt-1 text-muted-foreground text-sm">
+                {post.summary}
+              </p>
+              <Button variant="link" className="mt-2 p-0 text-primary">
+                Read more
+              </Button>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </CardContent>
   </Card>
