@@ -20,24 +20,25 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities }) => (
         Recent Activity
       </h2>
       <div className="space-y-4">
-        {activities.map((activity, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="flex items-center space-x-2"
-          >
-            <div className="h-2 w-2 rounded-full bg-primary" />
-            <p className="text-sm">
-              <span className="font-semibold">{activity.action}</span>{" "}
-              {activity.target}
-              <span className="ml-2 text-muted-foreground">
-                {activity.time}
-              </span>
-            </p>
-          </motion.div>
-        ))}
+        <div className="flex items-center space-x-2">
+          {activities.map((activity, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <div className="h-2 w-2 rounded-full bg-primary" />
+              <p className="text-sm">
+                <span className="font-semibold">{activity.action}</span>{" "}
+                {activity.target}
+                <span className="ml-2 text-muted-foreground">
+                  {activity.time}
+                </span>
+              </p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </CardContent>
   </Card>

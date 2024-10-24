@@ -10,7 +10,7 @@
     "@prisma/client": "^5.21.1"
   },
   "scripts": {
-    "db:generate": "prisma generate",
+    "db:generate": "prisma generate --schema=./prisma/schema.prisma",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:push": "prisma db push --skip-generate"

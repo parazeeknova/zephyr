@@ -50,8 +50,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({
               <Tooltip>
                 <TooltipTrigger>
                   <div className="flex items-center font-semibold text-foreground text-lg">
-                    <Flame className="mr-1 h-6 w-6 text-orange-500" />
-                    {formatNumber(userData.aura || 0)}
+                    <Flame className="mr-1 h-6 w-6 text-orange-500" />0
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
