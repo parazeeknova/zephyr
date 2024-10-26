@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, LucideTrendingUp } from "lucide-react";
+import { LucideTrendingUp } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 import { useEffect, useState, useTransition } from "react";
@@ -8,6 +8,7 @@ import { useEffect, useState, useTransition } from "react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { formatNumber } from "@/lib/utils";
 import { getTrendingTopics } from "@/state/TopicActions";
+import TrendingTopicsSkeleton from "@zephyr-ui/Layouts/skeletons/TrendingTopicSkeleton";
 
 interface TrendingTopic {
   hashtag: string;
@@ -25,6 +26,10 @@ const TrendingTopics: React.FC = () => {
     });
   }, []);
 
+  if (isPending) {
+    return <TrendingTopicsSkeleton />;
+  }
+
   return (
     <Card className="bg-card shadow-sm">
       <CardContent className="p-4">
@@ -32,27 +37,26 @@ const TrendingTopics: React.FC = () => {
           Trending Topics
           <LucideTrendingUp className="ml-2" size={16} />
         </CardTitle>
-        {isPending ? (
-          <Loader2 className="mx-auto animate-spin" />
-        ) : (
-          <ul className="space-y-3">
-            {topics.map(({ hashtag, count }) => (
-              <li key={hashtag}>
-                <Link href={`/hashtag/${hashtag.slice(1)}`} className="block">
-                  <p
-                    className="line-clamp-1 break-all font-semibold text-foreground hover:underline"
-                    title={hashtag}
-                  >
-                    {hashtag}
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {formatNumber(count)} {count === 1 ? "post" : "posts"}
-                  </p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+        <ul className="space-y-3">
+          {topics.map(({ hashtag, count }) => (
+            <li key={hashtag}>
+              <Link
+                href={`/hashtag/${hashtag.slice(1)}`}
+                className="group block transition-colors"
+              >
+                <p
+                  className="line-clamp-1 break-all font-semibold text-foreground transition-colors group-hover:text-primary"
+                  title={hashtag}
+                >
+                  {hashtag}
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  {formatNumber(count)} {count === 1 ? "post" : "posts"}
+                </p>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </CardContent>
     </Card>
   );

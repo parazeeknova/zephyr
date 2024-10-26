@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import kyInstance from "@/lib/ky";
 import Post from "@zephyr-ui/Home/feedview/postCard";
 import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
-import PostsOnlyLoadingSkeleton from "@zephyr-ui/Layouts/PostOnlyLoadingSkeleton";
+import PostsOnlyLoadingSkeleton from "@zephyr-ui/Layouts/skeletons/PostOnlyLoadingSkeleton";
 import type { PostsPage } from "@zephyr/db";
 
 interface UserPostsProps {
