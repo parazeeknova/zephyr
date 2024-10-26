@@ -4,7 +4,7 @@ import kyInstance from "@/lib/ky";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Post from "@zephyr-ui/Home/feedview/postCard";
 import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
-import PostsLoadingSkeleton from "@zephyr-ui/Posts/PostsLoadingSkeleton";
+import PostsOnlyLoadingSkeleton from "@zephyr-ui/Layouts/PostOnlyLoadingSkeleton";
 import type { PostsPage } from "@zephyr/db";
 import { Loader2 } from "lucide-react";
 
@@ -32,7 +32,7 @@ export default function Bookmarks() {
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
   if (status === "pending") {
-    return <PostsLoadingSkeleton />;
+    return <PostsOnlyLoadingSkeleton />;
   }
 
   if (status === "success" && !posts.length && !hasNextPage) {

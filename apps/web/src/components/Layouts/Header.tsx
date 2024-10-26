@@ -29,14 +29,14 @@ const Header: React.FC<HeaderProps> = ({
       <header className="flex items-center justify-between border-border border-b bg-background/90 px-6 py-1.5">
         <div className="flex items-center space-x-4">
           <Link href="/">
-            <h1 className="flex-grow text-center font-bold text-2xl">
-              <Cover className="text-primary">Zephyr.</Cover>
+            <h1 className="mr-1 flex-grow text-center font-bold text-2xl">
+              <Cover className="text-primary">Zephyr</Cover>
             </h1>
           </Link>
+          <SearchField />
         </div>
 
         <div className="hidden items-center space-x-4 md:flex">
-          <SearchField />
           <NotificationsButton
             initialState={{ unreadCount: unreadNotificationCount }}
           />

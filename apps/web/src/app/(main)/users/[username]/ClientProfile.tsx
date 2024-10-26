@@ -1,15 +1,13 @@
 "use client";
 
-import type React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
-
-import VerifyEnv from "@/components/Tests/VerifyEnv";
 import ScrollUpButton from "@zephyr-ui/Layouts/ScrollUpButton";
 import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
 import ProfileFeedView from "@zephyr-ui/Profile/ProfileFeedView";
 import LeftSidebar from "@zephyr-ui/Profile/sidebars/ProfileLeftSideBar";
 import RightSidebar from "@zephyr-ui/Profile/sidebars/ProfileRightSideBar";
 import type { UserData } from "@zephyr/db";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface ProfilePageProps {
   username: string;
@@ -49,7 +47,6 @@ const ClientProfile: React.FC<ProfilePageProps> = ({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <VerifyEnv />
       <div className="flex flex-1">
         {showLeftSidebar && <LeftSidebar />}
         <main

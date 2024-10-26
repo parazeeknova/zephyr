@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import kyInstance from "@/lib/ky";
 import Post from "@zephyr-ui/Home/feedview/postCard";
 import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
-import PostsLoadingSkeleton from "@zephyr-ui/Posts/PostsLoadingSkeleton";
+import PostsOnlyLoadingSkeleton from "@zephyr-ui/Layouts/PostOnlyLoadingSkeleton";
 import type { PostsPage } from "@zephyr/db";
 
 interface UserPostsProps {
@@ -37,7 +37,7 @@ const UserPosts: React.FC<UserPostsProps> = ({ userId }) => {
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
   if (status === "pending") {
-    return <PostsLoadingSkeleton />;
+    return <PostsOnlyLoadingSkeleton />;
   }
 
   if (status === "success" && !posts.length && !hasNextPage) {
@@ -58,7 +58,6 @@ const UserPosts: React.FC<UserPostsProps> = ({ userId }) => {
 
   return (
     <div className="space-y-4">
-      <h2 className="font-bold text-xl">User Posts</h2>
       <InfiniteScrollContainer
         className="space-y-5"
         onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}

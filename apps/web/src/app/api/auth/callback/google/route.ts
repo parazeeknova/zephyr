@@ -8,8 +8,6 @@ import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
-  console.log("Starting Google OAuth callback...");
-
   try {
     const code = req.nextUrl.searchParams.get("code");
     const state = req.nextUrl.searchParams.get("state");
@@ -23,11 +21,9 @@ export async function GET(req: NextRequest) {
       !storedCodeVerifier ||
       state !== storedState
     ) {
-      console.log("Invalid OAuth parameters");
       return new Response(null, { status: 400 });
     }
 
-    console.log("Validating authorization code...");
     // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
     let tokenResponse;
     try {
@@ -35,7 +31,6 @@ export async function GET(req: NextRequest) {
         code,
         storedCodeVerifier
       );
-      console.log("Token validation successful");
     } catch (error) {
       console.error("Token validation error:", error);
       throw error;
