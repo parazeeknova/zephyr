@@ -24,7 +24,7 @@ export default async function Page(props: PageProps) {
 
   return (
     <main className="flex w-full min-w-0 gap-5">
-      <aside className="sticky top-[5rem] ml-1 h-[calc(100vh-5.25rem)] w-64 flex-shrink-0 overflow-y-auto ">
+      <aside className="sticky top-[5rem] ml-1 h-[calc(100vh-5.25rem)] w-72 flex-shrink-0 overflow-y-auto ">
         <div className="mr-2">
           <NavigationCard
             isCollapsed={false}
