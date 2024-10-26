@@ -1,107 +1,28 @@
-"use client";
+// In page.tsx
+import { validateRequest } from "@zephyr/auth/auth";
+import { getUserDataSelect, prisma } from "@zephyr/db";
+import ClientHome from "./ClientHome";
 
-import { Globe2Icon, UsersIcon } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+export default async function Page() {
+  const { user } = await validateRequest();
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ForYouFeed from "@zephyr-ui/Home/ForYouFeed";
-import FollowingFeed from "@zephyr-ui/Home/feedview/Following";
-import LeftSideBar from "@zephyr-ui/Home/sidebars/LeftSideBar";
-import RightSideBar from "@zephyr-ui/Home/sidebars/RightSideBar";
-import ScrollUpButton from "@zephyr-ui/Layouts/ScrollUpButton";
-import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
-import PostEditor from "@zephyr-ui/Posts/editor/PostEditor";
+  if (!user) {
+    return (
+      <p className="text-destructive">
+        You&apos;re not authorized to view this page.
+      </p>
+    );
+  }
 
-export default function Home() {
-  const [screenSize, setScreenSize] = useState("large");
-  const mainRef = useRef<HTMLDivElement>(null);
-  const rightSidebarRef = useRef<HTMLDivElement>(null);
-  const [isFooterSticky, setIsFooterSticky] = useState(false);
-  const [showScrollUpButton, setShowScrollUpButton] = useState(false);
+  // Fetch the complete user data with all required fields
+  const userData = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: getUserDataSelect(user.id)
+  });
 
-  const handleResize = useCallback(() => {
-    if (window.innerWidth < 768) {
-      setScreenSize("small");
-    } else if (window.innerWidth < 1024) {
-      setScreenSize("medium");
-    } else {
-      setScreenSize("large");
-    }
-  }, []);
+  if (!userData) {
+    return <p className="text-destructive">Unable to load user data.</p>;
+  }
 
-  const handleScroll = useCallback(() => {
-    const scrollThreshold = 200;
-    setShowScrollUpButton(window.scrollY > scrollThreshold);
-
-    if (mainRef.current && rightSidebarRef.current) {
-      const { top: sidebarTop, height: sidebarHeight } =
-        rightSidebarRef.current.getBoundingClientRect();
-      setIsFooterSticky(sidebarTop + sidebarHeight <= 0);
-    }
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("scroll", handleScroll);
-    handleResize();
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [handleResize, handleScroll]);
-
-  return (
-    <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
-      <div className="flex flex-1 overflow-hidden">
-        <LeftSideBar />
-        <main ref={mainRef} className="flex-1 overflow-y-auto bg-background">
-          <Tabs defaultValue="for-you" className="w-full bg-background">
-            <div className="mb-2 flex w-full justify-center px-4 sm:px-6">
-              <TabsList className="m-2 mt-4 grid h-12 w-full max-w-2xl grid-cols-2 rounded-md border border-muted bg-muted/50 p-2 shadow-md">
-                <TabsTrigger
-                  value="for-you"
-                  className="rounded-sm transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                >
-                  <Globe2Icon className="mr-2 h-4 w-4" />
-                  Globals
-                </TabsTrigger>
-                <TabsTrigger
-                  value="following"
-                  className="rounded-full transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                >
-                  <UsersIcon className="mr-2 h-4 w-4" />
-                  Following
-                </TabsTrigger>
-              </TabsList>
-            </div>
-
-            <div className="mt-6 pr-6 pl-6">
-              <PostEditor />
-            </div>
-            <TabsContent value="for-you">
-              <ForYouFeed />
-            </TabsContent>
-            <TabsContent value="following">
-              <FollowingFeed />
-            </TabsContent>
-          </Tabs>
-        </main>
-        {screenSize !== "small" && (
-          <div className="relative w-80 bg-[hsl(var(--background-alt))]">
-            <div ref={rightSidebarRef}>
-              <RightSideBar />
-            </div>
-            <div
-              className={`transition-all duration-300 ${
-                isFooterSticky ? "fixed top-0 right-0 mt-20 w-80" : ""
-              }`}
-            >
-              <StickyFooter />
-            </div>
-          </div>
-        )}
-      </div>
-      <ScrollUpButton isVisible={showScrollUpButton} />
-    </div>
-  );
+  return <ClientHome userData={userData} />;
 }
