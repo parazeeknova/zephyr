@@ -7,7 +7,7 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
-import PostsOnlyLoadingSkeleton from "@zephyr-ui/Layouts/PostOnlyLoadingSkeleton";
+import PostsOnlyLoadingSkeleton from "@zephyr-ui/Layouts/skeletons/PostOnlyLoadingSkeleton";
 import type { NotificationsPage } from "@zephyr/db";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";

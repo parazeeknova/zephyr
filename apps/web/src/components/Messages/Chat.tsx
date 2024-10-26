@@ -4,7 +4,7 @@ import useInitializeChatClient from "@/hooks/useInitializeChatClient";
 import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
 import SuggestedConnections from "@zephyr-ui/Home/sidebars/right/SuggestedConnections";
 import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
-import { Loader2 } from "lucide-react";
+import ChatSkeleton from "@zephyr-ui/Layouts/skeletons/ChatSkeleton";
 import { useTheme } from "next-themes";
 import { useState } from "react";
 import { Chat as StreamChat } from "stream-chat-react";
@@ -19,7 +19,7 @@ export default function Chat() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (!chatClient) {
-    return <Loader2 className="mx-auto my-3 animate-spin text-primary" />;
+    return <ChatSkeleton />;
   }
 
   return (

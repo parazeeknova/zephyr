@@ -1,28 +1,25 @@
 "use client";
 
-import type React from "react";
-
 import { useSession } from "@/app/(main)/SessionProvider";
+import type { UserData } from "@zephyr/db";
+import type React from "react";
 import ProfileCard from "./right/ProfileCard";
 import SuggestedConnections from "./right/SuggestedConnections";
 import TrendingTopics from "./right/TrendingTopics";
 
-const RightSidebar: React.FC = () => {
+interface RightSidebarProps {
+  userData: UserData;
+}
+
+const RightSidebar: React.FC<RightSidebarProps> = ({ userData }) => {
   const { user } = useSession();
 
-  const profileData = {
-    avatarUrl: user?.avatarUrl,
-    username: user?.username,
-    profession: "Programmer",
-    followers: 69,
-    following: 6.9,
-    aura: 69
-  };
+  if (!user || !userData) return null;
 
   return (
-    <aside className="w-80 bg-[hsl(var(--background-alt))] p-4 text-foreground">
+    <aside className="w-80 flex-shrink-0 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-card-foreground">
       <div className="space-y-4">
-        <ProfileCard {...profileData} />
+        <ProfileCard userData={userData} />
         <SuggestedConnections />
         <TrendingTopics />
       </div>

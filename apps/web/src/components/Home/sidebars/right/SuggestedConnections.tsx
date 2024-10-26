@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 
@@ -10,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSuggestedConnections } from "@/state/UserActions";
 import FollowButton from "@zephyr-ui/Layouts/FollowButton";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
+import SuggestedConnectionsSkeleton from "@zephyr-ui/Layouts/skeletons/SCSkeleton";
 
 interface SerializableUserData {
   id: string;
@@ -39,9 +39,29 @@ const SuggestedConnections: React.FC = () => {
     }
   });
 
-  // console.log("Connections:", connections);
-  // console.log("Is Loading:", isLoading);
-  if (error) console.error("Error fetching suggested connections: ", error);
+  if (isLoading) {
+    return <SuggestedConnectionsSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <Card className="bg-card shadow-md">
+        <CardHeader>
+          <CardTitle className="font-semibold text-muted-foreground text-sm uppercase">
+            Suggested Connections
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-muted-foreground text-sm">
+            <p>Unable to load suggestions.</p>
+            <p className="text-xs">
+              {error instanceof Error ? error.message : String(error)}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-card shadow-md">
@@ -51,17 +71,7 @@ const SuggestedConnections: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <Loader2 className="mx-auto animate-spin" />
-        ) : error ? (
-          <div>
-            <p>Error loading suggested connections.</p>
-            <p>
-              Error details:{" "}
-              {error instanceof Error ? error.message : String(error)}
-            </p>
-          </div>
-        ) : connections && connections.length > 0 ? (
+        {connections && connections.length > 0 ? (
           <ul className="space-y-4">
             {connections.map((connection) => (
               <li
@@ -72,14 +82,18 @@ const SuggestedConnections: React.FC = () => {
                 <UserTooltip user={connection}>
                   <div className="flex items-center space-x-3">
                     <Link href={`/users/${connection.username}`}>
-                      <UserAvatar avatarUrl={connection.avatarUrl} size={32} />
+                      <UserAvatar
+                        avatarUrl={connection.avatarUrl}
+                        size={32}
+                        className="transition-transform hover:scale-105"
+                      />
                     </Link>
                     <div>
-                      <p className="line-clamp-1 break-all font-semibold text-foreground hover:underline">
-                        {connection.displayName}
-                      </p>
                       <Link href={`/users/${connection.username}`}>
-                        <p className="text-muted-foreground text-sm">
+                        <p className="line-clamp-1 break-all font-semibold text-foreground transition-colors hover:text-primary">
+                          {connection.displayName}
+                        </p>
+                        <p className="text-muted-foreground text-sm hover:text-muted-foreground/80">
                           @{connection.username}
                         </p>
                       </Link>
@@ -99,7 +113,9 @@ const SuggestedConnections: React.FC = () => {
             ))}
           </ul>
         ) : (
-          <p>No suggested connections available.</p>
+          <p className="text-center text-muted-foreground text-sm">
+            No suggestions available.
+          </p>
         )}
       </CardContent>
     </Card>
