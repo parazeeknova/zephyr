@@ -1,12 +1,9 @@
 "use client";
 
-import type React from "react";
-
-import ThoughtShare from "@zephyr-ui/Home/sidebars/right/ThoughtShare";
 import UserDetails from "@zephyr-ui/Profile/sidebars/right/UserDetails";
 import FollowedTopics from "@zephyr-ui/Profile/sidebars/right/UserFollowedTopics";
-import InterestedCommunities from "@zephyr-ui/Profile/sidebars/right/UserIntrestedCommunities";
 import type { UserData } from "@zephyr/db";
+import type React from "react";
 
 interface ProfileRightSideBarProps {
   username: string;
@@ -31,13 +28,6 @@ const ProfileRightSideBar: React.FC<ProfileRightSideBarProps> = ({
       "Prototyping",
       "Visual Design",
       "Information Architecture"
-    ],
-    interestedCommunities: [
-      "UX/UI Designers",
-      "Tech Innovators",
-      "Accessibility Advocates",
-      "Frontend Developers",
-      "Product Managers"
     ]
   };
 
@@ -45,9 +35,7 @@ const ProfileRightSideBar: React.FC<ProfileRightSideBarProps> = ({
     <aside className="w-96 flex-shrink-0 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-card-foreground">
       <div className="space-y-4">
         <UserDetails userData={userData} loggedInUserId={loggedInUserId} />
-        <ThoughtShare />
         <FollowedTopics topics={tempData.followedTopics} />
-        <InterestedCommunities communities={tempData.interestedCommunities} />
       </div>
     </aside>
   );

@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { Home, MessageCircle, TrendingUp, UsersRoundIcon } from "lucide-react";
+import { Home, Search, TrendingUp, UsersRoundIcon } from "lucide-react";
 import Link from "next/link";
 
 interface NavigationCardProps {
@@ -25,7 +25,7 @@ export default function NavigationCard({
       style={{ top: stickyTop }}
     >
       <CardContent
-        className={`flex flex-col items-center space-y-2 ${
+        className={`justify-centeritems-center flex flex-col space-y-2 ${
           isCollapsed ? "p-2" : "p-4"
         }`}
       >
@@ -54,21 +54,21 @@ export default function NavigationCard({
         {/* Will be replaced by MessageButton in messages component*/}
         <div className="block w-full">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link href="/messages" className="block w-full">
+            <Link href="/search" className="block w-full">
               <Button
                 variant="ghost"
                 size={isCollapsed ? "icon" : "lg"}
                 className={`w-full ${
                   isCollapsed ? "justify-center" : "justify-start"
                 }`}
-                title="Whispers"
+                title="Explore"
               >
-                <MessageCircle
+                <Search
                   className={`h-5 w-5 text-muted-foreground ${
                     isCollapsed ? "" : "mr-4"
                   }`}
                 />
-                {!isCollapsed && <span>Whispers</span>}
+                {!isCollapsed && <span>Explore</span>}
               </Button>
             </Link>
           </motion.div>

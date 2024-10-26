@@ -7,7 +7,7 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
-import PostsLoadingSkeleton from "@zephyr-ui/Posts/PostsLoadingSkeleton";
+import PostsOnlyLoadingSkeleton from "@zephyr-ui/Layouts/PostOnlyLoadingSkeleton";
 import type { NotificationsPage } from "@zephyr/db";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
@@ -55,7 +55,7 @@ export default function Notifications() {
   const notifications = data?.pages.flatMap((page) => page.notifications) || [];
 
   if (status === "pending") {
-    return <PostsLoadingSkeleton />;
+    return <PostsOnlyLoadingSkeleton />;
   }
 
   if (status === "success" && !notifications.length && !hasNextPage) {

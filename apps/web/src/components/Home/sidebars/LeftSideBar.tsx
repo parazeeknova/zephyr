@@ -6,9 +6,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import Friends from "./left/Friends";
-import MyGroups from "./left/MyGroups";
 import NavigationCard from "./left/NavigationCard";
-import UpcomingEvents from "./left/UpcomingEvent";
 
 const LeftSideBar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -33,24 +31,10 @@ const LeftSideBar: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // These would typically come from an API or state management
-  const myGroupsData = [
-    { name: "Picktab Studio", icon: "🎨" },
-    { name: "Arasaka Digital", icon: "🚀" },
-    { name: "Design Jam", icon: "🌵" },
-    { name: "Figma Jam", icon: "💡" }
-  ];
-
-  const upcomingEventsData = [
-    { name: "Tech Conference 2023", color: "text-red-500 dark:text-red-400" },
-    { name: "Design Meetup", color: "text-yellow-500 dark:text-yellow-400" },
-    { name: "Hackathon", color: "text-green-500 dark:text-green-400" }
-  ];
-
   const sidebarWidth = () => {
     if (screenSize === "small") return "w-0";
     if (screenSize === "medium" || (isCollapsed && !isHovered)) return "w-16";
-    return "w-64";
+    return "w-72";
   };
 
   return (
@@ -81,15 +65,7 @@ const LeftSideBar: React.FC = () => {
             className={`space-y-4 ${isCollapsed && !isHovered ? "px-0" : "px-2"}`}
           >
             <NavigationCard isCollapsed={isCollapsed && !isHovered} />
-            <MyGroups
-              groups={myGroupsData}
-              isCollapsed={isCollapsed && !isHovered}
-            />
             <Friends isCollapsed={isCollapsed && !isHovered} />
-            <UpcomingEvents
-              events={upcomingEventsData}
-              isCollapsed={isCollapsed && !isHovered}
-            />
           </div>
         </div>
       )}

@@ -1,15 +1,16 @@
 "use client";
 
-import { HomeIcon, RocketIcon, TrendingUpIcon, UsersIcon } from "lucide-react";
+import { Globe2Icon, UsersIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ForYouFeed from "@zephyr-ui/Home/ForYouFeed";
+import FollowingFeed from "@zephyr-ui/Home/feedview/Following";
 import LeftSideBar from "@zephyr-ui/Home/sidebars/LeftSideBar";
 import RightSideBar from "@zephyr-ui/Home/sidebars/RightSideBar";
-import FollowingFeed from "@zephyr-ui/Layouts/Following";
 import ScrollUpButton from "@zephyr-ui/Layouts/ScrollUpButton";
 import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
+import PostEditor from "@zephyr-ui/Posts/editor/PostEditor";
 
 export default function Home() {
   const [screenSize, setScreenSize] = useState("large");
@@ -54,29 +55,28 @@ export default function Home() {
       <div className="flex flex-1 overflow-hidden">
         <LeftSideBar />
         <main ref={mainRef} className="flex-1 overflow-y-auto bg-background">
-          <Tabs
-            defaultValue="for-you"
-            className="mt-6 mb-0 w-full rounded-lg bg-background"
-          >
-            <div className="mb-2 flex justify-center">
-              <TabsList className="inline-flex h-12 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground shadow-sm">
-                <TabsTrigger value="for-you">
-                  <HomeIcon className="mr-2 h-4 w-4" />
+          <Tabs defaultValue="for-you" className="w-full bg-background">
+            <div className="mb-2 flex w-full justify-center px-4 sm:px-6">
+              <TabsList className="m-2 mt-4 grid h-12 w-full max-w-2xl grid-cols-2 rounded-md border border-muted bg-muted/50 p-2 shadow-md">
+                <TabsTrigger
+                  value="for-you"
+                  className="rounded-sm transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                >
+                  <Globe2Icon className="mr-2 h-4 w-4" />
                   Globals
                 </TabsTrigger>
-                <TabsTrigger value="following">
+                <TabsTrigger
+                  value="following"
+                  className="rounded-full transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                >
                   <UsersIcon className="mr-2 h-4 w-4" />
                   Following
                 </TabsTrigger>
-                <TabsTrigger value="">
-                  <TrendingUpIcon className="mr-2 h-4 w-4" />
-                  Trending
-                </TabsTrigger>
-                <TabsTrigger value="">
-                  <RocketIcon className="mr-2 h-4 w-4" />
-                  Recommended
-                </TabsTrigger>
               </TabsList>
+            </div>
+
+            <div className="mt-6 pr-6 pl-6">
+              <PostEditor />
             </div>
             <TabsContent value="for-you">
               <ForYouFeed />
