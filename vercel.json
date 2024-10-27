@@ -7,7 +7,5 @@
     }
   ],
   "buildCommand": "turbo build",
-  "installCommand": "pnpm install",
-  "framework": "nextjs",
-  "outputDirectory": "./apps/web/.next"
+  "installCommand": "pnpm install"
 }
