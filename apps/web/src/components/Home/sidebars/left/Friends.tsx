@@ -1,7 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { MessageSquare, MoreHorizontal, Tag, User, Users } from "lucide-react";
+import { MessageSquare, MoreHorizontal, User, Users } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
@@ -82,12 +82,6 @@ const FriendListItem: React.FC<{
           <Link href="/messages" className="flex items-center">
             <MessageSquare className="mr-2 h-4 w-4" />
             <span>Chat</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="#" className="flex items-center">
-            <Tag className="mr-2 h-4 w-4" />
-            <span>Tag</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem

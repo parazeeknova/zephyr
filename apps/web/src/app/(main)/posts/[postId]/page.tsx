@@ -1,6 +1,8 @@
-import NavigationCard from "@/components/Home/sidebars/left/NavigationCard";
 import Linkify from "@/helpers/global/Linkify";
+import { getUserData } from "@/hooks/useUserData";
 import PostCard from "@zephyr-ui/Home/feedview/postCard";
+import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
+import ProfileCard from "@zephyr-ui/Home/sidebars/right/ProfileCard";
 import FollowButton from "@zephyr-ui/Layouts/FollowButton";
 import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
@@ -31,13 +33,9 @@ const getPost = cache(async (postId: string, loggedInUser: string) => {
 
 export async function generateMetadata(props: PageProps) {
   const params = await props.params;
-
   const { postId } = params;
-
   const { user } = await validateRequest();
-
   if (!user) return {};
-
   const post = await getPost(postId, user.id);
 
   return {
@@ -47,10 +45,9 @@ export async function generateMetadata(props: PageProps) {
 
 export default async function Page(props: PageProps) {
   const params = await props.params;
-
   const { postId } = params;
-
   const { user } = await validateRequest();
+  const userData = user ? await getUserData(user.id) : null;
 
   if (!user) {
     return (
@@ -65,16 +62,25 @@ export default async function Page(props: PageProps) {
   return (
     <>
       <main className="flex w-full min-w-0 gap-5">
-        <aside className="ml-1 w-64 flex-shrink-0">
-          <NavigationCard
-            isCollapsed={false}
-            className="h-[calc(100vh-4.5rem)]"
-            stickyTop="5rem"
-          />
+        <aside className="sticky top-[5rem] ml-1 hidden h-[calc(100vh-5.25rem)] w-72 flex-shrink-0 md:block">
+          <div className="flex h-full flex-col">
+            <NavigationCard
+              isCollapsed={false}
+              className="flex-none"
+              stickyTop="5rem"
+            />
+            {userData && (
+              <div className="mt-auto mb-4">
+                <ProfileCard userData={userData} />
+              </div>
+            )}
+          </div>
         </aside>
+
         <div className="mt-5 w-full min-w-0 space-y-5">
           <PostCard post={post} />
         </div>
+
         <div className="sticky top-[5.25rem] hidden h-fit w-80 flex-none lg:block">
           <Suspense fallback={<Loader2 className="mx-auto animate-spin" />}>
             <UserInfoSidebar user={post.user} />
