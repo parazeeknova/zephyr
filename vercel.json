@@ -1,8 +1,13 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "crons": [
     {
       "path": "/api/clear-uploads",
       "schedule": "0 2 * * *"
     }
-  ]
+  ],
+  "buildCommand": "turbo build",
+  "installCommand": "pnpm install",
+  "framework": "nextjs",
+  "outputDirectory": "./apps/web/.next"
 }
