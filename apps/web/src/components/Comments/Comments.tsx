@@ -1,7 +1,8 @@
+// In Comments.tsx
 import kyInstance from "@/lib/ky";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import CommentsSkeleton from "@zephyr-ui/Layouts/skeletons/CommentsSkeleton";
 import type { CommentsPage, PostData } from "@zephyr/db";
-import { Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
 import Comment from "./Comment";
 import CommentInput from "./CommentInput";
@@ -31,6 +32,10 @@ export default function Comments({ post }: CommentsProps) {
 
   const comments = data?.pages.flatMap((page) => page.comments) || [];
 
+  if (status === "pending") {
+    return <CommentsSkeleton />;
+  }
+
   return (
     <div className="mt-4 space-y-3">
       <CommentInput post={post} />
@@ -43,9 +48,6 @@ export default function Comments({ post }: CommentsProps) {
         >
           Load previous eddies
         </Button>
-      )}
-      {status === "pending" && (
-        <Loader2 className="mx-auto animate-spin text-primary" />
       )}
       {status === "success" && !comments.length && (
         <p className="text-center text-muted-foreground">No eddy yet.</p>
