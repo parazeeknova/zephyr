@@ -53,6 +53,49 @@ body:not(:hover)::-webkit-scrollbar-thumb {
 body:hover::-webkit-scrollbar-thumb {
   animation: fadeIn 0.3s ease;
 }
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+@layer utilities {
+  .glass-effect {
+    @apply bg-background/40 backdrop-blur-md border border-border/50;
+  }
+  
+  .glass-hover {
+    @apply hover:bg-background/60 hover:border-border/80 hover:shadow-md;
+  }
+
+  .gradient-blur {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--primary-rgb), 0.1) 0%,
+      rgba(var(--primary-rgb), 0.2) 50%,
+      rgba(var(--primary-rgb), 0.1) 100%
+    );
+    filter: blur(4px);
+  }
+
+  .backdrop-blur-sm {
+    backdrop-filter: blur(8px);
+  }
+  
+  .backdrop-blur-md {
+    backdrop-filter: blur(12px);
+  }
+  
+  .backdrop-blur-lg {
+    backdrop-filter: blur(16px);
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 97.65%;
@@ -84,6 +127,7 @@ body:hover::-webkit-scrollbar-thumb {
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --primary-rgb: 147, 51, 234;
   }
 
   .dark {

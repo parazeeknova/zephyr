@@ -27,7 +27,7 @@ const LeftSideBar: React.FC = () => {
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Initial check
+    handleResize();
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -39,7 +39,7 @@ const LeftSideBar: React.FC = () => {
 
   return (
     <aside
-      className={`transition-all duration-300 ease-in-out ${sidebarWidth()} bg-[hsl(var(--background-alt))] p-2`}
+      className={`transition-all duration-300 ease-in-out ${sidebarWidth()} hidden bg-[hsl(var(--background-alt))] p-2 md:block`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

@@ -1,11 +1,9 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
 import kyInstance from "@/lib/ky";
 import { useQuery } from "@tanstack/react-query";
+import { HeaderIconButton } from "@zephyr-ui/Styles/HeaderButtons";
 import type { MessageCountInfo } from "@zephyr/db";
 import { MessageCircle } from "lucide-react";
-import Link from "next/link";
 
 interface MessagesButtonProps {
   initialState: MessageCountInfo;
@@ -21,22 +19,11 @@ export default function MessagesButton({ initialState }: MessagesButtonProps) {
   });
 
   return (
-    <Button
-      variant="ghost"
-      className="relative rounded-full bg-muted"
+    <HeaderIconButton
+      href="/messages"
+      icon={<MessageCircle className="h-5 w-5" />}
+      count={data.unreadCount}
       title="Whispers"
-      asChild
-    >
-      <Link href="/messages" className="block">
-        <div className="relative">
-          <MessageCircle />
-          {!!data.unreadCount && (
-            <span className="-right-1 -top-1 absolute rounded-full bg-primary px-1 font-medium text-primary-foreground text-xs tabular-nums">
-              {data.unreadCount}
-            </span>
-          )}
-        </div>
-      </Link>
-    </Button>
+    />
   );
 }

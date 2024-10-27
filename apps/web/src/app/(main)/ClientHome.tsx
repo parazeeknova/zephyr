@@ -88,7 +88,7 @@ const ClientHome: React.FC<ClientHomeProps> = ({ userData }) => {
           </Tabs>
         </main>
         {showRightSidebar && (
-          <div className="relative w-80 bg-[hsl(var(--background-alt))]">
+          <div className="relative hidden w-80 bg-[hsl(var(--background-alt))] md:block">
             <div ref={rightSidebarRef}>
               <RightSideBar userData={userData} />
             </div>
