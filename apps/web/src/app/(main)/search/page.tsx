@@ -1,7 +1,10 @@
-import NavigationCard from "@/components/Home/sidebars/left/NavigationCard";
-import SuggestedConnections from "@/components/Home/sidebars/right/SuggestedConnections";
-import TrendingTopics from "@/components/Home/sidebars/right/TrendingTopics";
+import { getUserData } from "@/hooks/useUserData";
+import Friends from "@zephyr-ui/Home/sidebars/left/Friends";
+import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
+import ProfileCard from "@zephyr-ui/Home/sidebars/right/ProfileCard";
+import TrendingTopics from "@zephyr-ui/Home/sidebars/right/TrendingTopics";
 import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
+import { validateRequest } from "@zephyr/auth/auth";
 import type { Metadata } from "next";
 import SearchResults from "./SearchResult";
 
@@ -19,23 +22,30 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 
 export default async function Page(props: PageProps) {
   const searchParams = await props.searchParams;
-
   const { q } = searchParams;
+  const { user } = await validateRequest();
+  const userData = user ? await getUserData(user.id) : null;
 
   return (
     <main className="flex w-full min-w-0 gap-5">
-      <aside className="sticky top-[5rem] ml-1 h-[calc(100vh-5.25rem)] w-64 flex-shrink-0 overflow-y-auto ">
-        <div className="mr-2">
+      <aside className="sticky top-[5rem] ml-1 hidden h-[calc(100vh-5.25rem)] w-72 flex-shrink-0 md:block">
+        <div className="flex h-full flex-col">
           <NavigationCard
             isCollapsed={false}
-            className="h-[calc(100vh-4.5rem)]"
+            className="flex-none"
             stickyTop="5rem"
           />
-        </div>
-        <div className="mt-2 mr-2">
-          <SuggestedConnections />
+          <div className="mt-2 flex-none">
+            <Friends isCollapsed={false} />
+          </div>
+          {userData && (
+            <div className="mt-auto mb-4">
+              <ProfileCard userData={userData} />
+            </div>
+          )}
         </div>
       </aside>
+
       <div className="mt-5 w-full min-w-0 space-y-5">
         <SearchResults query={q} />
       </div>

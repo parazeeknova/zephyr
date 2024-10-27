@@ -1,6 +1,5 @@
-// In page.tsx
+import { getUserData } from "@/hooks/useUserData";
 import { validateRequest } from "@zephyr/auth/auth";
-import { getUserDataSelect, prisma } from "@zephyr/db";
 import ClientHome from "./ClientHome";
 
 export default async function Page() {
@@ -14,11 +13,7 @@ export default async function Page() {
     );
   }
 
-  // Fetch the complete user data with all required fields
-  const userData = await prisma.user.findUnique({
-    where: { id: user.id },
-    select: getUserDataSelect(user.id)
-  });
+  const userData = await getUserData(user.id);
 
   if (!userData) {
     return <p className="text-destructive">Unable to load user data.</p>;
