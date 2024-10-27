@@ -1,11 +1,11 @@
 "use client";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
 
 import kyInstance from "@/lib/ky";
 import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
-import PostsLoadingSkeleton from "@zephyr-ui/Posts/PostsLoadingSkeleton";
+import FeedViewSkeleton from "@zephyr-ui/Layouts/skeletons/FeedViewSkeleton";
+import LoadMoreSkeleton from "@zephyr-ui/Layouts/skeletons/LoadMoreSkeleton";
 import type { PostsPage } from "@zephyr/db";
 
 import FeedView from "./FeedView";
@@ -34,7 +34,7 @@ export default function ForYouFeed() {
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
   if (status === "pending") {
-    return <PostsLoadingSkeleton />;
+    return <FeedViewSkeleton />;
   }
 
   if (status === "success" && !posts.length && !hasNextPage) {
@@ -58,9 +58,7 @@ export default function ForYouFeed() {
       onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
     >
       <FeedView posts={posts} />
-      {isFetchingNextPage && (
-        <Loader2 className="mx-auto my-3 animate-spin bg-background" />
-      )}
+      {isFetchingNextPage && <LoadMoreSkeleton />}
     </InfiniteScrollContainer>
   );
 }

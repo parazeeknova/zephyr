@@ -76,9 +76,10 @@ const ClientHome: React.FC<ClientHomeProps> = ({ userData }) => {
               </TabsList>
             </div>
 
-            <div className="mt-6 pr-6 pl-6">
+            <div className="mt-6 pr-4 pl-4">
               <PostEditor />
             </div>
+
             <TabsContent value="for-you">
               <ForYouFeed />
             </TabsContent>

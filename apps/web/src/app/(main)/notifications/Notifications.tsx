@@ -7,9 +7,9 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
+import LoadMoreSkeleton from "@zephyr-ui/Layouts/skeletons/LoadMoreSkeleton";
 import PostsOnlyLoadingSkeleton from "@zephyr-ui/Layouts/skeletons/PostOnlyLoadingSkeleton";
 import type { NotificationsPage } from "@zephyr/db";
-import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import Notification from "./Notification";
 
@@ -82,7 +82,7 @@ export default function Notifications() {
       {notifications.map((notification) => (
         <Notification key={notification.id} notification={notification} />
       ))}
-      {isFetchingNextPage && <Loader2 className="mx-auto my-3 animate-spin" />}
+      {isFetchingNextPage && <LoadMoreSkeleton />}
     </InfiniteScrollContainer>
   );
 }

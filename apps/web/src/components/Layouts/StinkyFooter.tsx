@@ -3,7 +3,7 @@ import type React from "react";
 
 const StickyFooter: React.FC = () => {
   return (
-    <div className="space-y-1 text-muted-foreground text-sm">
+    <div className="hidden space-y-1 text-muted-foreground text-sm md:block">
       <div className="flex items-center justify-center space-x-2">
         <span className="font-sofiaProSoftBold">&copy; 2024</span>
         <span className="font-sofiaProSoftBold">Zephyr</span>

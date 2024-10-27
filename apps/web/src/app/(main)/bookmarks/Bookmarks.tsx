@@ -4,9 +4,9 @@ import kyInstance from "@/lib/ky";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Post from "@zephyr-ui/Home/feedview/postCard";
 import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
+import LoadMoreSkeleton from "@zephyr-ui/Layouts/skeletons/LoadMoreSkeleton";
 import PostsOnlyLoadingSkeleton from "@zephyr-ui/Layouts/skeletons/PostOnlyLoadingSkeleton";
 import type { PostsPage } from "@zephyr/db";
-import { Loader2 } from "lucide-react";
 
 export default function Bookmarks() {
   const {
@@ -59,7 +59,7 @@ export default function Bookmarks() {
       {posts.map((post) => (
         <Post key={post.id} post={post} />
       ))}
-      {isFetchingNextPage && <Loader2 className="mx-auto my-3 animate-spin" />}
+      {isFetchingNextPage && <LoadMoreSkeleton />}
     </InfiniteScrollContainer>
   );
 }
