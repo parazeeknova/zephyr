@@ -30,7 +30,6 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
   const { user } = useSession();
-
   const [showComments, setShowComments] = useState(false);
 
   const PostContent = () => (
@@ -57,6 +56,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
             </Link>
           </div>
         </div>
+
         <div className="flex items-center space-x-2">
           {post.user.id === user.id && (
             <PostMoreButton
@@ -156,7 +156,7 @@ function MediaPreviews({ attachments }: MediaPreviewsProps) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-3",
+        "flex flex-col gap-2 sm:gap-3",
         attachments.length > 1 && "sm:grid sm:grid-cols-2"
       )}
     >
@@ -179,7 +179,7 @@ function MediaPreview({ media }: MediaPreviewProps) {
         alt="Attachment"
         width={500}
         height={500}
-        className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+        className="mx-auto size-fit max-h-[20rem] rounded-lg sm:max-h-[30rem] sm:rounded-2xl"
       />
     );
   }
@@ -190,7 +190,7 @@ function MediaPreview({ media }: MediaPreviewProps) {
         <video
           src={media.url}
           controls
-          className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+          className="mx-auto size-fit max-h-[20rem] rounded-lg sm:max-h-[30rem] sm:rounded-2xl"
         />
       </div>
     );

@@ -60,7 +60,7 @@ const ClientProfile: React.FC<ProfilePageProps> = ({
           </div>
         </main>
         {showRightSidebar && (
-          <div className="relative w-96 bg-[hsl(var(--background-alt))]">
+          <div className="relative hidden w-96 bg-[hsl(var(--background-alt))] md:block">
             <div ref={rightSidebarRef}>
               <RightSidebar
                 username={username}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import {
   Check,
   LogOutIcon,
@@ -43,69 +44,112 @@ export default function UserButton({ className }: UserButtonProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className={cn("flex-none rounded-full", className)}
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          // @ts-expect-error
+          className="group relative"
         >
-          <UserAvatar avatarUrl={user.avatarUrl} size={35} />
-        </Button>
+          <div className="-inset-[2px] absolute rounded-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100" />
+          <Button
+            variant="ghost"
+            className={cn(
+              "relative flex-none rounded-full border border-border/50 bg-background/40 p-0 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-border/80 hover:bg-background/60 hover:shadow-md",
+              className
+            )}
+          >
+            <UserAvatar
+              avatarUrl={user.avatarUrl}
+              size={35}
+              className="transition-transform duration-200"
+            />
+          </Button>
+        </motion.div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="font-medium text-sm leading-none">@{user.username}</p>
-            <p className="text-muted-foreground text-xs leading-none">
-              {/* @ts-expect-error */}
-              {user.email}
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href={`/users/${user.username}`}>
-            <UserIcon className="mr-2 size-4" />
-            <span>Profile</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <Monitor className="mr-2 size-4" />
-            <span>Theme</span>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuPortal>
-            <DropdownMenuSubContent>
-              <DropdownMenuItem onClick={() => setTheme("system")}>
-                <Monitor className="mr-2 size-4" />
-                <span>System</span>
-                {theme === "system" && <Check className="ml-auto size-4" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("light")}>
-                <Sun className="mr-2 size-4" />
-                <span>Light</span>
-                {theme === "light" && <Check className="ml-auto size-4" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>
-                <Moon className="mr-2 size-4" />
-                <span>Dark</span>
-                {theme === "dark" && <Check className="ml-auto size-4" />}
-              </DropdownMenuItem>
-            </DropdownMenuSubContent>
-          </DropdownMenuPortal>
-        </DropdownMenuSub>
-        <DropdownMenuItem>
-          <SettingsIcon className="mr-2 size-4" />
-          <span>Settings</span>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => {
-            queryClient.clear();
-            logout();
-          }}
+      <DropdownMenuContent
+        align="end"
+        className="w-56 border border-border/50 bg-background/95 shadow-lg backdrop-blur-md"
+        sideOffset={8}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
         >
-          <LogOutIcon className="mr-2 size-4" />
-          <span>Log out</span>
-        </DropdownMenuItem>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="font-medium text-sm leading-none">
+                @{user.username}
+              </p>
+              <p className="text-muted-foreground text-xs leading-none">
+                {/* @ts-expect-error */}
+                {user.email}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator className="bg-border/50" />
+          <DropdownMenuItem
+            asChild
+            className="hover:bg-primary/10 focus:bg-primary/10"
+          >
+            <Link
+              href={`/users/${user.username}`}
+              className="flex items-center"
+            >
+              <UserIcon className="mr-2 size-4" />
+              <span>Profile</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="hover:bg-primary/10 focus:bg-primary/10">
+              <Monitor className="mr-2 size-4" />
+              <span>Theme</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent className="border border-border/50 bg-background/95 backdrop-blur-md">
+                <DropdownMenuItem
+                  onClick={() => setTheme("system")}
+                  className="hover:bg-primary/10 focus:bg-primary/10"
+                >
+                  <Monitor className="mr-2 size-4" />
+                  <span>System</span>
+                  {theme === "system" && <Check className="ml-auto size-4" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setTheme("light")}
+                  className="hover:bg-primary/10 focus:bg-primary/10"
+                >
+                  <Sun className="mr-2 size-4" />
+                  <span>Light</span>
+                  {theme === "light" && <Check className="ml-auto size-4" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setTheme("dark")}
+                  className="hover:bg-primary/10 focus:bg-primary/10"
+                >
+                  <Moon className="mr-2 size-4" />
+                  <span>Dark</span>
+                  {theme === "dark" && <Check className="ml-auto size-4" />}
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+          <DropdownMenuItem className="hover:bg-primary/10 focus:bg-primary/10">
+            <SettingsIcon className="mr-2 size-4" />
+            <span>Settings</span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator className="bg-border/50" />
+          <DropdownMenuItem
+            onClick={() => {
+              queryClient.clear();
+              logout();
+            }}
+            className="text-red-500 hover:bg-red-500/10 focus:bg-red-500/10 focus:text-red-500"
+          >
+            <LogOutIcon className="mr-2 size-4" />
+            <span>Log out</span>
+          </DropdownMenuItem>
+        </motion.div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

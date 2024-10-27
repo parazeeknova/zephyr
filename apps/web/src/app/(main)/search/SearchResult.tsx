@@ -4,9 +4,9 @@ import kyInstance from "@/lib/ky";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Post from "@zephyr-ui/Home/feedview/postCard";
 import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
+import LoadMoreSkeleton from "@zephyr-ui/Layouts/skeletons/LoadMoreSkeleton";
 import PostsLoadingSkeleton from "@zephyr-ui/Layouts/skeletons/PostOnlyLoadingSkeleton";
 import type { PostsPage } from "@zephyr/db";
-import { Loader2 } from "lucide-react";
 
 interface SearchResultsProps {
   query: string;
@@ -66,7 +66,7 @@ export default function SearchResults({ query }: SearchResultsProps) {
       {posts.map((post) => (
         <Post key={post.id} post={post} />
       ))}
-      {isFetchingNextPage && <Loader2 className="mx-auto my-3 animate-spin" />}
+      {isFetchingNextPage && <LoadMoreSkeleton />}
     </InfiniteScrollContainer>
   );
 }

@@ -38,7 +38,7 @@ const tempData = {
 };
 
 const LeftSidebar: React.FC = () => (
-  <aside className="w-80 flex-shrink-0 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-card-foreground">
+  <aside className="hidden w-80 flex-shrink-0 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-card-foreground md:block">
     <div className="space-y-4">
       <NavigationCard isCollapsed={false} />
       <Friends isCollapsed={false} />

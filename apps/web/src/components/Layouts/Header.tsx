@@ -1,15 +1,16 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Bookmark, Home, MessageSquare } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Cover } from "@/components/ui/cover";
 
 import SearchField from "@zephyr-ui/Layouts/SearchField";
 import UserButton from "@zephyr-ui/Layouts/UserButton";
 import MessagesButton from "../Messages/MessagesButton";
+import { HeaderIconButton } from "../Styles/HeaderButtons";
 import NotificationsButton from "./NotificationsButton";
 
 interface HeaderProps {
@@ -25,77 +26,152 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <>
-      {/* Header */}
-      <header className="flex items-center justify-between border-border border-b bg-background/90 px-6 py-1.5">
-        <div className="flex items-center space-x-4">
-          <Link href="/">
-            <h1 className="mr-1 flex-grow text-center font-bold text-2xl">
-              <Cover className="text-primary">Zephyr</Cover>
-            </h1>
-          </Link>
-          <SearchField />
-        </div>
+      <motion.header
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        // @ts-expect-error
+        className="fixed top-0 right-0 left-0 z-50 flex items-center justify-between border-border border-b bg-background/60 px-6 py-1 backdrop-blur-md"
+      >
+        <Link href="/">
+          <motion.h1
+            whileHover={{ scale: 1.05 }}
+            // @ts-expect-error
+            className="mr-1 font-bold text-2xl"
+          >
+            <Cover className="text-primary">Zephyr</Cover>
+          </motion.h1>
+        </Link>
 
-        <div className="hidden items-center space-x-4 md:flex">
+        <motion.div
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          // @ts-expect-error
+          className="mx-auto max-w-xl flex-1 px-4"
+        >
+          <SearchField />
+        </motion.div>
+
+        <div className="flex items-center space-x-3">
           <NotificationsButton
             initialState={{ unreadCount: unreadNotificationCount }}
           />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative rounded-full bg-muted px-2"
-            title="Bookmarks"
+          <div className="hidden md:flex">
+            <MessagesButton
+              initialState={{ unreadCount: unreadMessageCount }}
+            />
+          </div>
+          <div className="hidden md:flex">
+            <HeaderIconButton
+              href="/bookmarks"
+              icon={<Bookmark className="h-5 w-5" />}
+              count={bookmarkCount}
+              title="Bookmarks"
+            />
+          </div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            // @ts-expect-error
+            className="group relative mt-2"
           >
-            <Link href="/bookmarks">
+            <div className="-inset-[1px] absolute rounded-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 opacity-0 blur transition duration-500 group-hover:opacity-100" />
+            <div className="relative">
+              <UserButton />
+            </div>
+          </motion.div>
+        </div>
+      </motion.header>
+      {/* Spacer for content below header */}
+      <div className="h-[58px]" /> {/* Mobile Navigation Dock */}
+      <div className="fixed right-0 bottom-8 left-0 flex justify-center md:hidden">
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          // @ts-expect-error
+          className="mx-auto flex items-center gap-1 rounded-full border border-border bg-background/80 p-2 pt-3 shadow-lg backdrop-blur-lg"
+        >
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            // @ts-expect-error
+            className="flex flex-col items-center px-6"
+          >
+            <Link
+              href="/"
+              className="flex flex-col items-center text-muted-foreground"
+            >
+              <Home className="h-5 w-5" />
+              <span className="mt-1 text-xs">Home</span>
+            </Link>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            // @ts-expect-error
+            className="flex flex-col items-center px-6 text-muted-foreground"
+          >
+            <Link
+              href="/bookmarks"
+              className="relative flex flex-col items-center"
+            >
               <div className="relative">
-                <Bookmark />
+                <Bookmark className="h-5 w-5" />
                 {bookmarkCount > 0 && (
-                  <span className="-right-1 -top-1 absolute rounded-full bg-primary px-1 font-medium text-primary-foreground text-xs tabular-nums">
-                    {bookmarkCount}
-                  </span>
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring" }}
+                    // @ts-expect-error
+                    className="-top-2 -right-2 absolute"
+                  >
+                    <Badge
+                      variant="secondary"
+                      className="flex h-4 w-4 items-center justify-center p-0 text-[10px]"
+                    >
+                      {bookmarkCount}
+                    </Badge>
+                  </motion.div>
                 )}
               </div>
+              <span className="mt-1 text-xs">Bookmarks</span>
             </Link>
-          </Button>
-          <MessagesButton initialState={{ unreadCount: unreadMessageCount }} />
-          <div className="flex items-center">
-            <UserButton />
-          </div>
-        </div>
-      </header>
+          </motion.div>
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="fixed right-0 bottom-0 left-0 border-border border-t bg-background py-2 md:hidden">
-        <div className="flex items-center justify-around">
-          <Link href="/" className="flex flex-col items-center">
-            <Home className="h-5 w-5" />
-            <span className="text-xs">Home</span>
-          </Link>
-          <Link
-            href="/bookmarks"
-            className="relative flex flex-col items-center"
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            // @ts-expect-error
+            className="flex flex-col items-center px-6 text-muted-foreground"
           >
-            <Bookmark className="h-5 w-5" />
-            <span className="text-xs">Bookmarks</span>
-            {bookmarkCount > 0 && (
-              <Badge
-                variant="secondary"
-                className="-top-2 -right-2 absolute text-xs"
-              >
-                {bookmarkCount}
-              </Badge>
-            )}
-          </Link>
-          <Link href="/chat" className="flex flex-col items-center">
-            <MessageSquare className="h-5 w-5" />
-            <span className="text-xs">Chat</span>
-          </Link>
-          <div className="flex flex-col items-center">
-            <UserButton />
-            <span className="text-xs">Profile</span>
-          </div>
-        </div>
-      </nav>
+            <Link
+              href="/messages"
+              className="relative flex flex-col items-center"
+            >
+              <div className="relative">
+                <MessageSquare className="h-5 w-5" />
+                {unreadMessageCount > 0 && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring" }}
+                    // @ts-expect-error
+                    className="-top-2 -right-2 absolute"
+                  >
+                    <Badge
+                      variant="secondary"
+                      className="flex h-4 w-4 items-center justify-center p-0 text-[10px]"
+                    >
+                      {unreadMessageCount}
+                    </Badge>
+                  </motion.div>
+                )}
+              </div>
+              <span className="mt-1 text-xs">Whispers</span>
+            </Link>
+          </motion.div>
+        </motion.div>
+      </div>
     </>
   );
 };
