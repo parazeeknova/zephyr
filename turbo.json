@@ -11,9 +11,7 @@
       "cache": false
     },
     "build": {
-      "dependsOn": ["^db:generate", "^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "dependsOn": ["^db:generate", "^build"]
     },
     "lint": {
       "dependsOn": ["^lint"],
