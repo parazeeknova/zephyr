@@ -5,7 +5,5 @@
       "path": "/api/clear-uploads",
       "schedule": "0 2 * * *"
     }
-  ],
-  "buildCommand": "turbo build",
-  "installCommand": "pnpm install"
+  ]
 }
