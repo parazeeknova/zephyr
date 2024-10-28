@@ -26,7 +26,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ userData }) => {
       className="overflow-hidden transition-all duration-300"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      suppressHydrationWarning // Suppress hydration warning for SSR and Linify
+      suppressHydrationWarning
     >
       <div className="relative">
         {/* Background blur effect */}
@@ -40,7 +40,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ userData }) => {
           }}
         />
 
-        <CardContent className="relative pt-4 pb-2">
+        <CardContent className="relative px-4 pt-4 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <UserAvatar
@@ -48,7 +48,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ userData }) => {
                 size={48}
                 className="rounded-full ring-2 ring-background"
               />
-              <div className="flex flex-col">
+              <div className="flex max-w-[70%] flex-col">
                 <Link
                   href={`/users/${userData.username}`}
                   className="group flex items-center gap-1 text-foreground"

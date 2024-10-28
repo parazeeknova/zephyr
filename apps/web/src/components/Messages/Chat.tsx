@@ -39,7 +39,7 @@ export default function Chat() {
           <StickyFooter />
         </div>
       </aside>
-      <div className="mt-5 mr-2 mb-4 w-full min-w-0 space-y-5 overflow-hidden rounded-2xl border border-border shadow-md">
+      <div className="mt-5 mr-2 mb-24 ml-2 w-full min-w-0 space-y-5 overflow-hidden rounded-2xl border border-border shadow-md md:mb-4 md:ml-0">
         <StreamChat
           client={chatClient}
           theme={
