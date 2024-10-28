@@ -13,6 +13,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      utilities: {
+        ".overflow-wrap-anywhere": {
+          "overflow-wrap": "anywhere"
+        }
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

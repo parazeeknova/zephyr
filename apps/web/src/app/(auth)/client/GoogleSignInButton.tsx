@@ -14,6 +14,7 @@ export default function GoogleSignInButton() {
     </Button>
   );
 }
+
 function GoogleIcon() {
   return (
     // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>

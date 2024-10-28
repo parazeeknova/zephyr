@@ -40,13 +40,6 @@ interface DatabaseUserAttributes {
   googleId: string | null;
 }
 
-// In auth.ts, add console logging to verify environment variables
-console.log("Google OAuth Configuration:", {
-  clientId: process.env.GOOGLE_CLIENT_ID ? "exists" : "missing",
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET ? "exists" : "missing",
-  redirectUri: `${process.env.NEXT_PUBLIC_URL}/api/auth/callback/google`
-});
-
 export const google = new Google(
   // biome-ignore lint/style/noNonNullAssertion: <explanation>
   process.env.GOOGLE_CLIENT_ID!,

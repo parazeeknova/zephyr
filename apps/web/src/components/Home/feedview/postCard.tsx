@@ -34,30 +34,30 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
 
   const PostContent = () => (
     <>
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center space-x-2">
           <UserTooltip user={post.user}>
             <Link href={`/users/${post.user.username}`}>
               <UserAvatar avatarUrl={post.user.avatarUrl} />
             </Link>
           </UserTooltip>
-          <div>
+          <div className="min-w-0">
             <UserTooltip user={post.user}>
               <Link href={`/users/${post.user.username}`}>
-                <h3 className="font-semibold text-foreground">
+                <h3 className="truncate font-semibold text-foreground">
                   {post.user.displayName}
                 </h3>
               </Link>
             </UserTooltip>
             <Link href={`/posts/${post.id}`} suppressHydrationWarning>
-              <p className="text-muted-foreground text-sm hover:underline">
+              <p className="truncate text-muted-foreground text-sm hover:underline">
                 {formatRelativeDate(post.createdAt)}
               </p>
             </Link>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex shrink-0 items-center space-x-2">
           {post.user.id === user.id && (
             <PostMoreButton
               post={post}
@@ -85,18 +85,20 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
       <AuraCount postId={post.id} initialAura={post.aura} />
 
       <Linkify>
-        <p className="mb-4 whitespace-pre-wrap text-foreground">
+        <p className="overflow-wrap-anywhere mb-4 max-w-full whitespace-pre-wrap break-words text-foreground">
           {post.content}
         </p>
       </Linkify>
 
       {!!post.attachments.length && (
-        <MediaPreviews attachments={post.attachments} />
+        <div className="max-w-full overflow-hidden">
+          <MediaPreviews attachments={post.attachments} />
+        </div>
       )}
 
       {!!post.attachments.length && <Separator className="mt-4" />}
 
-      <div className="mt-2 flex items-center justify-between">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
         <AuraVoteButton
           postId={post.id}
           initialState={{
@@ -156,7 +158,7 @@ function MediaPreviews({ attachments }: MediaPreviewsProps) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-2 sm:gap-3",
+        "flex w-full flex-col gap-2 sm:gap-3",
         attachments.length > 1 && "sm:grid sm:grid-cols-2"
       )}
     >

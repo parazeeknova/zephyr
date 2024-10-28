@@ -7,11 +7,13 @@
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@zephyr/db": "workspace:*",
     "arctic": "^2.0.1",
+    "deep-email-validator": "^0.1.21",
+    "email-validator": "^2.0.4",
     "i": "^0.3.7",
     "lucia": "^3.2.2",
     "next": "15.0.1",
-    "zod": "^3.23.8",
-    "react": "19.0.0-rc-69d4b800-20241021"
+    "react": "19.0.0-rc-69d4b800-20241021",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22.7.8",

@@ -120,44 +120,6 @@ body:hover::-webkit-scrollbar-thumb {
   }
 }
 
-.str-chat {
-  --str-chat__font-family: inherit;
-  --str-chat__primary-color: theme(colors.primary.DEFAULT);
-  --str-chat__on-primary-color: theme(colors.primary.foreground);
-  --str-chat__active-primary-color: theme(colors.primary.foreground);
-  --str-chat__primary-color-low-emphasis: color-mix(
-    in hsl,
-    hsl(var(--primary)) 10%,
-    transparent
-  );
-  --str-chat__background-color: theme(colors.card.DEFAULT);
-  --str-chat__secondary-background-color: theme(colors.card.DEFAULT);
-  --str-chat__message-textarea-background-color: theme(colors.background);
-  --str-chat__channel-preview-active-background-color: theme(
-    colors.accent.DEFAULT
-  );
-  --str-chat__channel-preview-hover-background-color: var(
-    --str-chat__channel-preview-active-background-color
-  );
-  --str-chat__secondary-surface-color: theme(colors.muted.DEFAULT);
-  --str-chat__own-message-bubble-color: theme(colors.primary.foreground);
-  --str-chat__primary-surface-color: theme(colors.primary.DEFAULT);
-  --str-chat__primary-surface-color-low-emphasis: var(
-    --str-chat__primary-color-low-emphasis
-  );
-  --str-chat__disabled-color: theme(colors.muted.DEFAULT);
-  --str-chat__cta-button-border-radius: var(--radius);
-}
-.str-chat-channel-list {
-  border-right: none;
-}
-.str-chat__channel-list-react .str-chat__channel-list-messenger-react {
-  padding-bottom: 0;
-}
-.str-chat__channel-search-bar-button--exit-search {
-  display: none;
-}
-
 @layer base {
   * {
     @apply border-border;
@@ -168,9 +130,15 @@ body:hover::-webkit-scrollbar-thumb {
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .float-animation {
@@ -181,7 +149,7 @@ body:hover::-webkit-scrollbar-thumb {
   .glass-effect {
     @apply bg-background/40 backdrop-blur-md border border-border/50;
   }
-  
+
   .glass-hover {
     @apply hover:bg-background/60 hover:border-border/80 hover:shadow-md;
   }
@@ -199,11 +167,11 @@ body:hover::-webkit-scrollbar-thumb {
   .backdrop-blur-sm {
     backdrop-filter: blur(8px);
   }
-  
+
   .backdrop-blur-md {
     backdrop-filter: blur(12px);
   }
-  
+
   .backdrop-blur-lg {
     backdrop-filter: blur(16px);
   }

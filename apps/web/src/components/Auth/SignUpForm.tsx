@@ -1,9 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-
 import { signUp } from "@/app/(auth)/signup/actions";
 import { FlipWords } from "@/components/ui/flip-words";
 import {
@@ -15,11 +11,21 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { LoadingButton } from "@zephyr-ui/Auth/LoadingButton";
 import { PasswordInput } from "@zephyr-ui/Auth/PasswordInput";
 import { type SignUpValues, signUpSchema } from "@zephyr/auth/validation";
+import { AlertCircle, Mail, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { PasswordStrengthChecker } from "./PasswordStrengthChecker";
 
 export default function SignUpForm() {
+  const { toast } = useToast();
+  const router = useRouter();
+
   const texts = [
     "Elevate your ideas, accelerate your impact.",
     "Transform thoughts into action.",
@@ -29,7 +35,7 @@ export default function SignUpForm() {
   ];
 
   const [error, setError] = useState<string>();
-
+  const [password, setPassword] = useState("");
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<SignUpValues>({
@@ -44,12 +50,48 @@ export default function SignUpForm() {
   async function onSubmit(values: SignUpValues) {
     setError(undefined);
     startTransition(async () => {
-      const { error } = await signUp(values);
+      console.log("Submitting signup form with values:", {
+        ...values,
+        password: "[REDACTED]"
+      });
+
+      const { error, success } = await signUp(values);
       if (error) {
+        console.log("Signup error:", error);
         setError(error);
+        toast({
+          variant: "destructive",
+          title: "Signup Failed",
+          description: error
+        });
+      } else if (success) {
+        console.log("Signup successful");
+        toast({
+          title: "Account Created Successfully",
+          description: "Welcome to Zephyr! Redirecting to home page..."
+        });
+
+        // Only redirect if signup was successful
+        setTimeout(() => {
+          router.push("/");
+          router.refresh();
+        }, 1000);
       }
     });
   }
+
+  // Show validation errors as toasts
+  const handleInvalidSubmit = () => {
+    const errors = form.formState.errors;
+    if (Object.keys(errors).length > 0) {
+      const firstError = Object.values(errors)[0];
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: firstError.message
+      });
+    }
+  };
 
   return (
     <div>
@@ -60,8 +102,18 @@ export default function SignUpForm() {
         />
       </div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-          {error && <p className="text-center text-destructive">{error}</p>}
+        <form
+          onSubmit={form.handleSubmit(onSubmit, handleInvalidSubmit)}
+          className="space-y-3"
+        >
+          {error && (
+            <div className="rounded-lg bg-destructive/15 p-3 text-center text-destructive text-sm">
+              <p className="flex items-center justify-center gap-2">
+                <AlertCircle className="h-4 w-4" />
+                {error}
+              </p>
+            </div>
+          )}
           <FormField
             control={form.control}
             name="username"
@@ -69,7 +121,10 @@ export default function SignUpForm() {
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input placeholder="Username" {...field} />
+                  <div className="relative">
+                    <Input placeholder="Username" {...field} />
+                    <User className="-translate-y-1/2 absolute top-1/2 right-3 h-4 w-4 text-muted-foreground" />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -82,7 +137,10 @@ export default function SignUpForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Email" type="email" {...field} />
+                  <div className="relative">
+                    <Input placeholder="Email" type="email" {...field} />
+                    <Mail className="-translate-y-1/2 absolute top-1/2 right-3 h-4 w-4 text-muted-foreground" />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -95,8 +153,16 @@ export default function SignUpForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <PasswordInput placeholder="Password" {...field} />
+                  <PasswordInput
+                    placeholder="Password"
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      setPassword(e.target.value);
+                    }}
+                  />
                 </FormControl>
+                <PasswordStrengthChecker password={password} />
                 <FormMessage />
               </FormItem>
             )}

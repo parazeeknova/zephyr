@@ -5,7 +5,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import localFont from "next/font/local";
-import "stream-chat-react/dist/css/v2/index.css";
 import { extractRouterConfig } from "uploadthing/server";
 import ReactQueryProvider from "./ReactQueryProvider";
 import { fileRouter } from "./api/uploadthing/core";
