@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@zephyr-ui/Auth/LoadingButton";
 import { PasswordInput } from "@zephyr-ui/Auth/PasswordInput";
 import { type SignUpValues, signUpSchema } from "@zephyr/auth/validation";
+import { PasswordStrengthChecker } from "./PasswordStrengthChecker";
 
 export default function SignUpForm() {
   const texts = [
@@ -29,6 +30,7 @@ export default function SignUpForm() {
   ];
 
   const [error, setError] = useState<string>();
+  const [password, setPassword] = useState("");
 
   const [isPending, startTransition] = useTransition();
 
@@ -95,8 +97,16 @@ export default function SignUpForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <PasswordInput placeholder="Password" {...field} />
+                  <PasswordInput
+                    placeholder="Password"
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      setPassword(e.target.value);
+                    }}
+                  />
                 </FormControl>
+                <PasswordStrengthChecker password={password} />
                 <FormMessage />
               </FormItem>
             )}
