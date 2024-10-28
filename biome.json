@@ -17,7 +17,7 @@
       "typechain-types",
       "generated.ts",
       "**/components/ui/**",
-      "globals.css"
+      "Theme.css"
     ]
   },
   "linter": {

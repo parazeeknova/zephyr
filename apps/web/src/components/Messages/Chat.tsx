@@ -10,6 +10,7 @@ import { useState } from "react";
 import { Chat as StreamChat } from "stream-chat-react";
 import ChatChannel from "./ChatChannel";
 import ChatSidebar from "./ChatSidebar";
+import { ChatThemeProvider } from "./ChatThemeProvider";
 
 export default function Chat() {
   const chatClient = useInitializeChatClient();
@@ -23,43 +24,45 @@ export default function Chat() {
   }
 
   return (
-    <main className="flex h-[calc(100vh-4rem)] w-full min-w-0 gap-5 overflow-hidden shadow-sm">
-      <aside className="sticky top-[5rem] hidden h-full w-72 flex-shrink-0 overflow-y-auto bg-muted md:block">
-        <div className="mt-5 mr-2 ml-2">
-          <NavigationCard
-            isCollapsed={false}
-            className="h-[calc(100vh-6rem)]"
-            stickyTop="5rem"
-          />
-        </div>
-        <div className="mt-2 mr-2 ml-2">
-          <SuggestedConnections />
-        </div>
-        <div className="mt-4 mr-2 ml-2">
-          <StickyFooter />
-        </div>
-      </aside>
-      <div className="mt-5 mr-2 mb-24 ml-2 w-full min-w-0 space-y-5 overflow-hidden rounded-2xl border border-border shadow-md md:mb-4 md:ml-0">
-        <StreamChat
-          client={chatClient}
-          theme={
-            resolvedTheme === "dark"
-              ? "str-chat__theme-dark"
-              : "str-chat__theme-light"
-          }
-        >
-          <div className="flex h-full w-full">
-            <ChatSidebar
-              open={sidebarOpen}
-              onClose={() => setSidebarOpen(false)}
-            />
-            <ChatChannel
-              open={!sidebarOpen}
-              openSidebar={() => setSidebarOpen(true)}
+    <ChatThemeProvider>
+      <main className="flex h-[calc(100vh-4rem)] w-full min-w-0 gap-5 overflow-hidden shadow-sm">
+        <aside className="sticky top-[5rem] hidden h-full w-72 flex-shrink-0 overflow-y-auto bg-muted md:block">
+          <div className="mt-5 mr-2 ml-2">
+            <NavigationCard
+              isCollapsed={false}
+              className="h-[calc(100vh-6rem)]"
+              stickyTop="5rem"
             />
           </div>
-        </StreamChat>
-      </div>
-    </main>
+          <div className="mt-2 mr-2 ml-2">
+            <SuggestedConnections />
+          </div>
+          <div className="mt-4 mr-2 ml-2">
+            <StickyFooter />
+          </div>
+        </aside>
+        <div className="mt-5 mr-2 mb-24 ml-2 w-full min-w-0 space-y-5 overflow-hidden rounded-2xl border border-border shadow-md md:mb-4 md:ml-0">
+          <StreamChat
+            client={chatClient}
+            theme={
+              resolvedTheme === "dark"
+                ? "str-chat__theme-dark"
+                : "str-chat__theme-light"
+            }
+          >
+            <div className="flex h-full w-full">
+              <ChatSidebar
+                open={sidebarOpen}
+                onClose={() => setSidebarOpen(false)}
+              />
+              <ChatChannel
+                open={!sidebarOpen}
+                openSidebar={() => setSidebarOpen(true)}
+              />
+            </div>
+          </StreamChat>
+        </div>
+      </main>
+    </ChatThemeProvider>
   );
 }
