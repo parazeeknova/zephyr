@@ -1,7 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalDependencies": [".env"],
   "tasks": {
     "db:generate": {
       "cache": false,
@@ -11,7 +10,11 @@
       "cache": false
     },
     "build": {
-      "dependsOn": ["^db:generate", "^build"]
+      "dependsOn": ["^db:generate", "^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "web#build": {
+      "dependsOn": ["^db:generate", "^web#build"]
     },
     "lint": {
       "dependsOn": ["^lint"],
