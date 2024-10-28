@@ -46,6 +46,8 @@
     "cn": "^0.1.1",
     "cropperjs": "^1.6.2",
     "date-fns": "^4.1.0",
+    "deep-email-validator": "^0.1.21",
+    "email-validator": "^2.0.4",
     "framer-motion": "^11.11.10",
     "ky": "^1.7.2",
     "lucia": "^3.2.2",

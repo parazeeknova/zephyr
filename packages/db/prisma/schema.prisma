@@ -22,6 +22,7 @@ model User {
   googleId              String?        @unique
   avatarUrl             String?
   bio                   String?
+  emailVerified         Boolean        @default(false)
   sessions              Session[]
   posts                 Post[]
   following             Follow[]       @relation("Following")
