@@ -22,6 +22,7 @@ import BookmarkButton from "@zephyr-ui/Posts/BookmarkButton";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
 import type { PostData } from "@zephyr/db";
 import { useState } from "react";
+import MediaViewer from "./MediaViewer";
 
 interface PostCardProps {
   post: PostData;
@@ -155,50 +156,58 @@ interface MediaPreviewsProps {
 }
 
 function MediaPreviews({ attachments }: MediaPreviewsProps) {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
   return (
-    <div
-      className={cn(
-        "flex w-full flex-col gap-2 sm:gap-3",
-        attachments.length > 1 && "sm:grid sm:grid-cols-2"
-      )}
-    >
-      {attachments.map((m) => (
-        <MediaPreview key={m.id} media={m} />
-      ))}
-    </div>
-  );
-}
-
-interface MediaPreviewProps {
-  media: Media;
-}
-
-function MediaPreview({ media }: MediaPreviewProps) {
-  if (media.type === "IMAGE") {
-    return (
-      <Image
-        src={media.url}
-        alt="Attachment"
-        width={500}
-        height={500}
-        className="mx-auto size-fit max-h-[20rem] rounded-lg sm:max-h-[30rem] sm:rounded-2xl"
-      />
-    );
-  }
-
-  if (media.type === "VIDEO") {
-    return (
-      <div>
-        <video
-          src={media.url}
-          controls
-          className="mx-auto size-fit max-h-[20rem] rounded-lg sm:max-h-[30rem] sm:rounded-2xl"
-        />
+    <>
+      <div
+        className={cn(
+          "flex w-full flex-col gap-2 sm:gap-3",
+          attachments.length > 1 && "sm:grid sm:grid-cols-2"
+        )}
+      >
+        {attachments.map((m, index) => (
+          <div
+            key={m.id}
+            onClick={() => setSelectedIndex(index)}
+            className="relative cursor-pointer overflow-hidden rounded-lg transition-transform hover:scale-[1.02]"
+          >
+            {m.type === "IMAGE" ? (
+              <>
+                <Image
+                  src={m.url}
+                  alt="Attachment"
+                  width={500}
+                  height={500}
+                  className="mx-auto h-full max-h-[20rem] w-full rounded-lg object-cover sm:max-h-[30rem] sm:rounded-2xl"
+                />
+                <div className="absolute inset-0 bg-black/5 transition-opacity hover:opacity-0" />
+              </>
+            ) : m.type === "VIDEO" ? (
+              <>
+                <video
+                  src={m.url}
+                  controls
+                  className="mx-auto h-full max-h-[20rem] w-full rounded-lg object-cover sm:max-h-[30rem] sm:rounded-2xl"
+                />
+                <div className="absolute inset-0 bg-black/5 transition-opacity hover:opacity-0" />
+              </>
+            ) : (
+              <p className="text-destructive">Unsupported media type</p>
+            )}
+          </div>
+        ))}
       </div>
-    );
-  }
-
-  return <p className="text-destructive">Unsupported media type</p>;
+      {selectedIndex !== null && (
+        <MediaViewer
+          media={attachments}
+          initialIndex={selectedIndex}
+          isOpen={selectedIndex !== null}
+          onClose={() => setSelectedIndex(null)}
+        />
+      )}
+    </>
+  );
 }
 
 interface CommentButtonProps {
