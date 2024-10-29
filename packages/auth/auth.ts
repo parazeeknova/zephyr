@@ -1,6 +1,6 @@
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 import { prisma } from "@zephyr/db";
-import { Google } from "arctic";
+import { Discord, GitHub, Google, Twitter } from "arctic";
 import { Lucia, type Session, type User } from "lucia";
 import { cookies } from "next/headers";
 import { cache } from "react";
@@ -46,6 +46,30 @@ export const google = new Google(
   // biome-ignore lint/style/noNonNullAssertion: <explanation>
   process.env.GOOGLE_CLIENT_SECRET!,
   `${process.env.NEXT_PUBLIC_URL}/api/auth/callback/google`
+);
+
+export const github = new GitHub(
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
+  process.env.GITHUB_CLIENT_ID!,
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
+  process.env.GITHUB_CLIENT_SECRET!,
+  `${process.env.NEXT_PUBLIC_URL}/api/auth/callback/github`
+);
+
+export const discord = new Discord(
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
+  process.env.DISCORD_CLIENT_ID!,
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
+  process.env.DISCORD_CLIENT_SECRET!,
+  `${process.env.NEXT_PUBLIC_URL}/api/auth/callback/discord`
+);
+
+export const twitter = new Twitter(
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
+  process.env.TWITTER_CLIENT_ID!,
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
+  process.env.TWITTER_CLIENT_SECRET!,
+  `${process.env.NEXT_PUBLIC_URL}/api/auth/callback/twitter`
 );
 
 export const validateRequest = cache(
