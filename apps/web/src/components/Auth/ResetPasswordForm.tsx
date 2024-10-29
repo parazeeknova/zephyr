@@ -1,9 +1,9 @@
 "use client";
 
+import { requestPasswordReset } from "@/app/(auth)/reset-password/server-actions";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import resetImage from "@zephyr-assets/password-reset-image.jpg";
-import { requestPasswordReset } from "@zephyr/auth/reset-password/server-actions";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, KeyRound, Mail } from "lucide-react";
 import Image from "next/image";

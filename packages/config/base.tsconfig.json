@@ -17,7 +17,10 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ESNext"
+    "target": "ESNext",
+    "paths": {
+      "@zephyr/web": ["../../apps/web/src"]
+    }
   },
   "exclude": ["node_modules"]
 }

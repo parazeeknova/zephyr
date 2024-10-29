@@ -1,17 +1,17 @@
 {
-	"$schema": "https://openapi.vercel.sh/vercel.json",
-	"crons": [
-		{
-			"path": "/api/clear-uploads",
-			"schedule": "0 2 * * *"
-		},
-		{
-			"path": "/api/cron/cleanup-unverified",
-			"schedule": "0 2 * * *"
-		},
-		{
-			"path": "/api/cron/cleanup-reset-tokens",
-			"schedule": "0 2 * * *"
-		}
-	]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/clear-uploads",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-unverified",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-reset-tokens",
+      "schedule": "0 2 * * *"
+    }
+  ]
 }

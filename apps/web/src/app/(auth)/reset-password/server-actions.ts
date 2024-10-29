@@ -1,7 +1,7 @@
 "use server";
 
+import { sendPasswordResetEmail } from "@/lib/nodemailer";
 import { hash } from "@node-rs/argon2";
-import { sendPasswordResetEmail } from "@zephyr-web/src/lib/nodemailer";
 import { prisma } from "@zephyr/db";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
