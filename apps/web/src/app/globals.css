@@ -175,4 +175,10 @@ body:hover::-webkit-scrollbar-thumb {
   .backdrop-blur-lg {
     backdrop-filter: blur(16px);
   }
+
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
 }
