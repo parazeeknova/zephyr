@@ -9,7 +9,10 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@zephyr/web": ["../../apps/web/src/*"]
+    }
   },
   "includes": ["**/*.ts", "./*.tsx", "./*.ts"]
 }

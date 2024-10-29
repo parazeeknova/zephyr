@@ -119,7 +119,8 @@ export async function GET(req: NextRequest) {
             displayName: googleUser.name,
             googleId: googleUser.id,
             email: googleUser.email,
-            avatarUrl: googleUser.picture
+            avatarUrl: googleUser.picture,
+            emailVerified: true
           }
         });
 

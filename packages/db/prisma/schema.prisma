@@ -14,28 +14,56 @@ datasource db {
 
 // User model
 model User {
-  id                    String         @id
-  username              String         @unique
-  displayName           String
-  email                 String?        @unique
-  passwordHash          String?
-  googleId              String?        @unique
-  avatarUrl             String?
-  bio                   String?
-  emailVerified         Boolean        @default(false)
-  sessions              Session[]
-  posts                 Post[]
-  following             Follow[]       @relation("Following")
-  followers             Follow[]       @relation("Followers")
-  bookmarks             Bookmark[]
-  comments              Comment[]
-  vote                  Vote[]
-  receivedNotifications Notification[] @relation("Recipient")
-  issuedNotifications   Notification[] @relation("Issuer")
+  id                      String                   @id
+  username                String                   @unique
+  displayName             String
+  email                   String?                  @unique
+  passwordHash            String?
+  googleId                String?                  @unique
+  avatarUrl               String?
+  bio                     String?
+  emailVerified           Boolean                  @default(false)
+  sessions                Session[]
+  emailVerificationTokens EmailVerificationToken[]
+  passwordResetTokens     PasswordResetToken[]
+  posts                   Post[]
+  following               Follow[]                 @relation("Following")
+  followers               Follow[]                 @relation("Followers")
+  bookmarks               Bookmark[]
+  comments                Comment[]
+  vote                    Vote[]
+  receivedNotifications   Notification[]           @relation("Recipient")
+  issuedNotifications     Notification[]           @relation("Issuer")
 
   createdAt DateTime @default(now())
 
   @@map("users")
+}
+
+// Email verification token model using JWT web tokens
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([token])
+  @@map("email_verification_tokens")
+}
+
+// Password reset token model
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([token])
+  @@map("password_reset_tokens")
 }
 
 // Session model
