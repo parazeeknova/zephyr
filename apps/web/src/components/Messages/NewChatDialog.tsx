@@ -21,7 +21,7 @@ import {
 
 interface NewChatDialogProps {
   onOpenChange: (open: boolean) => void;
-  onChatCreated: () => void;
+  onChatCreated: (channel: any) => void;
 }
 
 export default function NewChatDialog({
@@ -71,7 +71,7 @@ export default function NewChatDialog({
     },
     onSuccess: (channel) => {
       setActiveChannel(channel);
-      onChatCreated();
+      onChatCreated(channel);
     },
     onError(error) {
       console.error("Error starting chat", error);

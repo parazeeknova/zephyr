@@ -49,7 +49,7 @@ export default function Notification({ notification }: NotificationProps) {
             <span>{message}</span>
           </div>
           {notification.post && (
-            <div className="line-clamp-3 whitespace-pre-line text-muted-foreground">
+            <div className="line-clamp-3 max-w-[90%] overflow-x-hidden truncate whitespace-pre-line text-wrap text-muted-foreground">
               {notification.post.content}
             </div>
           )}
