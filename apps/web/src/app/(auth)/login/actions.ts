@@ -1,55 +1,8 @@
-"use server";
+"use client";
 
-import { verify } from "@node-rs/argon2";
-import { lucia } from "@zephyr/auth/auth";
-import { type LoginValues, loginSchema } from "@zephyr/auth/validation";
-import { prisma } from "@zephyr/db";
-import { isRedirectError } from "next/dist/client/components/redirect";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import type { LoginValues } from "@zephyr/auth/validation";
+import { loginAction } from "./server-actions";
 
-export async function login(
-  credentials: LoginValues
-): Promise<{ error: string }> {
-  try {
-    const { username, password } = loginSchema.parse(credentials);
-
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        username: {
-          equals: username,
-          mode: "insensitive"
-        }
-      }
-    });
-
-    if (!existingUser || !existingUser.passwordHash) {
-      return { error: "Incorrect username or password" };
-    }
-
-    const validPassword = await verify(existingUser.passwordHash, password, {
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1
-    });
-
-    if (!validPassword) {
-      return { error: "Incorrect username or password" };
-    }
-
-    const session = await lucia.createSession(existingUser.id, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-    (await cookies()).set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes
-    );
-
-    return redirect("/");
-  } catch (error) {
-    if (isRedirectError(error)) throw error;
-    console.error(error);
-    return { error: "Something went wrong. Please try again." };
-  }
+export async function login(values: LoginValues) {
+  return loginAction(values);
 }

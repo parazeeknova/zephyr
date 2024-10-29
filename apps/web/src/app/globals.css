@@ -129,6 +129,44 @@ body:hover::-webkit-scrollbar-thumb {
   }
 }
 
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes pulseError {
+  0%,
+  100% {
+    border-color: rgb(239 68 68 / 0.2);
+  }
+  50% {
+    border-color: rgb(239 68 68 / 0.5);
+  }
+}
+
+.shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.pulse-error {
+  animation: pulseError 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 @keyframes float {
   0% {
     transform: translateY(0px);
