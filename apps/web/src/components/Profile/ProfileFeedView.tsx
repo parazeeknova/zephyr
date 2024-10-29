@@ -12,7 +12,7 @@ interface ProfileFeedViewProps {
 }
 
 const ProfileFeedView: React.FC<ProfileFeedViewProps> = ({ userData }) => (
-  <div className="flex-1 overflow-auto bg-background p-8 text-foreground">
+  <div className="flex-1 overflow-auto bg-background p-4 text-foreground md:p-8">
     <motion.main
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}

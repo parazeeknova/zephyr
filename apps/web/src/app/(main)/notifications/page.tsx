@@ -36,7 +36,7 @@ export default async function Page() {
         </div>
       </aside>
 
-      <div className="mt-5 w-full min-w-0 space-y-5">
+      <div className="mt-5 w-full min-w-0 space-y-5 overflow-hidden p-2 md:p-0">
         <Notifications />
       </div>
 

@@ -55,7 +55,7 @@ const ClientProfile: React.FC<ProfilePageProps> = ({
             !showLeftSidebar && !showRightSidebar ? "w-full" : ""
           }`}
         >
-          <div className="mx-auto max-w-5xl p-4">
+          <div className="mx-auto max-w-5xl p-0 md:p-4">
             <ProfileFeedView username={username} userData={userData} />
           </div>
         </main>

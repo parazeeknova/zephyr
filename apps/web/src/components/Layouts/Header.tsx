@@ -1,14 +1,14 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Cover } from "@/components/ui/cover";
+import { cn } from "@/lib/utils";
+import SearchField from "@zephyr-ui/Layouts/SearchField";
+import UserButton from "@zephyr-ui/Layouts/UserButton";
 import { motion } from "framer-motion";
 import { Bookmark, Home, MessageSquare } from "lucide-react";
 import Link from "next/link";
-
-import { Badge } from "@/components/ui/badge";
-import { Cover } from "@/components/ui/cover";
-
-import SearchField from "@zephyr-ui/Layouts/SearchField";
-import UserButton from "@zephyr-ui/Layouts/UserButton";
+import { usePathname } from "next/navigation";
 import MessagesButton from "../Messages/MessagesButton";
 import { HeaderIconButton } from "../Styles/HeaderButtons";
 import NotificationsButton from "./NotificationsButton";
@@ -24,13 +24,78 @@ const Header: React.FC<HeaderProps> = ({
   unreadNotificationCount,
   unreadMessageCount
 }) => {
+  const pathname = usePathname();
+  const isActivePath = (path: string) => {
+    return pathname === path;
+  };
+
+  const MobileNavLink = ({
+    href,
+    icon,
+    label,
+    badge = 0
+  }: {
+    href: string;
+    icon: React.ReactNode;
+    label: string;
+    badge?: number;
+  }) => {
+    const isActive = isActivePath(href);
+
+    return (
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        // @ts-expect-error
+        className="flex flex-col items-center px-4"
+      >
+        <Link
+          href={href}
+          className={cn(
+            "relative flex flex-col items-center",
+            isActive ? "text-foreground" : "text-muted-foreground"
+          )}
+        >
+          <div className="relative flex items-center justify-center">
+            {icon}
+            {badge > 0 && ( // Only show badge if count is greater than 0
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring" }}
+                // @ts-expect-error
+                className="-top-1.5 -right-1.5 absolute"
+              >
+                <Badge
+                  variant="secondary"
+                  className="flex h-3.5 w-3.5 items-center justify-center p-0 font-medium text-[9px]"
+                >
+                  {badge}
+                </Badge>
+              </motion.div>
+            )}
+          </div>
+          <span className="mt-0.5 font-medium text-[10px]">{label}</span>
+          {isActive && (
+            <motion.div
+              layoutId="activeIndicator"
+              // @ts-expect-error
+              className="-bottom-1.5 absolute h-[2px] w-4 bg-primary"
+              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            />
+          )}
+        </Link>
+      </motion.div>
+    );
+  };
+
   return (
     <>
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         // @ts-expect-error
-        className="fixed top-0 right-0 left-0 z-50 flex items-center justify-between border-border border-b bg-background/60 px-6 py-1 backdrop-blur-md"
+        className="fixed top-0 right-0 left-0 z-50 flex h-14 items-center justify-between border-border border-b bg-background/60 px-4 backdrop-blur-md sm:px-6"
       >
         <Link href="/">
           <motion.h1
@@ -52,7 +117,7 @@ const Header: React.FC<HeaderProps> = ({
           <SearchField />
         </motion.div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           <NotificationsButton
             initialState={{ unreadCount: unreadNotificationCount }}
           />
@@ -81,95 +146,37 @@ const Header: React.FC<HeaderProps> = ({
           </motion.div>
         </div>
       </motion.header>
+
       {/* Spacer for content below header */}
-      <div className="h-[58px]" /> {/* Mobile Navigation Dock */}
-      <div className="fixed right-0 bottom-8 left-0 flex justify-center md:hidden">
+      <div className="h-14" />
+
+      {/* Mobile Navigation Dock */}
+      <div className="fixed right-0 bottom-6 left-0 flex justify-center md:hidden">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           // @ts-expect-error
-          className="mx-auto flex items-center gap-1 rounded-full border border-border bg-background/80 p-2 pt-3 shadow-lg backdrop-blur-lg"
+          className="mx-auto flex items-center gap-0.5 rounded-full border border-border bg-background/80 px-2 py-1.5 shadow-lg backdrop-blur-lg"
         >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            // @ts-expect-error
-            className="flex flex-col items-center px-6"
-          >
-            <Link
-              href="/"
-              className="flex flex-col items-center text-muted-foreground"
-            >
-              <Home className="h-5 w-5" />
-              <span className="mt-1 text-xs">Home</span>
-            </Link>
-          </motion.div>
+          <MobileNavLink
+            href="/"
+            icon={<Home className="h-[18px] w-[18px]" />}
+            label="Home"
+          />
 
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            // @ts-expect-error
-            className="flex flex-col items-center px-6 text-muted-foreground"
-          >
-            <Link
-              href="/bookmarks"
-              className="relative flex flex-col items-center"
-            >
-              <div className="relative">
-                <Bookmark className="h-5 w-5" />
-                {bookmarkCount > 0 && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring" }}
-                    // @ts-expect-error
-                    className="-top-2 -right-2 absolute"
-                  >
-                    <Badge
-                      variant="secondary"
-                      className="flex h-4 w-4 items-center justify-center p-0 text-[10px]"
-                    >
-                      {bookmarkCount}
-                    </Badge>
-                  </motion.div>
-                )}
-              </div>
-              <span className="mt-1 text-xs">Bookmarks</span>
-            </Link>
-          </motion.div>
+          <MobileNavLink
+            href="/bookmarks"
+            icon={<Bookmark className="h-[18px] w-[18px]" />}
+            label="Bookmarks"
+            badge={bookmarkCount} // Will only show if > 0
+          />
 
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            // @ts-expect-error
-            className="flex flex-col items-center px-6 text-muted-foreground"
-          >
-            <Link
-              href="/messages"
-              className="relative flex flex-col items-center"
-            >
-              <div className="relative">
-                <MessageSquare className="h-5 w-5" />
-                {unreadMessageCount > 0 && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring" }}
-                    // @ts-expect-error
-                    className="-top-2 -right-2 absolute"
-                  >
-                    <Badge
-                      variant="secondary"
-                      className="flex h-4 w-4 items-center justify-center p-0 text-[10px]"
-                    >
-                      {unreadMessageCount}
-                    </Badge>
-                  </motion.div>
-                )}
-              </div>
-              <span className="mt-1 text-xs">Whispers</span>
-            </Link>
-          </motion.div>
+          <MobileNavLink
+            href="/messages"
+            icon={<MessageSquare className="h-[18px] w-[18px]" />}
+            label="Whispers"
+            badge={unreadMessageCount} // Will only show if > 0
+          />
         </motion.div>
       </div>
     </>
