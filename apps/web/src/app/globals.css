@@ -179,6 +179,27 @@ body:hover::-webkit-scrollbar-thumb {
   }
 }
 
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 300% 300%;
+  animation: gradient 8s ease infinite;
+}
+
+.auth-button-shadow {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
 .float-animation {
   animation: float 3s ease-in-out infinite;
 }

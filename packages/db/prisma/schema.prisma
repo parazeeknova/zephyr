@@ -20,6 +20,9 @@ model User {
   email                   String?                  @unique
   passwordHash            String?
   googleId                String?                  @unique
+  githubId                String?                  @unique
+  discordId               String?                  @unique
+  twitterId               String?                  @unique
   avatarUrl               String?
   bio                     String?
   emailVerified           Boolean                  @default(false)

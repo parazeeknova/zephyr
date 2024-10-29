@@ -1,11 +1,15 @@
 "use client";
 
+import AuthButtonWrapper from "@/components/Auth/AuthButtonWrapper";
 import loginImage from "@zephyr-assets/login-image.jpg";
 import LoginForm from "@zephyr-ui/Auth/LoginForm";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import DiscordSignInButton from "./DiscordSignInButton";
+import GithubSignInButton from "./GithubSignInButton";
 import GoogleSignInButton from "./GoogleSignInButton";
+import TwitterSignInButton from "./TwitterSignInButton";
 
 const fadeIn = {
   hidden: { opacity: 0 },
@@ -195,8 +199,31 @@ export default function ClientLoginPage() {
                   Welcome Back
                 </motion.h2>
 
-                <motion.div variants={contentAnimation} custom={1}>
-                  <GoogleSignInButton />
+                <motion.div
+                  // @ts-expect-error
+                  className="mb-6 space-y-4"
+                  variants={contentAnimation}
+                  custom={1}
+                >
+                  {/* Google button - full width */}
+                  <AuthButtonWrapper className="w-full">
+                    <GoogleSignInButton />
+                  </AuthButtonWrapper>
+
+                  {/* Grid for other auth buttons */}
+                  <div className="grid grid-cols-3 gap-3">
+                    <AuthButtonWrapper>
+                      <GithubSignInButton />
+                    </AuthButtonWrapper>
+
+                    <AuthButtonWrapper>
+                      <DiscordSignInButton />
+                    </AuthButtonWrapper>
+
+                    <AuthButtonWrapper>
+                      <TwitterSignInButton />
+                    </AuthButtonWrapper>
+                  </div>
                 </motion.div>
 
                 <motion.div
