@@ -25,6 +25,7 @@ model User {
   emailVerified           Boolean                  @default(false)
   sessions                Session[]
   emailVerificationTokens EmailVerificationToken[]
+  passwordResetTokens     PasswordResetToken[]
   posts                   Post[]
   following               Follow[]                 @relation("Following")
   followers               Follow[]                 @relation("Followers")
@@ -50,6 +51,19 @@ model EmailVerificationToken {
 
   @@index([token])
   @@map("email_verification_tokens")
+}
+
+// Password reset token model
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([token])
+  @@map("password_reset_tokens")
 }
 
 // Session model

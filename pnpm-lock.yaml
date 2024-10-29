@@ -213,6 +213,9 @@ importers:
       usehooks-ts:
         specifier: ^3.1.0
         version: 3.1.0(react@19.0.0-rc-69d4b800-20241021)
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
     devDependencies:
       '@tailwindcss/aspect-ratio':
         specifier: 0.4.2
@@ -253,6 +256,9 @@ importers:
       '@lucia-auth/adapter-prisma':
         specifier: ^4.0.1
         version: 4.0.1(@prisma/client@5.21.1(prisma@5.21.1))(lucia@3.2.2)
+      '@node-rs/argon2':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@zephyr/db':
         specifier: workspace:*
         version: link:../db
@@ -268,12 +274,18 @@ importers:
       i:
         specifier: ^0.3.7
         version: 0.3.7
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
       lucia:
         specifier: ^3.2.2
         version: 3.2.2
       next:
         specifier: 15.0.1
         version: 15.0.1(react-dom@19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021))(react@19.0.0-rc-69d4b800-20241021)
+      nodemailer:
+        specifier: ^6.9.16
+        version: 6.9.16
       react:
         specifier: 19.0.0-rc-69d4b800-20241021
         version: 19.0.0-rc-69d4b800-20241021
@@ -281,9 +293,15 @@ importers:
         specifier: ^3.23.8
         version: 3.23.8
     devDependencies:
+      '@types/jsonwebtoken':
+        specifier: ^9.0.7
+        version: 9.0.7
       '@types/node':
         specifier: ^22.7.8
         version: 22.7.8
+      '@types/nodemailer':
+        specifier: ^6.4.16
+        version: 6.4.16
       '@types/react':
         specifier: npm:types-react@19.0.0-rc.1
         version: types-react@19.0.0-rc.1

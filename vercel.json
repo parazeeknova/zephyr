@@ -8,6 +8,10 @@
     {
       "path": "/api/cron/cleanup-unverified",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-reset-tokens",
+      "schedule": "0 * * * *"
     }
   ]
 }

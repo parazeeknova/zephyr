@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import ForgotPasswordLink from "@zephyr-ui/Auth/ForgotPasswordLink";
 import { LoadingButton } from "@zephyr-ui/Auth/LoadingButton";
 import { PasswordInput } from "@zephyr-ui/Auth/PasswordInput";
 import { type LoginValues, loginSchema } from "@zephyr/auth/validation";
@@ -259,6 +260,10 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
+
+          <div className="flex items-center justify-end">
+            <ForgotPasswordLink />
+          </div>
 
           <LoadingButton loading={isPending} type="submit" className="w-full">
             Log in
