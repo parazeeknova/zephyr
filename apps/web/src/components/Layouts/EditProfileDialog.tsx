@@ -233,7 +233,7 @@ function AvatarInput({
           </span>
         </button>
         <p className="text-muted-foreground text-xs">
-          Supports JPG, PNG, and GIF (under 2MB)
+          Supports JPG, PNG, and GIF (under 8MB)
         </p>
       </div>
 

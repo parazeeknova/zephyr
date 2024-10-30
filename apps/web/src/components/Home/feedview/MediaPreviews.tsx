@@ -16,7 +16,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
 
   const renderPreview = (m: Media, _index: number) => {
     const commonClasses =
-      "mx-auto h-full max-h-[20rem] w-full rounded-lg object-cover sm:max-h-[30rem] sm:rounded-2xl";
+      "mx-auto h-full max-h-[20rem] w-[85%] rounded-lg object-cover sm:max-h-[30rem] sm:rounded-2xl";
 
     switch (m.type) {
       case "IMAGE":

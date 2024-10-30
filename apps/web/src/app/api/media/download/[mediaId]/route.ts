@@ -21,14 +21,13 @@ export const dynamic = "force-dynamic";
 const DOWNLOAD_COOLDOWN = 120; // 2 minutes in seconds
 
 export async function GET(
-  _request: NextRequest,
-  { params }: { params: { mediaId: string } }
-) {
-  // Extract and await the mediaId parameter
-  const { mediaId } = await params;
+  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
+  request: NextRequest,
+  context: { params: Promise<{ mediaId: string }> }
+): Promise<NextResponse | Response> {
+  const { mediaId } = await context.params;
 
   try {
-    // Validate request
     const { user } = await validateRequest();
     if (!user) {
       return new NextResponse("Unauthorized", { status: 401 });
