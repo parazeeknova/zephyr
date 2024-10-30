@@ -1,5 +1,5 @@
 import { useToast } from "@/hooks/use-toast";
-import { useUploadThing } from "@/lib/uploadthing";
+import { validateFile } from "@/lib/r2";
 import { useState } from "react";
 
 export interface Attachment {
@@ -10,57 +10,34 @@ export interface Attachment {
 
 export default function useMediaUpload() {
   const { toast } = useToast();
-
   const [attachments, setAttachments] = useState<Attachment[]>([]);
-
+  const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number>();
 
-  const { startUpload, isUploading } = useUploadThing("attachment", {
-    onBeforeUploadBegin(files) {
-      const renamedFiles = files.map((file) => {
-        const extension = file.name.split(".").pop();
-        return new File(
-          [file],
-          `attachment_${crypto.randomUUID()}.${extension}`,
-          {
-            type: file.type
-          }
-        );
+  async function uploadMedia(file: File) {
+    try {
+      validateFile(file);
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData
       });
 
-      setAttachments((prev) => [
-        ...prev,
-        ...renamedFiles.map((file) => ({ file, isUploading: true }))
-      ]);
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
 
-      return renamedFiles;
-    },
-    onUploadProgress: setUploadProgress,
-    onClientUploadComplete(res) {
-      setAttachments((prev) =>
-        prev.map((a) => {
-          const uploadResult = res.find((r) => r.name === a.file.name);
-
-          if (!uploadResult) return a;
-
-          return {
-            ...a,
-            mediaId: uploadResult.serverData.mediaId,
-            isUploading: false
-          };
-        })
-      );
-    },
-    onUploadError(e) {
-      setAttachments((prev) => prev.filter((a) => !a.isUploading));
-      toast({
-        variant: "destructive",
-        description: e.message
-      });
+      const { mediaId, url } = await response.json();
+      return { mediaId, url };
+    } catch (error: any) {
+      throw new Error(error.message || "Upload failed");
     }
-  });
+  }
 
-  function handleStartUpload(files: File[]) {
+  async function handleStartUpload(files: File[]) {
     if (isUploading) {
       toast({
         variant: "destructive",
@@ -77,7 +54,40 @@ export default function useMediaUpload() {
       return;
     }
 
-    startUpload(files);
+    setIsUploading(true);
+    setAttachments((prev) => [
+      ...prev,
+      ...files.map((file) => ({ file, isUploading: true }))
+    ]);
+
+    try {
+      let completed = 0;
+      await Promise.all(
+        files.map(async (file) => {
+          try {
+            const result = await uploadMedia(file);
+            setAttachments((prev) =>
+              prev.map((a) =>
+                a.file === file
+                  ? { ...a, mediaId: result.mediaId, isUploading: false }
+                  : a
+              )
+            );
+            completed++;
+            setUploadProgress((completed / files.length) * 100);
+          } catch (error: any) {
+            toast({
+              variant: "destructive",
+              description: error.message
+            });
+            setAttachments((prev) => prev.filter((a) => a.file !== file));
+          }
+        })
+      );
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(undefined);
+    }
   }
 
   function removeAttachment(fileName: string) {

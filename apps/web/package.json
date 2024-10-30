@@ -10,6 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.682.0",
+    "@aws-sdk/s3-request-presigner": "^3.682.0",
     "@emotion/styled": "^11.13.0",
     "@hookform/resolvers": "^3.9.0",
     "@mui/icons-material": "^6.1.5",
@@ -48,11 +50,13 @@
     "date-fns": "^4.1.0",
     "deep-email-validator": "^0.1.21",
     "email-validator": "^2.0.4",
+    "file-type": "^19.6.0",
     "framer-motion": "^11.11.10",
     "jsonwebtoken": "^9.0.2",
     "ky": "^1.7.2",
     "lucia": "^3.2.2",
     "lucide-react": "^0.454.0",
+    "mime-types": "^2.1.35",
     "next": "15.0.1",
     "next-themes": "^0.3.0",
     "nodemailer": "^6.9.16",
@@ -74,6 +78,7 @@
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@types/jsonwebtoken": "^9.0.7",
+    "@types/mime-types": "^2.1.4",
     "@types/node": "^22.7.8",
     "@types/nodemailer": "^6.4.16",
     "@types/react": "npm:types-react@19.0.0-rc.1",

@@ -110,13 +110,15 @@ model Post {
 
 // Media model for post attachments
 model Media {
-  id     String    @id @default(cuid())
-  postId String?
-  post   Post?     @relation(fields: [postId], references: [id], onDelete: SetNull)
-  type   MediaType
-  url    String
-
-  createdAt DateTime @default(now())
+  id        String    @id @default(cuid())
+  postId    String?
+  post      Post?     @relation(fields: [postId], references: [id], onDelete: SetNull)
+  type      MediaType
+  url       String
+  key       String    @default("")
+  mimeType  String    @default("application/octet-stream")
+  size      Int       @default(0)
+  createdAt DateTime  @default(now())
 
   @@map("post_media")
 }
@@ -124,6 +126,8 @@ model Media {
 enum MediaType {
   IMAGE
   VIDEO
+  AUDIO
+  DOCUMENT
 }
 
 // Upvotes & Downvotes model

@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { ArrowUpRight, MessageSquare, Share2 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
 
@@ -12,8 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Linkify from "@/helpers/global/Linkify";
-import { cn, formatRelativeDate } from "@/lib/utils";
-import type { Media } from "@prisma/client";
+import { formatRelativeDate } from "@/lib/utils";
 import Comments from "@zephyr-ui/Comments/Comments";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import AuraCount from "@zephyr-ui/Posts/AuraCount";
@@ -22,7 +20,7 @@ import BookmarkButton from "@zephyr-ui/Posts/BookmarkButton";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
 import type { PostData } from "@zephyr/db";
 import { useState } from "react";
-import MediaViewer from "./MediaViewer";
+import { MediaPreviews } from "./MediaPreviews";
 
 interface PostCardProps {
   post: PostData;
@@ -150,65 +148,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
     </motion.div>
   );
 };
-
-interface MediaPreviewsProps {
-  attachments: Media[];
-}
-
-function MediaPreviews({ attachments }: MediaPreviewsProps) {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-
-  return (
-    <>
-      <div
-        className={cn(
-          "flex w-full flex-col gap-2 sm:gap-3",
-          attachments.length > 1 && "sm:grid sm:grid-cols-2"
-        )}
-      >
-        {attachments.map((m, index) => (
-          <div
-            key={m.id}
-            onClick={() => setSelectedIndex(index)}
-            className="relative cursor-pointer overflow-hidden rounded-lg transition-transform hover:scale-[1.02]"
-          >
-            {m.type === "IMAGE" ? (
-              <>
-                <Image
-                  src={m.url}
-                  alt="Attachment"
-                  width={500}
-                  height={500}
-                  className="mx-auto h-full max-h-[20rem] w-full rounded-lg object-cover sm:max-h-[30rem] sm:rounded-2xl"
-                />
-                <div className="absolute inset-0 bg-black/5 transition-opacity hover:opacity-0" />
-              </>
-            ) : m.type === "VIDEO" ? (
-              <>
-                <video
-                  src={m.url}
-                  controls
-                  className="mx-auto h-full max-h-[20rem] w-full rounded-lg object-cover sm:max-h-[30rem] sm:rounded-2xl"
-                />
-                <div className="absolute inset-0 bg-black/5 transition-opacity hover:opacity-0" />
-              </>
-            ) : (
-              <p className="text-destructive">Unsupported media type</p>
-            )}
-          </div>
-        ))}
-      </div>
-      {selectedIndex !== null && (
-        <MediaViewer
-          media={attachments}
-          initialIndex={selectedIndex}
-          isOpen={selectedIndex !== null}
-          onClose={() => setSelectedIndex(null)}
-        />
-      )}
-    </>
-  );
-}
 
 interface CommentButtonProps {
   post: PostData;

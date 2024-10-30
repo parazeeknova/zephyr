@@ -7,13 +7,18 @@
     ".": "./index.ts"
   },
   "dependencies": {
-    "@prisma/client": "^5.21.1"
+    "@prisma/client": "^5.21.1",
+    "date-fns": "^4.1.0"
   },
   "scripts": {
     "db:generate": "prisma generate --schema=./prisma/schema.prisma",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "db:push": "prisma db push --skip-generate"
+    "db:push": "prisma db push --skip-generate",
+    "backup": "tsx scripts/backup.ts",
+    "pre-migrate": "tsx scripts/pre-migration-check.ts",
+    "migrate:safe": "pnpm run backup && pnpm run pre-migrate && pnpm prisma migrate dev --create-only",
+    "migrate:apply": "pnpm prisma migrate deploy"
   },
   "devDependencies": {
     "@types/node": "^22.7.8",
