@@ -1,8 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { getStreamConfig, validateEnv } from "@zephyr/config/src/env";
+import { getStreamConfig } from "@zephyr/config/src/env";
 import { StreamChat } from "stream-chat";
-
-validateEnv();
 
 const { apiKey, secret } = getStreamConfig();
 const streamClient = StreamChat.getInstance(apiKey, secret);
@@ -14,7 +12,7 @@ const prismaClientSingleton = () => {
         async delete({ args, query }) {
           const deletedUser = await query(args);
 
-          if (deletedUser?.id) {
+          if (deletedUser?.id && apiKey && secret) {
             try {
               await streamClient.deleteUser(deletedUser.id, {
                 mark_messages_deleted: true,
