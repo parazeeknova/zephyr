@@ -52,6 +52,25 @@ const nextConfig = {
         destination: "/search?q=%23:tag"
       }
     ];
+  },
+  env: {
+    NEXT_PRIVATE_SKIP_VALIDATION:
+      process.env.NEXT_PRIVATE_SKIP_VALIDATION || "false"
+  },
+  webpack: (config, { dev, isServer }) => {
+    // Skip validation for static pages during build
+    if (isServer && !dev) {
+      const originalEntry = config.entry;
+      config.entry = async () => {
+        const entries = await originalEntry();
+        if (entries["app/not-found"] || entries["pages/_error"]) {
+          // Set skip validation for error and not-found pages
+          process.env.NEXT_PRIVATE_SKIP_VALIDATION = "true";
+        }
+        return entries;
+      };
+    }
+    return config;
   }
 };
 
