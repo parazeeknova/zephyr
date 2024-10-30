@@ -3,7 +3,7 @@ import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 const r2Client = new S3Client({
   region: "auto",
@@ -16,18 +16,16 @@ const r2Client = new S3Client({
   }
 });
 
-interface RouteParams {
-  params: {
-    mediaId: string;
-  };
-}
-
 export const dynamic = "force-dynamic";
 
 const DOWNLOAD_COOLDOWN = 120; // 2 minutes in seconds
 
-export async function GET(_request: Request, { params }: RouteParams) {
-  const mediaId = params.mediaId;
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: { mediaId: string } }
+) {
+  // Extract and await the mediaId parameter
+  const { mediaId } = await params;
 
   try {
     // Validate request

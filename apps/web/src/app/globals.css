@@ -252,3 +252,21 @@ body:hover::-webkit-scrollbar-thumb {
   transform-origin: center;
   max-width: none;
 }
+
+.form-input-transition {
+  @apply transition-all duration-200 ease-in-out;
+  @apply focus:ring-2 focus:ring-primary/20;
+  @apply hover:border-primary/50;
+  @apply bg-background/50 backdrop-blur-sm;
+}
+
+.settings-card {
+  @apply relative overflow-hidden rounded-lg border border-border/50;
+  @apply bg-background/30 backdrop-blur-md shadow-sm;
+  @apply transition-all duration-200 hover:shadow-md hover:bg-background/40;
+}
+
+.settings-header {
+  @apply font-medium text-lg bg-gradient-to-r from-primary to-secondary;
+  @apply bg-clip-text text-transparent;
+}

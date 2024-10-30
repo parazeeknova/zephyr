@@ -4,10 +4,12 @@ export function getUserDataSelect(loggedInUserId: string) {
   return {
     id: true,
     username: true,
+    email: true,
     displayName: true,
     avatarUrl: true,
     bio: true,
     createdAt: true,
+    googleId: true,
     followers: {
       where: {
         followerId: loggedInUserId

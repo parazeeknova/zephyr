@@ -64,7 +64,7 @@ const contentAnimation = {
   })
 };
 
-const AnimatedZephyrText = () => {
+export const AnimatedZephyrText = () => {
   const letters = "ZEPHYR.".split("");
 
   return (
