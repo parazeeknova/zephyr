@@ -1,6 +1,6 @@
 import streamServerClient from "@/lib/stream";
 import { slugify } from "@/lib/utils";
-import { github, lucia } from "@zephyr/auth/auth";
+import { github, lucia, validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
 import { OAuth2RequestError } from "arctic";
 import { generateIdFromEntropySize } from "lucia";
@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
     const code = req.nextUrl.searchParams.get("code");
     const state = req.nextUrl.searchParams.get("state");
     const storedState = (await cookies()).get("state")?.value;
+    const isLinking = (await cookies()).get("linking")?.value === "true";
 
     if (!code || !state || !storedState || state !== storedState) {
       return new Response(null, { status: 400 });
@@ -58,6 +59,48 @@ export async function GET(req: NextRequest) {
         throw new Error("No primary email found");
       }
 
+      if (isLinking) {
+        const { user } = await validateRequest();
+        if (!user) {
+          return new Response(null, {
+            status: 302,
+            headers: {
+              Location: "/login"
+            }
+          });
+        }
+
+        const existingGithubUser = await prisma.user.findUnique({
+          where: {
+            githubId: githubUser.id.toString()
+          }
+        });
+
+        if (existingGithubUser && existingGithubUser.id !== user.id) {
+          return new Response(null, {
+            status: 302,
+            headers: {
+              Location: "/settings?error=github_account_linked_other"
+            }
+          });
+        }
+
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { githubId: githubUser.id.toString() }
+        });
+
+        (await cookies()).set("linking", "", { maxAge: 0 });
+
+        return new Response(null, {
+          status: 302,
+          headers: {
+            Location: "/settings?success=github_linked"
+          }
+        });
+      }
+
+      // Regular sign-in/sign-up flow
       const existingUserWithEmail = await prisma.user.findUnique({
         where: {
           email: primaryEmail
@@ -65,15 +108,10 @@ export async function GET(req: NextRequest) {
       });
 
       if (existingUserWithEmail && !existingUserWithEmail.githubId) {
-        const searchParams = new URLSearchParams({
-          error: "email_exists",
-          email: primaryEmail
-        });
-
         return new Response(null, {
           status: 302,
           headers: {
-            Location: `/login?${searchParams.toString()}`
+            Location: `/login/error?error=email_exists&email=${encodeURIComponent(githubUser.email)}`
           }
         });
       }

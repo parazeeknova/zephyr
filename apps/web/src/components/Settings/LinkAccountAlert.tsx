@@ -16,10 +16,13 @@ export default function LinkAccountAlert() {
       const errorMessages: Record<string, string> = {
         google_account_linked_other:
           "This Google account is already linked to another user",
+        github_account_linked_other:
+          "This GitHub account is already linked to another user",
         already_linked: "This Google account is already linked to your account",
         email_mismatch:
           "The Google account email doesn't match your account email",
         google_auth_failed: "Google authentication failed. Please try again",
+        github_auth_failed: "GitHub authentication failed. Please try again",
         unauthorized: "You must be logged in to link accounts",
         cannot_unlink_no_email:
           "Cannot unlink: No email associated with account",
@@ -38,7 +41,9 @@ export default function LinkAccountAlert() {
     if (success) {
       const successMessages: Record<string, string> = {
         google_linked: "Google account linked successfully",
-        google_unlinked: "Google account unlinked successfully"
+        google_unlinked: "Google account unlinked successfully",
+        github_linked: "GitHub account linked successfully",
+        github_unlinked: "GitHub account unlinked successfully"
       };
 
       toast({
