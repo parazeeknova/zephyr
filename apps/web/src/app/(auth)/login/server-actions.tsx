@@ -8,7 +8,10 @@ import { prisma } from "@zephyr/db";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 
-async function createVerificationTokenForUser(userId: string, email: string) {
+export async function createVerificationTokenForUser(
+  userId: string,
+  email: string
+) {
   // Check for existing token
   const existingToken = await prisma.emailVerificationToken.findFirst({
     where: { userId }

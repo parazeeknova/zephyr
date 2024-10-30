@@ -18,6 +18,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { useUploadThing } from "@/lib/uploadthing";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
 import {
@@ -28,9 +31,10 @@ import type { UserData } from "@zephyr/db";
 import { Camera } from "lucide-react";
 import Image, { type StaticImageData } from "next/image";
 import { useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { type UseFormReturn, useForm } from "react-hook-form";
 import Resizer from "react-image-file-resizer";
 import CropImageDialog from "./CropImageDialog";
+import GifCenteringDialog from "./GifCenteringDialog";
 
 interface EditProfileDialogProps {
   user: UserData;
@@ -89,6 +93,7 @@ export default function EditProfileDialog({
                 : user.avatarUrl || avatarPlaceholder
             }
             onImageCropped={setCroppedAvatar}
+            form={form}
           />
         </div>
         <Form {...form}>
@@ -138,18 +143,50 @@ export default function EditProfileDialog({
 interface AvatarInputProps {
   src: string | StaticImageData;
   onImageCropped: (blob: Blob | null) => void;
+  form: UseFormReturn<UpdateUserProfileValues>;
 }
 
-function AvatarInput({ src, onImageCropped }: AvatarInputProps) {
+function AvatarInput({
+  src,
+  onImageCropped,
+  form
+}: AvatarInputProps & { form: UseFormReturn<UpdateUserProfileValues> }) {
   const [imageToCrop, setImageToCrop] = useState<File>();
-
+  const [gifToCenter, setGifToCenter] = useState<File>();
+  const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  function onImageSelected(image: File | undefined) {
-    if (!image) return;
+  const { startUpload, isUploading } = useUploadThing("avatar", {
+    onClientUploadComplete: (res) => {
+      if (res?.[0]) {
+        onImageCropped(null);
+        toast({
+          title: "Avatar updated",
+          description: "Your avatar has been updated successfully"
+        });
+      }
+    },
+    onUploadError: (error) => {
+      toast({
+        title: "Upload failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
 
+  async function onImageSelected(file: File | undefined) {
+    if (!file) return;
+
+    // Handle GIF files
+    if (file.type === "image/gif") {
+      setGifToCenter(file);
+      return;
+    }
+
+    // For non-GIF images, proceed with regular cropping flow
     Resizer.imageFileResizer(
-      image,
+      file,
       1024,
       1024,
       "WEBP",
@@ -164,32 +201,72 @@ function AvatarInput({ src, onImageCropped }: AvatarInputProps) {
     <>
       <input
         type="file"
-        accept="image/*"
+        accept="image/*, image/gif"
         onChange={(e) => onImageSelected(e.target.files?.[0])}
         ref={fileInputRef}
         className="sr-only hidden"
       />
-      <button
-        type="button"
-        onClick={() => fileInputRef.current?.click()}
-        className="group relative block"
-      >
-        <Image
-          src={src}
-          alt="Avatar preview"
-          width={150}
-          height={150}
-          className="size-32 flex-none rounded-full object-cover"
+      <div className="space-y-2">
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="group relative block"
+          disabled={isUploading}
+        >
+          <Image
+            src={src}
+            alt="Avatar preview"
+            width={150}
+            height={150}
+            className={cn(
+              "size-32 flex-none rounded-full object-cover",
+              isUploading && "opacity-50"
+            )}
+            unoptimized={typeof src === "string" && src.endsWith(".gif")}
+          />
+          <span className="absolute inset-0 m-auto flex size-12 items-center justify-center rounded-full bg-black bg-opacity-30 text-white transition-colors duration-200 group-hover:bg-opacity-25">
+            {isUploading ? (
+              <span className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            ) : (
+              <Camera size={24} />
+            )}
+          </span>
+        </button>
+        <p className="text-muted-foreground text-xs">
+          Supports JPG, PNG, and GIF (under 8MB)
+        </p>
+      </div>
+
+      {/* GIF Centering Dialog */}
+      {gifToCenter && (
+        <GifCenteringDialog
+          gifFile={gifToCenter}
+          onClose={() => {
+            setGifToCenter(undefined);
+            if (fileInputRef.current) {
+              fileInputRef.current.value = "";
+            }
+          }}
+          currentValues={{
+            displayName: form.getValues("displayName"),
+            bio: form.getValues("bio")
+          }}
         />
-        <span className="absolute inset-0 m-auto flex size-12 items-center justify-center rounded-full bg-black bg-opacity-30 text-white transition-colors duration-200 group-hover:bg-opacity-25">
-          <Camera size={24} />
-        </span>
-      </button>
+      )}
+
+      {/* Regular Image Cropping Dialog */}
       {imageToCrop && (
         <CropImageDialog
           src={URL.createObjectURL(imageToCrop)}
           cropAspectRatio={1}
-          onCropped={onImageCropped}
+          onCropped={async (blob) => {
+            if (blob) {
+              const file = new File([blob], "avatar.webp", {
+                type: "image/webp"
+              });
+              await startUpload([file]);
+            }
+          }}
           onClose={() => {
             setImageToCrop(undefined);
             if (fileInputRef.current) {

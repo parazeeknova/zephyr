@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "@prisma/client": "^5.21.1",
-    "date-fns": "^4.1.0"
+    "date-fns": "^4.1.0",
+    "stream-chat": "^8.40.9"
   },
   "scripts": {
     "db:generate": "prisma generate --schema=./prisma/schema.prisma",
@@ -18,7 +19,8 @@
     "backup": "tsx scripts/backup.ts",
     "pre-migrate": "tsx scripts/pre-migration-check.ts",
     "migrate:safe": "pnpm run backup && pnpm run pre-migrate && pnpm prisma migrate dev --create-only",
-    "migrate:apply": "pnpm prisma migrate deploy"
+    "migrate:apply": "pnpm prisma migrate deploy",
+    "cleanup-streamchat": "ts-node scripts/cleanup-streamchat.ts"
   },
   "devDependencies": {
     "@types/node": "^22.7.8",

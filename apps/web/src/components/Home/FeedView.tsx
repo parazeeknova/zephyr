@@ -14,10 +14,8 @@ interface FeedViewProps {
 }
 
 export const FeedView: React.FC<FeedViewProps> = ({ posts }) => {
-  // Memoized Components
   const MemoizedPostCard = useMemo(() => React.memo(PostCard), []);
 
-  // Memoized Values
   const sortedPosts = useMemo(() => {
     const sorted = [...posts].sort(
       (a, b) =>
@@ -30,15 +28,29 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts }) => {
       snapshots: sorted.filter((post) =>
         post.attachments.some((att) => att.type === "IMAGE")
       ),
-      reels: sorted.filter((post) =>
-        post.attachments.some((att) => att.type === "VIDEO")
+      media: sorted.filter((post) =>
+        post.attachments.some(
+          (att) => att.type === "VIDEO" || att.type === "AUDIO"
+        )
+      ),
+      files: sorted.filter((post) =>
+        post.attachments.some(
+          (att) => att.type === "DOCUMENT" || att.type === "CODE"
+        )
       )
     };
   }, [posts]);
 
+  const tabConfig = [
+    { value: "all", label: "All" },
+    { value: "scribbles", label: "Fleets" },
+    { value: "snapshots", label: "Snapshots" },
+    { value: "media", label: "Reels" },
+    { value: "files", label: "Wisps" }
+  ];
+
   return (
     <main className="flex-1 overflow-y-auto bg-background p-4 pb-24">
-      {/* Fleets Section */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -57,62 +69,41 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts }) => {
 
             <Tabs defaultValue="all" className="w-full">
               <div className="mb-4 flex justify-center sm:mb-6">
-                <TabsList className="grid w-full max-w-md grid-cols-4">
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  <TabsTrigger value="scribbles">Scribbles</TabsTrigger>
-                  <TabsTrigger value="snapshots">Snapshots</TabsTrigger>
-                  <TabsTrigger value="reels">Reels</TabsTrigger>
+                <TabsList className="grid w-full max-w-2xl grid-cols-5">
+                  {tabConfig.map((tab) => (
+                    <TabsTrigger key={tab.value} value={tab.value}>
+                      {tab.label}
+                    </TabsTrigger>
+                  ))}
                 </TabsList>
               </div>
 
-              <TabsContent value="all">
-                <div className="flex justify-center">
-                  <div className="w-full max-w-3xl space-y-2 sm:space-y-4">
-                    {sortedPosts.all.map((post, index) => (
-                      <React.Fragment key={`all-${index}`}>
-                        {index > 0 && <Separator className="my-2 sm:my-4" />}
-                        <MemoizedPostCard post={post} isJoined={true} />
-                      </React.Fragment>
-                    ))}
+              {tabConfig.map((tab) => (
+                <TabsContent key={tab.value} value={tab.value}>
+                  <div className="flex justify-center">
+                    <div className="w-full max-w-3xl space-y-2 sm:space-y-4">
+                      {sortedPosts[tab.value as keyof typeof sortedPosts].map(
+                        (post, index) => (
+                          <React.Fragment key={`${tab.value}-${index}`}>
+                            {index > 0 && (
+                              <Separator className="my-2 sm:my-4" />
+                            )}
+                            <MemoizedPostCard post={post} isJoined={true} />
+                          </React.Fragment>
+                        )
+                      )}
+                      {sortedPosts[tab.value as keyof typeof sortedPosts]
+                        .length === 0 && (
+                        <div className="flex flex-col items-center justify-center py-8">
+                          <p className="text-center text-muted-foreground">
+                            No {tab.label.toLowerCase()} available.
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </TabsContent>
-              <TabsContent value="scribbles">
-                <div className="flex justify-center">
-                  <div className="w-full max-w-3xl space-y-2 sm:space-y-4">
-                    {sortedPosts.scribbles.map((post, index) => (
-                      <React.Fragment key={`scribble-${index}`}>
-                        {index > 0 && <Separator className="my-2 sm:my-4" />}
-                        <MemoizedPostCard post={post} isJoined={true} />
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </div>
-              </TabsContent>
-              <TabsContent value="snapshots">
-                <div className="flex justify-center">
-                  <div className="w-full max-w-3xl space-y-2 sm:space-y-4">
-                    {sortedPosts.snapshots.map((post, index) => (
-                      <React.Fragment key={`snapshot-${index}`}>
-                        {index > 0 && <Separator className="my-2 sm:my-4" />}
-                        <MemoizedPostCard post={post} isJoined={true} />
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </div>
-              </TabsContent>
-              <TabsContent value="reels">
-                <div className="flex justify-center">
-                  <div className="w-full max-w-3xl space-y-2 sm:space-y-4">
-                    {sortedPosts.reels.map((post, index) => (
-                      <React.Fragment key={`reel-${index}`}>
-                        {index > 0 && <Separator className="my-2 sm:my-4" />}
-                        <MemoizedPostCard post={post} isJoined={true} />
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </div>
-              </TabsContent>
+                </TabsContent>
+              ))}
             </Tabs>
           </CardContent>
         </Card>

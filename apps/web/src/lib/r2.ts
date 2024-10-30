@@ -17,7 +17,28 @@ export type AllowedFileType =
   | "audio/ogg"
   | "application/pdf"
   | "application/msword"
-  | "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  | "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  | "text/plain"
+  | "text/html"
+  | "text/css"
+  | "text/javascript"
+  | "text/typescript"
+  | "application/json"
+  | "text/markdown"
+  | "text/x-python"
+  | "text/x-java"
+  | "text/x-c"
+  | "text/x-cpp"
+  | "text/x-csharp"
+  | "text/x-ruby"
+  | "text/x-php"
+  | "text/x-rust"
+  | "text/x-go"
+  | "text/x-kotlin"
+  | "text/x-swift"
+  | "application/xml"
+  | "text/x-yaml"
+  | "text/x-sql";
 
 export const allowedFileTypes: AllowedFileType[] = [
   "image/jpeg",
@@ -31,14 +52,36 @@ export const allowedFileTypes: AllowedFileType[] = [
   "audio/ogg",
   "application/pdf",
   "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "text/plain",
+  "text/html",
+  "text/css",
+  "text/javascript",
+  "text/typescript",
+  "application/json",
+  "text/markdown",
+  "text/x-python",
+  "text/x-java",
+  "text/x-c",
+  "text/x-cpp",
+  "text/x-csharp",
+  "text/x-ruby",
+  "text/x-php",
+  "text/x-rust",
+  "text/x-go",
+  "text/x-kotlin",
+  "text/x-swift",
+  "application/xml",
+  "text/x-yaml",
+  "text/x-sql"
 ];
 
 export const maxFileSizes = {
   image: 5 * 1024 * 1024, // 5MB
   video: 100 * 1024 * 1024, // 100MB
   audio: 20 * 1024 * 1024, // 20MB
-  document: 10 * 1024 * 1024 // 10MB
+  document: 50 * 1024 * 1024, // 50MB
+  code: 10 * 1024 * 1024 // 10MB
 };
 
 export const r2Client = new S3Client({
@@ -56,6 +99,12 @@ export const getFileType = (mimeType: string) => {
   if (mimeType.startsWith("image/")) return "image";
   if (mimeType.startsWith("video/")) return "video";
   if (mimeType.startsWith("audio/")) return "audio";
+  if (
+    mimeType.startsWith("text/") ||
+    mimeType === "application/json" ||
+    mimeType === "application/xml"
+  )
+    return "code";
   return "document";
 };
 
@@ -85,9 +134,9 @@ export const generatePresignedUrl = async (key: string) => {
 
 export const uploadToR2 = async (file: File, userId: string) => {
   validateFile(file);
-
-  const extension = file.name.split(".").pop();
-  const key = `${userId}/${Date.now()}-${crypto.randomUUID()}.${extension}`;
+  const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+  const uniquePrefix = `${Date.now()}-${crypto.randomUUID()}`;
+  const key = `${userId}/${uniquePrefix}-${cleanFileName}`;
 
   await r2Client.send(
     new PutObjectCommand({
@@ -110,6 +159,7 @@ export const uploadToR2 = async (file: File, userId: string) => {
     url,
     type: getFileType(file.type),
     mimeType: file.type,
-    size: file.size
+    size: file.size,
+    originalName: file.name
   };
 };

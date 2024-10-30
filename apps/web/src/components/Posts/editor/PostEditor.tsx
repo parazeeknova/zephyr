@@ -177,8 +177,8 @@ export default function PostEditor() {
               // @ts-expect-error
               className="flex items-center gap-2"
             >
-              <span className="font-medium text-sm">
-                {uploadProgress ?? 0}%
+              <span className="font-medium text-sm tabular-nums">
+                {(uploadProgress ?? 0).toFixed(1)}%
               </span>
               <Loader2 className="size-5 animate-spin text-primary" />
             </motion.div>

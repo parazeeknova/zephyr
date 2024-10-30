@@ -1,6 +1,6 @@
 import streamServerClient from "@/lib/stream";
 import { slugify } from "@/lib/utils";
-import { google, lucia } from "@zephyr/auth/auth";
+import { google, lucia, validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
 import { OAuth2RequestError } from "arctic";
 import { generateIdFromEntropySize } from "lucia";
@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
     const state = req.nextUrl.searchParams.get("state");
     const storedState = (await cookies()).get("state")?.value;
     const storedCodeVerifier = (await cookies()).get("code_verifier")?.value;
+    const isLinking = (await cookies()).get("linking")?.value === "true";
 
     if (
       !code ||
@@ -60,6 +61,47 @@ export async function GET(req: NextRequest) {
 
     const googleUser = await response.json();
 
+    if (isLinking) {
+      const { user } = await validateRequest();
+      if (!user) {
+        return new Response(null, {
+          status: 302,
+          headers: {
+            Location: "/login"
+          }
+        });
+      }
+
+      const existingGoogleUser = await prisma.user.findUnique({
+        where: {
+          googleId: googleUser.id
+        }
+      });
+
+      if (existingGoogleUser && existingGoogleUser.id !== user.id) {
+        return new Response(null, {
+          status: 302,
+          headers: {
+            Location: "/settings?error=google_account_linked"
+          }
+        });
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { googleId: googleUser.id }
+      });
+
+      (await cookies()).set("linking", "", { maxAge: 0 });
+
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: "/settings?success=google_linked"
+        }
+      });
+    }
+
     // Check if user exists with email but without Google auth
     const existingUserWithEmail = await prisma.user.findUnique({
       where: {
@@ -68,17 +110,10 @@ export async function GET(req: NextRequest) {
     });
 
     if (existingUserWithEmail && !existingUserWithEmail.googleId) {
-      // User exists with email but hasn't used Google login
-      // Redirect to login page with error message
-      const searchParams = new URLSearchParams({
-        error: "email_exists",
-        email: googleUser.email
-      });
-
       return new Response(null, {
         status: 302,
         headers: {
-          Location: `/login?${searchParams.toString()}`
+          Location: `/login/error?error=email_exists&email=${encodeURIComponent(googleUser.email)}`
         }
       });
     }

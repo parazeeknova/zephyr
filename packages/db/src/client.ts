@@ -4,10 +4,16 @@ export function getUserDataSelect(loggedInUserId: string) {
   return {
     id: true,
     username: true,
+    email: true,
     displayName: true,
     avatarUrl: true,
     bio: true,
     createdAt: true,
+    googleId: true,
+    githubId: true,
+    discordId: true,
+    twitterId: true,
+    passwordHash: true,
     followers: {
       where: {
         followerId: loggedInUserId

@@ -7,7 +7,7 @@ import {
   LogOutIcon,
   Monitor,
   Moon,
-  SettingsIcon,
+  Settings2Icon,
   Sun,
   UserIcon
 } from "lucide-react";
@@ -62,6 +62,7 @@ export default function UserButton({ className }: UserButtonProps) {
               avatarUrl={user.avatarUrl}
               size={35}
               className="transition-transform duration-200"
+              priority // Add priority for faster loading
             />
           </Button>
         </motion.div>
@@ -135,8 +136,10 @@ export default function UserButton({ className }: UserButtonProps) {
             </DropdownMenuPortal>
           </DropdownMenuSub>
           <DropdownMenuItem className="hover:bg-primary/10 focus:bg-primary/10">
-            <SettingsIcon className="mr-2 size-4" />
-            <span>Settings</span>
+            <Link href="/settings" className="flex items-center">
+              <Settings2Icon className="mr-2 size-4" />
+              <span>Settings</span>
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator className="bg-border/50" />
           <DropdownMenuItem
