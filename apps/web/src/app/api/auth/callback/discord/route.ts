@@ -1,4 +1,4 @@
-import { getStreamClient } from "@/lib/stream";
+import { createStreamUser } from "@/lib/streamServices";
 import { slugify } from "@/lib/utils";
 import { discord, lucia, validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
@@ -6,6 +6,8 @@ import { OAuth2RequestError } from "arctic";
 import { generateIdFromEntropySize } from "lucia";
 import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
@@ -148,12 +150,11 @@ export async function GET(req: NextRequest) {
             }
           });
 
-          const streamClient = getStreamClient();
-          await streamClient.upsertUser({
-            id: newUser.id,
-            username: newUser.username,
-            name: newUser.displayName
-          });
+          await createStreamUser(
+            newUser.id,
+            newUser.username,
+            newUser.displayName
+          );
         });
 
         const session = await lucia.createSession(userId, {});
