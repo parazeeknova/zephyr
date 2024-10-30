@@ -110,17 +110,10 @@ export async function GET(req: NextRequest) {
     });
 
     if (existingUserWithEmail && !existingUserWithEmail.googleId) {
-      // User exists with email but hasn't used Google login
-      // Redirect to login page with error message
-      const searchParams = new URLSearchParams({
-        error: "email_exists",
-        email: googleUser.email
-      });
-
       return new Response(null, {
         status: 302,
         headers: {
-          Location: `/login?${searchParams.toString()}`
+          Location: `/login/error?error=email_exists&email=${encodeURIComponent(googleUser.email)}`
         }
       });
     }

@@ -104,7 +104,7 @@ export default function AccountSettings({ user }: AccountSettingsProps) {
   }
 
   const handleSocialLink = (provider: string) => {
-    window.location.href = `/auth/link/${provider}`;
+    window.location.href = `/api/auth/link/${provider}`;
   };
 
   return (

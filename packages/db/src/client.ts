@@ -10,6 +10,7 @@ export function getUserDataSelect(loggedInUserId: string) {
     bio: true,
     createdAt: true,
     googleId: true,
+    passwordHash: true,
     followers: {
       where: {
         followerId: loggedInUserId

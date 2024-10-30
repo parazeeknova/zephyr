@@ -21,6 +21,10 @@ export default function LinkAccountAlert() {
           "The Google account email doesn't match your account email",
         google_auth_failed: "Google authentication failed. Please try again",
         unauthorized: "You must be logged in to link accounts",
+        cannot_unlink_no_email:
+          "Cannot unlink: No email associated with account",
+        cannot_unlink_no_password:
+          "Cannot unlink: Need at least one authentication method",
         unknown_error: "An unexpected error occurred. Please try again"
       };
 
@@ -31,10 +35,15 @@ export default function LinkAccountAlert() {
       });
     }
 
-    if (success === "google_linked") {
+    if (success) {
+      const successMessages: Record<string, string> = {
+        google_linked: "Google account linked successfully",
+        google_unlinked: "Google account unlinked successfully"
+      };
+
       toast({
         title: "Success",
-        description: "Google account linked successfully"
+        description: successMessages[success] || "Operation successful"
       });
     }
   }, [searchParams, toast]);
