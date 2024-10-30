@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/node": "^22.7.8",
+    "@types/node": "^22.8.4",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
     "husky": "^9.1.6",
@@ -30,6 +30,6 @@
     "node": ">=18.x <=22.x"
   },
   "dependencies": {
-    "vercel": "^37.12.1"
+    "vercel": "^37.13.0"
   }
 }
