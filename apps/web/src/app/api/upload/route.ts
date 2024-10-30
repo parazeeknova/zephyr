@@ -34,7 +34,11 @@ export async function POST(request: Request) {
       }
     });
 
-    return NextResponse.json({ mediaId: media.id, url: upload.url });
+    return NextResponse.json({
+      mediaId: media.id,
+      url: upload.url,
+      key: upload.key
+    });
   } catch (error: any) {
     console.error("Upload error:", error);
     return NextResponse.json(

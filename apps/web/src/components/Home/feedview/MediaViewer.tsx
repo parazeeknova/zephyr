@@ -2,10 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { formatFileName, truncateFileName } from "@/lib/formatFileName";
+import { useToast } from "@/hooks/use-toast";
+import { getLanguageFromFileName } from "@/lib/codefileExtensions";
+import { formatFileName } from "@/lib/formatFileName";
 import { cn } from "@/lib/utils";
 import type { Media } from "@prisma/client";
-import { ChevronLeft, ChevronRight, Download, FileIcon, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  FileCode,
+  FileIcon,
+  X
+} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -22,7 +31,9 @@ const MediaViewer = ({
   isOpen,
   onClose
 }: MediaViewerProps) => {
+  const { toast } = useToast();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -42,20 +53,69 @@ const MediaViewer = ({
 
   const handleDownload = async () => {
     try {
-      const response = await fetch(currentMedia.url);
+      setIsDownloading(true);
+
+      const response = await fetch(`/api/media/download/${currentMedia.id}`);
+
+      if (response.status === 429) {
+        const data = await response.json();
+        toast({
+          title: "Download Rate Limited",
+          description: data.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error("Failed to download file");
+      }
+
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      const downloadUrl = window.URL.createObjectURL(blob);
+
       const a = document.createElement("a");
-      a.href = url;
-      a.download = currentMedia.key.split("/").pop() || "download";
+      a.href = downloadUrl;
+      a.download = formatFileName(currentMedia.key);
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
+
+      // Cleanup
+      window.URL.revokeObjectURL(downloadUrl);
       document.body.removeChild(a);
     } catch (error) {
       console.error("Download failed:", error);
+      toast({
+        title: "Download Failed",
+        description:
+          "There was an error downloading the file. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDownloading(false);
     }
   };
+
+  const DownloadButton = () => (
+    <Button
+      onClick={handleDownload}
+      className="flex items-center gap-2"
+      variant="secondary"
+      disabled={isDownloading}
+    >
+      {isDownloading ? (
+        <>
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          Downloading...
+        </>
+      ) : (
+        <>
+          <Download className="h-4 w-4" />
+          Download {formatFileName(currentMedia.key)}
+        </>
+      )}
+    </Button>
+  );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -92,6 +152,7 @@ const MediaViewer = ({
             />
           </div>
         );
+
       case "VIDEO":
         return (
           <div className="relative max-h-full max-w-full">
@@ -108,12 +169,16 @@ const MediaViewer = ({
             />
           </div>
         );
+
       case "AUDIO":
         return (
           <div className="flex flex-col items-center gap-4 rounded-lg bg-background/50 p-8">
             <div className="flex h-64 w-64 items-center justify-center rounded-full bg-primary/10">
               <FileIcon className="h-32 w-32 text-primary" />
             </div>
+            <p className="font-medium text-lg">
+              {formatFileName(currentMedia.key)}
+            </p>
             <audio
               src={currentMedia.url}
               controls
@@ -123,6 +188,25 @@ const MediaViewer = ({
             />
           </div>
         );
+
+      case "CODE":
+        return (
+          <div className="flex flex-col items-center gap-4 rounded-lg bg-background/50 p-8">
+            <div className="flex h-64 w-64 items-center justify-center rounded-full bg-primary/10">
+              <FileCode className="h-32 w-32 text-primary" />
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <p className="font-medium text-lg">
+                {formatFileName(currentMedia.key)}
+              </p>
+              <p className="text-muted-foreground text-sm">
+                {getLanguageFromFileName(currentMedia.key)}
+              </p>
+            </div>
+            <DownloadButton />
+          </div>
+        );
+
       case "DOCUMENT":
         return (
           <div className="flex flex-col items-center gap-4 rounded-lg bg-background/50 p-8">
@@ -131,22 +215,16 @@ const MediaViewer = ({
             </div>
             <div className="flex flex-col items-center gap-2">
               <p className="font-medium text-lg">
-                {truncateFileName(formatFileName(currentMedia.key))}
+                {formatFileName(currentMedia.key)}
               </p>
               <p className="text-muted-foreground text-sm">
                 {currentMedia.mimeType || "Document"}
               </p>
             </div>
-            <Button
-              onClick={handleDownload}
-              className="flex items-center gap-2"
-              variant="secondary"
-            >
-              <Download className="h-4 w-4" />
-              Download {formatFileName(currentMedia.key)}
-            </Button>
+            <DownloadButton />
           </div>
         );
+
       default:
         return <p className="text-destructive">Unsupported media type</p>;
     }

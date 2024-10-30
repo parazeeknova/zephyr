@@ -1,6 +1,8 @@
+import { getLanguageFromFileName } from "@/lib/codefileExtensions";
+import { formatFileName } from "@/lib/formatFileName";
 import { cn } from "@/lib/utils";
 import type { Media } from "@prisma/client";
-import { FileAudioIcon, FileIcon } from "lucide-react";
+import { FileAudioIcon, FileCode, FileIcon } from "lucide-react"; // Add FileCode import
 import Image from "next/image";
 import { useState } from "react";
 import MediaViewer from "./MediaViewer";
@@ -42,8 +44,22 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
           <div className="flex h-full flex-col items-center justify-center gap-2 rounded-lg bg-primary/5 p-4">
             <FileAudioIcon className="h-12 w-12 text-primary" />
             <p className="max-w-full truncate font-medium text-sm">
-              {m.key.split("/").pop()}
+              {formatFileName(m.key)}
             </p>
+          </div>
+        );
+      case "CODE":
+        return (
+          <div className="flex h-full flex-col items-center justify-center gap-2 rounded-lg bg-primary/5 p-4">
+            <FileCode className="h-12 w-12 text-primary" />
+            <div className="flex flex-col items-center">
+              <p className="max-w-full truncate font-medium text-sm">
+                {formatFileName(m.key)}
+              </p>
+              <p className="text-muted-foreground text-xs">
+                {getLanguageFromFileName(m.key)}
+              </p>
+            </div>
           </div>
         );
       case "DOCUMENT":
@@ -51,7 +67,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
           <div className="flex h-full flex-col items-center justify-center gap-2 rounded-lg bg-primary/5 p-4">
             <FileIcon className="h-12 w-12 text-primary" />
             <p className="max-w-full truncate font-medium text-sm">
-              {m.key.split("/").pop()}
+              {formatFileName(m.key)}
             </p>
           </div>
         );

@@ -1,6 +1,7 @@
+import { getLanguageFromFileName } from "@/lib/codefileExtensions";
 import { formatFileName } from "@/lib/formatFileName";
 import { cn } from "@/lib/utils";
-import { FileAudioIcon, FileIcon, X } from "lucide-react";
+import { FileAudioIcon, FileCode, FileIcon, X } from "lucide-react";
 import Image from "next/image";
 import type { Attachment } from "./useMediaUpload";
 
@@ -19,58 +20,95 @@ export function AttachmentPreview({
   const renderPreview = () => {
     if (file.type.startsWith("image")) {
       return (
-        <Image
-          src={src}
-          alt={fileName}
-          width={500}
-          height={500}
-          className="size-fit max-h-[30rem] rounded-2xl"
-        />
+        <div className="relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden rounded-2xl bg-primary/5">
+          <Image
+            src={src}
+            alt={fileName}
+            width={500}
+            height={500}
+            className="h-full w-full object-cover"
+          />
+        </div>
+      );
+    }
+
+    if (
+      file.type.startsWith("text/") ||
+      file.type === "application/json" ||
+      file.type === "application/xml"
+    ) {
+      const language = getLanguageFromFileName(fileName);
+      return (
+        <div className="w-full rounded-2xl bg-primary/5 p-6">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex h-16 w-16 items-center justify-center">
+              <FileCode className="h-full w-full text-primary" />
+            </div>
+            <div className="w-full max-w-[250px] space-y-1">
+              <p className="truncate text-center font-medium text-sm">
+                {formatFileName(fileName)}
+              </p>
+              <p className="text-center text-muted-foreground text-xs">
+                {language}
+              </p>
+            </div>
+          </div>
+        </div>
       );
     }
 
     if (file.type.startsWith("video")) {
       return (
-        <video controls className="size-fit max-h-[30rem] rounded-2xl">
-          <source src={src} type={file.type} />
-        </video>
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-primary/5">
+          <video controls className="h-full w-full object-cover">
+            <source src={src} type={file.type} />
+          </video>
+        </div>
       );
     }
 
     if (file.type.startsWith("audio")) {
       return (
-        <div className="flex flex-col items-center gap-4 rounded-2xl bg-primary/5 p-8">
-          <FileAudioIcon className="h-16 w-16 text-primary" />
-          <p className="max-w-full truncate font-medium text-sm">
-            {formatFileName(fileName)}
-          </p>
-          <audio controls className="w-full max-w-md">
-            <source src={src} type={file.type} />
-          </audio>
+        <div className="w-full rounded-2xl bg-primary/5 p-6">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex h-16 w-16 items-center justify-center">
+              <FileAudioIcon className="h-full w-full text-primary" />
+            </div>
+            <div className="w-full max-w-[250px] px-2">
+              <p className="truncate text-center font-medium text-sm">
+                {formatFileName(fileName)}
+              </p>
+            </div>
+            <audio controls className="w-full max-w-md">
+              <source src={src} type={file.type} />
+            </audio>
+          </div>
         </div>
       );
     }
 
     // Document or other file types
     return (
-      <div className="flex flex-col items-center gap-4 rounded-2xl bg-primary/5 p-8">
-        <FileIcon className="h-16 w-16 text-primary" />
-        <div className="flex flex-col items-center gap-1">
-          <p className="max-w-full truncate font-medium text-sm">
-            {formatFileName(fileName)}
-          </p>
-          <p className="text-muted-foreground text-xs">
-            {file.type || "Document"}
-          </p>
+      <div className="w-full rounded-2xl bg-primary/5 p-6">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex h-16 w-16 items-center justify-center">
+            <FileIcon className="h-full w-full text-primary" />
+          </div>
+          <div className="w-full max-w-[250px] space-y-1">
+            <p className="truncate text-center font-medium text-sm">
+              {formatFileName(fileName)}
+            </p>
+            <p className="text-center text-muted-foreground text-xs">
+              {file.type || "Document"}
+            </p>
+          </div>
         </div>
       </div>
     );
   };
 
   return (
-    <div
-      className={cn("relative mx-auto size-fit", isUploading && "opacity-50")}
-    >
+    <div className={cn("relative w-full", isUploading && "opacity-50")}>
       {renderPreview()}
       {!isUploading && (
         <button
