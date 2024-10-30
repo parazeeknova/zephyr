@@ -1,47 +1,36 @@
-import { StreamChat } from "stream-chat";
+let streamClient: any = null;
 
-// Lazy initialization for Stream Chat
-let streamClient: StreamChat | null = null;
-
-export function initializeStreamChat() {
+export const initializeStream = async () => {
   if (!streamClient) {
-    const key = process.env.NEXT_PUBLIC_STREAM_KEY;
-    const secret = process.env.STREAM_SECRET;
-
-    if (!key || !secret) {
-      console.warn("Stream Chat credentials not configured");
-      return null;
+    try {
+      const { getStreamClient } = await import("./stream");
+      streamClient = await getStreamClient();
+    } catch (error) {
+      console.warn("Failed to initialize Stream client:", error);
     }
-
-    streamClient = StreamChat.getInstance(key, secret);
   }
   return streamClient;
-}
+};
 
-export function getStreamClient() {
-  return streamClient;
-}
-
-// Initialize only when explicitly called
-export async function createStreamUser(
+export const createStreamUser = async (
   userId: string,
   username: string,
   displayName: string
-) {
-  const client = initializeStreamChat();
-  if (!client) {
-    console.warn("Skipping Stream user creation - Stream Chat not configured");
-    return;
-  }
-
+) => {
   try {
+    const client = await initializeStream();
+    if (!client) {
+      console.warn("Skipping Stream user creation - client not initialized");
+      return;
+    }
+
     await client.upsertUser({
       id: userId,
       username,
       name: displayName
     });
   } catch (error) {
-    console.error("Failed to create Stream user:", error);
-    // Don't throw - allow the auth flow to continue even if Stream fails
+    console.warn("Failed to create Stream user:", error);
+    // Don't throw - allow the auth flow to continue
   }
-}
+};
