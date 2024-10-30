@@ -6,6 +6,10 @@
       "schedule": "0 2 * * *"
     },
     {
+      "path": "/api/cleanup-media",
+      "schedule": "0 2 * * *"
+    },
+    {
       "path": "/api/cron/cleanup-unverified",
       "schedule": "0 2 * * *"
     },

@@ -9,18 +9,35 @@ import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import "./styles.css";
 
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSubmitPostMutation } from "@/posts/editor/mutations";
 import { useDropzone } from "@uploadthing/react";
-import { ImageIcon, Loader2, X } from "lucide-react";
-import Image from "next/image";
-import { type ClipboardEvent, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
+import type { ClipboardEvent } from "react";
+import { AttachmentPreview } from "./AttachmentPreview";
+import { FileInput } from "./FileInput";
 import useMediaUpload, { type Attachment } from "./useMediaUpload";
+
+const containerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 }
+};
 
 export default function PostEditor() {
   const { user } = useSession();
-
   const mutation = useSubmitPostMutation();
 
   const {
@@ -50,10 +67,7 @@ export default function PostEditor() {
     ]
   });
 
-  const input =
-    editor?.getText({
-      blockSeparator: "\n"
-    }) || "";
+  const input = editor?.getText({ blockSeparator: "\n" }) || "";
 
   function onSubmit() {
     mutation.mutate(
@@ -78,88 +92,116 @@ export default function PostEditor() {
   }
 
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-5">
-      <div className="flex gap-5">
-        <UserAvatar avatarUrl={user.avatarUrl} className="hidden sm:inline" />
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      // @ts-expect-error
+      className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-5 transition-shadow duration-300 hover:shadow-lg"
+    >
+      {/* @ts-expect-error */}
+      <motion.div variants={itemVariants} className="flex gap-5">
+        <div className="hidden sm:inline">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          >
+            <UserAvatar avatarUrl={user.avatarUrl} />
+          </motion.div>
+        </div>
         <div {...rootProps} className="w-full">
-          <EditorContent
-            editor={editor}
+          <motion.div
+            variants={itemVariants}
+            // @ts-expect-error
             className={cn(
-              "max-h-[20rem] w-full overflow-y-auto rounded-2xl bg-[hsl(var(--background-alt))] px-5 py-3 text-foreground",
-              isDragActive && "outline-dashed"
+              "relative rounded-2xl transition-all duration-300",
+              isDragActive && "ring-2 ring-primary ring-offset-2"
             )}
-            onPaste={onPaste}
-          />
+          >
+            <EditorContent
+              editor={editor}
+              className={cn(
+                "max-h-[20rem] w-full overflow-y-auto rounded-2xl bg-[hsl(var(--background-alt))] px-5 py-3 text-foreground",
+                "transition-all duration-300 ease-in-out",
+                "focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2",
+                isDragActive && "outline-dashed outline-primary"
+              )}
+              onPaste={onPaste}
+            />
+            {isDragActive && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                // @ts-expect-error
+                className="absolute inset-0 flex items-center justify-center rounded-2xl bg-primary/10 backdrop-blur-sm"
+              >
+                <p className="font-medium text-lg text-primary">
+                  Drop files here
+                </p>
+              </motion.div>
+            )}
+          </motion.div>
           <input {...getInputProps()} />
         </div>
-      </div>
-      {!!attachments.length && (
-        <AttachmentPreviews
-          attachments={attachments}
-          removeAttachment={removeAttachment}
-        />
-      )}
-      <div className="flex items-center justify-end gap-3">
-        {isUploading && (
-          <>
-            <span className="text-sm">{uploadProgress ?? 0}%</span>
-            <Loader2 className="size-5 animate-spin text-primary" />
-          </>
+      </motion.div>
+
+      <AnimatePresence>
+        {!!attachments.length && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <AttachmentPreviews
+              attachments={attachments}
+              removeAttachment={removeAttachment}
+            />
+          </motion.div>
         )}
-        <AddAttachmentsButton
-          onFilesSelected={startUpload}
-          disabled={isUploading || attachments.length >= 5}
-        />
-        <LoadingButton
-          onClick={onSubmit}
-          loading={mutation.isPending}
-          disabled={!input.trim() || isUploading}
-          className="min-w-20"
-        >
-          Post
-        </LoadingButton>
-      </div>
-    </div>
-  );
-}
+      </AnimatePresence>
 
-interface AddAttachmentsButtonProps {
-  onFilesSelected: (files: File[]) => void;
-  disabled: boolean;
-}
-
-function AddAttachmentsButton({
-  onFilesSelected,
-  disabled
-}: AddAttachmentsButtonProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  return (
-    <>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="text-primary hover:text-primary"
-        disabled={disabled}
-        onClick={() => fileInputRef.current?.click()}
+      <motion.div
+        variants={itemVariants}
+        // @ts-expect-error
+        className="flex items-center justify-end gap-3"
       >
-        <ImageIcon size={20} />
-      </Button>
-      <input
-        type="file"
-        accept="image/*, video/*"
-        multiple
-        ref={fileInputRef}
-        className="sr-only hidden"
-        onChange={(e) => {
-          const files = Array.from(e.target.files || []);
-          if (files.length) {
-            onFilesSelected(files);
-            e.target.value = "";
-          }
-        }}
-      />
-    </>
+        <AnimatePresence>
+          {isUploading && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              // @ts-expect-error
+              className="flex items-center gap-2"
+            >
+              <span className="font-medium text-sm">
+                {uploadProgress ?? 0}%
+              </span>
+              <Loader2 className="size-5 animate-spin text-primary" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <FileInput
+            onFilesSelected={startUpload}
+            disabled={isUploading || attachments.length >= 5}
+          />
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <LoadingButton
+            onClick={onSubmit}
+            loading={mutation.isPending}
+            disabled={!input.trim() || isUploading}
+            className="min-w-20 bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            Post
+          </LoadingButton>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -173,61 +215,33 @@ function AttachmentPreviews({
   removeAttachment
 }: AttachmentPreviewsProps) {
   return (
-    <div
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      // @ts-expect-error
       className={cn(
         "flex flex-col gap-3",
         attachments.length > 1 && "sm:grid sm:grid-cols-2"
       )}
     >
-      {attachments.map((attachment) => (
-        <AttachmentPreview
+      {attachments.map((attachment, index) => (
+        <motion.div
           key={attachment.file.name}
-          attachment={attachment}
-          onRemoveClick={() => removeAttachment(attachment.file.name)}
-        />
-      ))}
-    </div>
-  );
-}
-
-interface AttachmentPreviewProps {
-  attachment: Attachment;
-  onRemoveClick: () => void;
-}
-
-function AttachmentPreview({
-  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
-  attachment: { file, mediaId, isUploading },
-  onRemoveClick
-}: AttachmentPreviewProps) {
-  const src = URL.createObjectURL(file);
-
-  return (
-    <div
-      className={cn("relative mx-auto size-fit", isUploading && "opacity-50")}
-    >
-      {file.type.startsWith("image") ? (
-        <Image
-          src={src}
-          alt="Attachment preview"
-          width={500}
-          height={500}
-          className="size-fit max-h-[30rem] rounded-2xl"
-        />
-      ) : (
-        <video controls className="size-fit max-h-[30rem] rounded-2xl">
-          <source src={src} type={file.type} />
-        </video>
-      )}
-      {!isUploading && (
-        <button
-          type="button"
-          onClick={onRemoveClick}
-          className="absolute top-3 right-3 rounded-full bg-foreground p-1.5 text-background transition-colors hover:bg-foreground/60"
+          variants={itemVariants}
+          custom={index}
+          layout
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.2 }}
         >
-          <X size={20} />
-        </button>
-      )}
-    </div>
+          <AttachmentPreview
+            attachment={attachment}
+            onRemoveClick={() => removeAttachment(attachment.file.name)}
+          />
+        </motion.div>
+      ))}
+    </motion.div>
   );
 }
