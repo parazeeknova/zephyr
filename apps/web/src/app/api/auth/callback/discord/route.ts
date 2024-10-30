@@ -1,4 +1,4 @@
-import streamServerClient from "@/lib/stream";
+import { getStreamClient } from "@/lib/stream";
 import { slugify } from "@/lib/utils";
 import { discord, lucia, validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
@@ -148,7 +148,8 @@ export async function GET(req: NextRequest) {
             }
           });
 
-          await streamServerClient.upsertUser({
+          const streamClient = getStreamClient();
+          await streamClient.upsertUser({
             id: newUser.id,
             username: newUser.username,
             name: newUser.displayName
