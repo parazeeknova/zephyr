@@ -1,4 +1,4 @@
-import streamServerClient from "@/lib/stream";
+import { streamServerClient } from "@/lib/stream";
 import { validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
 import { type FileRouter, createUploadthing } from "uploadthing/next";

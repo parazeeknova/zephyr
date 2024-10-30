@@ -1,7 +1,7 @@
 "use server";
 
 import { sendVerificationEmail } from "@/lib/nodemailer";
-import streamServerClient from "@/lib/stream";
+import { streamServerClient } from "@/lib/stream";
 import { hash } from "@node-rs/argon2";
 import {
   DISPOSABLE_EMAIL_DOMAINS,

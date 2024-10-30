@@ -1,4 +1,4 @@
-import streamServerClient from "@/lib/stream";
+import { streamServerClient } from "@/lib/stream";
 import { lucia } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
 import jwt from "jsonwebtoken";

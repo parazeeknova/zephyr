@@ -1,4 +1,4 @@
-import streamServerClient from "@/lib/stream";
+import { streamServerClient } from "@/lib/stream";
 import { validateRequest } from "@zephyr/auth/auth";
 
 export async function GET() {

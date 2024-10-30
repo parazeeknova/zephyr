@@ -1,4 +1,4 @@
-import streamServerClient from "@/lib/stream";
+import { streamServerClient } from "@/lib/stream";
 import { slugify } from "@/lib/utils";
 import { lucia, twitter, validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";

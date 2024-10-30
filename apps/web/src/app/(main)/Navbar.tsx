@@ -1,4 +1,4 @@
-import streamServerClient from "@/lib/stream";
+import { streamServerClient } from "@/lib/stream";
 import Header from "@zephyr-ui/Layouts/Header";
 import { validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";

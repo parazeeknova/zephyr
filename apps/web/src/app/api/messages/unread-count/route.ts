@@ -1,4 +1,4 @@
-import streamServerClient from "@/lib/stream";
+import { streamServerClient } from "@/lib/stream";
 import { validateRequest } from "@zephyr/auth/auth";
 import type { MessageCountInfo } from "@zephyr/db";
 
