@@ -140,8 +140,16 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
           icon="github"
           isConnected={!!user.githubId}
         />
-        <AccountCard provider="Discord" icon="discord" isComingSoon />
-        <AccountCard provider="Twitter" icon="twitter" isComingSoon />
+        <AccountCard
+          provider="Discord"
+          icon="discord"
+          isConnected={!!user.discordId}
+        />
+        <AccountCard
+          provider="Twitter"
+          icon="twitter"
+          isConnected={!!user.twitterId}
+        />
       </motion.div>
     </motion.div>
   );
