@@ -1,15 +1,12 @@
+import { getStreamConfig, validateEnv } from "@zephyr/config/src/env";
 import { StreamChat } from "stream-chat";
 import prisma from "../src/prisma";
 
 async function cleanupStreamChatUsers() {
-  if (!process.env.NEXT_PUBLIC_STREAM_KEY || !process.env.STREAM_SECRET) {
-    throw new Error("Stream Chat environment variables are not configured");
-  }
+  validateEnv();
+  const { apiKey, secret } = getStreamConfig();
 
-  const streamClient = StreamChat.getInstance(
-    process.env.NEXT_PUBLIC_STREAM_KEY,
-    process.env.STREAM_SECRET
-  );
+  const streamClient = StreamChat.getInstance(apiKey, secret);
 
   try {
     // Get all users from StreamChat

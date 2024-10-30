@@ -2,6 +2,9 @@
   "extends": "@zephyr/config/base.tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
+    "paths": {
+      "ROOT": ["../../apps/web/src/*"]
+    },
     "noEmit": false,
     "outDir": "dist",
     "baseUrl": "."

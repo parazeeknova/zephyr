@@ -1,14 +1,11 @@
 import { PrismaClient } from "@prisma/client";
+import { getStreamConfig, validateEnv } from "@zephyr/config/src/env";
 import { StreamChat } from "stream-chat";
 
-if (!process.env.NEXT_PUBLIC_STREAM_KEY || !process.env.STREAM_SECRET) {
-  throw new Error("Stream Chat environment variables are not configured");
-}
+validateEnv();
 
-const streamClient = StreamChat.getInstance(
-  process.env.NEXT_PUBLIC_STREAM_KEY,
-  process.env.STREAM_SECRET
-);
+const { apiKey, secret } = getStreamConfig();
+const streamClient = StreamChat.getInstance(apiKey, secret);
 
 const prismaClientSingleton = () => {
   return new PrismaClient().$extends({
