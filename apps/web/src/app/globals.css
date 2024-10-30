@@ -241,3 +241,14 @@ body:hover::-webkit-scrollbar-thumb {
     transition-duration: 150ms;
   }
 }
+
+.gif-avatar-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.gif-avatar-container img {
+  position: absolute;
+  transform-origin: center;
+  max-width: none;
+}

@@ -62,6 +62,7 @@ export default function UserButton({ className }: UserButtonProps) {
               avatarUrl={user.avatarUrl}
               size={35}
               className="transition-transform duration-200"
+              priority // Add priority for faster loading
             />
           </Button>
         </motion.div>
