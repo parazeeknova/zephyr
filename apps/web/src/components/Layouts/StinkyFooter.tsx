@@ -7,22 +7,22 @@ const StickyFooter: React.FC = () => {
       <div className="flex items-center justify-center space-x-2">
         <span className="font-sofiaProSoftBold">&copy; 2024</span>
         <span className="font-sofiaProSoftBold">Zephyr</span>
-        <Link href="/terms" className="hover:underline">
+        <Link href="/toc" className="hover:underline">
           Terms
         </Link>
         <Link href="/privacy" className="hover:underline">
           Privacy
         </Link>
-        <Link href="/feedback" className="hover:underline">
+        <Link href="/soon" className="hover:underline">
           Feedback
         </Link>
       </div>
       <div className="flex justify-center space-x-2">
-        <Link href="/status" className="hover:underline">
+        <Link href="/soon" className="hover:underline">
           Status
         </Link>
         <a
-          href="https://discord.gg/zephyr"
+          href="/soon"
           target="_blank"
           rel="noopener noreferrer"
           className="hover:text-foreground"
@@ -45,18 +45,18 @@ const StickyFooter: React.FC = () => {
         >
           Twitter
         </a>
-        <Link href="/rules" className="hover:underline">
+        <Link href="/soon" className="hover:underline">
           Rules
         </Link>
       </div>
       <div className="flex justify-center space-x-2">
-        <Link href="/support" className="hover:underline">
+        <Link href="/soon" className="hover:underline">
           Support
         </Link>
-        <Link href="/about" className="hover:underline">
+        <Link href="/soon" className="hover:underline">
           About
         </Link>
-        <Link href="/more" className="hover:underline">
+        <Link href="/soon" className="hover:underline">
           More...
         </Link>
       </div>

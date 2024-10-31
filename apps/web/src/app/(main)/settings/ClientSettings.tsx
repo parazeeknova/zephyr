@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatedZephyrText } from "@/app/(auth)/client/ClientLoginPage";
+import { FossBanner } from "@/components/misc/foss-banner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { UserData } from "@zephyr/db";
 import { motion } from "framer-motion";
@@ -90,6 +91,8 @@ export default function ClientSettings({ user }: ClientSettingsProps) {
               </TabsContent>
             </div>
           </Tabs>
+
+          <FossBanner className="mt-8" />
 
           {/* Background gradient effect */}
           <div className="-z-10 absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 via-secondary/5 to-background blur-3xl" />
