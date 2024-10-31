@@ -1,20 +1,28 @@
+// src/lib/stream.ts
+import { getStreamConfig, isStreamConfigured } from "@zephyr/config/src/env";
 import { StreamChat } from "stream-chat";
 
-if (!process.env.NEXT_PUBLIC_STREAM_KEY || !process.env.STREAM_SECRET) {
-  throw new Error("Stream credentials are not properly configured");
+let streamClient: StreamChat | null = null;
+
+export function getStreamClient(): StreamChat {
+  if (!streamClient && isStreamConfigured()) {
+    const config = getStreamConfig();
+    streamClient = StreamChat.getInstance(config.apiKey, config.secret);
+  }
+
+  if (!streamClient) {
+    throw new Error("Stream client not initialized - missing configuration");
+  }
+
+  return streamClient;
 }
 
-const streamServerClient = StreamChat.getInstance(
-  process.env.NEXT_PUBLIC_STREAM_KEY,
-  process.env.STREAM_SECRET,
-  { timeout: 15000 }
-);
-
-export const getStreamClient = () => streamServerClient;
-
-export const generateStreamUserToken = (userId: string) => {
-  if (!streamServerClient) {
-    throw new Error("Stream client not initialized");
+export function generateStreamUserToken(userId: string): string | null {
+  try {
+    const client = getStreamClient();
+    return client.createToken(userId);
+  } catch (error) {
+    console.warn("Failed to generate Stream user token:", error);
+    return null;
   }
-  return streamServerClient.createToken(userId);
-};
+}

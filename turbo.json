@@ -1,5 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
   "ui": "tui",
   "tasks": {
     "db:generate": {
@@ -22,7 +23,7 @@
     },
     "dev": {
       "dependsOn": ["^db:generate"],
-      "cache": true,
+      "cache": false,
       "persistent": true
     }
   }

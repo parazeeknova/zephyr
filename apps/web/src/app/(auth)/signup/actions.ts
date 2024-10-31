@@ -281,11 +281,16 @@ export async function signUp(
         }
       });
 
-      await streamClient.upsertUser({
-        id: userId,
-        username,
-        name: username
-      });
+      try {
+        await streamClient.upsertUser({
+          id: userId,
+          username,
+          name: username
+        });
+      } catch (streamError) {
+        console.warn("Failed to create Stream user:", streamError);
+        // Continue with signup even if Stream fails
+      }
     });
 
     // Send verification email

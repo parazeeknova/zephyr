@@ -1,16 +1,27 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  transpilePackages: ["@zephyr/auth", "@zephyr/db"],
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  transpilePackages: ["@zephyr/auth", "@zephyr/db", "@zephyr/config"],
   reactStrictMode: true,
   experimental: {
     staleTimes: {
       dynamic: 30
     }
   },
+
   compiler: {
-    styledComponents: true
+    styledComponents: true,
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? {
+            exclude: ["error", "warn"]
+          }
+        : false
   },
+
   serverExternalPackages: ["@node-rs/argon2", "@prisma/client"],
+  poweredByHeader: false,
+
   images: {
     remotePatterns: [
       {
@@ -45,7 +56,8 @@ const nextConfig = {
       }
     ]
   },
-  rewrites: () => {
+
+  rewrites: async () => {
     return [
       {
         source: "/hashtag/:tag",
@@ -53,10 +65,13 @@ const nextConfig = {
       }
     ];
   },
+
   env: {
     NEXT_PRIVATE_SKIP_VALIDATION:
-      process.env.NEXT_PRIVATE_SKIP_VALIDATION || "false"
+      process.env.NEXT_PRIVATE_SKIP_VALIDATION || "false",
+    NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV || "development"
   },
+
   webpack: (config, { dev, isServer }) => {
     // Skip validation for static pages during build
     if (isServer && !dev) {
@@ -64,14 +79,30 @@ const nextConfig = {
       config.entry = async () => {
         const entries = await originalEntry();
         if (entries["app/not-found"] || entries["pages/_error"]) {
-          // Set skip validation for error and not-found pages
           process.env.NEXT_PRIVATE_SKIP_VALIDATION = "true";
         }
         return entries;
       };
     }
+
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        stream: false,
+        util: false,
+        buffer: false,
+        process: false
+      };
+    }
+
     return config;
-  }
-};
+  },
+
+  output: "standalone"
+} as const;
 
 export default nextConfig;
