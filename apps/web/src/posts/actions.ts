@@ -1,6 +1,12 @@
 "use server";
 
-import { getPostDataInclude, prisma } from "@zephyr/db";
+import {
+  POST_VIEWS_KEY_PREFIX,
+  POST_VIEWS_SET,
+  getPostDataInclude,
+  prisma,
+  redis
+} from "@zephyr/db";
 
 import { validateRequest } from "@zephyr/auth/auth";
 
@@ -21,6 +27,18 @@ export async function deletePost(id: string) {
     where: { id },
     include: getPostDataInclude(user.id)
   });
+
+  // Clean up Redis entries
+  try {
+    await Promise.all([
+      // Remove from views set
+      redis.srem(POST_VIEWS_SET, id),
+      // Delete view count
+      redis.del(`${POST_VIEWS_KEY_PREFIX}${id}`)
+    ]);
+  } catch (error) {
+    console.error("Error cleaning up Redis cache for deleted post:", error);
+  }
 
   return deletedPost;
 }
