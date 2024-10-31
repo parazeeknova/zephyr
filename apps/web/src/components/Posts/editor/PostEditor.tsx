@@ -64,7 +64,13 @@ export default function PostEditor() {
       Placeholder.configure({
         placeholder: "What's crack-a-lackin'?"
       })
-    ]
+    ],
+    editorProps: {
+      attributes: {
+        class: "focus:outline-none"
+      }
+    },
+    immediatelyRender: false
   });
 
   const input = editor?.getText({ blockSeparator: "\n" }) || "";
@@ -124,7 +130,7 @@ export default function PostEditor() {
               className={cn(
                 "max-h-[20rem] w-full overflow-y-auto rounded-2xl bg-[hsl(var(--background-alt))] px-5 py-3 text-foreground",
                 "transition-all duration-300 ease-in-out",
-                "focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2",
+                "focus-within:ring-2 focus-within:ring-primary",
                 isDragActive && "outline-dashed outline-primary"
               )}
               onPaste={onPaste}

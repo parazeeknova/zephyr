@@ -9,7 +9,7 @@
   "dependencies": {
     "@prisma/client": "^5.21.1",
     "date-fns": "^4.1.0",
-    "stream-chat": "^8.40.9"
+    "stream-chat": "^8.42.0"
   },
   "scripts": {
     "db:generate": "prisma generate --schema=./prisma/schema.prisma",
@@ -23,7 +23,7 @@
     "cleanup-streamchat": "ts-node scripts/cleanup-streamchat.ts"
   },
   "devDependencies": {
-    "@types/node": "^22.7.8",
+    "@types/node": "^22.8.4",
     "@zephyr/config": "workspace:*",
     "prisma": "^5.21.1",
     "ts-loader": "^9.5.1",

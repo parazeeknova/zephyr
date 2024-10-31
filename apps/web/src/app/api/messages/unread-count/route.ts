@@ -1,4 +1,4 @@
-import streamServerClient from "@/lib/stream";
+import { getStreamClient } from "@/lib/stream";
 import { validateRequest } from "@zephyr/auth/auth";
 import type { MessageCountInfo } from "@zephyr/db";
 
@@ -8,15 +8,16 @@ export async function GET() {
     if (!user) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const { total_unread_count } = await streamServerClient.getUnreadCount(
-      user.id
-    );
+
+    const streamClient = getStreamClient();
+    const { total_unread_count } = await streamClient.getUnreadCount(user.id);
+
     const data: MessageCountInfo = {
       unreadCount: total_unread_count
     };
     return Response.json(data);
   } catch (error) {
-    console.error(error);
+    console.error("Stream error:", error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -65,9 +65,7 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
               "hover:scale-110 active:scale-95",
               "before:absolute before:inset-0 before:z-0 before:opacity-0 before:transition-opacity",
               "before:duration-300 before:ease-in-out hover:before:opacity-100",
-              hoveredButton === buttonType
-                ? "ring-2 ring-primary ring-offset-2"
-                : "",
+              hoveredButton === buttonType ? "ring-2 ring-primary" : "",
               buttonType === "image" &&
                 "before:bg-gradient-to-r before:from-pink-500/10 before:to-purple-500/10",
               buttonType === "audio" &&
@@ -86,7 +84,7 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
             <Icon
               size={20}
               className={cn(
-                "relative z-10 text-primary transition-transform duration-300",
+                "relative z-10 text-muted-foreground transition-transform duration-300",
                 hoveredButton === buttonType && "rotate-12 transform"
               )}
             />

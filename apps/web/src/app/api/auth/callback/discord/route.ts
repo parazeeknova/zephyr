@@ -1,4 +1,4 @@
-import streamServerClient from "@/lib/stream";
+import { getStreamClient } from "@/lib/stream";
 import { slugify } from "@/lib/utils";
 import { discord, lucia, validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
@@ -6,6 +6,8 @@ import { OAuth2RequestError } from "arctic";
 import { generateIdFromEntropySize } from "lucia";
 import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
@@ -148,11 +150,19 @@ export async function GET(req: NextRequest) {
             }
           });
 
-          await streamServerClient.upsertUser({
-            id: newUser.id,
-            username: newUser.username,
-            name: newUser.displayName
-          });
+          const streamClient = getStreamClient();
+          if (streamClient) {
+            try {
+              await streamClient.upsertUser({
+                id: newUser.id,
+                username: newUser.username,
+                name: newUser.displayName
+              });
+            } catch (error) {
+              console.warn("Failed to create Stream user:", error);
+              // Continue with auth flow even if Stream fails
+            }
+          }
         });
 
         const session = await lucia.createSession(userId, {});

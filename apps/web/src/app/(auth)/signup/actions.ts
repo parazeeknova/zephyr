@@ -1,7 +1,7 @@
 "use server";
 
 import { sendVerificationEmail } from "@/lib/nodemailer";
-import streamServerClient from "@/lib/stream";
+import { getStreamClient } from "@/lib/stream";
 import { hash } from "@node-rs/argon2";
 import {
   DISPOSABLE_EMAIL_DOMAINS,
@@ -258,6 +258,8 @@ export async function signUp(
       expiresIn: "1h"
     });
 
+    const streamClient = getStreamClient();
+
     // Create user with verification token
     await prisma.$transaction(async (tx) => {
       await tx.user.create({
@@ -279,11 +281,16 @@ export async function signUp(
         }
       });
 
-      await streamServerClient.upsertUser({
-        id: userId,
-        username,
-        name: username
-      });
+      try {
+        await streamClient.upsertUser({
+          id: userId,
+          username,
+          name: username
+        });
+      } catch (streamError) {
+        console.warn("Failed to create Stream user:", streamError);
+        // Continue with signup even if Stream fails
+      }
     });
 
     // Send verification email

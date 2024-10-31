@@ -1,9 +1,28 @@
+// src/lib/stream.ts
+import { getStreamConfig, isStreamConfigured } from "@zephyr/config/src/env";
 import { StreamChat } from "stream-chat";
 
-const streamServerClient = StreamChat.getInstance(
-  // biome-ignore lint/style/noNonNullAssertion: This is a public key that is required to be set in the environment else the app will not work
-  process.env.NEXT_PUBLIC_STREAM_KEY!,
-  process.env.STREAM_SECRET
-);
+let streamClient: StreamChat | null = null;
 
-export default streamServerClient;
+export function getStreamClient(): StreamChat {
+  if (!streamClient && isStreamConfigured()) {
+    const config = getStreamConfig();
+    streamClient = StreamChat.getInstance(config.apiKey, config.secret);
+  }
+
+  if (!streamClient) {
+    throw new Error("Stream client not initialized - missing configuration");
+  }
+
+  return streamClient;
+}
+
+export function generateStreamUserToken(userId: string): string | null {
+  try {
+    const client = getStreamClient();
+    return client.createToken(userId);
+  } catch (error) {
+    console.warn("Failed to generate Stream user token:", error);
+    return null;
+  }
+}
