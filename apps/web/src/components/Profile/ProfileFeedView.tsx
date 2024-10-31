@@ -6,13 +6,18 @@ import type { UserData } from "@zephyr/db";
 import { motion } from "framer-motion";
 import type React from "react";
 import UserPosts from "./UserPost";
+import UserDetails from "./sidebars/right/UserDetails";
 
 interface ProfileFeedViewProps {
   username: string;
   userData: UserData;
+  loggedInUserId: string;
 }
 
-const ProfileFeedView: React.FC<ProfileFeedViewProps> = ({ userData }) => {
+const ProfileFeedView: React.FC<ProfileFeedViewProps> = ({
+  userData,
+  loggedInUserId
+}) => {
   const tabConfig = [
     { value: "all", label: "All" },
     { value: "scribbles", label: "Fleets" },
@@ -28,33 +33,13 @@ const ProfileFeedView: React.FC<ProfileFeedViewProps> = ({ userData }) => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="mb-6 overflow-hidden">
-          <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            // @ts-expect-error
-            className="relative"
-          >
-            <div
-              className="absolute inset-0 border border-primary bg-center bg-cover"
-              style={{
-                backgroundImage: `url(${userData.avatarUrl})`,
-                filter: "blur(8px)",
-                opacity: 0.3,
-                transform: "scale(1.1)"
-              }}
-            />
-            <div className="relative px-4 py-8">
-              <h1 className="text-center font-bold text-2xl uppercase">
-                {userData.displayName}'s Profile
-              </h1>
-              <p className="mt-1 text-center text-muted-foreground">
-                You are viewing {userData.displayName}'s fleets.
-              </p>
-            </div>
-          </motion.div>
-        </Card>
+        <div className="mt-2 mb-10 md:hidden">
+          <UserDetails userData={userData} loggedInUserId={loggedInUserId} />
+        </div>
+
+        <div className="hidden md:block">
+          <ProfileHeader userData={userData} />
+        </div>
 
         <Card className="mb-8 bg-card shadow-lg">
           <div className="p-4">
@@ -93,9 +78,43 @@ const ProfileFeedView: React.FC<ProfileFeedViewProps> = ({ userData }) => {
             </Tabs>
           </div>
         </Card>
+
+        <div className="mb-16 md:hidden">
+          <ProfileHeader userData={userData} />
+        </div>
       </motion.main>
     </div>
   );
 };
 
 export default ProfileFeedView;
+
+const ProfileHeader: React.FC<{ userData: UserData }> = ({ userData }) => (
+  <Card className="mb-6 overflow-hidden">
+    <motion.div
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ delay: 0.2, duration: 0.5 }}
+      // @ts-ignore
+      className="relative"
+    >
+      <div
+        className="absolute inset-0 border border-primary bg-center bg-cover"
+        style={{
+          backgroundImage: `url(${userData.avatarUrl})`,
+          filter: "blur(8px)",
+          opacity: 0.3,
+          transform: "scale(1.1)"
+        }}
+      />
+      <div className="relative px-4 py-8">
+        <h1 className="text-center font-bold text-2xl uppercase">
+          {userData.displayName}'s Profile
+        </h1>
+        <p className="mt-1 text-center text-muted-foreground">
+          You are viewing {userData.displayName}'s fleets.
+        </p>
+      </div>
+    </motion.div>
+  </Card>
+);

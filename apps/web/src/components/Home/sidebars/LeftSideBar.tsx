@@ -5,6 +5,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import ContributeCard from "@zephyr-ui/misc/ContributionCard";
 import Friends from "./left/Friends";
 import NavigationCard from "./left/NavigationCard";
 
@@ -66,6 +67,7 @@ const LeftSideBar: React.FC = () => {
           >
             <NavigationCard isCollapsed={isCollapsed && !isHovered} />
             <Friends isCollapsed={isCollapsed && !isHovered} />
+            <ContributeCard isCollapsed={isCollapsed && !isHovered} />
           </div>
         </div>
       )}

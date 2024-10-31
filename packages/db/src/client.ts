@@ -14,6 +14,7 @@ export function getUserDataSelect(loggedInUserId: string) {
     discordId: true,
     twitterId: true,
     passwordHash: true,
+    emailVerified: true,
     followers: {
       where: {
         followerId: loggedInUserId
