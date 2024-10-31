@@ -1,20 +1,25 @@
 import { cn } from "@/lib/utils";
 import avatarPlaceholder from "@zephyr-assets/avatar-placeholder.png";
+import type { UserData } from "@zephyr/db";
 import Image from "next/image";
 
 interface UserAvatarProps {
-  avatarUrl: string | null | undefined;
+  user?: Pick<UserData, "avatarUrl"> | null;
+  avatarUrl?: string | null;
   size?: number;
   className?: string;
   priority?: boolean;
 }
 
 export default function UserAvatar({
-  avatarUrl,
+  user,
+  avatarUrl: directAvatarUrl,
   size,
   className,
   priority = false
 }: UserAvatarProps) {
+  const avatarUrl = user?.avatarUrl ?? directAvatarUrl;
+
   return (
     <Image
       src={avatarUrl || avatarPlaceholder}

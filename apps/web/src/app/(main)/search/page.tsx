@@ -46,7 +46,7 @@ export default async function Page(props: PageProps) {
         </div>
       </aside>
 
-      <div className="mt-5 w-full min-w-0 space-y-5">
+      <div className="mt-5 mr-4 mb-14 ml-4 w-full min-w-0 space-y-5 md:mr-0 md:mb-0 md:ml-0">
         <SearchResults query={q} />
       </div>
 
