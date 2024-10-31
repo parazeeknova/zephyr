@@ -1,5 +1,6 @@
 "use client";
 
+import { FossBanner } from "@/components/misc/foss-banner";
 import { motion } from "framer-motion";
 import {
   Construction,
@@ -135,6 +136,8 @@ export default function ComingSoon() {
               description="Get personalized suggestions based on your interests and activities"
             />
           </motion.div>
+
+          <FossBanner />
 
           {/* Progress Indicator */}
           <motion.div
