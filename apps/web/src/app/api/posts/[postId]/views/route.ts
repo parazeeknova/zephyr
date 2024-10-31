@@ -1,14 +1,16 @@
 import { postViewsCache } from "@zephyr/db";
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(
-  _request: Request,
-  context: { params: { postId: string } }
+  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
+  request: NextRequest,
+  context: { params: Promise<{ postId: string }> }
 ) {
   try {
-    const { postId } = await Promise.resolve(context.params);
+    const { postId } = await context.params;
 
     if (!postId) {
       return NextResponse.json(
