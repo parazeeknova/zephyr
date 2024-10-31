@@ -1,127 +1,109 @@
-import { Redis } from "@upstash/redis";
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { validateRequest } from "@zephyr/auth/auth";
+import { prisma, redis } from "@zephyr/db";
+import { type NextRequest, NextResponse } from "next/server";
 
-export const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || "",
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || ""
+const r2Client = new S3Client({
+  region: "auto",
+  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!
+  }
 });
 
-export interface TrendingTopic {
-  hashtag: string;
-  count: number;
-}
+export const dynamic = "force-dynamic";
 
-const TRENDING_TOPICS_KEY = "trending:topics";
-const TRENDING_TOPICS_BACKUP_KEY = "trending:topics:backup";
-const CACHE_TTL = 3600; // 1 hour in seconds
-const BACKUP_TTL = 86400; // 24 hours in seconds
+const DOWNLOAD_COOLDOWN = 120; // 2 minutes in seconds
 
-export const trendingTopicsCache = {
-  async get(): Promise<TrendingTopic[] | null> {
-    try {
-      const cached = await redis.get(TRENDING_TOPICS_KEY);
-      // Handle both string and direct object responses
-      if (!cached) return null;
+export async function GET(
+  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
+  request: NextRequest,
+  context: { params: Promise<{ mediaId: string }> }
+): Promise<NextResponse | Response> {
+  const { mediaId } = await context.params;
 
-      if (Array.isArray(cached)) {
-        return cached as TrendingTopic[];
-      }
-
-      if (typeof cached === "string") {
-        return JSON.parse(cached) as TrendingTopic[];
-      }
-
-      console.error("Unexpected cache value type:", typeof cached);
-      return null;
-    } catch (error) {
-      console.error("Error getting trending topics from cache:", error);
-      return this.getBackup();
+  try {
+    const { user } = await validateRequest();
+    if (!user) {
+      return new NextResponse("Unauthorized", { status: 401 });
     }
-  },
 
-  async getBackup(): Promise<TrendingTopic[] | null> {
-    try {
-      const backup = await redis.get(TRENDING_TOPICS_BACKUP_KEY);
-      if (!backup) return null;
+    // Check rate limit
+    const downloadKey = `download:${user.id}:${mediaId}`;
+    const lastDownload = await redis.get(downloadKey);
 
-      if (Array.isArray(backup)) {
-        return backup as TrendingTopic[];
+    if (lastDownload) {
+      const timeLeft =
+        DOWNLOAD_COOLDOWN -
+        Math.floor((Date.now() - Number(lastDownload)) / 1000);
+      if (timeLeft > 0) {
+        return new NextResponse(
+          JSON.stringify({
+            error: "Rate limit exceeded",
+            message: `Please wait ${timeLeft} seconds before downloading this file again`,
+            timeLeft
+          }),
+          {
+            status: 429,
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }
+        );
       }
-
-      if (typeof backup === "string") {
-        return JSON.parse(backup) as TrendingTopic[];
-      }
-
-      console.error("Unexpected backup value type:", typeof backup);
-      return null;
-    } catch (error) {
-      console.error("Error getting trending topics backup:", error);
-      return null;
     }
-  },
 
-  async set(topics: TrendingTopic[]): Promise<void> {
-    try {
-      // Explicitly stringify the data
-      const stringifiedTopics = JSON.stringify(topics);
-
-      await redis.set(TRENDING_TOPICS_KEY, stringifiedTopics, {
-        ex: CACHE_TTL
-      });
-
-      await redis.set(TRENDING_TOPICS_BACKUP_KEY, stringifiedTopics, {
-        ex: BACKUP_TTL
-      });
-
-      await redis.set(
-        `${TRENDING_TOPICS_KEY}:last_updated`,
-        Date.now().toString(),
-        {
-          ex: BACKUP_TTL
+    // Get media
+    const media = await prisma.media.findUnique({
+      where: { id: mediaId },
+      select: {
+        key: true,
+        type: true,
+        post: {
+          select: {
+            userId: true
+          }
         }
-      );
-    } catch (error) {
-      console.error("Error setting trending topics cache:", error);
+      }
+    });
+
+    if (!media) {
+      return new NextResponse("Media not found", { status: 404 });
     }
-  },
 
-  async invalidate(): Promise<void> {
-    try {
-      await redis.del(TRENDING_TOPICS_KEY);
-    } catch (error) {
-      console.error("Error invalidating trending topics cache:", error);
-    }
-  },
+    // Set rate limit
+    await redis.set(downloadKey, Date.now(), {
+      ex: DOWNLOAD_COOLDOWN // Expire key after cooldown period
+    });
 
-  async shouldRefresh(): Promise<boolean> {
-    try {
-      const lastUpdated = await redis.get(
-        `${TRENDING_TOPICS_KEY}:last_updated`
-      );
-      if (!lastUpdated) return true;
+    // Generate signed URL with specific headers for download
+    const command = new GetObjectCommand({
+      Bucket: process.env.R2_BUCKET_NAME,
+      Key: media.key,
+      ResponseContentDisposition: `attachment; filename="${media.key.split("/").pop()}"`
+    });
 
-      const timestamp =
-        typeof lastUpdated === "string"
-          ? Number.parseInt(lastUpdated, 10)
-          : Number(lastUpdated);
+    const url = await getSignedUrl(r2Client, command, {
+      expiresIn: 60
+    });
 
-      if (Number.isNaN(timestamp)) return true;
+    const response = await fetch(url);
+    const blob = await response.blob();
 
-      const timeSinceUpdate = Date.now() - timestamp;
-      return timeSinceUpdate > (CACHE_TTL * 1000) / 2;
-    } catch {
-      return true;
-    }
-  },
-
-  async warmCache(): Promise<void> {
-    try {
-      const shouldWarm = await this.shouldRefresh();
-      if (!shouldWarm) return;
-      await this.refreshCache();
-    } catch (error) {
-      console.error("Error warming trending topics cache:", error);
-    }
-  },
-
-  refreshCache: null as unknown as () => Promise<TrendingTopic[]>
-};
+    return new Response(blob, {
+      headers: {
+        "Content-Type":
+          response.headers.get("Content-Type") || "application/octet-stream",
+        "Content-Disposition": `attachment; filename="${media.key.split("/").pop()}"`,
+        "Content-Length": response.headers.get("Content-Length") || ""
+      }
+    });
+  } catch (error) {
+    console.error("Download failed:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+}
