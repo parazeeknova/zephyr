@@ -21,7 +21,9 @@
     "pre-migrate": "tsx scripts/pre-migration-check.ts",
     "migrate:safe": "pnpm run backup && pnpm run pre-migrate && pnpm prisma migrate dev --create-only",
     "migrate:apply": "pnpm prisma migrate deploy",
-    "cleanup-streamchat": "ts-node scripts/cleanup-streamchat.ts"
+    "cleanup-streamchat": "ts-node scripts/cleanup-streamchat.ts",
+    "post:syncviews": "ts-node scripts/sync-view-counts.ts",
+    "post:viewtest": "ts-node test/test-view-count.ts"
   },
   "devDependencies": {
     "@types/node": "^22.8.4",

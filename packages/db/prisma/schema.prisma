@@ -97,6 +97,7 @@ model Post {
   userId              String
   user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   aura                Int            @default(0)
+  viewCount           Int            @default(0)
   attachments         Media[]
   bookmarks           Bookmark[]
   comments            Comment[]

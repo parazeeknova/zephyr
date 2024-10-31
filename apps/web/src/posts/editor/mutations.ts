@@ -1,13 +1,11 @@
+import { useToast } from "@/hooks/use-toast";
 import {
   type InfiniteData,
   type QueryFilters,
   useMutation,
   useQueryClient
 } from "@tanstack/react-query";
-
-import { useToast } from "@/hooks/use-toast";
 import type { PostsPage } from "@zephyr/db";
-
 import { submitPost } from "./actions";
 
 export function useSubmitPostMutation() {
