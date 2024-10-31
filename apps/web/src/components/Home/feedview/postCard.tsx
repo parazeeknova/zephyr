@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, Eye, MessageSquare, Share2 } from "lucide-react";
+import { ArrowUpRight, Eye, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 
@@ -67,9 +67,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
           <Button
             variant="ghost"
             size="sm"
-            className="text-muted-foreground hover:text-foreground"
+            className="flex items-center space-x-2 text-muted-foreground"
           >
-            <Share2 className="h-4 w-4" />
+            <Eye className="h-4 w-4" />
+            <span className="text-sm tabular-nums">{post.viewCount}</span>
           </Button>
           <BookmarkButton
             postId={post.id}
@@ -79,14 +80,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
               )
             }}
           />
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center space-x-2 text-muted-foreground"
-          >
-            <Eye className="h-4 w-4" />
-            <span className="text-sm tabular-nums">{post.viewCount}</span>
-          </Button>
         </div>
       </div>
 

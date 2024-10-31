@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatedZephyrText } from "@/app/(auth)/client/ClientLoginPage";
+import { LegalLinksCard } from "@/components/misc/LegalLinksCard";
 import { FossBanner } from "@/components/misc/foss-banner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { UserData } from "@zephyr/db";
@@ -92,6 +93,7 @@ export default function ClientSettings({ user }: ClientSettingsProps) {
             </div>
           </Tabs>
 
+          <LegalLinksCard className="mt-8" />
           <FossBanner className="mt-8" />
 
           {/* Background gradient effect */}
