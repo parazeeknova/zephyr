@@ -1,6 +1,6 @@
 "use server";
 
-import { streamServerClient } from "@/lib/stream";
+import { getStreamClient } from "@/lib/stream";
 import { validateRequest } from "@zephyr/auth/auth";
 import {
   type UpdateUserProfileValues,
@@ -15,6 +15,8 @@ export async function updateUserProfile(values: UpdateUserProfileValues) {
 
   if (!user) throw new Error("Unauthorized");
 
+  const streamClient = getStreamClient();
+
   const updatedUser = await prisma.$transaction(async (tx) => {
     const updatedUser = await tx.user.update({
       where: { id: user.id },
@@ -22,12 +24,13 @@ export async function updateUserProfile(values: UpdateUserProfileValues) {
       select: getUserDataSelect(user.id)
     });
 
-    await streamServerClient.partialUpdateUser({
+    await streamClient.partialUpdateUser({
       id: user.id,
       set: {
         name: validatedValues.displayName
       }
     });
+
     return updatedUser;
   });
 

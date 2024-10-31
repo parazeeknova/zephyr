@@ -1,4 +1,4 @@
-import { streamServerClient } from "@/lib/stream";
+import { getStreamClient } from "@/lib/stream";
 import { lucia } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
 import jwt from "jsonwebtoken";
@@ -58,6 +58,8 @@ export async function GET(req: NextRequest) {
         );
       }
 
+      const streamClient = getStreamClient();
+
       // Update user, cleanup, and create Stream Chat user in a transaction
       await prisma.$transaction(async (tx) => {
         // Update user verification status
@@ -72,7 +74,7 @@ export async function GET(req: NextRequest) {
         });
 
         // Create Stream Chat user
-        await streamServerClient.upsertUser({
+        await streamClient.upsertUser({
           id: user.id,
           name: user.displayName,
           username: user.username

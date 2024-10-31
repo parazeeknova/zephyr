@@ -1,16 +1,4 @@
-let streamClient: any = null;
-
-export const initializeStream = async () => {
-  if (!streamClient) {
-    try {
-      const { getStreamClient } = await import("./stream");
-      streamClient = await getStreamClient();
-    } catch (error) {
-      console.warn("Failed to initialize Stream client:", error);
-    }
-  }
-  return streamClient;
-};
+import { getStreamClient } from "./stream";
 
 export const createStreamUser = async (
   userId: string,
@@ -18,7 +6,7 @@ export const createStreamUser = async (
   displayName: string
 ) => {
   try {
-    const client = await initializeStream();
+    const client = getStreamClient();
     if (!client) {
       console.warn("Skipping Stream user creation - client not initialized");
       return;

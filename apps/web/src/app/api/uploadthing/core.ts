@@ -1,4 +1,4 @@
-import { streamServerClient } from "@/lib/stream";
+import { getStreamClient } from "@/lib/stream";
 import { validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
 import { type FileRouter, createUploadthing } from "uploadthing/next";
@@ -39,6 +39,8 @@ export const fileRouter = {
         `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`
       );
 
+      const streamClient = getStreamClient();
+
       await Promise.all([
         prisma.user.update({
           where: { id: metadata.user.id },
@@ -46,7 +48,7 @@ export const fileRouter = {
             avatarUrl: newAvatarUrl
           }
         }),
-        streamServerClient.partialUpdateUser({
+        streamClient.partialUpdateUser({
           id: metadata.user.id,
           set: {
             image: newAvatarUrl

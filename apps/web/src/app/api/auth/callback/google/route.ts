@@ -1,4 +1,4 @@
-import { streamServerClient } from "@/lib/stream";
+import { getStreamClient } from "@/lib/stream";
 import { slugify } from "@/lib/utils";
 import { google, lucia, validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
@@ -146,6 +146,8 @@ export async function GET(req: NextRequest) {
     const username = `${slugify(googleUser.name)}-${userId.slice(0, 4)}`;
 
     try {
+      const streamClient = getStreamClient();
+
       await prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
           data: {
@@ -159,7 +161,7 @@ export async function GET(req: NextRequest) {
           }
         });
 
-        await streamServerClient.upsertUser({
+        await streamClient.upsertUser({
           id: newUser.id,
           username: newUser.username,
           name: newUser.displayName
