@@ -1,22 +1,20 @@
 "use client";
 
+import { useSession } from "@/app/(main)/SessionProvider";
+import { cn } from "@/lib/utils";
+import { useSubmitPostMutation } from "@/posts/editor/mutations";
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-
-import { useSession } from "@/app/(main)/SessionProvider";
+import { useDropzone } from "@uploadthing/react";
 import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import "./styles.css";
-
-import { cn } from "@/lib/utils";
-import { useSubmitPostMutation } from "@/posts/editor/mutations";
-import { useDropzone } from "@uploadthing/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import type { ClipboardEvent } from "react";
 import { AttachmentPreview } from "./AttachmentPreview";
 import { FileInput } from "./FileInput";
+import "./styles.css";
 import useMediaUpload, { type Attachment } from "./useMediaUpload";
 
 const containerVariants = {

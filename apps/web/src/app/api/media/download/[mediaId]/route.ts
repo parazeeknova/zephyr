@@ -1,8 +1,7 @@
-import { redis } from "@/lib/redis";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { validateRequest } from "@zephyr/auth/auth";
-import { prisma } from "@zephyr/db";
+import { prisma, redis } from "@zephyr/db";
 import { type NextRequest, NextResponse } from "next/server";
 
 const r2Client = new S3Client({

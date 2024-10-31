@@ -270,3 +270,28 @@ body:hover::-webkit-scrollbar-thumb {
   @apply font-medium text-lg bg-gradient-to-r from-primary to-secondary;
   @apply bg-clip-text text-transparent;
 }
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.trending-gradient {
+  background: linear-gradient(
+    -45deg,
+    var(--primary) /
+    0.05,
+    transparent,
+    var(--primary) /
+    0.08
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}

@@ -1,12 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, MessageSquare, Share2 } from "lucide-react";
+import { ArrowUpRight, Eye, MessageSquare, Share2 } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 
 import { useSession } from "@/app/(main)/SessionProvider";
 import UserTooltip from "@/components/Layouts/UserTooltip";
+import ViewTracker from "@/components/Posts/ViewCounter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -78,6 +79,14 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
               )
             }}
           />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex items-center space-x-2 text-muted-foreground"
+          >
+            <Eye className="h-4 w-4" />
+            <span className="text-sm tabular-nums">{post.viewCount}</span>
+          </Button>
         </div>
       </div>
 
@@ -131,7 +140,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
+      // @ts-expect-error
+      id={`post-${post.id}`}
     >
+      <ViewTracker postId={post.id} />
       {isJoined ? (
         <div className="group/post">
           <div className="p-4">

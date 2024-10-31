@@ -2,20 +2,12 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "crons": [
     {
-      "path": "/api/clear-uploads",
-      "schedule": "0 2 * * *"
+      "path": "/api/cron/sync-views",
+      "schedule": "0 1 * * *"
     },
     {
-      "path": "/api/cleanup-media",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/cleanup-unverified",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/cleanup-reset-tokens",
-      "schedule": "0 2 * * *"
+      "path": "/api/cron/maintenance",
+      "schedule": "0 1 * * *"
     }
   ]
 }
