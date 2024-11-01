@@ -26,33 +26,45 @@ trendingTopicsCache.refreshCache = async function (): Promise<TrendingTopic[]> {
   return topics;
 };
 
+export async function invalidateTrendingTopicsCache(): Promise<
+  TrendingTopic[]
+> {
+  try {
+    // Get new data first
+    const newTopics = await getTrendingTopicsFromDB();
+    if (!newTopics || newTopics.length === 0) {
+      throw new Error("No new topics found");
+    }
+
+    // Update cache with new data
+    await trendingTopicsCache.set(newTopics);
+    return newTopics;
+  } catch (error) {
+    console.error("Error in invalidateTrendingTopicsCache:", error);
+    return getTrendingTopics();
+  }
+}
+
 export async function getTrendingTopics(): Promise<TrendingTopic[]> {
   try {
     const cachedTopics = await trendingTopicsCache.get();
 
-    if (cachedTopics && (await trendingTopicsCache.shouldRefresh())) {
-      // Don't await, let it refresh in background
-      void trendingTopicsCache.refreshCache();
-      return cachedTopics;
+    if (!cachedTopics || cachedTopics.length === 0) {
+      const newTopics = await getTrendingTopicsFromDB();
+      await trendingTopicsCache.set(newTopics);
+      return newTopics;
     }
 
-    if (!cachedTopics) {
-      return await trendingTopicsCache.refreshCache();
+    // Background refresh if needed
+    if (await trendingTopicsCache.shouldRefresh()) {
+      void trendingTopicsCache.refreshCache();
     }
 
     return cachedTopics;
   } catch (error) {
     console.error("Error in getTrendingTopics:", error);
-
-    const backupTopics = await trendingTopicsCache.getBackup();
-    if (backupTopics) return backupTopics;
-
     return getTrendingTopicsFromDB();
   }
-}
-
-export async function invalidateTrendingTopicsCache(): Promise<void> {
-  await trendingTopicsCache.invalidate();
 }
 
 export async function warmTrendingTopicsCache(): Promise<void> {

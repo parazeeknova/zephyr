@@ -18,8 +18,8 @@ const BACKUP_TTL = 86400; // 24 hours in seconds
 export const trendingTopicsCache = {
   async get(): Promise<TrendingTopic[]> {
     try {
-      // Upstash automatically handles JSON serialization
-      return (await redis.get<TrendingTopic[]>(TRENDING_TOPICS_KEY)) || [];
+      const topics = await redis.get<TrendingTopic[]>(TRENDING_TOPICS_KEY);
+      return topics || [];
     } catch (error) {
       console.error("Error getting trending topics from cache:", error);
       return this.getBackup();
@@ -40,11 +40,11 @@ export const trendingTopicsCache = {
 
   async set(topics: TrendingTopic[]): Promise<void> {
     try {
-      // Store directly, Upstash handles serialization
+      // Upstash handles JSON serialization automatically
       await redis.set(TRENDING_TOPICS_KEY, topics, { ex: CACHE_TTL });
       await redis.set(TRENDING_TOPICS_BACKUP_KEY, topics, { ex: BACKUP_TTL });
       await redis.set(`${TRENDING_TOPICS_KEY}:last_updated`, Date.now(), {
-        ex: BACKUP_TTL
+        ex: CACHE_TTL
       });
     } catch (error) {
       console.error("Error setting trending topics cache:", error);
@@ -53,7 +53,9 @@ export const trendingTopicsCache = {
 
   async invalidate(): Promise<void> {
     try {
+      // For Upstash, we need to handle these operations separately
       await redis.del(TRENDING_TOPICS_KEY);
+      await redis.del(`${TRENDING_TOPICS_KEY}:last_updated`);
     } catch (error) {
       console.error("Error invalidating trending topics cache:", error);
     }

@@ -27,12 +27,12 @@ const TrendingTopics: React.FC = () => {
     try {
       setError(null);
       startTransition(async () => {
-        if (invalidateCache) {
-          await invalidateTrendingTopicsCache();
-        }
-        const trendingTopics = await getTrendingTopics();
-        if (trendingTopics) {
-          setTopics(trendingTopics);
+        const newTopics = invalidateCache
+          ? await invalidateTrendingTopicsCache()
+          : await getTrendingTopics();
+
+        if (newTopics && newTopics.length > 0) {
+          setTopics(newTopics);
           setLastUpdated(new Date());
         }
       });
