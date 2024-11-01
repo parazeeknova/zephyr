@@ -4,6 +4,7 @@ import AuthButtonWrapper from "@/components/Auth/AuthButtonWrapper";
 import loginImage from "@zephyr-assets/login-image.jpg";
 import LoginForm from "@zephyr-ui/Auth/LoginForm";
 import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, FileText, Shield } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import DiscordSignInButton from "./DiscordSignInButton";
@@ -274,6 +275,63 @@ export default function ClientLoginPage() {
                       transition={{ duration: 0.3 }}
                     />
                   </Link>
+                </motion.div>
+                <motion.div
+                  variants={contentAnimation}
+                  custom={5}
+                  // @ts-expect-error
+                  className="mt-8"
+                >
+                  <div className="rounded-lg border border-primary/10 bg-primary/5 p-4 backdrop-blur-sm">
+                    <div className="grid grid-cols-2 gap-3">
+                      <Link
+                        href="/toc"
+                        className="group flex flex-col gap-2 rounded-lg border border-primary/5 bg-background/80 p-3 transition-all hover:bg-accent hover:shadow-sm"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="rounded-full bg-primary/10 p-1.5 transition-colors group-hover:bg-primary/20">
+                            <FileText className="h-3 w-3 text-primary" />
+                          </div>
+                          <span className="font-medium text-foreground/80 text-xs transition-colors group-hover:text-primary">
+                            Terms
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground leading-tight">
+                          Read our terms of service
+                        </p>
+                      </Link>
+
+                      <Link
+                        href="/privacy"
+                        className="group flex flex-col gap-2 rounded-lg border border-primary/5 bg-background/80 p-3 transition-all hover:bg-accent hover:shadow-sm"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="rounded-full bg-primary/10 p-1.5 transition-colors group-hover:bg-primary/20">
+                            <Shield className="h-3 w-3 text-primary" />
+                          </div>
+                          <span className="font-medium text-foreground/80 text-xs transition-colors group-hover:text-primary">
+                            Privacy
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground leading-tight">
+                          View our privacy policy
+                        </p>
+                      </Link>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between border-primary/5 border-t pt-3">
+                      <p className="text-[10px] text-muted-foreground">
+                        By signing in, you agree to our terms and privacy policy
+                      </p>
+                      <motion.div
+                        initial={{ scale: 0.95 }}
+                        whileHover={{ scale: 1 }}
+                        // @ts-expect-error
+                        className="rounded-full bg-primary/10 p-1.5"
+                      >
+                        <ArrowRight className="h-3 w-3 text-primary" />
+                      </motion.div>
+                    </div>
+                  </div>
                 </motion.div>
               </div>
             </div>

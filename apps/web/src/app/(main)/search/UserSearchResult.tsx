@@ -136,7 +136,7 @@ function UserCard({ user }: { user: UserData }) {
     >
       <div className="p-4">
         <div className="flex items-start gap-4">
-          <Link href={`/@${user.username}`} className="flex-shrink-0">
+          <Link href={`/users/${user.username}`} className="flex-shrink-0">
             <UserAvatar
               user={user}
               className="h-16 w-16 ring-2 ring-primary/10 ring-offset-2 ring-offset-background transition-all group-hover:ring-primary/20"
@@ -145,7 +145,7 @@ function UserCard({ user }: { user: UserData }) {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
               <Link
-                href={`/@${user.username}`}
+                href={`/users/${user.username}`}
                 className="truncate font-medium transition-colors hover:text-primary"
               >
                 {user.displayName}
