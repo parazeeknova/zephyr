@@ -11,8 +11,9 @@ import NavigationCard from "./left/NavigationCard";
 
 const LeftSideBar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [screenSize, setScreenSize] = useState("large");
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [lastScrollPosition, setLastScrollPosition] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -23,51 +24,127 @@ const LeftSideBar: React.FC = () => {
         setIsCollapsed(true);
       } else {
         setScreenSize("large");
-        setIsCollapsed(false);
+        // Don't reset isCollapsed here to maintain scroll-based state
+      }
+    };
+
+    const handleScroll = () => {
+      setScrollPosition(window.scrollY);
+
+      // Auto collapse/expand based on scroll direction
+      if (screenSize === "large") {
+        const currentScroll = window.scrollY;
+
+        // Determine scroll direction and distance
+        const scrollingDown = currentScroll > lastScrollPosition;
+        const scrollDifference = Math.abs(currentScroll - lastScrollPosition);
+
+        // Only trigger if scroll difference is significant (prevent tiny movements)
+        if (scrollDifference > 20) {
+          if (scrollingDown && !isCollapsed && currentScroll > 1000) {
+            setIsCollapsed(true);
+          } else if (!scrollingDown && isCollapsed) {
+            setIsCollapsed(false);
+          }
+        }
+
+        setLastScrollPosition(currentScroll);
       }
     };
 
     window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleScroll);
     handleResize();
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [screenSize, lastScrollPosition, isCollapsed]);
 
   const sidebarWidth = () => {
     if (screenSize === "small") return "w-0";
-    if (screenSize === "medium" || (isCollapsed && !isHovered)) return "w-16";
-    return "w-72";
+    if (screenSize === "medium") return "w-16";
+    return isCollapsed ? "w-16" : "w-72";
   };
+
+  const handleMenuClick = () => {
+    if (screenSize === "large") {
+      setIsCollapsed(!isCollapsed);
+    }
+  };
+
+  const navTransform = `translateY(${Math.min(scrollPosition * 0.1, 20)}px)`;
 
   return (
     <aside
       className={`transition-all duration-300 ease-in-out ${sidebarWidth()} hidden bg-[hsl(var(--background-alt))] p-2 md:block`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       {screenSize !== "small" && (
-        <div className="flex flex-col space-y-4">
+        <div className="flex h-full flex-col">
+          {/* Sticky Navigation with Scroll Animation */}
           <div
-            className={`ml-1 flex ${isCollapsed && !isHovered ? "justify-center" : "justify-start"}`}
+            className="sticky top-[80px] z-30"
+            style={{
+              transform: navTransform,
+              transition: "transform 0.2s ease-out"
+            }}
           >
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className={`${isCollapsed && !isHovered ? "h-8 w-8 p-0" : "w-full justify-center"}`}
+            <div
+              className={`ml-1 flex ${
+                screenSize === "medium" || isCollapsed
+                  ? "justify-center"
+                  : "justify-start"
+              }`}
             >
-              <Menu
-                className={`text-muted-foreground ${
-                  isCollapsed && !isHovered ? "h-6 w-6" : "h-6 w-6"
-                }`}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleMenuClick}
+                disabled={screenSize === "medium"}
+                className={`${
+                  screenSize === "medium" || isCollapsed
+                    ? "h-8 w-8 p-0"
+                    : "w-full justify-center"
+                } ${screenSize === "medium" ? "cursor-not-allowed opacity-50" : ""} transition-all duration-300`}
+              >
+                <Menu
+                  className={`text-muted-foreground ${
+                    screenSize === "medium" || isCollapsed
+                      ? "h-6 w-6"
+                      : "h-6 w-6"
+                  }`}
+                />
+              </Button>
+            </div>
+            <div
+              className={`mt-4 mb-4 ${
+                screenSize === "medium" || isCollapsed ? "px-0" : "px-2"
+              }`}
+            >
+              <NavigationCard
+                isCollapsed={screenSize === "medium" || isCollapsed}
               />
-            </Button>
+            </div>
           </div>
-          <div
-            className={`space-y-4 ${isCollapsed && !isHovered ? "px-0" : "px-2"}`}
-          >
-            <NavigationCard isCollapsed={isCollapsed && !isHovered} />
-            <Friends isCollapsed={isCollapsed && !isHovered} />
-            <ContributeCard isCollapsed={isCollapsed && !isHovered} />
+
+          {/* Scrollable Section with Fade Animation */}
+          <div className="mt-4 flex-1">
+            <div
+              className={`space-y-4 ${
+                screenSize === "medium" || isCollapsed ? "px-0" : "px-2"
+              } transition-opacity duration-300`}
+              style={{
+                opacity: Math.max(1 - scrollPosition * 0.003, 0),
+                transform: `translateY(${Math.min(scrollPosition * 0.05, 10)}px)`,
+                transition: "transform 0.2s ease-out, opacity 0.3s ease-out"
+              }}
+            >
+              <Friends isCollapsed={screenSize === "medium" || isCollapsed} />
+              <ContributeCard
+                isCollapsed={screenSize === "medium" || isCollapsed}
+              />
+            </div>
           </div>
         </div>
       )}

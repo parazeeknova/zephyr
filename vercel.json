@@ -7,7 +7,7 @@
     },
     {
       "path": "/api/cron/maintenance",
-      "schedule": "0 1 * * *"
+      "schedule": "10 1 * * *"
     }
   ]
 }
