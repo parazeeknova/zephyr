@@ -2,7 +2,7 @@ import { getLanguageFromFileName } from "@/lib/codefileExtensions";
 import { formatFileName } from "@/lib/formatFileName";
 import { cn } from "@/lib/utils";
 import type { Media } from "@prisma/client";
-import { FileAudioIcon, FileCode, FileIcon } from "lucide-react"; // Add FileCode import
+import { FileAudioIcon, FileCode, FileIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import MediaViewer from "./MediaViewer";
@@ -14,6 +14,8 @@ interface MediaPreviewsProps {
 export function MediaPreviews({ attachments }: MediaPreviewsProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
+  const getMediaUrl = (mediaId: string) => `/api/media/${mediaId}`;
+
   const renderPreview = (m: Media, _index: number) => {
     const commonClasses =
       "mx-auto h-full max-h-[20rem] w-[85%] rounded-lg object-cover sm:max-h-[30rem] sm:rounded-2xl";
@@ -23,7 +25,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
         return (
           <>
             <Image
-              src={m.url}
+              src={getMediaUrl(m.id)}
               alt="Attachment"
               width={500}
               height={500}
@@ -35,7 +37,11 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
       case "VIDEO":
         return (
           <>
-            <video src={m.url} className={commonClasses} preload="metadata" />
+            <video
+              src={getMediaUrl(m.id)}
+              className={commonClasses}
+              preload="metadata"
+            />
             <div className="absolute inset-0 bg-black/5 transition-opacity hover:opacity-0" />
           </>
         );

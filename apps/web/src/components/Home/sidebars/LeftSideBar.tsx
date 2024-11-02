@@ -13,7 +13,6 @@ const LeftSideBar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [screenSize, setScreenSize] = useState("large");
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [lastScrollPosition, setLastScrollPosition] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -24,32 +23,11 @@ const LeftSideBar: React.FC = () => {
         setIsCollapsed(true);
       } else {
         setScreenSize("large");
-        // Don't reset isCollapsed here to maintain scroll-based state
       }
     };
 
     const handleScroll = () => {
       setScrollPosition(window.scrollY);
-
-      // Auto collapse/expand based on scroll direction
-      if (screenSize === "large") {
-        const currentScroll = window.scrollY;
-
-        // Determine scroll direction and distance
-        const scrollingDown = currentScroll > lastScrollPosition;
-        const scrollDifference = Math.abs(currentScroll - lastScrollPosition);
-
-        // Only trigger if scroll difference is significant (prevent tiny movements)
-        if (scrollDifference > 20) {
-          if (scrollingDown && !isCollapsed && currentScroll > 1000) {
-            setIsCollapsed(true);
-          } else if (!scrollingDown && isCollapsed) {
-            setIsCollapsed(false);
-          }
-        }
-
-        setLastScrollPosition(currentScroll);
-      }
     };
 
     window.addEventListener("resize", handleResize);
@@ -60,7 +38,7 @@ const LeftSideBar: React.FC = () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [screenSize, lastScrollPosition, isCollapsed]);
+  }, []);
 
   const sidebarWidth = () => {
     if (screenSize === "small") return "w-0";

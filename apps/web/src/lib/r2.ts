@@ -77,7 +77,7 @@ export const allowedFileTypes: AllowedFileType[] = [
 ];
 
 export const maxFileSizes = {
-  image: 5 * 1024 * 1024, // 5MB
+  image: 10 * 1024 * 1024, // 10MB
   video: 100 * 1024 * 1024, // 100MB
   audio: 20 * 1024 * 1024, // 20MB
   document: 50 * 1024 * 1024, // 50MB
@@ -94,6 +94,13 @@ export const r2Client = new S3Client({
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!
   }
 });
+
+export const getPublicUrl = (key: string) => {
+  if (!process.env.NEXT_PUBLIC_R2_PUBLIC_URL) {
+    throw new Error("NEXT_PUBLIC_R2_PUBLIC_URL is not configured");
+  }
+  return `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${key}`;
+};
 
 export const getFileType = (mimeType: string) => {
   if (mimeType.startsWith("image/")) return "image";
@@ -152,7 +159,8 @@ export const uploadToR2 = async (file: File, userId: string) => {
     })
   );
 
-  const url = await generatePresignedUrl(key);
+  // Use public URL instead of pre-signed URL
+  const url = getPublicUrl(key);
 
   return {
     key,

@@ -7,16 +7,10 @@ import { getLanguageFromFileName } from "@/lib/codefileExtensions";
 import { formatFileName } from "@/lib/formatFileName";
 import { cn } from "@/lib/utils";
 import type { Media } from "@prisma/client";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  FileCode,
-  FileIcon,
-  X
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, FileIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { CodePreview } from "./CodePreview";
 
 interface MediaViewerProps {
   media: Media[];
@@ -35,13 +29,15 @@ const MediaViewer = ({
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [isDownloading, setIsDownloading] = useState(false);
 
+  const currentMedia = media[currentIndex];
+  const getMediaUrl = (mediaId: string, download = false) =>
+    `/api/media/${mediaId}${download ? "?download=true" : ""}`;
+
   useEffect(() => {
     if (isOpen) {
       setCurrentIndex(initialIndex);
     }
   }, [isOpen, initialIndex]);
-
-  const currentMedia = media[currentIndex];
 
   const handlePrevious = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : media.length - 1));
@@ -141,7 +137,7 @@ const MediaViewer = ({
         return (
           <div className="relative max-h-full max-w-full">
             <Image
-              src={currentMedia.url}
+              src={getMediaUrl(currentMedia.id)}
               alt={`Media item ${currentIndex + 1}`}
               width={1200}
               height={800}
@@ -157,7 +153,7 @@ const MediaViewer = ({
         return (
           <div className="relative max-h-full max-w-full">
             <video
-              src={currentMedia.url}
+              src={getMediaUrl(currentMedia.id)}
               controls
               className={cn(
                 "max-h-[85vh] w-auto",
@@ -180,7 +176,7 @@ const MediaViewer = ({
               {formatFileName(currentMedia.key)}
             </p>
             <audio
-              src={currentMedia.url}
+              src={getMediaUrl(currentMedia.id)}
               controls
               className="w-full max-w-md"
               autoPlay
@@ -192,37 +188,64 @@ const MediaViewer = ({
 
       case "CODE":
         return (
-          <div className="flex flex-col items-center gap-4 rounded-lg bg-background/50 p-8">
-            <div className="flex h-64 w-64 items-center justify-center rounded-full bg-primary/10">
-              <FileCode className="h-32 w-32 text-primary" />
+          <div className="w-full max-w-4xl rounded-lg bg-background/50 p-4">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <p className="font-medium">
+                  {formatFileName(currentMedia.key)}
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  {getLanguageFromFileName(currentMedia.key)}
+                </p>
+              </div>
+              <Button
+                onClick={handleDownload}
+                variant="secondary"
+                disabled={isDownloading}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download
+              </Button>
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <p className="font-medium text-lg">
-                {formatFileName(currentMedia.key)}
-              </p>
-              <p className="text-muted-foreground text-sm">
-                {getLanguageFromFileName(currentMedia.key)}
-              </p>
-            </div>
-            <DownloadButton />
+            <CodePreview
+              mediaId={currentMedia.id}
+              language={getLanguageFromFileName(currentMedia.key)}
+              fileName={formatFileName(currentMedia.key)}
+              className="shadow-lg"
+            />
           </div>
         );
 
       case "DOCUMENT":
         return (
           <div className="flex flex-col items-center gap-4 rounded-lg bg-background/50 p-8">
-            <div className="flex h-64 w-64 items-center justify-center rounded-full bg-primary/10">
-              <FileIcon className="h-32 w-32 text-primary" />
+            <div className="flex h-32 w-32 items-center justify-center rounded-full bg-primary/10">
+              <FileIcon className="h-16 w-16 text-primary" />
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <p className="font-medium text-lg">
-                {formatFileName(currentMedia.key)}
-              </p>
-              <p className="text-muted-foreground text-sm">
-                {currentMedia.mimeType || "Document"}
-              </p>
+            <p className="font-medium">{formatFileName(currentMedia.key)}</p>
+            <p className="text-muted-foreground text-sm">
+              {currentMedia.mimeType}
+            </p>
+            <div className="flex gap-4">
+              <Button
+                onClick={handleDownload}
+                variant="secondary"
+                disabled={isDownloading}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download
+              </Button>
+              {currentMedia.mimeType === "application/pdf" && (
+                <Button
+                  onClick={() =>
+                    window.open(getMediaUrl(currentMedia.id), "_blank")
+                  }
+                  variant="outline"
+                >
+                  View PDF
+                </Button>
+              )}
             </div>
-            <DownloadButton />
           </div>
         );
 
