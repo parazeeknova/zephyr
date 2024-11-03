@@ -19,6 +19,7 @@ export const trendingTopicsCache = {
   async get(): Promise<TrendingTopic[]> {
     try {
       const topics = await redis.get<TrendingTopic[]>(TRENDING_TOPICS_KEY);
+      console.log("Retrieved topics from cache:", topics);
       return topics || [];
     } catch (error) {
       console.error("Error getting trending topics from cache:", error);
@@ -28,24 +29,26 @@ export const trendingTopicsCache = {
 
   async getBackup(): Promise<TrendingTopic[]> {
     try {
-      // Upstash automatically handles JSON serialization
-      return (
-        (await redis.get<TrendingTopic[]>(TRENDING_TOPICS_BACKUP_KEY)) || []
+      const backupTopics = await redis.get<TrendingTopic[]>(
+        TRENDING_TOPICS_BACKUP_KEY
       );
+      console.log("Retrieved topics from backup cache:", backupTopics);
+      return backupTopics || [];
     } catch (error) {
-      console.error("Error getting trending topics backup:", error);
+      console.error("Error getting trending topics from backup cache:", error);
       return [];
     }
   },
 
   async set(topics: TrendingTopic[]): Promise<void> {
     try {
-      // Upstash handles JSON serialization automatically
+      console.log("Setting topics in cache:", topics);
       await redis.set(TRENDING_TOPICS_KEY, topics, { ex: CACHE_TTL });
       await redis.set(TRENDING_TOPICS_BACKUP_KEY, topics, { ex: BACKUP_TTL });
       await redis.set(`${TRENDING_TOPICS_KEY}:last_updated`, Date.now(), {
         ex: CACHE_TTL
       });
+      console.log("Set topics in cache:", topics);
     } catch (error) {
       console.error("Error setting trending topics cache:", error);
     }
@@ -53,9 +56,9 @@ export const trendingTopicsCache = {
 
   async invalidate(): Promise<void> {
     try {
-      // For Upstash, we need to handle these operations separately
       await redis.del(TRENDING_TOPICS_KEY);
       await redis.del(`${TRENDING_TOPICS_KEY}:last_updated`);
+      console.log("Invalidated trending topics cache");
     } catch (error) {
       console.error("Error invalidating trending topics cache:", error);
     }
@@ -67,7 +70,6 @@ export const trendingTopicsCache = {
         `${TRENDING_TOPICS_KEY}:last_updated`
       );
       if (!lastUpdated) return true;
-
       const timeSinceUpdate = Date.now() - lastUpdated;
       return timeSinceUpdate > (CACHE_TTL * 1000) / 2;
     } catch {
