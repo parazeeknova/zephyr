@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.682.0",
-    "@aws-sdk/s3-request-presigner": "^3.682.0",
+    "@aws-sdk/s3-request-presigner": "^3.685.0",
     "@emotion/styled": "^11.13.0",
     "@hookform/resolvers": "^3.9.1",
     "@mui/icons-material": "^6.1.6",
