@@ -1,29 +1,18 @@
 import { getUserData } from "@/hooks/useUserData";
-import CreatePostCard from "@zephyr-ui/Home/sidebars/left/CreatePostCard";
-import Friends from "@zephyr-ui/Home/sidebars/left/Friends";
 import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
 import ProfileCard from "@zephyr-ui/Home/sidebars/right/ProfileCard";
 import TrendingTopics from "@zephyr-ui/Home/sidebars/right/TrendingTopics";
 import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
 import { validateRequest } from "@zephyr/auth/auth";
 import type { Metadata } from "next";
-import SearchResults from "./SearchResult";
+import PostEditorPage from "./PostEditorPage";
 
-interface PageProps {
-  searchParams: Promise<{ q: string }>;
-}
+export const metadata: Metadata = {
+  title: "Compose New Post | Zephyr",
+  description: "Share your thoughts, code, and media with the Zephyr community"
+};
 
-export async function generateMetadata(props: PageProps): Promise<Metadata> {
-  const searchParams = await props.searchParams;
-  return {
-    title: `Search results for ${searchParams.q}`,
-    description: `Search results for ${searchParams.q}`
-  };
-}
-
-export default async function Page(props: PageProps) {
-  const searchParams = await props.searchParams;
-  const { q } = searchParams;
+export default async function Page() {
   const { user } = await validateRequest();
   const userData = user ? await getUserData(user.id) : null;
 
@@ -36,12 +25,6 @@ export default async function Page(props: PageProps) {
             className="flex-none"
             stickyTop="5rem"
           />
-          <div className="mt-2 flex-none">
-            <Friends isCollapsed={false} />
-          </div>
-          <div className="mt-2 mb-4 flex-none">
-            <CreatePostCard isCollapsed={false} />
-          </div>
           {userData && (
             <div className="mt-auto mb-4">
               <ProfileCard userData={userData} />
@@ -50,15 +33,15 @@ export default async function Page(props: PageProps) {
         </div>
       </aside>
 
-      <div className="mt-5 mr-4 mb-14 ml-4 w-full min-w-0 space-y-5 md:mr-0 md:mb-0 md:ml-0">
-        <SearchResults query={q} />
+      <div className="mt-5 mr-4 mb-14 ml-4 w-full min-w-0 md:mr-0 md:mb-0 md:ml-0">
+        <PostEditorPage />
       </div>
 
-      <div className="sticky top-[5.25rem] hidden h-fit w-80 flex-none lg:block">
-        <div className="space-y-5 rounded-2xl border border-border bg-card p-5 shadow-sm">
-          <h2 className="font-bold text-xl">Search</h2>
+      <div className="sticky top-[5rem] hidden h-fit w-80 flex-none lg:block">
+        <div className="space-y-5 rounded-2xl border border-border bg-card/30 p-5 shadow-sm backdrop-blur-sm">
+          <h2 className="font-bold text-xl">Compose</h2>
           <p className="text-muted-foreground">
-            Search results for &quot;{q}&quot;
+            Share your thoughts with the community
           </p>
         </div>
         <div className="mt-2 mb-2">

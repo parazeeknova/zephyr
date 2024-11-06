@@ -2,6 +2,7 @@
 
 import type React from "react";
 
+import CreatePostCard from "@/components/Home/sidebars/left/CreatePostCard";
 import Friends from "@zephyr-ui/Home/sidebars/left/Friends";
 import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
 
@@ -10,7 +11,7 @@ const LeftSidebar: React.FC = () => (
     <div className="space-y-4">
       <NavigationCard isCollapsed={false} />
       <Friends isCollapsed={false} />
-      {/* <Analytics data={} /> */}
+      <CreatePostCard isCollapsed={false} />
     </div>
   </aside>
 );

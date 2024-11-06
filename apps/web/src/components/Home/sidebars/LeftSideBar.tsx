@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import ContributeCard from "@zephyr-ui/misc/ContributionCard";
+import CreatePostCard from "./left/CreatePostCard";
 import Friends from "./left/Friends";
 import NavigationCard from "./left/NavigationCard";
 
@@ -103,6 +104,11 @@ const LeftSideBar: React.FC = () => {
               <NavigationCard
                 isCollapsed={screenSize === "medium" || isCollapsed}
               />
+              <div className="mt-4">
+                <CreatePostCard
+                  isCollapsed={screenSize === "medium" || isCollapsed}
+                />
+              </div>
             </div>
           </div>
 
