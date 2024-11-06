@@ -29,4 +29,3 @@ export async function POST(req: NextRequest) {
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
-export const allowedMethods = ["POST"];

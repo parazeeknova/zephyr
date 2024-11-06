@@ -3,6 +3,9 @@ import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "@zephyr/db";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+export const runtime = "edge";
+
 export async function POST(req: Request) {
   try {
     const authHeader = req.headers.get("Authorization");
@@ -18,7 +21,7 @@ export async function POST(req: Request) {
       where: {
         postId: null,
         createdAt: {
-          lte: new Date(Date.now() - 24 * 60 * 60 * 1000) // 24 hours old
+          lte: new Date(Date.now() - 24 * 60 * 60 * 1000)
         }
       },
       select: {
@@ -27,7 +30,6 @@ export async function POST(req: Request) {
       }
     });
 
-    // Delete from R2
     await Promise.all(
       unusedMedia.map((media) =>
         r2Client.send(
@@ -40,7 +42,6 @@ export async function POST(req: Request) {
       )
     );
 
-    // Delete from database
     await prisma.media.deleteMany({
       where: {
         id: {
@@ -60,7 +61,3 @@ export async function POST(req: Request) {
     );
   }
 }
-
-export const runtime = "edge";
-export const dynamic = "force-dynamic";
-export const allowedMethods = ["POST"];
