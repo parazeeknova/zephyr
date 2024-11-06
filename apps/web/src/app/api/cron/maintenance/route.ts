@@ -66,4 +66,3 @@ export async function POST(request: Request) {
 
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
-export const allowedMethods = ["POST"];
