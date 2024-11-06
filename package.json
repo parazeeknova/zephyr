@@ -30,6 +30,6 @@
     "node": ">=18.x <=22.x"
   },
   "dependencies": {
-    "vercel": "^37.13.0"
+    "vercel": "^37.14.0"
   }
 }
