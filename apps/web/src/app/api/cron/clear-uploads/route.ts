@@ -1,7 +1,7 @@
 import { prisma } from "@zephyr/db";
 import { UTApi } from "uploadthing/server";
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   try {
     const authHeader = req.headers.get("Authorization");
 
@@ -50,3 +50,7 @@ export async function GET(req: Request) {
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
+export const allowedMethods = ["POST"];

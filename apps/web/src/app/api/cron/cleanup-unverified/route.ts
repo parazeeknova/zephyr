@@ -1,6 +1,6 @@
 import { prisma } from "@zephyr/db";
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   try {
     // Verify the request is from your cron job service
     const authHeader = req.headers.get("authorization");
@@ -45,3 +45,7 @@ export async function GET(req: Request) {
     return new Response("Internal Server Error", { status: 500 });
   }
 }
+
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
+export const allowedMethods = ["POST"];

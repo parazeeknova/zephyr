@@ -1,7 +1,7 @@
 import { prisma } from "@zephyr/db";
 import type { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const authHeader = req.headers.get("authorization");
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -26,3 +26,7 @@ export async function GET(req: NextRequest) {
     return new Response("Internal Server Error", { status: 500 });
   }
 }
+
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
+export const allowedMethods = ["POST"];
