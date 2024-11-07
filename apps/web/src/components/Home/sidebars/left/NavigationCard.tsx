@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { Home, Search, TrendingUp, UsersRoundIcon } from "lucide-react";
+import { CompassIcon, Home, Search, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
 interface NavigationCardProps {
@@ -76,16 +76,16 @@ export default function NavigationCard({
 
         <div className="block w-full">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link href="/soon" className="block w-full">
+            <Link href="/discover" className="block w-full">
               <Button
                 variant="ghost"
                 size={isCollapsed ? "icon" : "lg"}
                 className={`w-full ${
                   isCollapsed ? "justify-center" : "justify-start"
                 }`}
-                title="Zephyrians"
+                title="Discover"
               >
-                <UsersRoundIcon
+                <CompassIcon
                   className={`h-5 w-5 text-muted-foreground ${
                     isCollapsed ? "" : "mr-4"
                   }`}

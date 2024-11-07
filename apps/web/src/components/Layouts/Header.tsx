@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import SearchField from "@zephyr-ui/Layouts/SearchField";
 import UserButton from "@zephyr-ui/Layouts/UserButton";
 import { motion } from "framer-motion";
-import { Bookmark, Home, MessageSquare } from "lucide-react";
+import { Bookmark, Compass, Home, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import MessagesButton from "../Messages/MessagesButton";
@@ -162,6 +162,12 @@ const Header: React.FC<HeaderProps> = ({
             href="/"
             icon={<Home className="h-[18px] w-[18px]" />}
             label="Home"
+          />
+
+          <MobileNavLink
+            href="/discover"
+            icon={<Compass className="h-[18px] w-[18px]" />}
+            label="Zephyrians"
           />
 
           <MobileNavLink
