@@ -1,18 +1,16 @@
 import { getUserData } from "@/hooks/useUserData";
 import DiscoverySidebar from "@zephyr-ui/Discover/DiscoverSidebar";
-import SuggestedUsers from "@zephyr-ui/Discover/SuggestedUsers";
-import TrendingUsers from "@zephyr-ui/Discover/TrendingUsers";
+import NewUsers from "@zephyr-ui/Discover/NewUsers";
 import Friends from "@zephyr-ui/Home/sidebars/left/Friends";
-import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
 import { validateRequest } from "@zephyr/auth/auth";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Discover",
-  description: "Discover and connect with amazing people on Zephyr"
+  title: "New Users",
+  description: "Discover new users on Zephyr"
 };
 
-export default async function DiscoveryPage() {
+export default async function NewUsersPage() {
   const { user } = await validateRequest();
   const userData = user ? await getUserData(user.id) : null;
 
@@ -22,17 +20,13 @@ export default async function DiscoveryPage() {
         <div className="flex h-full flex-col">
           <DiscoverySidebar />
           <div className="mt-2 flex-none">
-            <NavigationCard isCollapsed={false} />
-          </div>
-          <div className="mt-2 flex-none">
             <Friends isCollapsed={false} />
           </div>
         </div>
       </aside>
 
       <div className="mt-5 mr-4 mb-14 ml-4 w-full min-w-0 space-y-5 md:mr-0 md:mb-0 md:ml-0">
-        <TrendingUsers />
-        <SuggestedUsers userId={userData?.id} />
+        <NewUsers userId={userData?.id} />
       </div>
     </main>
   );

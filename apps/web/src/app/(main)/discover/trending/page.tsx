@@ -1,19 +1,18 @@
 import { getUserData } from "@/hooks/useUserData";
 import DiscoverySidebar from "@zephyr-ui/Discover/DiscoverSidebar";
-import SuggestedUsers from "@zephyr-ui/Discover/SuggestedUsers";
 import TrendingUsers from "@zephyr-ui/Discover/TrendingUsers";
 import Friends from "@zephyr-ui/Home/sidebars/left/Friends";
-import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
 import { validateRequest } from "@zephyr/auth/auth";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Discover",
-  description: "Discover and connect with amazing people on Zephyr"
+  title: "Trending Users | Zephyr",
+  description: "Discover trending users on Zephyr"
 };
 
-export default async function DiscoveryPage() {
+export default async function TrendingPage() {
   const { user } = await validateRequest();
+  // biome-ignore lint/correctness/noUnusedVariables: template
   const userData = user ? await getUserData(user.id) : null;
 
   return (
@@ -22,9 +21,6 @@ export default async function DiscoveryPage() {
         <div className="flex h-full flex-col">
           <DiscoverySidebar />
           <div className="mt-2 flex-none">
-            <NavigationCard isCollapsed={false} />
-          </div>
-          <div className="mt-2 flex-none">
             <Friends isCollapsed={false} />
           </div>
         </div>
@@ -32,7 +28,6 @@ export default async function DiscoveryPage() {
 
       <div className="mt-5 mr-4 mb-14 ml-4 w-full min-w-0 space-y-5 md:mr-0 md:mb-0 md:ml-0">
         <TrendingUsers />
-        <SuggestedUsers userId={userData?.id} />
       </div>
     </main>
   );

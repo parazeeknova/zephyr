@@ -38,7 +38,7 @@ const TrendingUsers = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       // @ts-expect-error
-      className="space-y-4"
+      className="mr-0 space-y-4 md:mr-4"
     >
       <div className="flex items-center gap-2">
         <Flame className="h-5 w-5 text-orange-500" />
