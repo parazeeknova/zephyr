@@ -226,8 +226,8 @@ importers:
         specifier: ^8.42.0
         version: 8.42.0
       stream-chat-react:
-        specifier: ^12.5.1
-        version: 12.5.1(jquery@3.7.1)(react-dom@19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021))(react@19.0.0-rc-69d4b800-20241021)(stream-chat@8.42.0)(types-react@19.0.0-rc.1)
+        specifier: ^12.5.2
+        version: 12.5.2(jquery@3.7.1)(react-dom@19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021))(react@19.0.0-rc-69d4b800-20241021)(stream-chat@8.42.0)(types-react@19.0.0-rc.1)
       tailwind-merge:
         specifier: ^2.5.4
         version: 2.5.4
@@ -5107,8 +5107,8 @@ packages:
     resolution: {integrity: sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==}
     engines: {node: '>= 0.6'}
 
-  stream-chat-react@12.5.1:
-    resolution: {integrity: sha512-IrC6SEY+tiCRtHn7nlqv2VT2OnDYhZikIxupgY1WIlM56TgVxY0SDRNvuOyGLucwJL76SWr00U7swnFEL53m5A==}
+  stream-chat-react@12.5.2:
+    resolution: {integrity: sha512-JEz01szNLGpvkYODUDG3RKxEdJztJMhEuCJ43okP602HYcGsKunN6CZxfMsT9hLf47tc6ShrDuNPZxOefAUSFw==}
     peerDependencies:
       '@breezystack/lamejs': ^1.2.7
       '@emoji-mart/data': ^1.1.0
@@ -11349,7 +11349,7 @@ snapshots:
 
   statuses@1.5.0: {}
 
-  stream-chat-react@12.5.1(jquery@3.7.1)(react-dom@19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021))(react@19.0.0-rc-69d4b800-20241021)(stream-chat@8.42.0)(types-react@19.0.0-rc.1):
+  stream-chat-react@12.5.2(jquery@3.7.1)(react-dom@19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021))(react@19.0.0-rc-69d4b800-20241021)(stream-chat@8.42.0)(types-react@19.0.0-rc.1):
     dependencies:
       '@braintree/sanitize-url': 6.0.4
       '@popperjs/core': 2.11.8
