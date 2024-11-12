@@ -1,8 +1,6 @@
 {
   "extends": "@zephyr/config/react.tsconfig.json",
   "compilerOptions": {
-    "noImplicitAny": false,
-    "strict": false,
     "baseUrl": ".",
     "plugins": [
       {
