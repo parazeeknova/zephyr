@@ -48,12 +48,15 @@ git clone https://github.com/zephyr.git && cd zephyr
 # 2. Install the dependencies
 pnpm install
 
-# 3. Start the development server
+# 3. Start the development server using terminal
 # Windows
-./dev-start.ps1 or pnpm run dev-server:ps1
+./dev-start.ps1
 # Unix/Linux/Mac
-./dev-start.sh or pnpm run dev-server:sh
-```
+./dev-start.sh
+
+# OR use pnpm
+pnpm run dev-server:ps1 (Windows)
+pnpm run dev-server:sh (Linux/Unix/Mac)
 
 # OR Manually
 # Start Docker services
