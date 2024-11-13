@@ -13,7 +13,6 @@ interface MediaPreviewsProps {
 
 export function MediaPreviews({ attachments }: MediaPreviewsProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-
   const getMediaUrl = (mediaId: string) => `/api/media/${mediaId}`;
 
   const renderPreview = (m: Media, _index: number) => {

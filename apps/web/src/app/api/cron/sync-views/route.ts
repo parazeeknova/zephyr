@@ -55,14 +55,27 @@ async function syncViewCounts() {
     }
 
     const results = await pipeline.exec();
-    log(`Retrieved ${results.length} view counts from Redis`);
+    if (!results) {
+      log("Pipeline execution returned null");
+      return { success: false, logs, error: "Pipeline execution failed" };
+    }
 
     const updates = Array.from(existingPostIds)
-      .map((postId, index) => ({
-        postId,
-        views: Number(results[index]) || 0
-      }))
-      .filter((update) => update.views > 0);
+      .map((postId, index) => {
+        const [error, value] = results[index] || [];
+        if (error) {
+          log(`Error getting views for post ${postId}: ${error}`);
+          return null;
+        }
+        return {
+          postId,
+          views: Number(value) || 0
+        };
+      })
+      .filter(
+        (update): update is { postId: string; views: number } =>
+          update !== null && update.views > 0
+      );
 
     log(`Preparing to update ${updates.length} posts with non-zero views`);
 

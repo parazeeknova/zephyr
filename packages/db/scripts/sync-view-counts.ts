@@ -5,7 +5,6 @@ async function syncViewCounts() {
   try {
     console.log("Starting view count sync...");
 
-    // Test Redis connection
     try {
       await redis.ping();
       console.log("✅ Redis connection successful");
@@ -14,7 +13,6 @@ async function syncViewCounts() {
       return;
     }
 
-    // Get all posts that have views
     const postsWithViews = await redis.smembers(POST_VIEWS_SET);
     console.log(`Found ${postsWithViews.length} posts with views in Redis`);
 
@@ -23,26 +21,37 @@ async function syncViewCounts() {
       return;
     }
 
-    // Get view counts for all posts
     const pipeline = redis.pipeline();
     for (const postId of postsWithViews) {
       pipeline.get(`${POST_VIEWS_KEY_PREFIX}${postId}`);
     }
 
     const results = await pipeline.exec();
+    if (!results) {
+      console.error("Pipeline execution returned null");
+      return;
+    }
     console.log("Pipeline results:", results);
 
-    // Create updates array
     const updates = postsWithViews
-      .map((postId, index) => ({
-        postId,
-        views: Number(results[index]) || 0
-      }))
-      .filter((update) => update.views > 0);
+      .map((postId, index) => {
+        const [error, value] = results[index] || [];
+        if (error) {
+          console.log(`Error getting views for post ${postId}: ${error}`);
+          return null;
+        }
+        return {
+          postId,
+          views: Number(value) || 0
+        };
+      })
+      .filter(
+        (update): update is { postId: string; views: number } =>
+          update !== null && update.views > 0
+      );
 
     console.log("Updates to perform:", updates);
 
-    // Update database in batches
     const batchSize = 100;
     for (let i = 0; i < updates.length; i += batchSize) {
       const batch = updates.slice(i, i + batchSize);
@@ -61,7 +70,6 @@ async function syncViewCounts() {
       );
     }
 
-    // Verify the updates
     console.log("\nVerifying database updates:");
     for (const { postId, views } of updates) {
       const post = await prisma.post.findUnique({
@@ -83,7 +91,6 @@ async function syncViewCounts() {
   }
 }
 
-// Run if called directly
 if (require.main === module) {
   syncViewCounts()
     .then(() => process.exit(0))

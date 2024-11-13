@@ -1,158 +1,225 @@
-# Contributing to Zephyr
+# CONTRIBUTING TO ZEPHYR
 
-Thank you for your interest in contributing to Zephyr! We're excited to welcome contributors from all backgrounds and experience levels. This document provides guidelines and information to help you get started with contributing to our monorepo project.
+Thank you for your interest in contributing to Zephyr! This guide will help you start contributing to our community-driven platform.
 
-## Table of Contents
+## TABLE OF CONTENTS
+1. [Development Setup](#development-setup)
+2. [Project Structure](#project-structure)
+3. [Making Contributions](#making-contributions)
+4. [Code Standards](#code-standards)
+5. [Troubleshooting](#troubleshooting)
+6. [Community Guidelines](#community-guidelines)
 
-- [Contributing to Zephyr](#contributing-to-zephyr)
-  - [Table of Contents](#table-of-contents)
-  - [Code of Conduct](#code-of-conduct)
-  - [Hacktoberfest Participation](#hacktoberfest-participation)
-    - [Hacktoberfest Guidelines](#hacktoberfest-guidelines)
-  - [Getting Started](#getting-started)
-  - [Development Workflow](#development-workflow)
-    - [Conventional Commits](#conventional-commits)
-  - [Pull Request Process](#pull-request-process)
-    - [PR Title Format](#pr-title-format)
-  - [Coding Standards](#coding-standards)
-    - [Code Style](#code-style)
-  - [License](#license)
-    - [What does AGPL mean for contributors?](#what-does-agpl-mean-for-contributors)
-  - [Questions or Need Help?](#questions-or-need-help)
+## 1. DEVELOPMENT SETUP
 
-## Code of Conduct
+### PREREQUISITES:
+* Node.js v20+
+* pnpm
+* Docker + Docker Compose
+* Git
 
-By participating in this project, you agree to abide by our Code of Conduct. Please read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) to understand what kind of behavior will and will not be tolerated.
+### STEP-BY-STEP SETUP:
 
-## Hacktoberfest Participation
-
-This repository participates in Hacktoberfest! We welcome contributions throughout October and have labeled issues that are good for first-time contributors with `hacktoberfest` and `good-first-issue` tags.
-
-### Hacktoberfest Guidelines
-
-- Pull requests should be meaningful and address an existing issue
-- Low-quality PRs (like typo fixes) may be marked as `invalid` or `spam`
-- Check the [Hacktoberfest quality standards](https://hacktoberfest.digitalocean.com/resources/qualitystandards) before submitting
-
-## Getting Started
-
-1. **Fork and clone the repository**
-
-   ```bash
-   git clone https://github.com/parazeeknova/zephyr.git
-   cd zephyr
-   ```
-
-2. **Install dependencies**
-   We use pnpm as our package manager
-
-   ```bash
-   pnpm install
-   ```
-
-3. **Set up development environment**
-
-   ```bash
-   # Use the format in `.env.example` file to create a `.env` file in the root directory in `apps/web/` as its a monorepo.
-   # Get an example / temp postgre database from vercel for `.env` file and place it in `packages/db`.
-   # Get your storage bucket from uploadthing and add it to `.env` file, Will be replaced with amazon s3 bucket later.
-   # Add a random string in CRON_SECRET in `.env` file for vercel cron jobs (Only works in production).
-   ```
-
-4. **Run the development servers**
-
-   ```bash
-   turbo dev
-   ```
-
-## Development Workflow
-
-1. **Choose an issue** to work on or create a new one
-2. **Create a new branch** from `main`:
-
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-3. **Make your changes** and commit them using conventional commits:
-
-   ```bash
-   git commit -m "feat: add new social sharing feature"
-   ```
-
-4. **Push your branch** and create a pull request
-
-### Conventional Commits
-
-We follow the Conventional Commits specification. Commit messages should be structured as follows:
-
-```
-<type>[optional scope]: <description>
-
-[optional body]
-
-[optional footer(s)]
+#### a) Clone Repository:
+```sh
+$ git clone https://github.com/YOUR_USERNAME/zephyr.git
+$ cd zephyr
 ```
 
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
-
-Example:
-
-```
-feat(frontend): add new user profile page
-
-- Implement responsive design
-- Add avatar upload functionality
-
-Closes #123
+#### b) Install Dependencies:
+```sh
+$ pnpm install
 ```
 
-## Pull Request Process
+#### c) Environment Setup:
+1. Copy environment templates:
+  - `apps/web/.env.example` → `apps/web/.env`
+  - Create `packages/db/.env`
 
-1. Ensure your PR addresses an existing issue (if not, create one)
-2. Update documentation as needed
-3. Add tests for new features
-4. Make sure all tests pass
-5. Get at least one code review from a maintainer
-6. Once approved, a maintainer will merge your PR
+2. Configure Environment Variables:
+  ```ini
+  [DATABASE]
+  POSTGRES_USER=postgres
+  POSTGRES_PASSWORD=postgres
+  POSTGRES_DB=zephyr
+  POSTGRES_PORT=5433
+  POSTGRES_HOST=localhost
+  DATABASE_URL=postgresql://postgres:postgres@localhost:5433/zephyr?schema=public
 
-### PR Title Format
+  [REDIS]
+  REDIS_PASSWORD=zephyrredis
+  REDIS_PORT=6379
+  REDIS_HOST=localhost
 
-Follow the same convention as commit messages:
+  [MINIO]
+  MINIO_ROOT_USER=minioadmin
+  MINIO_ROOT_PASSWORD=minioadmin
+  MINIO_PORT=9000
+  MINIO_CONSOLE_PORT=9001
+  ```
+
+#### d) Start Development:
+- Windows: `./dev-start.ps1`
+- Unix: `./dev-start.sh`
+
+Or manually:
+```sh
+$ docker-compose -f docker-compose.dev.yml up -d
+$ pnpm turbo dev
+```
+
+## 2. PROJECT STRUCTURE
 
 ```
-feat(scope): brief description
+/zephyr
+  /apps
+   /web          - Next.js application
+  /packages
+   /auth         - Authentication
+   /config       - Shared configs
+   /db           - Database (Prisma)
+   /ui           - UI components
+  /docker         - Container configs
 ```
 
-## Coding Standards
+## 3. MAKING CONTRIBUTIONS
 
-- **Frontend:** We use Biome
-- **Backend:** Follow Node.js best practices
-- **Testing:** Write unit tests for new features (soon to be implemented)
-- **Documentation:** Update relevant documentation as needed
+### WORKFLOW:
 
-### Code Style
+1. Fork & Branch
+  ```sh
+  $ git checkout -b feature/your-feature
+  ```
 
-```bash
-# Check code style
-pnpm run biome:check
+2. Development
+  - Write code
+  - Add tests
+  - Update docs
+  - Follow style guide
 
-# Fix code style issues
-pnpm run biome:fix
+3. Commit
+  Format: `<type>(<scope>): <description>`
+  Example: `feat(auth): add password reset`
+
+4. Pull Request
+  - Fill template
+  - Link issues
+  - Pass checks
+
+### DEVELOPMENT COMMANDS:
+
+Start servers:
+```sh
+$ pnpm turbo dev
 ```
 
-## License
+Check code:
+```sh
+$ pnpm biome:check
+```
 
-This project is licensed under the AGPL License - see the [LICENSE](LICENSE) file for details. By contributing, you agree to license your contributions under the same license.
+Fix style:
+```sh
+$ pnpm biome:fix
+```
 
-### What does AGPL mean for contributors?
+## 4. CODE STANDARDS
 
-- Your contributions must also be licensed under AGPL
-- If you modify and distribute the code, you must make your changes available under AGPL
-- Network use is considered distribution, so if you run a modified version of the software as a service, you must make your changes available
+### STYLE RULES:
+- Use TypeScript
+- Follow Biome config
+- Keep files focused
+- Comment complex logic
+- Use meaningful names
 
-## Questions or Need Help?
+### COMMIT TYPES:
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation
+- `style`: Formatting
+- `refactor`: Code change
+- `test`: Adding tests
+- `chore`: Maintenance
 
-- Create an issue for bugs or feature requests
+## 5. TROUBLESHOOTING
 
-Thank you for contributing to make this project better! 🎉
+### DATABASE ISSUES:
+
+Check logs:
+```sh
+$ docker logs zephyr-postgres-dev
+```
+
+Manual Prisma setup:
+```sh
+$ cd packages/db
+$ pnpm prisma generate
+$ pnpm prisma db push
+```
+
+### DOCKER ISSUES:
+
+Reset containers:
+```sh
+$ docker-compose down -v
+$ docker-compose build --no-cache
+$ docker-compose up
+```
+
+### COMMON FIXES:
+
+1. Database Connection:
+  - Verify PostgreSQL is running
+  - Check port conflicts
+  - Validate connection string
+
+2. Environment:
+  - Confirm all variables set
+  - Check file locations
+  - Validate syntax
+
+3. Build Errors:
+  - Clear `node_modules`
+  - Rebuild dependencies
+  - Check Docker logs
+
+## 6. COMMUNITY GUIDELINES
+
+### COMMUNICATION:
+- Be respectful
+- Stay on topic
+- Help others
+- Follow code of conduct
+
+### ISSUE REPORTING:
+- Check existing issues
+- Provide reproduction
+- Be specific
+- Follow templates
+
+### PULL REQUESTS:
+- Link related issues
+- Describe changes
+- Add tests
+- Update docs
+
+======================
+
+## QUICK REFERENCE:
+
+### Ports:
+- Web: 3000
+- PostgreSQL: 5433
+- Redis: 6379
+- MinIO: 9000/9001
+
+### Commands:
+- Setup: `pnpm install`
+- Dev: `pnpm turbo dev`
+- Style: `pnpm biome:check`
+- Fix: `pnpm biome:fix`
+
+======================
+
+Thank you for contributing to Zephyr!
+For detailed information, visit our GitHub repository.

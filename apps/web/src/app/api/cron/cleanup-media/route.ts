@@ -1,10 +1,10 @@
-import { r2Client } from "@/lib/r2";
+import { minioClient } from "@/lib/minio";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "@zephyr/db";
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
+const CRON_SECRET = process.env.CRON_SECRET;
+const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || "uploads";
 
 export async function POST(req: Request) {
   const logs: string[] = [];
@@ -16,49 +16,38 @@ export async function POST(req: Request) {
   try {
     const authHeader = req.headers.get("Authorization");
 
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return NextResponse.json(
-        { message: "Invalid authorization header" },
-        { status: 401 }
-      );
+    if (authHeader !== `Bearer ${CRON_SECRET}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Find unused media files
     const unusedMedia = await prisma.media.findMany({
       where: {
         postId: null,
         createdAt: {
-          lte: new Date(Date.now() - 24 * 60 * 60 * 1000)
+          lte: new Date(Date.now() - 24 * 60 * 60 * 1000) // 24 hours old
         }
       },
-      select: {
-        id: true,
-        key: true
-      }
+      select: { id: true, key: true }
     });
 
     log(`Found ${unusedMedia.length} unused media files`);
-
-    // Filter out entries without keys
     const validMedia = unusedMedia.filter((m) => m.key);
 
     if (validMedia.length > 0) {
-      log(`Deleting ${validMedia.length} files from R2`);
+      log(`Deleting ${validMedia.length} files from MinIO`);
       try {
         await Promise.all(
           validMedia.map((media) =>
-            r2Client.send(
+            minioClient.send(
               new DeleteObjectCommand({
-                // biome-ignore lint/style/noNonNullAssertion: <explanation>
-                Bucket: process.env.R2_BUCKET_NAME!,
+                Bucket: MINIO_BUCKET,
                 Key: media.key
               })
             )
           )
         );
-        log("✅ R2 deletion successful");
+        log("✅ Successfully deleted files from MinIO");
 
-        // Delete from database after R2 deletion succeeds
         const result = await prisma.media.deleteMany({
           where: {
             id: {
@@ -66,11 +55,12 @@ export async function POST(req: Request) {
             }
           }
         });
+
         log(`✅ Deleted ${result.count} records from database`);
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        log(`❌ Error during cleanup: ${errorMessage}`);
+        log(`❌ Error during deletion: ${errorMessage}`);
         throw error;
       }
     } else {
@@ -83,14 +73,19 @@ export async function POST(req: Request) {
       logs
     });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Cleanup error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: "Internal server error",
+        message: errorMessage,
         logs
       },
       { status: 500 }
     );
   }
 }
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";

@@ -1,15 +1,17 @@
 FROM minio/minio:latest
 
-# Expose MinIO API and Console ports
+LABEL maintainer="Parazeeknova"
+LABEL description="Zephyr Development MinIO Instance"
+
+COPY docker/banner.txt /banner.txt
+COPY docker/minio/init.sh /init.sh
+
+RUN chmod +x /init.sh
+
 EXPOSE 9000 9001
 
-# Create a directory for the initialization script
-WORKDIR /opt/bin
+ENV MINIO_ROOT_USER=minioadmin \
+  MINIO_ROOT_PASSWORD=minioadmin
 
-# Copy and set up initialization script
-COPY --chown=minio:minio docker/minio/init.sh ./
-RUN chmod +x ./init.sh
-
-# Start MinIO
-ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
-CMD ["minio", "server", "/data", "--console-address", ":9001"]
+ENTRYPOINT ["minio"]
+CMD ["server", "--console-address", ":9001", "/data"]

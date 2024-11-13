@@ -19,11 +19,16 @@
     },
     "lint": {
       "dependsOn": ["^lint"],
-      "inputs": ["!src/components/ui/**"]
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "!src/components/ui/**"],
+      "outputs": []
     },
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "clean": {
+      "cache": false,
+      "outputs": []
     }
   }
 }
