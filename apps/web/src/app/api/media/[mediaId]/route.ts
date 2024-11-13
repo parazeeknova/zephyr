@@ -1,26 +1,11 @@
-import { r2Client } from "@/lib/r2";
+import {
+  getContentDisposition,
+  minioClient,
+  shouldDisplayInline
+} from "@/lib/minio";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "@zephyr/db";
 import { NextResponse } from "next/server";
-
-// Helper function to get content disposition
-function getContentDisposition(filename: string, inline = false) {
-  const utf8Filename = encodeURIComponent(filename);
-  return `${inline ? "inline" : "attachment"}; filename="${utf8Filename}"`;
-}
-
-// Helper to determine if a file should be displayed inline
-function shouldDisplayInline(mimeType: string) {
-  const inlineTypes = [
-    "image/",
-    "video/",
-    "audio/",
-    "text/",
-    "application/pdf",
-    "application/json"
-  ];
-  return inlineTypes.some((type) => mimeType.startsWith(type));
-}
 
 export async function GET(
   request: Request,
@@ -46,7 +31,7 @@ export async function GET(
       Key: media.key
     });
 
-    const response = await r2Client.send(command);
+    const response = await minioClient.send(command);
 
     if (!response.Body) {
       return new NextResponse("Media content not found", { status: 404 });
