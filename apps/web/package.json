@@ -73,7 +73,7 @@
     "react-linkify-it": "^1.0.8",
     "react-syntax-highlighter": "^15.6.1",
     "stream-chat": "^8.42.0",
-    "stream-chat-react": "^12.5.1",
+    "stream-chat-react": "^12.5.2",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "uploadthing": "^7.2.0",
