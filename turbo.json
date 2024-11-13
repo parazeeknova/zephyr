@@ -11,18 +11,17 @@
       "cache": false
     },
     "build": {
-      "dependsOn": ["^db:generate", "^build"],
+      "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "web#build": {
-      "dependsOn": ["^db:generate", "^web#build"]
+      "dependsOn": ["^build"]
     },
     "lint": {
       "dependsOn": ["^lint"],
       "inputs": ["!src/components/ui/**"]
     },
     "dev": {
-      "dependsOn": ["^db:generate"],
       "cache": false,
       "persistent": true
     }

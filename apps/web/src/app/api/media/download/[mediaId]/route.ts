@@ -1,19 +1,8 @@
-import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { getContentDisposition, minioClient } from "@/lib/minio";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { validateRequest } from "@zephyr/auth/auth";
 import { prisma, redis } from "@zephyr/db";
 import { type NextRequest, NextResponse } from "next/server";
-
-const r2Client = new S3Client({
-  region: "auto",
-  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!
-  }
-});
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +21,7 @@ export async function GET(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    // Check rate limit
+    // Check rate limit using Redis
     const downloadKey = `download:${user.id}:${mediaId}`;
     const lastDownload = await redis.get(downloadKey);
 
@@ -57,11 +46,12 @@ export async function GET(
       }
     }
 
-    // Get media
+    // Get media from database
     const media = await prisma.media.findUnique({
       where: { id: mediaId },
       select: {
         key: true,
+        mimeType: true,
         type: true,
         post: {
           select: {
@@ -75,33 +65,49 @@ export async function GET(
       return new NextResponse("Media not found", { status: 404 });
     }
 
-    // Set rate limit
-    await redis.set(downloadKey, Date.now(), {
-      ex: DOWNLOAD_COOLDOWN // Expire key after cooldown period
-    });
+    // Set rate limit in Redis using two separate commands
+    await redis.set(downloadKey, Date.now().toString());
+    await redis.expire(downloadKey, DOWNLOAD_COOLDOWN);
+
+    // Get filename from key
+    const filename = media.key.split("/").pop() || "download";
 
     // Generate signed URL with specific headers for download
     const command = new GetObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME,
+      Bucket: process.env.MINIO_BUCKET_NAME || "uploads",
       Key: media.key,
-      ResponseContentDisposition: `attachment; filename="${media.key.split("/").pop()}"`
+      ResponseContentType: media.mimeType,
+      ResponseContentDisposition: getContentDisposition(filename, false)
     });
 
-    const url = await getSignedUrl(r2Client, command, {
-      expiresIn: 60
-    });
+    try {
+      const response = await minioClient.send(command);
 
-    const response = await fetch(url);
-    const blob = await response.blob();
-
-    return new Response(blob, {
-      headers: {
-        "Content-Type":
-          response.headers.get("Content-Type") || "application/octet-stream",
-        "Content-Disposition": `attachment; filename="${media.key.split("/").pop()}"`,
-        "Content-Length": response.headers.get("Content-Length") || ""
+      if (!response.Body) {
+        throw new Error("No response body from MinIO");
       }
-    });
+
+      // Convert readable stream to blob
+      const chunks = [];
+      for await (const chunk of response.Body as any) {
+        chunks.push(chunk);
+      }
+      const blob = new Blob(chunks, { type: media.mimeType });
+
+      return new Response(blob, {
+        headers: {
+          "Content-Type": media.mimeType || "application/octet-stream",
+          "Content-Disposition": getContentDisposition(filename, false),
+          "Content-Length": response.ContentLength?.toString() || "",
+          "Cache-Control": "no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0"
+        }
+      });
+    } catch (error) {
+      console.error("MinIO download error:", error);
+      return new NextResponse("File download failed", { status: 500 });
+    }
   } catch (error) {
     console.error("Download failed:", error);
     return new NextResponse("Internal Server Error", { status: 500 });

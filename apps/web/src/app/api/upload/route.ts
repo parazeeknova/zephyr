@@ -1,4 +1,4 @@
-import { uploadToR2 } from "@/lib/r2";
+import { uploadToMinio } from "@/lib/minio";
 import { validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
 import { NextResponse } from "next/server";
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       return new NextResponse("No file provided", { status: 400 });
     }
 
-    const upload = await uploadToR2(file, user.id);
+    const upload = await uploadToMinio(file, user.id);
 
     // Create media record
     const media = await prisma.media.create({

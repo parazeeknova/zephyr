@@ -1,48 +1,75 @@
 # Base image
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
-# Install dependencies for building
+# Builder stage - Prune the monorepo
 FROM base AS builder
-RUN apk update && apk add --no-cache libc6-compat
-
-# Set working directory
+RUN apk update && apk add --no-cache libc6-compat git curl postgresql-client
 WORKDIR /app
-RUN npm install -g pnpm turbo
+RUN npm install -g pnpm@latest turbo@latest
 
-# Copy the project files
+# Copy files needed for pruning
 COPY . .
 
-# Prune the project to only include necessary files for the web package
+# Prune the monorepo to only include necessary files
 RUN turbo prune --scope=@zephyr/web --docker
 
-# Add lockfile and package.json's of isolated subworkspace
+# Installer stage - Install dependencies and build
 FROM base AS installer
-RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm
+RUN apk update && apk add --no-cache libc6-compat curl postgresql-client
+RUN npm install -g pnpm@latest
+
 WORKDIR /app
 
-# First install the dependencies (as they change less often)
+# Set environment variables
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV SKIP_TYPE_CHECK=1
+ENV HUSKY=0
+ENV CI=1
+
+# Copy pruned lockfile and package.json files
 COPY --from=builder /app/out/json/ .
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=builder /app/turbo.json ./turbo.json
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code from pruned output
+COPY --from=builder /app/out/full/ .
+
+# Generate Prisma client if needed
+COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
+RUN cd packages/db && pnpm dlx prisma generate
 
 # Build the project
-COPY --from=builder /app/out/full/ .
-RUN pnpm turbo build --filter=@zephyr/web...
+RUN pnpm turbo build --filter=@zephyr/web... --force
 
-# Runtime stage
+# Runner stage - Production environment
 FROM base AS runner
 WORKDIR /app
 
-# Don't run production as root
+# Create non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-USER nextjs
 
-# Automatically leverage output traces to reduce image size
+# Create necessary directories
+RUN mkdir -p /app/packages/db/prisma && \
+  chown -R nextjs:nodejs /app
+
+# Copy only necessary files
 COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
+COPY --from=installer --chown=nextjs:nodejs /app/packages/db/prisma ./packages/db/prisma
 
-# Yeehaw !
-CMD node apps/web/server.js
+# Set production environment variables
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PATH="/app/node_modules/.bin:${PATH}"
+ENV SKIP_PRISMA_GENERATE=true
+
+USER nextjs
+
+EXPOSE 3000
+
+CMD ["node", "apps/web/server.js"]

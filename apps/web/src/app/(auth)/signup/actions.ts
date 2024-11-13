@@ -34,32 +34,54 @@ const EMAIL_ERRORS = {
   SUSPICIOUS:
     "This email address appears to be suspicious. Please use a different one.",
   VALIDATION_FAILED:
-    "We couldn't validate this email address. Please try another."
+    "We couldn't validate this email address. Please try another.",
+  REQUIRED: "Email is required"
 };
 
 const USERNAME_ERRORS = {
   TAKEN: "This username is already taken. Please choose another.",
-  INVALID: "Username can only contain letters, numbers, and underscores."
+  INVALID: "Username can only contain letters, numbers, and underscores.",
+  REQUIRED: "Username is required"
 };
 
+const SYSTEM_ERRORS = {
+  JWT_SECRET: "System configuration error: JWT_SECRET is not configured",
+  USER_ID: "Failed to generate user ID",
+  TOKEN: "Failed to generate verification token",
+  INVALID_PAYLOAD: "Invalid token payload data"
+};
+
+// Validate JWT_SECRET at startup
+if (!process.env.JWT_SECRET) {
+  throw new Error(SYSTEM_ERRORS.JWT_SECRET);
+}
+
 async function isEmailValid(email: string) {
+  if (!email) {
+    return { isValid: false, error: EMAIL_ERRORS.REQUIRED };
+  }
+
   console.log("Starting email validation for:", email);
 
   // Basic format check
   if (!EmailValidator.validate(email)) {
     console.log("Basic email validation failed");
-    return { isValid: false, error: "Invalid email format" };
+    return { isValid: false, error: EMAIL_ERRORS.INVALID_FORMAT };
   }
 
   try {
     const domain = email.split("@")[1]?.toLowerCase();
+
+    if (!domain) {
+      return { isValid: false, error: EMAIL_ERRORS.INVALID_FORMAT };
+    }
 
     // Check for disposable email domains
     if (DISPOSABLE_EMAIL_DOMAINS.includes(domain)) {
       console.log("Disposable email domain detected:", domain);
       return {
         isValid: false,
-        error: "Temporary or disposable email addresses are not allowed"
+        error: EMAIL_ERRORS.DISPOSABLE
       };
     }
 
@@ -80,16 +102,15 @@ async function isEmailValid(email: string) {
 
       switch (result.reason) {
         case "regex":
-          return { isValid: false, error: "Invalid email format" };
+          return { isValid: false, error: EMAIL_ERRORS.INVALID_FORMAT };
         case "disposable":
           return {
             isValid: false,
-            error: "Temporary or disposable email addresses are not allowed"
+            error: EMAIL_ERRORS.DISPOSABLE
           };
         case "mx":
-          // Only accept if MX records exist
           if (!result.validators.mx?.valid) {
-            return { isValid: false, error: "Invalid email domain" };
+            return { isValid: false, error: EMAIL_ERRORS.INVALID_DOMAIN };
           }
           break;
         case "typo":
@@ -117,11 +138,11 @@ async function isEmailValid(email: string) {
       "throw"
     ];
 
-    if (suspicious.some((word) => domain?.includes(word))) {
+    if (suspicious.some((word) => domain.includes(word))) {
       console.log("Suspicious email domain detected:", domain);
       return {
         isValid: false,
-        error: "This type of email address is not allowed"
+        error: EMAIL_ERRORS.SUSPICIOUS
       };
     }
 
@@ -134,32 +155,41 @@ async function isEmailValid(email: string) {
 
       if (!hasMx) {
         console.log("No MX records found for domain:", domain);
-        return { isValid: false, error: "Invalid email domain" };
+        return { isValid: false, error: EMAIL_ERRORS.INVALID_DOMAIN };
       }
     } catch (error) {
       console.error("DNS lookup error:", error);
-      return { isValid: false, error: "Unable to verify email domain" };
+      return { isValid: false, error: EMAIL_ERRORS.INVALID_DOMAIN };
     }
 
     console.log("Email validation passed");
-    return { isValid: true };
+    return { isValid: true, error: null };
   } catch (error) {
     console.error("Email validation error:", error);
-    return { isValid: false, error: "Unable to validate email address" };
+    return { isValid: false, error: EMAIL_ERRORS.VALIDATION_FAILED };
   }
 }
 
 export async function resendVerificationEmail(email: string) {
+  if (!email) {
+    return {
+      error: EMAIL_ERRORS.REQUIRED,
+      success: false
+    };
+  }
+
   try {
     const existingUser = await prisma.user.findFirst({
       where: { email: { equals: email, mode: "insensitive" } }
     });
+
     if (!existingUser) {
       return {
         error: "User not found",
         success: false
       };
     }
+
     if (existingUser.emailVerified) {
       return {
         error: "Email already verified",
@@ -167,10 +197,10 @@ export async function resendVerificationEmail(email: string) {
       };
     }
 
-    // Check existing verification token
     const existingToken = await prisma.emailVerificationToken.findFirst({
       where: { userId: existingUser.id }
     });
+
     if (!existingToken) {
       return {
         error: "Verification token not found",
@@ -178,10 +208,9 @@ export async function resendVerificationEmail(email: string) {
       };
     }
 
-    // Check if enough time has passed (1 minute)
     const sentAt = existingToken.createdAt;
     const timeDiff = Date.now() - sentAt.getTime();
-    const isOneMinutePassed = timeDiff > 60000; // 1 minute in milliseconds
+    const isOneMinutePassed = timeDiff > 60000;
 
     if (!isOneMinutePassed) {
       const remainingSeconds = Math.ceil((60000 - timeDiff) / 1000);
@@ -190,21 +219,35 @@ export async function resendVerificationEmail(email: string) {
         success: false
       };
     }
-    // Generate new token
-    const newToken = jwt.sign(
-      { userId: existingUser.id, email },
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      process.env.JWT_SECRET!,
-      { expiresIn: "1h" }
-    );
+
+    const tokenPayload = {
+      userId: existingUser.id,
+      email,
+      timestamp: Date.now()
+    };
+
+    if (!tokenPayload.userId || !tokenPayload.email) {
+      throw new Error(SYSTEM_ERRORS.INVALID_PAYLOAD);
+    }
+
+    // biome-ignore lint/style/noNonNullAssertion: This is a known non-null value
+    const newToken = jwt.sign(tokenPayload, process.env.JWT_SECRET!, {
+      expiresIn: "1h"
+    });
+
+    if (!newToken) {
+      throw new Error(SYSTEM_ERRORS.TOKEN);
+    }
+
     await prisma.emailVerificationToken.update({
       where: { id: existingToken.id },
       data: {
         token: newToken,
         createdAt: new Date(),
-        expiresAt: new Date(Date.now() + 3600000) // 1 hour
+        expiresAt: new Date(Date.now() + 3600000)
       }
     });
+
     await sendVerificationEmail(email, newToken);
 
     return {
@@ -214,7 +257,10 @@ export async function resendVerificationEmail(email: string) {
   } catch (error) {
     console.error("Resend verification email error:", error);
     return {
-      error: "Failed to resend verification email. Please try again later.",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to resend verification email",
       success: false
     };
   }
@@ -224,7 +270,31 @@ export async function signUp(
   credentials: SignUpValues
 ): Promise<{ error?: string; success?: boolean }> {
   try {
-    const { username, email, password } = signUpSchema.parse(credentials);
+    if (!credentials) {
+      return {
+        error: "No credentials provided",
+        success: false
+      };
+    }
+
+    const validationResult = signUpSchema.safeParse(credentials);
+
+    if (!validationResult.success) {
+      const firstError = validationResult.error.errors[0];
+      return {
+        error: firstError?.message || "Invalid credentials",
+        success: false
+      };
+    }
+
+    const { username, email, password } = validationResult.data;
+
+    if (!username || !email || !password) {
+      return {
+        error: "All fields are required",
+        success: false
+      };
+    }
 
     const emailValidation = await isEmailValid(email);
     if (!emailValidation.isValid) {
@@ -234,10 +304,10 @@ export async function signUp(
       };
     }
 
-    // Check for existing users
     const existingUsername = await prisma.user.findFirst({
       where: { username: { equals: username, mode: "insensitive" } }
     });
+
     if (existingUsername) {
       return { error: USERNAME_ERRORS.TAKEN, success: false };
     }
@@ -245,6 +315,7 @@ export async function signUp(
     const existingEmail = await prisma.user.findFirst({
       where: { email: { equals: email, mode: "insensitive" } }
     });
+
     if (existingEmail) {
       return { error: EMAIL_ERRORS.ALREADY_EXISTS, success: false };
     }
@@ -252,15 +323,31 @@ export async function signUp(
     const passwordHash = await hash(password);
     const userId = generateIdFromEntropySize(10);
 
-    // Create verification token
+    if (!userId) {
+      throw new Error(SYSTEM_ERRORS.USER_ID);
+    }
+
+    const tokenPayload = {
+      userId,
+      email,
+      timestamp: Date.now()
+    };
+
+    if (!tokenPayload.userId || !tokenPayload.email) {
+      throw new Error(SYSTEM_ERRORS.INVALID_PAYLOAD);
+    }
+
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    const token = jwt.sign({ userId, email }, process.env.JWT_SECRET!, {
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET!, {
       expiresIn: "1h"
     });
 
+    if (!token) {
+      throw new Error(SYSTEM_ERRORS.TOKEN);
+    }
+
     const streamClient = getStreamClient();
 
-    // Create user with verification token
     await prisma.$transaction(async (tx) => {
       await tx.user.create({
         data: {
@@ -277,7 +364,7 @@ export async function signUp(
         data: {
           token,
           userId,
-          expiresAt: new Date(Date.now() + 3600000) // 1 hour
+          expiresAt: new Date(Date.now() + 3600000)
         }
       });
 
@@ -288,19 +375,20 @@ export async function signUp(
           name: username
         });
       } catch (streamError) {
-        console.warn("Failed to create Stream user:", streamError);
-        // Continue with signup even if Stream fails
+        console.error("Failed to create Stream user:", streamError);
       }
     });
 
-    // Send verification email
     await sendVerificationEmail(email, token);
 
     return { success: true };
   } catch (error) {
     console.error("Signup error:", error);
     return {
-      error: "Something went wrong. Please try again.",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again.",
       success: false
     };
   }

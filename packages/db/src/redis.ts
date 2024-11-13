@@ -1,8 +1,24 @@
-import { Redis } from "@upstash/redis";
+import IORedis from "ioredis";
 
-export const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || "",
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || ""
+const redisConfig = {
+  host: process.env.REDIS_HOST || "localhost",
+  port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
+  password: process.env.REDIS_PASSWORD || "zephyrredis",
+  retryStrategy(times: number) {
+    const delay = Math.min(times * 50, 2000);
+    return delay;
+  },
+  maxRetriesPerRequest: 3
+};
+
+export const redis = new IORedis(redisConfig);
+
+redis.on("error", (error) => {
+  console.error("Redis connection error:", error);
+});
+
+redis.on("connect", () => {
+  console.log("Connected to Redis successfully");
 });
 
 export interface TrendingTopic {
@@ -18,9 +34,8 @@ const BACKUP_TTL = 86400; // 24 hours in seconds
 export const trendingTopicsCache = {
   async get(): Promise<TrendingTopic[]> {
     try {
-      const topics = await redis.get<TrendingTopic[]>(TRENDING_TOPICS_KEY);
-      console.log("Retrieved topics from cache:", topics);
-      return topics || [];
+      const topics = await redis.get(TRENDING_TOPICS_KEY);
+      return topics ? JSON.parse(topics) : [];
     } catch (error) {
       console.error("Error getting trending topics from cache:", error);
       return this.getBackup();
@@ -29,11 +44,8 @@ export const trendingTopicsCache = {
 
   async getBackup(): Promise<TrendingTopic[]> {
     try {
-      const backupTopics = await redis.get<TrendingTopic[]>(
-        TRENDING_TOPICS_BACKUP_KEY
-      );
-      console.log("Retrieved topics from backup cache:", backupTopics);
-      return backupTopics || [];
+      const backupTopics = await redis.get(TRENDING_TOPICS_BACKUP_KEY);
+      return backupTopics ? JSON.parse(backupTopics) : [];
     } catch (error) {
       console.error("Error getting trending topics from backup cache:", error);
       return [];
@@ -42,13 +54,30 @@ export const trendingTopicsCache = {
 
   async set(topics: TrendingTopic[]): Promise<void> {
     try {
-      console.log("Setting topics in cache:", topics);
-      await redis.set(TRENDING_TOPICS_KEY, topics, { ex: CACHE_TTL });
-      await redis.set(TRENDING_TOPICS_BACKUP_KEY, topics, { ex: BACKUP_TTL });
-      await redis.set(`${TRENDING_TOPICS_KEY}:last_updated`, Date.now(), {
-        ex: CACHE_TTL
-      });
-      console.log("Set topics in cache:", topics);
+      const pipeline = redis.pipeline();
+
+      pipeline.set(
+        TRENDING_TOPICS_KEY,
+        JSON.stringify(topics),
+        "EX",
+        CACHE_TTL
+      );
+
+      pipeline.set(
+        TRENDING_TOPICS_BACKUP_KEY,
+        JSON.stringify(topics),
+        "EX",
+        BACKUP_TTL
+      );
+
+      pipeline.set(
+        `${TRENDING_TOPICS_KEY}:last_updated`,
+        Date.now(),
+        "EX",
+        CACHE_TTL
+      );
+
+      await pipeline.exec();
     } catch (error) {
       console.error("Error setting trending topics cache:", error);
     }
@@ -56,8 +85,10 @@ export const trendingTopicsCache = {
 
   async invalidate(): Promise<void> {
     try {
-      await redis.del(TRENDING_TOPICS_KEY);
-      await redis.del(`${TRENDING_TOPICS_KEY}:last_updated`);
+      const pipeline = redis.pipeline();
+      pipeline.del(TRENDING_TOPICS_KEY);
+      pipeline.del(`${TRENDING_TOPICS_KEY}:last_updated`);
+      await pipeline.exec();
       console.log("Invalidated trending topics cache");
     } catch (error) {
       console.error("Error invalidating trending topics cache:", error);
@@ -66,11 +97,11 @@ export const trendingTopicsCache = {
 
   async shouldRefresh(): Promise<boolean> {
     try {
-      const lastUpdated = await redis.get<number>(
+      const lastUpdated = await redis.get(
         `${TRENDING_TOPICS_KEY}:last_updated`
       );
       if (!lastUpdated) return true;
-      const timeSinceUpdate = Date.now() - lastUpdated;
+      const timeSinceUpdate = Date.now() - Number.parseInt(lastUpdated);
       return timeSinceUpdate > (CACHE_TTL * 1000) / 2;
     } catch {
       return true;
@@ -97,14 +128,10 @@ export const postViewsCache = {
   async incrementView(postId: string): Promise<number> {
     try {
       const pipeline = redis.pipeline();
-
-      // Add post to set of posts with views
       pipeline.sadd(POST_VIEWS_SET, postId);
-      // Increment view count
       pipeline.incr(`${POST_VIEWS_KEY_PREFIX}${postId}`);
-
       const results = await pipeline.exec();
-      return Number(results[1]) || 0; // Return the result of INCR operation
+      return (results?.[1]?.[1] as number) || 0;
     } catch (error) {
       console.error("Error incrementing post view:", error);
       return 0;
@@ -113,10 +140,8 @@ export const postViewsCache = {
 
   async getViews(postId: string): Promise<number> {
     try {
-      const views = await redis.get<number>(
-        `${POST_VIEWS_KEY_PREFIX}${postId}`
-      );
-      return views || 0;
+      const views = await redis.get(`${POST_VIEWS_KEY_PREFIX}${postId}`);
+      return Number.parseInt(views || "0");
     } catch (error) {
       console.error("Error getting post views:", error);
       return 0;
@@ -134,7 +159,7 @@ export const postViewsCache = {
 
       return postIds.reduce(
         (acc, id, index) => {
-          acc[id] = Number(results[index]) || 0;
+          acc[id] = Number.parseInt((results?.[index]?.[1] as string) || "0");
           return acc;
         },
         {} as Record<string, number>

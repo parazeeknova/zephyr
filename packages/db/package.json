@@ -10,6 +10,7 @@
     "@prisma/client": "^5.22.0",
     "@upstash/redis": "^1.34.3",
     "date-fns": "^4.1.0",
+    "ioredis": "^5.4.1",
     "stream-chat": "^8.42.0"
   },
   "scripts": {
