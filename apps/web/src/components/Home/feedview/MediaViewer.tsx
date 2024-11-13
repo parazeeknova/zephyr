@@ -7,10 +7,14 @@ import { getLanguageFromFileName } from "@/lib/codefileExtensions";
 import { formatFileName } from "@/lib/formatFileName";
 import { cn } from "@/lib/utils";
 import type { Media } from "@prisma/client";
+import fallbackImage from "@zephyr-assets/fallback.png";
+import { MediaViewerSkeleton } from "@zephyr-ui/Layouts/skeletons/MediaViewerSkeleton";
 import { ChevronLeft, ChevronRight, Download, FileIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { CodePreview } from "./CodePreview";
+
+const FALLBACK_IMAGE = fallbackImage;
 
 interface MediaViewerProps {
   media: Media[];
@@ -28,6 +32,7 @@ const MediaViewer = ({
   const { toast } = useToast();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const currentMedia = media[currentIndex];
   const getMediaUrl = (mediaId: string, download = false) =>
@@ -136,15 +141,25 @@ const MediaViewer = ({
       case "IMAGE":
         return (
           <div className="relative max-h-full max-w-full">
+            {isLoading && <MediaViewerSkeleton type="IMAGE" />}
             <Image
               src={getMediaUrl(currentMedia.id)}
               alt={`Media item ${currentIndex + 1}`}
               width={1200}
               height={800}
-              className="max-h-[85vh] object-contain"
+              className={cn(
+                "max-h-[85vh] object-contain",
+                isLoading && "hidden"
+              )}
               quality={100}
               priority
               sizes="95vw"
+              onLoadingComplete={() => setIsLoading(false)}
+              onError={(e) => {
+                console.error("Image load error:", e);
+                e.currentTarget.src = FALLBACK_IMAGE.src;
+                setIsLoading(false);
+              }}
             />
           </div>
         );
@@ -152,15 +167,19 @@ const MediaViewer = ({
       case "VIDEO":
         return (
           <div className="relative max-h-full max-w-full">
+            {isLoading && <MediaViewerSkeleton type="VIDEO" />}
             <video
               src={getMediaUrl(currentMedia.id)}
               controls
               className={cn(
                 "max-h-[85vh] w-auto",
-                "shadow-lg transition-transform duration-200"
+                "shadow-lg transition-transform duration-200",
+                isLoading && "hidden"
               )}
               autoPlay
               playsInline
+              onLoadedData={() => setIsLoading(false)}
+              onError={() => setIsLoading(false)}
               aria-label={`Video ${currentIndex + 1} of ${media.length}`}
             />
           </div>
@@ -189,30 +208,36 @@ const MediaViewer = ({
       case "CODE":
         return (
           <div className="w-full max-w-4xl rounded-lg bg-background/50 p-4">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <p className="font-medium">
-                  {formatFileName(currentMedia.key)}
-                </p>
-                <p className="text-muted-foreground text-sm">
-                  {getLanguageFromFileName(currentMedia.key)}
-                </p>
-              </div>
-              <Button
-                onClick={handleDownload}
-                variant="secondary"
-                disabled={isDownloading}
-              >
-                <Download className="mr-2 h-4 w-4" />
-                Download
-              </Button>
-            </div>
-            <CodePreview
-              mediaId={currentMedia.id}
-              language={getLanguageFromFileName(currentMedia.key)}
-              fileName={formatFileName(currentMedia.key)}
-              className="shadow-lg"
-            />
+            {isLoading ? (
+              <MediaViewerSkeleton type="CODE" />
+            ) : (
+              <>
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">
+                      {formatFileName(currentMedia.key)}
+                    </p>
+                    <p className="text-muted-foreground text-sm">
+                      {getLanguageFromFileName(currentMedia.key)}
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleDownload}
+                    variant="secondary"
+                    disabled={isDownloading}
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download
+                  </Button>
+                </div>
+                <CodePreview
+                  mediaId={currentMedia.id}
+                  language={getLanguageFromFileName(currentMedia.key)}
+                  fileName={formatFileName(currentMedia.key)}
+                  className="shadow-lg"
+                />
+              </>
+            )}
           </div>
         );
 

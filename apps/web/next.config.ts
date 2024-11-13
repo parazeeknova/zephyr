@@ -85,7 +85,10 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PRIVATE_SKIP_VALIDATION:
       process.env.NEXT_PRIVATE_SKIP_VALIDATION || "false",
-    NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV || "development"
+    NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV || "development",
+    NEXT_PUBLIC_MINIO_ENDPOINT:
+      process.env.NEXT_PUBLIC_MINIO_ENDPOINT || "http://localhost:9001",
+    NEXT_PUBLIC_MINIO_BUCKET_NAME: process.env.MINIO_BUCKET_NAME || "uploads"
   },
 
   webpack: (config, { dev, isServer }) => {

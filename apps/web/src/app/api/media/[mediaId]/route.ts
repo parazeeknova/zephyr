@@ -2,7 +2,8 @@ import {
   MINIO_BUCKET,
   getContentDisposition,
   minioClient,
-  shouldDisplayInline
+  shouldDisplayInline,
+  validateBucket
 } from "@/lib/minio";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "@zephyr/db";
@@ -13,6 +14,28 @@ export async function GET(
   context: { params: Promise<{ mediaId: string }> }
 ): Promise<NextResponse | Response> {
   const { mediaId } = await context.params;
+  if (!mediaId) {
+    return new NextResponse("Media ID is required", { status: 400 });
+  }
+
+  const media = await prisma.media.findUnique({
+    where: { id: mediaId },
+    select: {
+      id: true,
+      key: true,
+      mimeType: true,
+      type: true
+    }
+  });
+
+  if (!media) {
+    return new NextResponse("Media not found", { status: 404 });
+  }
+
+  const bucketExists = await validateBucket();
+  if (!bucketExists) {
+    return new NextResponse("Storage configuration error", { status: 500 });
+  }
 
   try {
     const { searchParams } = new URL(request.url);
@@ -57,6 +80,9 @@ export async function GET(
     return new NextResponse(response.Body.transformToWebStream(), { headers });
   } catch (error) {
     console.error("Media proxy error:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return new NextResponse(
+      `Internal Server Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+      { status: 500 }
+    );
   }
 }

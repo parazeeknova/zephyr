@@ -1,8 +1,3 @@
-> [!NOTE]
-> This repository is a part of **Hacktoberfest** 2024. So Issues and PRs are welcome. As the project is in very early stage, we are looking for contributors to help us build the platform. If you are interested in contributing or have any questions / suggestions, feel free to open an issue or a PR. We are looking forward to working with you. 🚀
-
-<br>
-
 <div align="center">
 
   <a href="https://github.com/parazeeknova/zephyr">
@@ -27,13 +22,14 @@
 <strong>Zephyr</strong> is a Social aggregator, part social media platform, part news aggregator. It is a platform that allows users to share and discover content from around the web. Completly open-source and community-driven, Zephyr is a platform that is built by the community, for the community.
 </p>
 
-#### _<div align="left"><sub>// Development Setup (For Contributers)</sub></div>_
+#### _<div align="left"><sub>// Local Development Setup</sub></div>_
 
 ###### _<div align="right"><sub>// Prerequisites</sub></div>_
 
-- [Node.js](https://nodejs.org/en/download/) (v20 or higher)
-- [pnpm](https://pnpm.io/installation)
-- [Turborepo](https://turbo.build/repo/docs/)
+- [Node.js](https://nodejs.org/) (v20 or higher)
+- [pnpm](https://pnpm.io/installation) (Package manager)
+- [Docker](https://www.docker.com/) (For development environment)
+- [Git](https://git-scm.com/) (Version control)
 
 ###### _<div align="right"><sub>// Installation</sub></div>_
 
@@ -42,26 +38,69 @@ We use <strong>pnpm</strong> and <strong>turbo</strong> for managing the depende
 </p>
 
 > [!IMPORTANT]
-> Make sure you have the prerequisites installed before running the following commands and have `.env` file in the root directory.
-> Use the format in `.env.example` file to create a `.env` file in the root directory in `apps/web/` as its a monorepo.
-> Get an example / temp postgre database from vercel for `.env` file and place it in `packages/db`.
-> Get your storage bucket from uploadthing and add it to `.env` file, Will be replaced with amazon s3 bucket later.
-> Add a random string in CRON_SECRET in `.env` file for vercel cron jobs (Only works in production).
+> Use the format in `.env.example` file to create a `.env` file in the root directory.
+> `dev-server` is a script that runs the development server for postgres, redis, minio and creates a temp `.env` to start with.
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/zephyr.git && cd zephyr
-# Install the dependencies
+
+# 2. Install the dependencies
 pnpm install
-# Start the development server on http://localhost:3000 (default web) and http://localhost:3001 (default wiki)
-turbo dev
+
+# 3. Start the development server
+# Windows
+./dev-start.ps1
+# Unix/Linux/Mac
+./dev-start.sh
+
+# OR Manually
+# Start Docker services
+docker-compose -f docker-compose.dev.yml up -d
+
+# 4. Set `.env` variables form `.env.example` file (optional if you want auth and other services)
+cp .env.example .env # Unix/Linux/Mac
+copy .env.example .env # Windows
+# Read the `.env.example` file for more information
+
+# 5.Start development server
+pnpm turbo dev
 ```
 
-###### _<div align="right"><sub>// Docker:</sub></div>_
+###### _<div align="right"><sub>// Ports:</sub></div>_
+
+- Next.js: http://localhost:3000
+- PostgreSQL: localhost:5433
+- Redis: localhost:6379
+- MinIO Console: http://localhost:9001
+
+
+#### _<div align="left"><sub>// Troubleshooting Common Issues</sub></div>_
+
+###### _<div align="right"><sub>// Prisma</sub></div>_
+
+- If you encounter any issues with Prisma, try running the following commands:
+```bash
+cd packages/db
+pnpm prisma generate
+pnpm prisma db push
+```
+
+###### _<div align="right"><sub>// Minio</sub></div>_
+
+- If you encounter any issues with Minio, create bucket manually:
 
 ```bash
-# Build the docker image for production and start the server
-docker-compose -f docker-compose.yml up -d or docker-compose build and docker-compose up
+Access MinIO Console at http://localhost:9001
+Login with default credentials:
+Username: minioadmin
+Password: minioadmin
+```
+- Create buckets manually:
+```bash
+- uploads
+- temp
+- backups
 ```
 
 #### _<div align="left"><sub>// Analytics</sub></div>_
