@@ -54,10 +54,6 @@ pnpm install
 # Unix/Linux/Mac
 ./dev-start.sh
 
-# OR use pnpm
-pnpm run dev-server:ps1 (Windows)
-pnpm run dev-server:sh (Linux/Unix/Mac)
-
 # OR Manually
 # Start Docker services
 docker-compose -f docker-compose.dev.yml up -d
