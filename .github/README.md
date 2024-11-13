@@ -50,9 +50,10 @@ pnpm install
 
 # 3. Start the development server
 # Windows
-./dev-start.ps1
+./dev-start.ps1 or pnpm run dev-server:ps1
 # Unix/Linux/Mac
-./dev-start.sh
+./dev-start.sh or pnpm run dev-server:sh
+```
 
 # OR Manually
 # Start Docker services

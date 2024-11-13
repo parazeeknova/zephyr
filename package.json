@@ -14,7 +14,9 @@
     "lint": "biome:fix && biome:check",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "prepare": "husky",
-    "typecheck": "pnpm --recursive --parallel run typecheck"
+    "typecheck": "pnpm --recursive --parallel run typecheck",
+    "dev-server:ps1": "powershell -ExecutionPolicy Bypass -File dev-server.ps1",
+    "dev-server:sh": "bash dev-server.sh"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
