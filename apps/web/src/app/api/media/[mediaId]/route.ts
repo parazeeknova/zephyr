@@ -1,4 +1,5 @@
 import {
+  MINIO_BUCKET,
   getContentDisposition,
   minioClient,
   shouldDisplayInline
@@ -26,8 +27,7 @@ export async function GET(
     }
 
     const command = new GetObjectCommand({
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      Bucket: process.env.R2_BUCKET_NAME!,
+      Bucket: MINIO_BUCKET,
       Key: media.key
     });
 
@@ -39,27 +39,22 @@ export async function GET(
 
     const headers = new Headers();
 
-    // Set content type
-    if (response.ContentType) {
-      headers.set("Content-Type", response.ContentType);
-    }
+    headers.set(
+      "Content-Type",
+      media.mimeType || response.ContentType || "application/octet-stream"
+    );
 
-    // Set content disposition
     const filename = media.key.split("/").pop() || "file";
     const inline = !download && shouldDisplayInline(media.mimeType);
     headers.set("Content-Disposition", getContentDisposition(filename, inline));
 
-    // Set caching headers
-    headers.set("Cache-Control", "public, max-age=31536000"); // Cache for 1 year
+    headers.set("Cache-Control", "public, max-age=31536000");
 
-    // Set content length if available
     if (response.ContentLength) {
       headers.set("Content-Length", response.ContentLength.toString());
     }
 
-    return new NextResponse(response.Body.transformToWebStream(), {
-      headers
-    });
+    return new NextResponse(response.Body.transformToWebStream(), { headers });
   } catch (error) {
     console.error("Media proxy error:", error);
     return new NextResponse("Internal Server Error", { status: 500 });

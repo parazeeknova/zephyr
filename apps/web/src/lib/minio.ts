@@ -77,29 +77,29 @@ export const allowedFileTypes: AllowedFileType[] = [
 ];
 
 export const maxFileSizes = {
-  image: 10 * 1024 * 1024, // 10MB
-  video: 100 * 1024 * 1024, // 100MB
+  image: 25 * 1024 * 1024, // 25MB
+  video: 250 * 1024 * 1024, // 250MB
   audio: 20 * 1024 * 1024, // 20MB
-  document: 50 * 1024 * 1024, // 50MB
+  document: 200 * 1024 * 1024, // 200MB
   code: 10 * 1024 * 1024 // 10MB
 };
 
-// Create MinIO client
 export const minioClient = new S3Client({
-  region: "us-east-1", // MinIO defaults to us-east-1
+  region: "us-east-1",
   endpoint: process.env.MINIO_ENDPOINT || "http://localhost:9000",
   credentials: {
     accessKeyId: process.env.MINIO_ROOT_USER || "minioadmin",
     secretAccessKey: process.env.MINIO_ROOT_PASSWORD || "minioadmin"
   },
-  forcePathStyle: true // Required for MinIO
+  forcePathStyle: true
 });
+
+export const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || "zephyr";
 
 export const getPublicUrl = (key: string) => {
   const endpoint =
     process.env.NEXT_PUBLIC_MINIO_ENDPOINT || "http://localhost:9001";
-  const bucket = process.env.MINIO_BUCKET_NAME || "uploads";
-  return `${endpoint}/${bucket}/${key}`;
+  return `${endpoint}/${MINIO_BUCKET}/${key}`;
 };
 
 export const getFileType = (mimeType: string) => {
@@ -170,7 +170,6 @@ export const uploadToMinio = async (file: File, userId: string) => {
   };
 };
 
-// Helper function to check if file exists
 export const checkFileExists = async (key: string) => {
   try {
     const command = new GetObjectCommand({
@@ -184,7 +183,6 @@ export const checkFileExists = async (key: string) => {
   }
 };
 
-// Helper function to get content type
 export const getContentType = (filename: string): string => {
   const extension = filename.split(".").pop()?.toLowerCase();
   const mimeTypes: Record<string, string> = {
@@ -230,13 +228,11 @@ export const getContentType = (filename: string): string => {
     : "application/octet-stream";
 };
 
-// Helper function to get content disposition
 export const getContentDisposition = (filename: string, inline = false) => {
   const utf8Filename = encodeURIComponent(filename);
   return `${inline ? "inline" : "attachment"}; filename="${utf8Filename}"`;
 };
 
-// Helper to determine if a file should be displayed inline
 export const shouldDisplayInline = (mimeType: string) => {
   const inlineTypes = [
     "image/",

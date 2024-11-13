@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import webpack from "webpack";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@zephyr/auth", "@zephyr/db", "@zephyr/config"],
@@ -19,7 +20,11 @@ const nextConfig: NextConfig = {
         : false
   },
 
-  serverExternalPackages: ["@node-rs/argon2", "@prisma/client"],
+  serverExternalPackages: [
+    "@node-rs/argon2",
+    "@prisma/client",
+    "@aws-sdk/client-s3"
+  ],
   poweredByHeader: false,
 
   images: {
@@ -63,7 +68,7 @@ const nextConfig: NextConfig = {
         protocol: "http",
         hostname: "localhost",
         port: "9001",
-        pathname: "/**"
+        pathname: `/${process.env.MINIO_BUCKET_NAME}/**`
       }
     ]
   },
@@ -84,7 +89,27 @@ const nextConfig: NextConfig = {
   },
 
   webpack: (config, { dev, isServer }) => {
-    // Skip validation for static pages during build
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: require.resolve("crypto-browserify"),
+        stream: require.resolve("stream-browserify"),
+        util: require.resolve("util/"),
+        buffer: require.resolve("buffer/"),
+        process: require.resolve("process/browser")
+      };
+
+      config.plugins.push(
+        new webpack.ProvidePlugin({
+          Buffer: ["buffer", "Buffer"],
+          process: "process/browser"
+        })
+      );
+    }
+
     if (isServer && !dev) {
       const originalEntry = config.entry;
       config.entry = async () => {
@@ -93,20 +118,6 @@ const nextConfig: NextConfig = {
           process.env.NEXT_PRIVATE_SKIP_VALIDATION = "true";
         }
         return entries;
-      };
-    }
-
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-        crypto: false,
-        stream: false,
-        util: false,
-        buffer: false,
-        process: false
       };
     }
 

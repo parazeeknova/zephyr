@@ -2,8 +2,7 @@ import { prisma } from "@zephyr/db";
 import { NextResponse } from "next/server";
 import { UTApi } from "uploadthing/server";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+const CRON_SECRET = process.env.CRON_SECRET;
 
 export async function POST(req: Request) {
   const logs: string[] = [];
@@ -15,15 +14,8 @@ export async function POST(req: Request) {
   try {
     const authHeader = req.headers.get("Authorization");
 
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid authorization header",
-          logs
-        },
-        { status: 401 }
-      );
+    if (authHeader !== `Bearer ${CRON_SECRET}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     log("🔍 Finding unused media files...");
@@ -38,10 +30,7 @@ export async function POST(req: Request) {
             }
           : {})
       },
-      select: {
-        id: true,
-        url: true
-      }
+      select: { id: true, url: true }
     });
 
     log(`Found ${unusedMedia.length} unused media files`);
@@ -55,21 +44,18 @@ export async function POST(req: Request) {
       });
     }
 
-    // Extract valid file keys
     const fileKeys = unusedMedia
       .map((m) => {
         try {
           return m.url.split(
             `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`
           )[1];
-        } catch (_error) {
+        } catch {
           log(`⚠️ Invalid URL format for media ID ${m.id}`);
           return null;
         }
       })
       .filter((key): key is string => key !== null);
-
-    log(`Processing ${fileKeys.length} valid file keys`);
 
     if (fileKeys.length > 0) {
       try {
@@ -77,43 +63,29 @@ export async function POST(req: Request) {
         log("✅ Successfully deleted files from UploadThing");
       } catch (error) {
         log(
-          `❌ Error deleting files from UploadThing: ${error instanceof Error ? error.message : String(error)}`
+          `❌ Error deleting files: ${error instanceof Error ? error.message : String(error)}`
         );
-        // Continue to database cleanup even if UploadThing deletion fails
       }
     }
 
-    // Delete from database
     const deleteResult = await prisma.media.deleteMany({
-      where: {
-        id: {
-          in: unusedMedia.map((m) => m.id)
-        }
-      }
+      where: { id: { in: unusedMedia.map((m) => m.id) } }
     });
-
-    log(`🗑️ Deleted ${deleteResult.count} records from database`);
 
     return NextResponse.json({
       success: true,
-      message: "Cleanup completed successfully",
       deleted: deleteResult.count,
       filesProcessed: fileKeys.length,
       logs
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    log(`❌ Error during cleanup: ${errorMessage}`);
     console.error("Cleanup error:", error);
-
     return NextResponse.json(
-      {
-        success: false,
-        error: "Internal server error",
-        message: errorMessage,
-        logs
-      },
+      { success: false, error: "Internal server error", logs },
       { status: 500 }
     );
   }
 }
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
