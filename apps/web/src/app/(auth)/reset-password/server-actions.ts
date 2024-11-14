@@ -34,22 +34,17 @@ export async function requestPasswordReset(
     });
 
     if (!user) {
-      // Return success even if user doesn't exist for security
       return { success: true };
     }
-
-    // Check for existing token and delete if found
     await prisma.passwordResetToken.deleteMany({
       where: { userId: user.id }
     });
 
-    // Create new reset token
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    // biome-ignore lint/style/noNonNullAssertion: This is safe because we check for the presence of the secret in the .env file
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
       expiresIn: "1h"
     });
 
-    // Save token to database
     await prisma.passwordResetToken.create({
       data: {
         token,
@@ -58,7 +53,6 @@ export async function requestPasswordReset(
       }
     });
 
-    // Send reset email
     await sendPasswordResetEmail(email, token);
 
     return { success: true };
@@ -71,8 +65,6 @@ export async function requestPasswordReset(
 export async function resetPassword(data: z.infer<typeof resetPasswordSchema>) {
   try {
     const { token, password } = resetPasswordSchema.parse(data);
-
-    // Verify token
     const resetToken = await prisma.passwordResetToken.findUnique({
       where: { token },
       include: { user: true }
@@ -82,10 +74,8 @@ export async function resetPassword(data: z.infer<typeof resetPasswordSchema>) {
       return { error: "Invalid or expired reset token" };
     }
 
-    // Hash new password
     const passwordHash = await hash(password);
 
-    // Update password and cleanup
     await prisma.$transaction([
       prisma.user.update({
         where: { id: resetToken.userId },

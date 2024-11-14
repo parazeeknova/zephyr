@@ -19,7 +19,7 @@ export default function DiscordSignInButton() {
 
 function DiscordIcon() {
   return (
-    // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
+    // biome-ignore lint/a11y/noSvgWithoutTitle: Discord icon is purely decorative
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"

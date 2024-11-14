@@ -91,14 +91,12 @@ export default function LoginErrorPage() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        {/* Background blur elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="-left-4 absolute top-0 h-[500px] w-[500px] rounded-full bg-blue-500/10 blur-[100px]" />
           <div className="absolute top-1/2 right-0 h-[400px] w-[400px] rounded-full bg-purple-500/10 blur-[100px]" />
           <div className="-translate-x-1/2 absolute bottom-0 left-1/2 h-[300px] w-[300px] rounded-full bg-pink-500/10 blur-[100px]" />
         </div>
 
-        {/* Content */}
         <div className="relative flex min-h-screen items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -162,7 +160,6 @@ export default function LoginErrorPage() {
             </motion.div>
           </motion.div>
 
-          {/* Animated Zephyr Text */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

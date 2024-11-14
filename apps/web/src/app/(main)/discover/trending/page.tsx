@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function TrendingPage() {
   const { user } = await validateRequest();
-  // biome-ignore lint/correctness/noUnusedVariables: template
+  // biome-ignore lint/correctness/noUnusedVariables: user is used in the component
   const userData = user ? await getUserData(user.id) : null;
 
   return (

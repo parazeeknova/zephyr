@@ -20,7 +20,7 @@ export default function GoogleSignInButton() {
 
 function GoogleIcon() {
   return (
-    // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
+    // biome-ignore lint/a11y/noSvgWithoutTitle: Google logo is purely decorative
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="1.2em"

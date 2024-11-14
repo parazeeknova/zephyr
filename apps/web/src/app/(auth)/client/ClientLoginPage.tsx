@@ -104,7 +104,6 @@ export const AnimatedZephyrText = () => {
         ))}
       </div>
 
-      {/* Animated underline */}
       <motion.div
         // @ts-expect-error
         className="absolute bottom-0 left-0 h-0.5 bg-primary/30"
@@ -135,10 +134,8 @@ export default function ClientLoginPage() {
         animate="visible"
         variants={fadeIn}
       >
-        {/* Background gradient overlay */}
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/5 via-background to-background/95" />
 
-        {/* Login Text - Most precise positioning */}
         <motion.div
           // @ts-expect-error
           className="absolute left-20 hidden h-full items-center md:flex"
@@ -206,12 +203,10 @@ export default function ClientLoginPage() {
                   variants={contentAnimation}
                   custom={1}
                 >
-                  {/* Google button - full width */}
                   <AuthButtonWrapper className="w-full">
                     <GoogleSignInButton />
                   </AuthButtonWrapper>
 
-                  {/* Grid for other auth buttons */}
                   <div className="grid grid-cols-3 gap-3">
                     <AuthButtonWrapper>
                       <GithubSignInButton />
@@ -342,7 +337,6 @@ export default function ClientLoginPage() {
           <AnimatedZephyrText />
         </div>
 
-        {/* Background image for both mobile and desktop */}
         <motion.div
           // @ts-expect-error
           className="absolute top-0 right-0 h-full w-full bg-center bg-cover opacity-5 blur-md lg:w-1/2"

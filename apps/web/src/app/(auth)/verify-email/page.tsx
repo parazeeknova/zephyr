@@ -17,14 +17,13 @@ const VerificationAnimation = () => {
   return (
     <div className="flex flex-col items-center space-y-6">
       <div className="relative h-32 w-64">
-        {/* Email Icon */}
         <motion.div
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           // @ts-expect-error
           className="absolute top-0 left-0 h-20 w-20 rounded-xl border border-primary/20 bg-primary/5 p-4"
         >
-          {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
+          {/* biome-ignore lint/a11y/noSvgWithoutTitle: SVG is purely decorative */}
           <svg
             className="h-full w-full text-primary/60"
             fill="none"
@@ -40,7 +39,6 @@ const VerificationAnimation = () => {
           </svg>
         </motion.div>
 
-        {/* Verification Process Animation */}
         <motion.div
           // @ts-expect-error
           className="-translate-x-1/2 absolute top-8 left-1/2 h-1 w-20"
@@ -51,14 +49,13 @@ const VerificationAnimation = () => {
           <div className="h-full w-full bg-gradient-to-r from-primary/0 via-primary to-primary/0" />
         </motion.div>
 
-        {/* Shield Icon */}
         <motion.div
           initial={{ x: 100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           // @ts-expect-error
           className="absolute top-0 right-0 h-20 w-20 rounded-xl border border-primary/20 bg-primary/5 p-4"
         >
-          {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
+          {/* biome-ignore lint/a11y/noSvgWithoutTitle: SVG is purely decorative */}
           <svg
             className="h-full w-full text-primary/60"
             fill="none"
@@ -74,7 +71,6 @@ const VerificationAnimation = () => {
           </svg>
         </motion.div>
 
-        {/* Scanning Effect */}
         <motion.div
           // @ts-expect-error
           className="absolute top-0 left-0 h-full w-1 bg-primary/50"
@@ -88,7 +84,6 @@ const VerificationAnimation = () => {
         />
       </div>
 
-      {/* Verification Text */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -114,7 +109,6 @@ const VerificationAnimation = () => {
         </motion.p>
       </motion.div>
 
-      {/* Progress Dots */}
       {/* @ts-expect-error */}
       <motion.div className="flex gap-2">
         {[0, 1, 2].map((i) => (
@@ -234,14 +228,12 @@ export default function VerifyEmailPage() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        {/* Background blur elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="-left-4 absolute top-0 h-[500px] w-[500px] rounded-full bg-blue-500/10 blur-[100px]" />
           <div className="absolute top-1/2 right-0 h-[400px] w-[400px] rounded-full bg-purple-500/10 blur-[100px]" />
           <div className="-translate-x-1/2 absolute bottom-0 left-1/2 h-[300px] w-[300px] rounded-full bg-pink-500/10 blur-[100px]" />
         </div>
 
-        {/* Content */}
         <div className="relative flex min-h-screen items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -276,7 +268,6 @@ export default function VerifyEmailPage() {
             )}
           </motion.div>
 
-          {/* Animated Zephyr Text */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

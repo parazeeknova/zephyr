@@ -12,16 +12,14 @@ export async function createVerificationTokenForUser(
   userId: string,
   email: string
 ) {
-  // Check for existing token
   const existingToken = await prisma.emailVerificationToken.findFirst({
     where: { userId }
   });
 
-  // If token exists, update it
   if (existingToken) {
     const newToken = jwt.sign(
       { userId, email },
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      // biome-ignore lint/style/noNonNullAssertion: JWT_SECRET is required
       process.env.JWT_SECRET!,
       { expiresIn: "1h" }
     );
@@ -38,10 +36,9 @@ export async function createVerificationTokenForUser(
     return newToken;
   }
 
-  // Create new token
   const token = jwt.sign(
     { userId, email },
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    // biome-ignore lint/style/noNonNullAssertion: JWT_SECRET is required
     process.env.JWT_SECRET!,
     { expiresIn: "1h" }
   );
@@ -87,7 +84,6 @@ export async function loginAction(credentials: LoginValues): Promise<{
       return { error: "Incorrect username or password", success: false };
     }
 
-    // Check if email is verified
     if (!existingUser.emailVerified && !existingUser.googleId) {
       if (!existingUser.email) {
         return { error: "Account has no associated email", success: false };
