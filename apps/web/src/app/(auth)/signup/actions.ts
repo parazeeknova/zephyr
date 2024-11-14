@@ -51,7 +51,6 @@ const SYSTEM_ERRORS = {
   INVALID_PAYLOAD: "Invalid token payload data"
 };
 
-// Validate JWT_SECRET at startup
 if (!process.env.JWT_SECRET) {
   throw new Error(SYSTEM_ERRORS.JWT_SECRET);
 }
@@ -63,7 +62,6 @@ async function isEmailValid(email: string) {
 
   console.log("Starting email validation for:", email);
 
-  // Basic format check
   if (!EmailValidator.validate(email)) {
     console.log("Basic email validation failed");
     return { isValid: false, error: EMAIL_ERRORS.INVALID_FORMAT };
@@ -76,7 +74,6 @@ async function isEmailValid(email: string) {
       return { isValid: false, error: EMAIL_ERRORS.INVALID_FORMAT };
     }
 
-    // Check for disposable email domains
     if (DISPOSABLE_EMAIL_DOMAINS.includes(domain)) {
       console.log("Disposable email domain detected:", domain);
       return {
@@ -85,7 +82,6 @@ async function isEmailValid(email: string) {
       };
     }
 
-    // Deep validation
     const result = (await deepEmailValidator({
       email,
       validateRegex: true,
@@ -124,7 +120,6 @@ async function isEmailValid(email: string) {
       }
     }
 
-    // Additional server-side checks
     const suspicious = [
       "mailbox",
       "temporary",
@@ -230,7 +225,7 @@ export async function resendVerificationEmail(email: string) {
       throw new Error(SYSTEM_ERRORS.INVALID_PAYLOAD);
     }
 
-    // biome-ignore lint/style/noNonNullAssertion: This is a known non-null value
+    // biome-ignore lint/style/noNonNullAssertion: JWT_SECRET is required
     const newToken = jwt.sign(tokenPayload, process.env.JWT_SECRET!, {
       expiresIn: "1h"
     });
@@ -337,7 +332,7 @@ export async function signUp(
       throw new Error(SYSTEM_ERRORS.INVALID_PAYLOAD);
     }
 
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    // biome-ignore lint/style/noNonNullAssertion: JWT_SECRET is required
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET!, {
       expiresIn: "1h"
     });

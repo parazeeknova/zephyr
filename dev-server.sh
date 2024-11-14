@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Print banner with color
 print_banner() {
     echo -e "\033[36m"
     cat << "EOB"
@@ -16,7 +15,6 @@ EOB
     echo -e "\033[90m----------------------------------------\033[0m"
 }
 
-# Function to create .env file
 create_env_file() {
     cat > .env << EOL
 POSTGRES_USER=postgres
@@ -55,25 +53,20 @@ EOL
     echo "✅ Created .env file"
 }
 
-# Create .env if it doesn't exist
 if [ ! -f .env ]; then
     echo "📝 Creating .env file..."
     create_env_file
 fi
 
-# Stop existing containers
 echo "🛑 Stopping existing containers..."
 docker-compose -f docker-compose.dev.yml down
 
-# Start containers
 echo "🚀 Starting Docker containers..."
 docker-compose -f docker-compose.dev.yml up -d
 
-# Wait for PostgreSQL to be ready
 echo "⏳ Waiting for PostgreSQL to be ready..."
 sleep 10
 
-# Check PostgreSQL logs for initialization status
 if docker logs zephyr-postgres-dev 2>&1 | grep -q "Prisma setup failed"; then
     echo "⚠️ Prisma setup needs manual initialization"
     echo "Please run the following commands in a new terminal:"
@@ -82,7 +75,6 @@ if docker logs zephyr-postgres-dev 2>&1 | grep -q "Prisma setup failed"; then
     echo "3. pnpm prisma db push"
 fi
 
-# MinIO setup instructions
 print_minio_instructions() {
     cat << "EOT"
 
@@ -109,14 +101,12 @@ print_minio_instructions() {
 EOT
 }
 
-# Setup MinIO
 echo "🗄️ Setting up MinIO..."
 if ! ./docker/minio/setup-minio.sh; then
     echo -e "\033[33m⚠️ MinIO automatic setup failed. Please follow manual setup instructions:\033[0m"
     print_minio_instructions
 fi
 
-# Final status message
 cat << "EOT"
 
 🎉 Development Environment Ready!
@@ -141,7 +131,6 @@ cat << "EOT"
 
 EOT
 
-# Show logs
 echo "📋 Starting log stream (Ctrl+C to exit)..."
 echo "----------------------------------------"
 docker-compose -f docker-compose.dev.yml logs -f

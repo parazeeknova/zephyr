@@ -128,10 +128,8 @@ export default function ClientSignupPage() {
         animate="visible"
         variants={fadeIn}
       >
-        {/* Background gradient overlay */}
         <div className="absolute inset-0 z-0 bg-gradient-to-bl from-primary/5 via-background to-background/95" />
 
-        {/* Sign Up Text */}
         <motion.div
           // @ts-expect-error
           className="absolute right-20 hidden h-full items-center md:flex"
@@ -226,7 +224,6 @@ export default function ClientSignupPage() {
 
         <AnimatedZephyrText />
 
-        {/* Background image for both mobile and desktop */}
         <motion.div
           // @ts-expect-error
           className="absolute top-0 left-0 h-full w-full bg-center bg-cover opacity-5 blur-md lg:w-1/2"

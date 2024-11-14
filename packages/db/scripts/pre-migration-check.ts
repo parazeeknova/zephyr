@@ -4,7 +4,6 @@ const prisma = new PrismaClient();
 
 async function checkDatabase() {
   try {
-    // Check for existing data
     const userCount = await prisma.user.count();
     const postCount = await prisma.post.count();
     const mediaCount = await prisma.media.count();

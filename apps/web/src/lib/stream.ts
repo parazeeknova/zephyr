@@ -1,4 +1,3 @@
-// src/lib/stream.ts
 import { getStreamConfig, isStreamConfigured } from "@zephyr/config/src/env";
 import { StreamChat } from "stream-chat";
 

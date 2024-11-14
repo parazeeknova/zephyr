@@ -19,14 +19,8 @@ export const searchSuggestionsCache = {
       const key = "search:suggestions";
 
       const pipeline = redis.pipeline();
-      
-      // Increment the score for this query
       pipeline.zincrby(key, 1, normalizedQuery);
-      
-      // Keep only top suggestions
       pipeline.zremrangebyrank(key, 0, -MAX_SUGGESTIONS - 1);
-      
-      // Set expiry
       pipeline.expire(key, SUGGESTIONS_TTL);
 
       await pipeline.exec();
@@ -42,10 +36,7 @@ export const searchSuggestionsCache = {
       const normalizedPrefix = prefix.toLowerCase().trim();
       const key = "search:suggestions";
 
-      // Get all members and scores with WITHSCORES option
       const results = await redis.zrevrange(key, 0, -1, 'WITHSCORES');
-      
-      // Process results into pairs of [member, score]
       const suggestions: SearchSuggestion[] = [];
       for (let i = 0; i < results.length; i += 2) {
         const query = results[i];
@@ -72,14 +63,9 @@ export const searchSuggestionsCache = {
       const normalizedQuery = query.toLowerCase().trim();
 
       const pipeline = redis.pipeline();
-      
-      // Add to sorted set with timestamp
+
       pipeline.zadd(key, Date.now(), normalizedQuery);
-      
-      // Keep only latest items
       pipeline.zremrangebyrank(key, 0, -MAX_HISTORY_ITEMS - 1);
-      
-      // Set expiry
       pipeline.expire(key, SEARCH_HISTORY_TTL);
 
       await pipeline.exec();
@@ -116,7 +102,6 @@ export const searchSuggestionsCache = {
   }
 };
 
-// For backward compatibility
 export const searchCache = {
   addToHistory: searchSuggestionsCache.addToHistory,
   getHistory: searchSuggestionsCache.getHistory,

@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 export default function NotFound() {
-  // Pre-calculate random values to ensure consistency
   const nebulaElements = useMemo(() => {
     return Array(5)
       .fill(0)
@@ -36,17 +35,14 @@ export default function NotFound() {
       className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-gradient-to-b from-background/50 to-background"
       suppressHydrationWarning
     >
-      {/* Galaxy Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-black">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,1),rgba(0,0,0,1))]" />
-          {/* Stars */}
           <div className="stars" />
           <div className="stars2" />
           <div className="stars3" />
         </div>
 
-        {/* Animated nebula-like circles */}
         <div className="absolute inset-0 overflow-hidden">
           {nebulaElements.map((nebula, i) => (
             <div
@@ -68,7 +64,6 @@ export default function NotFound() {
         </div>
       </div>
 
-      {/* Content */}
       <div className="relative z-10 mx-auto max-w-3xl px-4 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -77,7 +72,6 @@ export default function NotFound() {
           // @ts-expect-error
           className="space-y-10"
         >
-          {/* 404 Text */}
           <motion.div
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
@@ -99,7 +93,6 @@ export default function NotFound() {
             </div>
           </motion.div>
 
-          {/* Message */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -115,7 +108,6 @@ export default function NotFound() {
             </p>
           </motion.div>
 
-          {/* Button */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -136,7 +128,6 @@ export default function NotFound() {
         </motion.div>
       </div>
 
-      {/* Shooting stars effect */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {starElements.map((star, i) => (
           <div
