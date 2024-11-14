@@ -2,7 +2,6 @@
 
 import { type TrendingTopic, prisma, trendingTopicsCache } from "@zephyr/db";
 
-// Separate database query function
 async function getTrendingTopicsFromDB(): Promise<TrendingTopic[]> {
   try {
     const result = await prisma.$queryRaw<{ hashtag: string; count: bigint }[]>`
@@ -10,7 +9,7 @@ async function getTrendingTopicsFromDB(): Promise<TrendingTopic[]> {
       FROM posts
       GROUP BY (hashtag)
       ORDER BY count DESC, hashtag ASC
-      LIMIT 9
+      LIMIT 10
     `;
 
     console.log("Database query result:", result);
@@ -25,7 +24,6 @@ async function getTrendingTopicsFromDB(): Promise<TrendingTopic[]> {
   }
 }
 
-// Initialize the refreshCache function
 trendingTopicsCache.refreshCache = async function (): Promise<TrendingTopic[]> {
   const topics = await getTrendingTopicsFromDB();
   await this.set(topics);
@@ -36,13 +34,11 @@ export async function invalidateTrendingTopicsCache(): Promise<
   TrendingTopic[]
 > {
   try {
-    // Get new data first
     const newTopics = await getTrendingTopicsFromDB();
     if (!newTopics || newTopics.length === 0) {
       throw new Error("No new topics found");
     }
 
-    // Update cache with new data
     await trendingTopicsCache.set(newTopics);
     return newTopics;
   } catch (error) {
@@ -56,14 +52,12 @@ export async function getTrendingTopics(): Promise<TrendingTopic[]> {
     const cachedTopics = await trendingTopicsCache.get();
 
     if (cachedTopics && cachedTopics.length > 0) {
-      // Background refresh if needed
       if (await trendingTopicsCache.shouldRefresh()) {
         void backgroundRefreshTopics();
       }
       return cachedTopics;
     }
 
-    // If no cached topics, get fresh data
     const newTopics = await getTrendingTopicsFromDB();
     if (newTopics.length > 0) {
       await trendingTopicsCache.set(newTopics);
@@ -77,7 +71,6 @@ export async function getTrendingTopics(): Promise<TrendingTopic[]> {
   }
 }
 
-// Add this new function for background refresh
 export async function backgroundRefreshTopics(): Promise<void> {
   try {
     const topics = await getTrendingTopicsFromDB();

@@ -4,8 +4,6 @@ import { format } from "date-fns";
 const backupDatabase = () => {
   const date = format(new Date(), "yyyy-MM-dd-HH-mm");
   const filename = `backup-${date}.sql`;
-
-  // Get connection string from env
   const connectionString = process.env.POSTGRES_URL_NON_POOLING;
 
   if (!connectionString) {

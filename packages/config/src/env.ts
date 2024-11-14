@@ -21,7 +21,6 @@ export function validateStreamEnv() {
     .map(([key]) => key);
 
   if (missing.length > 0) {
-    // During build time, we'll just warn instead of throwing
     if (process.env.NODE_ENV === "production") {
       console.warn(
         `Warning: Missing Stream Chat environment variables: ${missing.join(", ")}`
@@ -29,7 +28,6 @@ export function validateStreamEnv() {
       return;
     }
 
-    // For development, we can be more strict
     if (process.env.NODE_ENV === "development") {
       throw new Error(
         `Stream Chat environment variables are not configured. Missing: ${missing.join(
@@ -38,7 +36,6 @@ export function validateStreamEnv() {
       );
     }
 
-    // For scripts, just log a warning
     console.warn(
       `Warning: Missing Stream Chat environment variables: ${missing.join(", ")}`
     );
@@ -46,7 +43,6 @@ export function validateStreamEnv() {
 }
 
 export function getStreamConfig() {
-  // Only validate in development
   if (process.env.NODE_ENV === "development") {
     validateStreamEnv();
   }
@@ -57,7 +53,6 @@ export function getStreamConfig() {
   };
 }
 
-// Add a new function for checking if Stream is properly configured
 export function isStreamConfigured() {
   return !!(process.env.NEXT_PUBLIC_STREAM_KEY && process.env.STREAM_SECRET);
 }

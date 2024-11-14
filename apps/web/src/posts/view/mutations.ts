@@ -19,11 +19,9 @@ export function useIncrementViewMutation() {
         return response.json();
       } catch (error) {
         console.error("View increment error:", error);
-        // Silently fail for view counts to not disturb user experience
         return null;
       }
     },
-    // Disable retries for view counts
     retry: false
   });
 }

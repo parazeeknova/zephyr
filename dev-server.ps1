@@ -1,4 +1,3 @@
-# Windows PowerShell Script for Zephyr Development Setup
 $banner = @"
 ███████╗███████╗██████╗ ██╗  ██╗██╗   ██╗██████╗ 
 ╚══███╔╝██╔════╝██╔══██╗██║  ██║╚██╗ ██╔╝██╔══██╗
@@ -13,7 +12,6 @@ Write-Host $banner -ForegroundColor Cyan
 Write-Host "📚 Development Server Setup Script" -ForegroundColor Yellow
 Write-Host "----------------------------------------" -ForegroundColor DarkGray
 
-# Function to create .env file
 function Create-EnvFile {
     $envContent = @"
 POSTGRES_USER=postgres
@@ -53,25 +51,20 @@ NEXT_TELEMETRY_DISABLED=1
     Write-Host "✅ Created .env file" -ForegroundColor Green
 }
 
-# Create .env if it doesn't exist
 if (-not (Test-Path ".env")) {
     Write-Host "📝 Creating .env file..." -ForegroundColor Yellow
     Create-EnvFile
 }
 
-# Stop existing containers
 Write-Host "🛑 Stopping existing containers..." -ForegroundColor Yellow
 docker-compose -f docker-compose.dev.yml down
 
-# Start containers
 Write-Host "🚀 Starting Docker containers..." -ForegroundColor Cyan
 docker-compose -f docker-compose.dev.yml up -d
 
-# Wait for PostgreSQL to be ready
 Write-Host "⏳ Waiting for PostgreSQL to be ready..." -ForegroundColor Yellow
 Start-Sleep -Seconds 10
 
-# Check PostgreSQL logs for initialization status
 $postgresLogs = docker logs zephyr-postgres-dev 2>&1
 if ($postgresLogs -match "Prisma setup failed") {
     Write-Host "⚠️ Prisma setup needs manual initialization" -ForegroundColor Yellow
@@ -83,7 +76,6 @@ Please run the following commands in a new terminal:
 "@ -ForegroundColor Cyan
 }
 
-# MinIO setup instructions
 $minioInstructions = @"
 
 📦 Manual MinIO Setup Instructions:
@@ -108,7 +100,6 @@ $minioInstructions = @"
 
 "@
 
-# Setup MinIO
 Write-Host "🗄️ Setting up MinIO..." -ForegroundColor Cyan
 $minioSetup = ./docker/minio/setup-minio.sh
 if ($LASTEXITCODE -ne 0) {
@@ -140,7 +131,6 @@ Write-Host @"
 
 "@ -ForegroundColor Green
 
-# Show logs
 Write-Host "📋 Starting log stream (Ctrl+C to exit)..." -ForegroundColor Cyan
 Write-Host "----------------------------------------" -ForegroundColor DarkGray
 docker-compose -f docker-compose.dev.yml logs -f

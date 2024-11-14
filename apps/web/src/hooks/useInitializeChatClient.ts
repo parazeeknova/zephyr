@@ -9,7 +9,7 @@ export default function useInitializeChatClient() {
 
   useEffect(() => {
     const client = StreamChat.getInstance(
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      // biome-ignore lint/style/noNonNullAssertion: stream key is required
       process.env.NEXT_PUBLIC_STREAM_KEY!
     );
 

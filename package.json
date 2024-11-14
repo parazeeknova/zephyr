@@ -1,6 +1,6 @@
 {
   "name": "zephyr",
-  "version": "0.0.01",
+  "version": "0.1",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
@@ -14,9 +14,7 @@
     "lint": "biome:fix && biome:check",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "prepare": "husky",
-    "typecheck": "pnpm --recursive --parallel run typecheck",
-    "dev-server:ps1": "powershell -ExecutionPolicy Bypass -File dev-server.ps1",
-    "dev-server:sh": "bash dev-server.sh"
+    "typecheck": "pnpm --recursive --parallel run typecheck"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
@@ -27,8 +25,5 @@
     "turbo": "^2.2.3",
     "typescript": "^5.6.3"
   },
-  "packageManager": "pnpm@9.12.2+sha512.22721b3a11f81661ae1ec68ce1a7b879425a1ca5b991c975b074ac220b187ce56c708fe5db69f4c962c989452eee76c82877f4ee80f474cebd61ee13461b6228",
-  "dependencies": {
-    "vercel": "^37.14.0"
-  }
+  "packageManager": "pnpm@9.12.2+sha512.22721b3a11f81661ae1ec68ce1a7b879425a1ca5b991c975b074ac220b187ce56c708fe5db69f4c962c989452eee76c82877f4ee80f474cebd61ee13461b6228"
 }

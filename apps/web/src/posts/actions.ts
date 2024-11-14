@@ -28,12 +28,9 @@ export async function deletePost(id: string) {
     include: getPostDataInclude(user.id)
   });
 
-  // Clean up Redis entries
   try {
     await Promise.all([
-      // Remove from views set
       redis.srem(POST_VIEWS_SET, id),
-      // Delete view count
       redis.del(`${POST_VIEWS_KEY_PREFIX}${id}`)
     ]);
   } catch (error) {
