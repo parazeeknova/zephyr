@@ -1,5 +1,5 @@
 import { useToast } from "@/hooks/use-toast";
-import { validateFile } from "@/lib/r2";
+import { validateFile } from "@/lib/minio";
 import { useState } from "react";
 
 export interface Attachment {
