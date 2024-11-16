@@ -1,0 +1,200 @@
+x-common-labels: &common-labels
+  environment: "production"
+
+x-common-security: &common-security
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+
+x-logging: &logging
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  postgres-prod:
+    container_name: zephyr-postgres-prod
+    build:
+      context: .
+      dockerfile: ./docker/postgres/Dockerfile.prod
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - DATABASE_URL=${DATABASE_URL}
+      - POSTGRES_PRISMA_URL=${POSTGRES_PRISMA_URL}
+      - POSTGRES_URL_NON_POOLING=${POSTGRES_URL_NON_POOLING}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+      - postgres_logs_prod:/var/log/postgresql
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    networks:
+      - prod_network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    security_opt:
+      - no-new-privileges:true
+    cap_add:
+      - CHOWN
+      - FOWNER
+      - SETGID
+      - SETUID
+    shm_size: '256mb'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    <<: [*common-labels, *logging]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: always
+
+  redis-prod:
+    container_name: zephyr-redis-prod
+    build:
+      context: .
+      dockerfile: ./docker/redis/Dockerfile.prod
+    ports:
+      - "${REDIS_PORT}:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_MAXMEMORY=4gb
+      - REDIS_MAXMEMORY_POLICY=allkeys-lru
+    volumes:
+      - redis_data_prod:/data
+      - ./docker/redis/prod/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - prod_network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    <<: [*common-labels, *common-security, *logging]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: always
+
+  minio-prod:
+    container_name: zephyr-minio-prod
+    build:
+      context: .
+      dockerfile: ./docker/minio/Dockerfile.prod
+    ports:
+      - "${MINIO_PORT}:9000"
+      - "${MINIO_CONSOLE_PORT}:9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_BROWSER_REDIRECT_URL=${MINIO_BROWSER_REDIRECT_URL:-http://localhost:9001}
+      - MINIO_PROMETHEUS_AUTH_TYPE=public
+    volumes:
+      - minio_data_prod:/data
+    networks:
+      - prod_network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    <<: [*common-labels, *common-security, *logging]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: always
+
+  web:
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile.prod
+    ports:
+      - "${NEXT_PUBLIC_PORT}:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis-prod:6379/0
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
+    depends_on:
+      postgres-prod:
+        condition: service_healthy
+      redis-prod:
+        condition: service_healthy
+      minio-prod:
+        condition: service_healthy
+    networks:
+      - prod_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    <<: [*common-labels, *common-security, *logging]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: always
+
+networks:
+  prod_network:
+    driver: bridge
+    name: zephyr_prod_network
+    driver_opts:
+      encrypted: "true"
+    labels:
+      <<: *common-labels
+
+volumes:
+  postgres_data_prod:
+    name: zephyr_postgres_data_prod
+    labels:
+      <<: *common-labels
+  redis_data_prod:
+    name: zephyr_redis_data_prod
+    labels:
+      <<: *common-labels
+  minio_data_prod:
+    name: zephyr_minio_data_prod
+    labels:
+      <<: *common-labels
+  postgres_logs_prod:
+    name: zephyr_postgres_logs_prod
+    labels:
+      <<: *common-labels

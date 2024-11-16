@@ -1,0 +1,18 @@
+FROM minio/minio:latest
+
+LABEL maintainer="Parazeeknova"
+LABEL description="Zephyr Production MinIO Instance"
+
+ENV MINIO_BROWSER_REDIRECT_URL=""
+ENV MINIO_DOMAIN=""
+ENV MINIO_REGION=""
+ENV MINIO_PROMETHEUS_AUTH_TYPE="public"
+ENV MINIO_PROMETHEUS_URL="/minio/v2/metrics/cluster"
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:9000/minio/health/live || exit 1
+
+EXPOSE 9000 9001
+
+ENTRYPOINT ["minio"]
+CMD ["server", "--console-address", ":9001", "/data"]

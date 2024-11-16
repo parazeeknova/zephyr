@@ -1,25 +1,57 @@
-import IORedis from "ioredis";
+import IORedis, { type RedisOptions } from "ioredis";
 
-const redisConfig = {
+const redisUrl = process.env.REDIS_URL;
+
+const redisConfig: RedisOptions = {
   host: process.env.REDIS_HOST || "localhost",
   port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
   password: process.env.REDIS_PASSWORD || "zephyrredis",
+  db: 0,
+  maxRetriesPerRequest: 3,
   retryStrategy(times: number) {
     const delay = Math.min(times * 50, 2000);
     return delay;
   },
-  maxRetriesPerRequest: 3
+  enableReadyCheck: true,
+  showFriendlyErrorStack: true,
+  reconnectOnError: (err: Error) => {
+    console.error("Redis reconnect on error:", err);
+    return true;
+  }
 };
 
-export const redis = new IORedis(redisConfig);
+let redis: IORedis;
 
-redis.on("error", (error) => {
-  console.error("Redis connection error:", error);
-});
+try {
+  redis = redisUrl ? new IORedis(redisUrl) : new IORedis(redisConfig);
 
-redis.on("connect", () => {
-  console.log("Connected to Redis successfully");
-});
+  redis.on("error", (error) => {
+    console.error("Redis connection error:", error);
+    console.error("Redis connection details:", {
+      connection: redisUrl || "Using individual config",
+      host: redis.options.host,
+      port: redis.options.port,
+      db: redis.options.db
+    });
+  });
+
+  redis.on("connect", () => {
+    console.log("Connected to Redis successfully");
+  });
+
+  redis.on("ready", () => {
+    console.log("Redis client ready");
+  });
+
+  redis.on("reconnecting", () => {
+    console.log("Redis client reconnecting");
+  });
+} catch (error) {
+  console.error("Failed to initialize Redis client:", error);
+  throw error;
+}
+
+export { redis };
 
 export interface TrendingTopic {
   hashtag: string;

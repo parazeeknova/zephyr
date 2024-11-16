@@ -60,7 +60,10 @@ const TrendingTopics: React.FC = () => {
     fetchTopics(true); // Force cache invalidation on manual refresh
   };
 
-  if (isPending) return <TrendingTopicsSkeleton />;
+  if (isPending) {
+    return <TrendingTopicsSkeleton />;
+  }
+
   if (error) {
     return (
       <Card className="bg-card/50 shadow-sm backdrop-blur-sm">

@@ -48,7 +48,15 @@ NEXT_TELEMETRY_DISABLED=1
 "@
 
     Set-Content -Path ".env" -Value $envContent
-    Write-Host "✅ Created .env file" -ForegroundColor Green
+    Write-Host "✅ Created root .env file" -ForegroundColor Green
+
+    New-Item -ItemType Directory -Force -Path "apps/web" | Out-Null
+    Set-Content -Path "apps/web/.env" -Value $envContent
+    Write-Host "✅ Created apps/web/.env file" -ForegroundColor Green
+
+    New-Item -ItemType Directory -Force -Path "packages/db" | Out-Null
+    Set-Content -Path "packages/db/.env" -Value $envContent
+    Write-Host "✅ Created packages/db/.env file" -ForegroundColor Green
 }
 
 if (-not (Test-Path ".env")) {

@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'zephyr-postgres'
+    static_configs:
+      - targets: ['postgres-prod:5432']
+    metrics_path: '/metrics'
+    scheme: 'http'
+
+  - job_name: 'zephyr-redis'
+    static_configs:
+      - targets: ['redis-prod:6379']
+    metrics_path: '/metrics'
+    scheme: 'http'
+
+  - job_name: 'zephyr-minio'
+    metrics_path: '/minio/v2/metrics/cluster'
+    scheme: 'http'
+    static_configs:
+      - targets: ['minio-prod:9000']
+
+  - job_name: 'zephyr-web'
+    static_configs:
+      - targets: ['web-prod:3000']
+    metrics_path: '/api/metrics'
+    scheme: 'http'

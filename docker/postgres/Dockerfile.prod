@@ -1,0 +1,35 @@
+FROM postgres:16-alpine
+
+LABEL maintainer="Parazeeknova"
+LABEL description="Zephyr Production PostgreSQL Instance"
+
+RUN apk add --no-cache \
+  postgresql-contrib \
+  bash \
+  curl \
+  htop
+
+RUN mkdir -p /var/lib/postgresql/data /etc/postgresql /var/log/postgresql && \
+  chown -R postgres:postgres /var/lib/postgresql /etc/postgresql /var/log/postgresql && \
+  chmod 0700 /var/lib/postgresql/data && \
+  chmod 0750 /etc/postgresql && \
+  chmod 0750 /var/log/postgresql
+
+RUN mkdir -p /backups && \
+  chown postgres:postgres /backups
+
+RUN mkdir -p /var/run/postgresql && \
+  chown -R postgres:postgres /var/run/postgresql && \
+  chmod 2777 /var/run/postgresql
+
+COPY --chown=postgres:postgres docker/postgres/prod/postgresql.conf /etc/postgresql/postgresql.conf
+COPY --chown=postgres:postgres docker/postgres/prod/pg_hba.conf /etc/postgresql/pg_hba.conf
+
+USER postgres
+
+COPY --chown=postgres:postgres docker/postgres/prod/backup.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/backup.sh
+
+RUN initdb -D /var/lib/postgresql/data
+
+CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]

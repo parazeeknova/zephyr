@@ -16,8 +16,7 @@ EOB
 }
 
 create_env_file() {
-    cat > .env << EOL
-POSTGRES_USER=postgres
+    ENV_CONTENT='POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=zephyr
 POSTGRES_PORT=5433
@@ -47,10 +46,18 @@ JWT_EXPIRES_IN=7d
 NEXT_PUBLIC_PORT=3000
 NEXT_PUBLIC_URL=http://localhost:3000
 NODE_ENV=development
-NEXT_TELEMETRY_DISABLED=1
-EOL
+NEXT_TELEMETRY_DISABLED=1'
 
-    echo "✅ Created .env file"
+    echo "$ENV_CONTENT" > .env
+    echo -e "\033[32m✅ Created root .env file\033[0m"
+
+    mkdir -p apps/web
+    echo "$ENV_CONTENT" > apps/web/.env
+    echo -e "\033[32m✅ Created apps/web/.env file\033[0m"
+
+    mkdir -p packages/db
+    echo "$ENV_CONTENT" > packages/db/.env
+    echo -e "\033[32m✅ Created packages/db/.env file\033[0m"
 }
 
 if [ ! -f .env ]; then
