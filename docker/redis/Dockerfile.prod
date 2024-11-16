@@ -1,0 +1,17 @@
+FROM redis:7-alpine
+
+LABEL maintainer="Parazeeknova"
+LABEL description="Zephyr Production Redis Instance"
+
+RUN apk add --no-cache \
+  bash \
+  curl
+
+RUN mkdir -p /data && \
+  chown redis:redis /data
+
+RUN chmod 0700 /data
+
+USER redis
+
+CMD ["redis-server", "/usr/local/etc/redis/redis.conf"]

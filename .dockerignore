@@ -1,38 +1,75 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+.github
+
 # Dependencies
-node_modules
-.pnpm-store
+**/node_modules
+**/.pnpm-store
+**/dist
+**/.next
+**/out
+**/.turbo
+**/.cache
 
-# Build outputs
-.next
-out
-build
-dist
+# Development files
+**/.env*
+!packages/db/.env
+**/.editorconfig
+**/.eslintrc*
+**/.prettierrc*
+**/*.log
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/.DS_Store
+**/*.pem
 
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Test files
+**/coverage
+**/.nyc_output
+**/__tests__
+**/*.test.*
+**/*.spec.*
 
-# IDEs and editors
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Documentation
+**/*.md
+**/docs
+**/LICENSE
+**/CHANGELOG.md
 
-# OS
-.DS_Store
-Thumbs.db
+# Development configurations
+**/.vscode
+**/.idea
+!packages/config/tsconfig*.json
 
-# Cache
-.turbo
-.cache
+# Temporary files
+**/*.swp
+**/*.swo
+**/tmp
+**/temp
 
-# Testing
-coverage
+# Docker specific
+.dockerignore
+**/Dockerfile*
+**/docker-compose*
 
-# Misc
-.vercel
+# Development scripts
+dev-server.ps1
+dev-server.sh
+
+# Build artifacts
+**/.build
+**/.coverage
+**/.env.local
+**/.env.development
+**/.env.test
+
+# Keep necessary files
+!turbo.json
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!packages/*/package.json
+!apps/*/package.json
