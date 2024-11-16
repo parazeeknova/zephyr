@@ -5,13 +5,14 @@ LABEL description="Zephyr Production Redis Instance"
 
 RUN apk add --no-cache \
   bash \
-  curl
+  curl \
+  gettext # Add this for envsubst
 
+COPY ./docker/redis/prod/redis.conf /usr/local/etc/redis/redis.conf.template
 RUN mkdir -p /data && \
-  chown redis:redis /data
-
-RUN chmod 0700 /data
+  chown redis:redis /data && \
+  chmod 0700 /data
 
 USER redis
 
-CMD ["redis-server", "/usr/local/etc/redis/redis.conf"]
+CMD ["sh", "-c", "envsubst < /usr/local/etc/redis/redis.conf.template > /usr/local/etc/redis/redis.conf && redis-server /usr/local/etc/redis/redis.conf"]

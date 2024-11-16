@@ -143,7 +143,7 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
-      - REDIS_URL=${REDIS_URL}
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis-prod:6379/0
       - MINIO_ENDPOINT=${MINIO_ENDPOINT}
     depends_on:
       postgres-prod:
@@ -156,7 +156,7 @@ services:
       - prod_network
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 1
       resources:
         limits:
           cpus: '2'
