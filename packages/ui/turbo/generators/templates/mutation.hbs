@@ -1,0 +1,43 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@/hooks/use-toast";
+
+interface {{pascalCase name}}Input {
+  // Add your mutation input type here
+}
+
+async function {{camelCase name}}(input: {{pascalCase name}}Input) {
+  const response = await fetch("/api/{{dashCase name}}", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input)
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Something went wrong");
+  }
+
+  return response.json();
+}
+
+export function use{{pascalCase name}}Mutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: {{camelCase name}},
+    onSuccess: (data) => {
+      // Add cache updates here
+      toast({
+        title: "Success",
+        description: "Operation completed successfully"
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Something went wrong",
+        variant: "destructive"
+      });
+    }
+  });
+}
