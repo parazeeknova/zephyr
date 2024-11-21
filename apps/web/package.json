@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.691.0",
+    "@aws-sdk/client-s3": "^3.693.0",
     "@aws-sdk/s3-request-presigner": "^3.691.0",
     "@emotion/styled": "^11.13.0",
     "@hookform/resolvers": "^3.9.1",
