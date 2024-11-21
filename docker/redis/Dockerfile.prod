@@ -6,7 +6,7 @@ LABEL description="Zephyr Production Redis Instance"
 RUN apk add --no-cache \
   bash \
   curl \
-  gettext # Add this for envsubst
+  gettext
 
 COPY ./docker/redis/prod/redis.conf /usr/local/etc/redis/redis.conf.template
 RUN mkdir -p /data && \
