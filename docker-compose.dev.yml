@@ -2,6 +2,13 @@ x-common-labels: &common-labels
   maintainer: "Parazeeknova"
   environment: "development"
 
+x-common-deploy: &common-deploy
+  resources:
+    limits:
+      memory: 1G
+    reservations:
+      memory: 512M
+
 services:
   postgres-dev:
     container_name: zephyr-postgres-dev
@@ -23,6 +30,7 @@ services:
       - postgres_data_dev:/var/lib/postgresql/data
       - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
       - ./docker/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - ./docker/postgres/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
     command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
     networks:
       - dev_network
@@ -66,6 +74,10 @@ services:
         reservations:
           cpus: '0.5'
           memory: 512M
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
     labels:
       <<: *common-labels
     healthcheck:
@@ -99,6 +111,10 @@ services:
         reservations:
           cpus: '0.5'
           memory: 512M
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
     labels:
       <<: *common-labels
     healthcheck:
@@ -108,6 +124,37 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
+
+  minio-init:
+    image: minio/mc
+    depends_on:
+      minio-dev:
+        condition: service_healthy
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    entrypoint: >
+      /bin/sh -c "
+      echo '⏳ Waiting for MinIO...' &&
+      until mc config host add minio http://minio-dev:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD; do
+        echo 'Waiting for MinIO to be ready...'
+        sleep 2
+      done &&
+      echo '✅ MinIO is ready' &&
+      for bucket in uploads temp backups; do
+        echo '📦 Creating bucket:' $$bucket &&
+        mc mb --ignore-existing minio/$$bucket &&
+        mc policy set public minio/$$bucket &&
+        mc version enable minio/$$bucket &&
+        if [ $$bucket = 'backups' ]; then
+          mc retention set --default compliance 7d minio/$$bucket
+        fi &&
+        echo '✅ Bucket' $$bucket 'configured'
+      done &&
+      echo '🎉 MinIO initialization completed!'
+      "
+    networks:
+      - dev_network
 
 networks:
   dev_network:

@@ -25,7 +25,12 @@
     "docker:prod:detach": "docker compose -f docker-compose.prod.yml up --build -d",
     "docker:logs": "docker compose -f docker-compose.dev.yml logs -f",
     "docker:logs:prod": "docker compose -f docker-compose.prod.yml logs -f",
-    "docker:interactive": "node ./docker/scripts/clean-docker.js"
+    "docker:interactive": "node ./docker/scripts/clean-docker.js",
+    "dev:init-db": "node docker/scripts/init-db.js || exit 1",
+    "dev:init-minio": "node docker/scripts/init-minio.js || exit 1",
+    "dev:server": "node docker/scripts/dev-server.js || exit 1",
+    "dev:start": "pnpm run dev:server && pnpm run dev",
+    "dev:setup": "pnpm run dev:init-db && pnpm run dev:init-minio"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
