@@ -49,10 +49,7 @@ git clone https://github.com/zephyr.git && cd zephyr
 pnpm install
 
 # 3. Start the development server using terminal
-# Windows
-./dev-start.ps1
-# Unix/Linux/Mac
-./dev-start.sh
+pnpm run dev:server
 
 # OR Manually
 # Start Docker services
@@ -64,6 +61,9 @@ copy .env.example .env # Windows
 # Read the `.env.example` file for more information
 
 # 5.Start development server
+pnpm run dev:start
+
+# OR Manually
 pnpm turbo dev
 ```
 
