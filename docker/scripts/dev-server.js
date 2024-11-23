@@ -3,14 +3,10 @@
 const { execSync } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
-const readline = require("node:readline");
-
-const _rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 const PROJECT_ROOT = path.resolve(__dirname, "../../");
+const INIT_FLAG_FILE = path.join(PROJECT_ROOT, ".dev-init");
+
 const colors = {
   reset: "\x1b[0m",
   red: "\x1b[31m",
@@ -42,20 +38,23 @@ function printBanner() {
 }
 
 function createEnvFile() {
-  const envContent = `POSTGRES_USER=postgres
+  const envContent = `
+# Database
+POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=zephyr
 POSTGRES_PORT=5433
 POSTGRES_HOST=localhost
-# Database URLs
 DATABASE_URL=postgresql://postgres:postgres@localhost:5433/zephyr?schema=public
 POSTGRES_PRISMA_URL=postgresql://postgres:postgres@localhost:5433/zephyr?schema=public
 POSTGRES_URL_NON_POOLING=postgresql://postgres:postgres@localhost:5433/zephyr?schema=public
+
 # Redis
 REDIS_PASSWORD=zephyrredis
 REDIS_PORT=6379
 REDIS_HOST=localhost
 REDIS_URL=redis://:$\{REDIS_PASSWORD}@$\{REDIS_HOST}:$\{REDIS_PORT}/0
+
 # MinIO
 MINIO_ROOT_USER=minioadmin
 MINIO_ROOT_PASSWORD=minioadmin
@@ -65,27 +64,25 @@ MINIO_CONSOLE_PORT=9001
 MINIO_HOST=localhost
 MINIO_ENDPOINT=http://$\{MINIO_HOST}:$\{MINIO_PORT}
 NEXT_PUBLIC_MINIO_ENDPOINT=http://localhost:$\{MINIO_PORT}
-# JWT
+MINIO_ENABLE_OBJECT_LOCKING=on
+
+# Application
 JWT_SECRET=zephyrjwtsupersecret
 JWT_EXPIRES_IN=7d
-# Next.js
 NEXT_PUBLIC_PORT=3000
 NEXT_PUBLIC_URL=http://localhost:3000
 NODE_ENV=development
-NEXT_TELEMETRY_DISABLED=1`;
+NEXT_TELEMETRY_DISABLED=1`.trim();
 
   try {
-    // Create root .env
     fs.writeFileSync(path.join(PROJECT_ROOT, ".env"), envContent);
     console.log(`${colors.green}✅ Created root .env file${colors.reset}`);
 
-    // Create apps/web/.env
     const appsWebDir = path.join(PROJECT_ROOT, "apps/web");
     fs.mkdirSync(appsWebDir, { recursive: true });
     fs.writeFileSync(path.join(appsWebDir, ".env"), envContent);
     console.log(`${colors.green}✅ Created apps/web/.env file${colors.reset}`);
 
-    // Create packages/db/.env
     const packagesDbDir = path.join(PROJECT_ROOT, "packages/db");
     fs.mkdirSync(packagesDbDir, { recursive: true });
     fs.writeFileSync(path.join(packagesDbDir, ".env"), envContent);
@@ -104,59 +101,58 @@ NEXT_TELEMETRY_DISABLED=1`;
 async function waitForServices(maxAttempts = 30) {
   console.log("⏳ Waiting for services to be ready...");
 
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      execSync("docker exec zephyr-postgres-dev pg_isready", { stdio: "pipe" });
-      console.log(`${colors.green}✅ PostgreSQL is ready${colors.reset}`);
-      break;
-    } catch (_error) {
-      if (attempt === maxAttempts) {
-        console.error(
-          `${colors.red}PostgreSQL failed to respond${colors.reset}`
+  const services = [
+    {
+      name: "PostgreSQL",
+      check: () =>
+        execSync("docker exec zephyr-postgres-dev pg_isready", {
+          stdio: "pipe"
+        })
+    },
+    {
+      name: "MinIO",
+      check: () =>
+        execSync("curl -sf http://localhost:9000/minio/health/live", {
+          stdio: "pipe"
+        })
+    },
+    {
+      name: "Redis",
+      check: () =>
+        execSync(
+          `docker exec zephyr-redis-dev redis-cli -a "${process.env.REDIS_PASSWORD || "zephyrredis"}" ping`,
+          { stdio: "pipe" }
+        )
+    }
+  ];
+
+  for (const service of services) {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        await service.check();
+        console.log(
+          `${colors.green}✅ ${service.name} is ready${colors.reset}`
         );
-        return false;
+        break;
+      } catch (_error) {
+        if (attempt === maxAttempts) {
+          console.error(
+            `${colors.red}${service.name} failed to respond${colors.reset}`
+          );
+          return false;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        console.log(
+          `Retrying ${service.name} check... (${attempt}/${maxAttempts})`
+        );
       }
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
-  }
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      execSync("curl -sf http://localhost:9000/minio/health/live", {
-        stdio: "pipe"
-      });
-      console.log(`${colors.green}✅ MinIO is ready${colors.reset}`);
-      break;
-    } catch (_error) {
-      if (attempt === maxAttempts) {
-        console.error(`${colors.red}MinIO failed to respond${colors.reset}`);
-        return false;
-      }
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
-  }
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      execSync(
-        `docker exec zephyr-redis-dev redis-cli -a "${process.env.REDIS_PASSWORD || "zephyrredis"}" ping`,
-        { stdio: "pipe" }
-      );
-      console.log(`${colors.green}✅ Redis is ready${colors.reset}`);
-      break;
-    } catch (_error) {
-      if (attempt === maxAttempts) {
-        console.error(`${colors.red}Redis failed to respond${colors.reset}`);
-        return false;
-      }
-      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
 
   return true;
 }
 
-async function startDockerServices() {
+async function startDockerServices(isFirstRun) {
   try {
     console.log("🛑 Stopping existing containers...");
     execSync("docker-compose -f docker-compose.dev.yml down", {
@@ -165,10 +161,23 @@ async function startDockerServices() {
     });
 
     console.log("🚀 Starting Docker containers...");
-    execSync("docker-compose -f docker-compose.dev.yml up -d", {
-      cwd: PROJECT_ROOT,
-      stdio: "inherit"
-    });
+    if (isFirstRun) {
+      console.log("📥 First run detected - initializing services...");
+      execSync(
+        "docker-compose -f docker-compose.dev.yml --profile init up -d --build",
+        {
+          cwd: PROJECT_ROOT,
+          stdio: "inherit"
+        }
+      );
+      fs.writeFileSync(INIT_FLAG_FILE, new Date().toISOString());
+    } else {
+      console.log("📦 Starting services (skipping initialization)...");
+      execSync("docker-compose -f docker-compose.dev.yml up -d --build", {
+        cwd: PROJECT_ROOT,
+        stdio: "inherit"
+      });
+    }
     return true;
   } catch (error) {
     console.error(
@@ -210,7 +219,8 @@ async function main() {
       createEnvFile();
     }
 
-    const dockerStarted = await startDockerServices();
+    const isFirstRun = !fs.existsSync(INIT_FLAG_FILE);
+    const dockerStarted = await startDockerServices(isFirstRun);
     if (!dockerStarted) {
       throw new Error("Failed to start Docker services");
     }

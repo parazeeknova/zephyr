@@ -4,10 +4,7 @@ LABEL maintainer="Parazeeknova"
 LABEL description="Zephyr Development Redis Instance"
 
 RUN apk add --no-cache \
-  figlet \
   bash \
-  htop \
-  vim \
   && mkdir -p /data \
   && chown redis:redis /data
 

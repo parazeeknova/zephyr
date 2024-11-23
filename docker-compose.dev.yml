@@ -19,8 +19,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=zephyr
-      - POSTGRES_PORT=5433
-      - POSTGRES_HOST=localhost
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=postgres-dev
       - DATABASE_URL=postgresql://postgres:postgres@%2Fvar%2Frun%2Fpostgresql/zephyr?schema=public
       - POSTGRES_PRISMA_URL=postgresql://postgres:postgres@%2Fvar%2Frun%2Fpostgresql/zephyr?schema=public
       - POSTGRES_URL_NON_POOLING=postgresql://postgres:postgres@%2Fvar%2Frun%2Fpostgresql/zephyr?schema=public
@@ -30,7 +30,6 @@ services:
       - postgres_data_dev:/var/lib/postgresql/data
       - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
       - ./docker/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
-      - ./docker/postgres/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
     command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
     networks:
       - dev_network
@@ -51,6 +50,42 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
+
+  prisma-migrate:
+    profiles: ["init"]
+    container_name: zephyr-prisma-migrate
+    image: node:18-alpine
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres-dev:5432/zephyr?schema=public
+      - POSTGRES_PRISMA_URL=postgresql://postgres:postgres@postgres-dev:5432/zephyr?schema=public
+      - POSTGRES_URL_NON_POOLING=postgresql://postgres:postgres@postgres-dev:5432/zephyr?schema=public
+    volumes:
+      - ./packages/db:/app/packages/db
+      - ./package.json:/app/package.json
+      - ./pnpm-lock.yaml:/app/pnpm-lock.yaml
+      - ./pnpm-workspace.yaml:/app/pnpm-workspace.yaml
+    networks:
+      - dev_network
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
+    command: >
+      sh -c "
+      apk add --no-cache netcat-openbsd &&
+      echo '⏳ Setting up Prisma...' &&
+      npm install -g pnpm &&
+      cd /app &&
+      pnpm install --frozen-lockfile &&
+      cd packages/db &&
+      echo '⏳ Waiting for PostgreSQL...' &&
+      until nc -z postgres-dev 5432; do
+        echo 'Waiting for PostgreSQL to be ready...'
+        sleep 2
+      done &&
+      echo '✅ PostgreSQL is ready' &&
+      pnpm prisma generate &&
+      pnpm prisma db push --accept-data-loss &&
+      echo '✅ Prisma migrations completed!'"
 
   redis-dev:
     container_name: zephyr-redis-dev
@@ -99,6 +134,7 @@ services:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
       - MINIO_BROWSER_REDIRECT_URL=http://localhost:9001
+      - MINIO_ENABLE_OBJECT_LOCKING=on
     volumes:
       - minio_data_dev:/data
     networks:
@@ -126,6 +162,7 @@ services:
     restart: unless-stopped
 
   minio-init:
+    profiles: ["init"]
     image: minio/mc
     depends_on:
       minio-dev:
@@ -134,25 +171,22 @@ services:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
     entrypoint: >
-      /bin/sh -c "
-      echo '⏳ Waiting for MinIO...' &&
-      until mc config host add minio http://minio-dev:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD; do
-        echo 'Waiting for MinIO to be ready...'
-        sleep 2
-      done &&
-      echo '✅ MinIO is ready' &&
-      for bucket in uploads temp backups; do
-        echo '📦 Creating bucket:' $$bucket &&
-        mc mb --ignore-existing minio/$$bucket &&
-        mc policy set public minio/$$bucket &&
-        mc version enable minio/$$bucket &&
-        if [ $$bucket = 'backups' ]; then
-          mc retention set --default compliance 7d minio/$$bucket
-        fi &&
-        echo '✅ Bucket' $$bucket 'configured'
-      done &&
-      echo '🎉 MinIO initialization completed!'
-      "
+      /bin/sh -c '
+      echo "⏳ Waiting for MinIO..." &&
+      sleep 5 &&
+      mc config host add minio http://minio-dev:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD &&
+      echo "✅ MinIO is ready" &&
+      mc mb --ignore-existing minio/uploads &&
+      mc anonymous set download minio/uploads &&
+      mc version enable minio/uploads &&
+      mc mb --ignore-existing minio/temp &&
+      mc anonymous set download minio/temp &&
+      mc version enable minio/temp &&
+      mc mb --ignore-existing --with-lock minio/backups &&
+      mc anonymous set download minio/backups &&
+      mc version enable minio/backups &&
+      echo "🎉 MinIO initialization completed!"
+      '
     networks:
       - dev_network
 

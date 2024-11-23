@@ -3,6 +3,8 @@ set -e
 
 cat /etc/banner.txt
 
+echo "🚀 Initializing Zephyr PostgreSQL Development Instance..."
+
 setup_database() {
     psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -13,4 +15,4 @@ EOSQL
 }
 
 setup_database
-echo "✅ Database initialized successfully"
+echo "✅ Database extensions initialized successfully"
