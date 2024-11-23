@@ -10,8 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.698.0",
-    "@aws-sdk/s3-request-presigner": "^3.698.0",
+    "@aws-sdk/client-s3": "^3.699.0",
+    "@aws-sdk/s3-request-presigner": "^3.699.0",
     "@emotion/styled": "^11.13.5",
     "@hookform/resolvers": "^3.9.1",
     "@mui/icons-material": "^6.1.8",
@@ -41,7 +41,7 @@
     "@zephyr/auth": "workspace:*",
     "@zephyr/db": "workspace:*",
     "@zephyr/ui": "workspace:*",
-    "arctic": "^2.2.2",
+    "arctic": "^2.3.0",
     "buffer": "^6.0.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -87,7 +87,7 @@
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/mime-types": "^2.1.4",
-    "@types/node": "^22.9.1",
+    "@types/node": "^22.9.3",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
@@ -96,6 +96,6 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
-    "typescript": "^5.6.3"
+    "typescript": "^5.7.2"
   }
 }
