@@ -48,12 +48,14 @@ git clone https://github.com/zephyr.git && cd zephyr
 # 2. Install the dependencies
 pnpm install
 
-# 3. Start the development server using terminal
+# 3. First time setup or after clean
 pnpm run dev:server
 
-# OR Manually
-# Start Docker services
-docker-compose -f docker-compose.dev.yml up -d
+# Subsequent starts
+pnpm run docker:start
+
+# Clean everything and start fresh
+pnpm run docker:clean:dev && pnpm run dev:server
 
 # 4. Set `.env` variables form `.env.example` file (optional if you want auth and other services)
 cp .env.example .env # Unix/Linux/Mac

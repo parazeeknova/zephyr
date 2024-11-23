@@ -52,6 +52,7 @@ services:
     restart: unless-stopped
 
   prisma-migrate:
+    profiles: ["init"]
     container_name: zephyr-prisma-migrate
     image: node:18-alpine
     environment:
@@ -161,6 +162,7 @@ services:
     restart: unless-stopped
 
   minio-init:
+    profiles: ["init"]
     image: minio/mc
     depends_on:
       minio-dev:
