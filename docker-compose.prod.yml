@@ -1,5 +1,7 @@
 x-common-labels: &common-labels
-  environment: "production"
+  labels:
+    maintainer: "Parazeeknova"
+    environment: "production"
 
 x-common-security: &common-security
   security_opt:
@@ -34,24 +36,19 @@ services:
     volumes:
       - postgres_data_prod:/var/lib/postgresql/data
       - postgres_logs_prod:/var/log/postgresql
+      - ./docker/postgres/prod/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./docker/postgres/prod/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
     command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
     networks:
       - prod_network
     deploy:
       resources:
         limits:
-          cpus: '2'
-          memory: 2G
+          cpus: '4'
+          memory: 8G
         reservations:
-          cpus: '1'
-          memory: 1G
-    security_opt:
-      - no-new-privileges:true
-    cap_add:
-      - CHOWN
-      - FOWNER
-      - SETGID
-      - SETUID
+          cpus: '2'
+          memory: 4G
     shm_size: '256mb'
     ulimits:
       memlock:
@@ -60,7 +57,7 @@ services:
       nofile:
         soft: 65536
         hard: 65536
-    <<: [*common-labels, *logging]
+    <<: [*common-labels, *common-security, *logging]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 30s
@@ -114,6 +111,7 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_BROWSER_REDIRECT_URL=${MINIO_BROWSER_REDIRECT_URL:-http://localhost:9001}
       - MINIO_PROMETHEUS_AUTH_TYPE=public
+      - MINIO_PROMETHEUS_URL=/minio/v2/metrics/cluster
     volumes:
       - minio_data_prod:/data
     networks:
@@ -156,7 +154,7 @@ services:
       - prod_network
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 2
       resources:
         limits:
           cpus: '2'
@@ -172,6 +170,42 @@ services:
       retries: 3
     restart: always
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: zephyr-prometheus
+    volumes:
+      - ./docker/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - "9090:9090"
+    networks:
+      - prod_network
+    <<: [*common-labels, *common-security, *logging]
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: zephyr-grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+    ports:
+      - "3001:3000"
+    networks:
+      - prod_network
+    depends_on:
+      - prometheus
+    <<: [*common-labels, *common-security, *logging]
+    restart: always
+
 networks:
   prod_network:
     driver: bridge
@@ -179,22 +213,37 @@ networks:
     driver_opts:
       encrypted: "true"
     labels:
-      <<: *common-labels
+      maintainer: "Parazeeknova"
+      environment: "production"
 
 volumes:
   postgres_data_prod:
     name: zephyr_postgres_data_prod
     labels:
-      <<: *common-labels
+      maintainer: "Parazeeknova"
+      environment: "production"
   redis_data_prod:
     name: zephyr_redis_data_prod
     labels:
-      <<: *common-labels
+      maintainer: "Parazeeknova"
+      environment: "production"
   minio_data_prod:
     name: zephyr_minio_data_prod
     labels:
-      <<: *common-labels
+      maintainer: "Parazeeknova"
+      environment: "production"
   postgres_logs_prod:
     name: zephyr_postgres_logs_prod
     labels:
-      <<: *common-labels
+      maintainer: "Parazeeknova"
+      environment: "production"
+  prometheus_data:
+    name: zephyr_prometheus_data
+    labels:
+      maintainer: "Parazeeknova"
+      environment: "production"
+  grafana_data:
+    name: zephyr_grafana_data
+    labels:
+      maintainer: "Parazeeknova"
+      environment: "production"
