@@ -30,8 +30,8 @@ importers:
         specifier: ^5.7.2
         version: 5.7.2
       ultracite:
-        specifier: 4.1.6
-        version: 4.1.6
+        specifier: 4.1.7
+        version: 4.1.7
 
   apps/web:
     dependencies:
@@ -4949,8 +4949,9 @@ packages:
     resolution: {integrity: sha512-ZPtzy0hu4cZjv3z5NW9gfKnNLjoz4y6uv4HlelAjDK7sY/xOkKZv9xK/WQpcsBB3jEybChz9DPC2U/+cusjJVQ==}
     engines: {node: '>=18'}
 
-  ultracite@4.1.6:
-    resolution: {integrity: sha512-xvCbWkZ8wYPCgXkP89t9oqI1Nj7ARnuEm4Wd/VJqMj4AD8GnFgvZh/GZJFuGULJ32d/MvKleYZPjsaT2me0gBA==}
+  ultracite@4.1.7:
+    resolution: {integrity: sha512-LqUj6o3GVpFXtkr6R1xoBfWuN2E7xl+nZ38C64EY9HeKDbffi57bpk81atnB5xHST0Ryb3F0/hUlFaoDEU84Yg==}
+    hasBin: true
 
   undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
@@ -10812,7 +10813,7 @@ snapshots:
 
   uint8array-extras@1.4.0: {}
 
-  ultracite@4.1.6: {}
+  ultracite@4.1.7: {}
 
   undici-types@6.19.8: {}
 
