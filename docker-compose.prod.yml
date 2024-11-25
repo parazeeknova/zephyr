@@ -2,12 +2,14 @@ x-common-labels: &common-labels
   labels:
     maintainer: "Parazeeknova"
     environment: "production"
+    version: "1.0"
 
 x-common-security: &common-security
   security_opt:
     - no-new-privileges:true
   cap_drop:
     - ALL
+  read_only: true
 
 x-logging: &logging
   logging:
@@ -15,6 +17,13 @@ x-logging: &logging
     options:
       max-size: "10m"
       max-file: "3"
+      compress: "true"
+
+x-healthcheck-defaults: &healthcheck-defaults
+  interval: 30s
+  timeout: 5s
+  retries: 3
+  start_period: 30s
 
 services:
   postgres-prod:
@@ -22,22 +31,34 @@ services:
     build:
       context: .
       dockerfile: ./docker/postgres/Dockerfile.prod
+      args:
+        POSTGRES_VERSION: 16
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - POSTGRES_HOST=${POSTGRES_HOST}
-      - DATABASE_URL=${DATABASE_URL}
-      - POSTGRES_PRISMA_URL=${POSTGRES_PRISMA_URL}
-      - POSTGRES_URL_NON_POOLING=${POSTGRES_URL_NON_POOLING}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      DATABASE_URL: ${DATABASE_URL}
+      POSTGRES_PRISMA_URL: ${POSTGRES_PRISMA_URL}
+      POSTGRES_URL_NON_POOLING: ${POSTGRES_URL_NON_POOLING}
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "127.0.0.1:${POSTGRES_PORT}:5432"
     volumes:
-      - postgres_data_prod:/var/lib/postgresql/data
-      - postgres_logs_prod:/var/log/postgresql
-      - ./docker/postgres/prod/postgresql.conf:/etc/postgresql/postgresql.conf:ro
-      - ./docker/postgres/prod/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - type: volume
+        source: postgres_data_prod
+        target: /var/lib/postgresql/data
+      - type: volume
+        source: postgres_logs_prod
+        target: /var/log/postgresql
+      - type: bind
+        source: ./docker/postgres/prod/postgresql.conf
+        target: /etc/postgresql/postgresql.conf
+        read_only: true
+      - type: bind
+        source: ./docker/postgres/prod/pg_hba.conf
+        target: /etc/postgresql/pg_hba.conf
+        read_only: true
     command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
     networks:
       - prod_network
@@ -57,14 +78,11 @@ services:
       nofile:
         soft: 65536
         hard: 65536
-    <<: [*common-labels, *common-security, *logging]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
-    restart: always
+      test: ["CMD-SHELL", "pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      <<: *healthcheck-defaults
+    <<: [*common-labels, *common-security, *logging]
+    restart: unless-stopped
 
   redis-prod:
     container_name: zephyr-redis-prod
@@ -72,14 +90,19 @@ services:
       context: .
       dockerfile: ./docker/redis/Dockerfile.prod
     ports:
-      - "${REDIS_PORT}:6379"
+      - "127.0.0.1:${REDIS_PORT}:6379"
     environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_MAXMEMORY=4gb
-      - REDIS_MAXMEMORY_POLICY=allkeys-lru
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_MAXMEMORY: 4gb
+      REDIS_MAXMEMORY_POLICY: allkeys-lru
     volumes:
-      - redis_data_prod:/data
-      - ./docker/redis/prod/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - type: volume
+        source: redis_data_prod
+        target: /data
+      - type: bind
+        source: ./docker/redis/prod/redis.conf
+        target: /usr/local/etc/redis/redis.conf
+        read_only: true
     networks:
       - prod_network
     deploy:
@@ -90,71 +113,38 @@ services:
         reservations:
           cpus: '1'
           memory: 2G
-    <<: [*common-labels, *common-security, *logging]
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-    restart: always
-
-  minio-prod:
-    container_name: zephyr-minio-prod
-    build:
-      context: .
-      dockerfile: ./docker/minio/Dockerfile.prod
-    ports:
-      - "${MINIO_PORT}:9000"
-      - "${MINIO_CONSOLE_PORT}:9001"
-    environment:
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-      - MINIO_BROWSER_REDIRECT_URL=${MINIO_BROWSER_REDIRECT_URL:-http://localhost:9001}
-      - MINIO_PROMETHEUS_AUTH_TYPE=public
-      - MINIO_PROMETHEUS_URL=/minio/v2/metrics/cluster
-    volumes:
-      - minio_data_prod:/data
-    networks:
-      - prod_network
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 4G
-        reservations:
-          cpus: '1'
-          memory: 2G
+      <<: *healthcheck-defaults
     <<: [*common-labels, *common-security, *logging]
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-    restart: always
+    restart: unless-stopped
 
   web:
     build:
       context: .
       dockerfile: ./apps/web/Dockerfile.prod
+      args:
+        NODE_ENV: production
     ports:
-      - "${NEXT_PUBLIC_PORT}:3000"
+      - "127.0.0.1:${NEXT_PUBLIC_PORT}:3000"
     environment:
-      - NODE_ENV=production
-      - DATABASE_URL=${DATABASE_URL}
-      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis-prod:6379/0
-      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis-prod:6379/0
     depends_on:
       postgres-prod:
         condition: service_healthy
       redis-prod:
-        condition: service_healthy
-      minio-prod:
         condition: service_healthy
     networks:
       - prod_network
     deploy:
       mode: replicated
       replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
       resources:
         limits:
           cpus: '2'
@@ -162,49 +152,61 @@ services:
         reservations:
           cpus: '1'
           memory: 2G
-    <<: [*common-labels, *common-security, *logging]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-    restart: always
+      <<: *healthcheck-defaults
+    <<: [*common-labels, *common-security, *logging]
+    restart: unless-stopped
 
   prometheus:
     image: prom/prometheus:latest
     container_name: zephyr-prometheus
     volumes:
-      - ./docker/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
+      - type: bind
+        source: ./docker/monitoring/prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+        read_only: true
+      - type: volume
+        source: prometheus_data
+        target: /prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--storage.tsdb.retention.time=15d'
+      - '--web.enable-lifecycle'
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
     networks:
       - prod_network
     <<: [*common-labels, *common-security, *logging]
-    restart: always
+    restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
     container_name: zephyr-grafana
     volumes:
-      - grafana_data:/var/lib/grafana
-      - ./docker/monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - type: volume
+        source: grafana_data
+        target: /var/lib/grafana
+      - type: bind
+        source: ./docker/monitoring/grafana/dashboards
+        target: /etc/grafana/provisioning/dashboards
+        read_only: true
     environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_ROOT_URL: ${GRAFANA_ROOT_URL:-http://localhost:3001}
     ports:
-      - "3001:3000"
+      - "127.0.0.1:3001:3000"
     networks:
       - prod_network
     depends_on:
       - prometheus
     <<: [*common-labels, *common-security, *logging]
-    restart: always
+    restart: unless-stopped
 
 networks:
   prod_network:
@@ -212,6 +214,10 @@ networks:
     name: zephyr_prod_network
     driver_opts:
       encrypted: "true"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
     labels:
       maintainer: "Parazeeknova"
       environment: "production"
@@ -222,28 +228,11 @@ volumes:
     labels:
       maintainer: "Parazeeknova"
       environment: "production"
-  redis_data_prod:
-    name: zephyr_redis_data_prod
-    labels:
-      maintainer: "Parazeeknova"
-      environment: "production"
-  minio_data_prod:
-    name: zephyr_minio_data_prod
-    labels:
-      maintainer: "Parazeeknova"
-      environment: "production"
   postgres_logs_prod:
     name: zephyr_postgres_logs_prod
-    labels:
-      maintainer: "Parazeeknova"
-      environment: "production"
+  redis_data_prod:
+    name: zephyr_redis_data_prod
   prometheus_data:
     name: zephyr_prometheus_data
-    labels:
-      maintainer: "Parazeeknova"
-      environment: "production"
   grafana_data:
     name: zephyr_grafana_data
-    labels:
-      maintainer: "Parazeeknova"
-      environment: "production"
