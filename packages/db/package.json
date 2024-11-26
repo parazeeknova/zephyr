@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@prisma/client": "^5.22.0",
-    "@types/node": "^22.9.3",
+    "@types/node": "^22.10.0",
     "@zephyr/config": "workspace:*",
     "prisma": "^5.22.0",
     "ts-loader": "^9.5.1",
