@@ -1,4 +1,4 @@
-import { useUpdateProfileMutation } from "@/app/(main)/users/[username]/mutations";
+import { useUpdateProfileMutation } from "@/app/(main)/users/[username]/avatar-mutations";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,6 +26,8 @@ interface GifCenteringDialogProps {
   currentValues: {
     displayName: string;
     bio: string;
+    userId: string;
+    oldAvatarKey?: string;
   };
 }
 
@@ -71,16 +73,19 @@ export default function GifCenteringDialog({
 
   const handleComplete = async () => {
     try {
-      // Create a new File with the original GIF data and transformation metadata
       const transformedFileName = `avatar_${Date.now()}_x${position.x}_y${position.y}_z${zoom}.gif`;
       const file = new File([gifFile], transformedFileName, {
         type: "image/gif"
       });
 
-      // Use the mutation to update the profile
       await mutation.mutateAsync({
-        values: currentValues,
-        avatar: file
+        values: {
+          displayName: currentValues.displayName,
+          bio: currentValues.bio
+        },
+        avatar: file,
+        userId: currentValues.userId,
+        oldAvatarKey: currentValues.oldAvatarKey
       });
 
       onClose();
@@ -102,7 +107,6 @@ export default function GifCenteringDialog({
         </DialogHeader>
 
         <div className="flex flex-col items-center gap-4">
-          {/* GIF Preview Container */}
           <div
             ref={containerRef}
             className="relative size-64 overflow-hidden rounded-full border-2 border-border bg-secondary"
@@ -130,9 +134,7 @@ export default function GifCenteringDialog({
             </motion.div>
           </div>
 
-          {/* Controls */}
           <div className="flex flex-col gap-2">
-            {/* Directional Controls */}
             <div className="grid grid-cols-3 gap-2">
               <div />
               <Button
@@ -177,7 +179,6 @@ export default function GifCenteringDialog({
               <div />
             </div>
 
-            {/* Zoom Controls */}
             <div className="flex items-center justify-center gap-2">
               <Button
                 variant="outline"
