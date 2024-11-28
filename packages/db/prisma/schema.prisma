@@ -24,6 +24,7 @@ model User {
   discordId               String?                  @unique
   twitterId               String?                  @unique
   avatarUrl               String?
+  avatarKey               String?
   bio                     String?
   emailVerified           Boolean                  @default(false)
   sessions                Session[]

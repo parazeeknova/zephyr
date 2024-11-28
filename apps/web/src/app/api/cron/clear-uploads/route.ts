@@ -1,6 +1,6 @@
+import { deleteAvatar } from "@/lib/minio";
 import { prisma } from "@zephyr/db";
 import { NextResponse } from "next/server";
-import { UTApi } from "uploadthing/server";
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
             }
           : {})
       },
-      select: { id: true, url: true }
+      select: { id: true, key: true }
     });
 
     log(`Found ${unusedMedia.length} unused media files`);
@@ -44,38 +44,69 @@ export async function POST(req: Request) {
       });
     }
 
-    const fileKeys = unusedMedia
-      .map((m) => {
+    const deletePromises = unusedMedia.map(async (media) => {
+      if (media.key) {
         try {
-          return m.url.split(
-            `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`
-          )[1];
-        } catch {
-          log(`⚠️ Invalid URL format for media ID ${m.id}`);
-          return null;
+          await deleteAvatar(media.key);
+          log(`✅ Successfully deleted file: ${media.key}`);
+        } catch (error) {
+          log(
+            `❌ Error deleting file ${media.key}: ${error instanceof Error ? error.message : String(error)}`
+          );
         }
-      })
-      .filter((key): key is string => key !== null);
-
-    if (fileKeys.length > 0) {
-      try {
-        await new UTApi().deleteFiles(fileKeys);
-        log("✅ Successfully deleted files from UploadThing");
-      } catch (error) {
-        log(
-          `❌ Error deleting files: ${error instanceof Error ? error.message : String(error)}`
-        );
       }
-    }
+    });
+
+    await Promise.all(deletePromises);
 
     const deleteResult = await prisma.media.deleteMany({
       where: { id: { in: unusedMedia.map((m) => m.id) } }
     });
 
+    log("🔍 Finding orphaned user avatars...");
+    const orphanedAvatars = await prisma.user.findMany({
+      where: {
+        avatarKey: {
+          not: null
+        },
+        AND: {
+          avatarUrl: null
+        }
+      },
+      select: {
+        id: true,
+        avatarKey: true
+      }
+    });
+
+    if (orphanedAvatars.length > 0) {
+      log(`Found ${orphanedAvatars.length} orphaned avatars`);
+
+      const avatarDeletePromises = orphanedAvatars.map(async (user) => {
+        if (user.avatarKey) {
+          try {
+            await deleteAvatar(user.avatarKey);
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { avatarKey: null }
+            });
+            log(`✅ Successfully deleted orphaned avatar: ${user.avatarKey}`);
+          } catch (error) {
+            log(
+              `❌ Error deleting orphaned avatar ${user.avatarKey}: ${error instanceof Error ? error.message : String(error)}`
+            );
+          }
+        }
+      });
+
+      await Promise.all(avatarDeletePromises);
+    }
+
     return NextResponse.json({
       success: true,
       deleted: deleteResult.count,
-      filesProcessed: fileKeys.length,
+      filesProcessed: unusedMedia.length,
+      orphanedAvatarsProcessed: orphanedAvatars.length,
       logs
     });
   } catch (error) {

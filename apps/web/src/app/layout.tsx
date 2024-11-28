@@ -1,11 +1,8 @@
 import { Toaster } from "@/components/ui/toaster";
-import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import localFont from "next/font/local";
-import { extractRouterConfig } from "uploadthing/server";
 import ReactQueryProvider from "./ReactQueryProvider";
-import { fileRouter } from "./api/uploadthing/core";
 import "./globals.css";
 
 const SofiaProSoft = localFont({
@@ -34,7 +31,7 @@ export const metadata: Metadata = {
     template: "%s | Zephyr",
     default: "Zephyr"
   },
-  description: `${description}`,
+  description,
   keywords:
     "blog accelerator, blogs, blogging platform, content, creation, collaboration, platform, zephyr, parazeeknova, hashcodes, AI, social, platform, content, creators, researchers, blogpost, summarization, collaborative, knowledge, sharing, blogging, research, writing, publishing, blog, accelerator, research accelerator, writing accelerator, collaborative accelerator, smart accelerator, AI accelerator, messaging",
   authors: [
@@ -44,7 +41,7 @@ export const metadata: Metadata = {
   publisher: "Parazeeknova",
   openGraph: {
     title: "Zephyr",
-    description: `${description}`,
+    description,
     url: "https://github.com/Parazeeknova/zephyr",
     siteName: "Zephyr - The Next-Generation Blog Accelerator",
     images: ["/Banner.png"],
@@ -53,7 +50,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Zephyr",
-    description: `${description}`,
+    description,
     images: ["/Banner.png"]
   }
 };
@@ -68,7 +65,6 @@ export default function RootLayout({
       <body
         className={`${SofiaProSoft.variable} min-h-screen font-sofiaProSoft antialiased`}
       >
-        <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
         <ReactQueryProvider>
           <ThemeProvider
             attribute="class"

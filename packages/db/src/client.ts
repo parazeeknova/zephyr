@@ -7,6 +7,7 @@ export function getUserDataSelect(loggedInUserId: string) {
     email: true,
     displayName: true,
     avatarUrl: true,
+    avatarKey: true,
     bio: true,
     createdAt: true,
     googleId: true,

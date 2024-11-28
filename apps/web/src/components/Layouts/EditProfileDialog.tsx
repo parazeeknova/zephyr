@@ -1,4 +1,4 @@
-import { useUpdateProfileMutation } from "@/app/(main)/users/[username]/mutations";
+import { useUpdateAvatarMutation } from "@/app/(main)/users/[username]/avatar-mutations";
 import avatarPlaceholder from "@/app/assets/avatar-placeholder.png";
 import {
   Dialog,
@@ -18,8 +18,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { useUploadThing } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
@@ -55,27 +53,22 @@ export default function EditProfileDialog({
     }
   });
 
-  const mutation = useUpdateProfileMutation();
-
   const [croppedAvatar, setCroppedAvatar] = useState<Blob | null>(null);
+  const mutation = useUpdateAvatarMutation();
 
-  async function onSubmit(values: UpdateUserProfileValues) {
-    const newAvatarFile = croppedAvatar
-      ? new File([croppedAvatar], `avatar_${user.id}.webp`)
-      : undefined;
+  async function onSubmit(_values: UpdateUserProfileValues) {
+    if (croppedAvatar) {
+      const file = new File([croppedAvatar], `avatar_${user.id}.webp`, {
+        type: "image/webp"
+      });
 
-    mutation.mutate(
-      {
-        values,
-        avatar: newAvatarFile
-      },
-      {
-        onSuccess: () => {
-          setCroppedAvatar(null);
-          onOpenChange(false);
-        }
-      }
-    );
+      await mutation.mutateAsync({
+        file,
+        userId: user.id,
+        oldAvatarKey: user.avatarKey || undefined
+      });
+    }
+    onOpenChange(false);
   }
 
   return (
@@ -94,6 +87,8 @@ export default function EditProfileDialog({
             }
             onImageCropped={setCroppedAvatar}
             form={form}
+            isUploading={mutation.isPending}
+            user={user}
           />
         </div>
         <Form {...form}>
@@ -144,47 +139,29 @@ interface AvatarInputProps {
   src: string | StaticImageData;
   onImageCropped: (blob: Blob | null) => void;
   form: UseFormReturn<UpdateUserProfileValues>;
+  isUploading: boolean;
+  user: UserData;
 }
 
 function AvatarInput({
   src,
   onImageCropped,
-  form
-}: AvatarInputProps & { form: UseFormReturn<UpdateUserProfileValues> }) {
+  form,
+  isUploading,
+  user
+}: AvatarInputProps) {
   const [imageToCrop, setImageToCrop] = useState<File>();
   const [gifToCenter, setGifToCenter] = useState<File>();
-  const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const { startUpload, isUploading } = useUploadThing("avatar", {
-    onClientUploadComplete: (res) => {
-      if (res?.[0]) {
-        onImageCropped(null);
-        toast({
-          title: "Avatar updated",
-          description: "Your avatar has been updated successfully"
-        });
-      }
-    },
-    onUploadError: (error) => {
-      toast({
-        title: "Upload failed",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
-  });
 
   async function onImageSelected(file: File | undefined) {
     if (!file) return;
 
-    // Handle GIF files
     if (file.type === "image/gif") {
       setGifToCenter(file);
       return;
     }
 
-    // For non-GIF images, proceed with regular cropping flow
     Resizer.imageFileResizer(
       file,
       1024,
@@ -237,7 +214,6 @@ function AvatarInput({
         </p>
       </div>
 
-      {/* GIF Centering Dialog */}
       {gifToCenter && (
         <GifCenteringDialog
           gifFile={gifToCenter}
@@ -249,22 +225,20 @@ function AvatarInput({
           }}
           currentValues={{
             displayName: form.getValues("displayName"),
-            bio: form.getValues("bio")
+            bio: form.getValues("bio"),
+            userId: user.id,
+            oldAvatarKey: user.avatarKey || undefined
           }}
         />
       )}
 
-      {/* Regular Image Cropping Dialog */}
       {imageToCrop && (
         <CropImageDialog
           src={URL.createObjectURL(imageToCrop)}
           cropAspectRatio={1}
-          onCropped={async (blob) => {
+          onCropped={(blob) => {
             if (blob) {
-              const file = new File([blob], "avatar.webp", {
-                type: "image/webp"
-              });
-              await startUpload([file]);
+              onImageCropped(blob);
             }
           }}
           onClose={() => {

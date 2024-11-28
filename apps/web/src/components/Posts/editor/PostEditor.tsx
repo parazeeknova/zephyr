@@ -6,12 +6,12 @@ import { useSubmitPostMutation } from "@/posts/editor/mutations";
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useDropzone } from "@uploadthing/react";
 import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import type { ClipboardEvent } from "react";
+import { useDropzone } from "react-dropzone";
 import { AttachmentPreview } from "./AttachmentPreview";
 import { FileInput } from "./FileInput";
 import "./styles.css";
@@ -48,7 +48,20 @@ export default function PostEditor() {
   } = useMediaUpload();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: startUpload
+    onDrop: async (acceptedFiles: any[]) => {
+      const validFiles = acceptedFiles.filter(
+        (file: { type: string }) =>
+          file.type.startsWith("image/") || file.type.startsWith("video/")
+      );
+      if (validFiles.length) {
+        await startUpload(validFiles);
+      }
+    },
+    accept: {
+      "image/*": [],
+      "video/*": []
+    },
+    maxSize: 128 * 1024 * 1024
   });
 
   const { onClick, ...rootProps } = getRootProps();

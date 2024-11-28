@@ -196,7 +196,7 @@ export default function TermsPage() {
               <li>
                 Authentication providers (Google, GitHub, Discord, Twitter)
               </li>
-              <li>Cloud storage services(Uploadthing, Cloudflare R2)</li>
+              <li>Cloud storage services(Cloudflare R2)</li>
               <li>Caching services(Upstash Redis)</li>
               <li>Content delivery networks(Vercel, Github)</li>
               <li>Database providers(Vercel)</li>

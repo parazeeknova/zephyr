@@ -83,7 +83,6 @@ services:
         sleep 2
       done &&
       echo '✅ PostgreSQL is ready' &&
-      pnpm prisma generate &&
       pnpm prisma db push --accept-data-loss &&
       echo '✅ Prisma migrations completed!'"
 
@@ -179,6 +178,9 @@ services:
       mc mb --ignore-existing minio/uploads &&
       mc anonymous set download minio/uploads &&
       mc version enable minio/uploads &&
+      mc mb --ignore-existing minio/avatars &&
+      mc anonymous set download minio/avatars &&
+      mc version enable minio/avatars &&
       mc mb --ignore-existing minio/temp &&
       mc anonymous set download minio/temp &&
       mc version enable minio/temp &&
