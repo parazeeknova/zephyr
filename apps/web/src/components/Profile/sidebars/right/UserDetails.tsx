@@ -3,6 +3,7 @@
 import EditProfileButton from "@/components/Layouts/EditProfileButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
@@ -10,7 +11,9 @@ import {
   TooltipTrigger
 } from "@/components/ui/tooltip";
 import Linkify from "@/helpers/global/Linkify";
+import { useToast } from "@/hooks/use-toast";
 import { formatNumber } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import FollowButton from "@zephyr-ui/Layouts/FollowButton";
 import FollowerCount from "@zephyr-ui/Layouts/FollowerCount";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
@@ -29,12 +32,42 @@ const UserDetails: React.FC<UserDetailsProps> = ({
   userData,
   loggedInUserId
 }) => {
+  const { toast } = useToast();
   const isFollowedByUser = userData.followers.length > 0;
 
   const followerInfo = {
     followers: userData._count.followers,
     isFollowedByUser
   };
+
+  const { data: avatarData, isLoading: isAvatarLoading } = useQuery({
+    queryKey: ["avatar", userData.id],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`/api/users/avatar/${userData.id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch avatar");
+        }
+        return response.json();
+      } catch (_error) {
+        toast({
+          title: "Error",
+          description: "Failed to load avatar. Using fallback image.",
+          variant: "destructive"
+        });
+        return {
+          url: userData.avatarUrl,
+          key: userData.avatarKey
+        };
+      }
+    },
+    initialData: {
+      url: userData.avatarUrl,
+      key: userData.avatarKey
+    },
+    staleTime: 1000 * 60 * 5,
+    retry: 2
+  });
 
   return (
     <motion.div
@@ -50,14 +83,18 @@ const UserDetails: React.FC<UserDetailsProps> = ({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <div
-            className="absolute inset-0 bg-center bg-cover"
-            style={{
-              backgroundImage: `url(${userData.avatarUrl})`,
-              filter: "blur(8px) brightness(0.9)",
-              transform: "scale(1.1)"
-            }}
-          />
+          {isAvatarLoading ? (
+            <Skeleton className="h-full w-full" />
+          ) : (
+            <div
+              className="absolute inset-0 bg-center bg-cover"
+              style={{
+                backgroundImage: `url(${avatarData.url})`,
+                filter: "blur(8px) brightness(0.9)",
+                transform: "scale(1.1)"
+              }}
+            />
+          )}
         </motion.div>
         <CardContent className="relative p-6">
           <div className="flex flex-col">
@@ -68,11 +105,15 @@ const UserDetails: React.FC<UserDetailsProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}
             >
-              <UserAvatar
-                avatarUrl={userData.avatarUrl}
-                size={120}
-                className="rounded-full ring-4 ring-background"
-              />
+              {isAvatarLoading ? (
+                <Skeleton className="size-[120px] rounded-full" />
+              ) : (
+                <UserAvatar
+                  avatarUrl={avatarData.url}
+                  size={120}
+                  className="rounded-full ring-4 ring-background"
+                />
+              )}
             </motion.div>
             <motion.div
               // @ts-expect-error
