@@ -23,7 +23,8 @@ const nextConfig: NextConfig = {
   serverExternalPackages: [
     "@node-rs/argon2",
     "@prisma/client",
-    "@aws-sdk/client-s3"
+    "@aws-sdk/client-s3",
+    "ioredis"
   ],
   poweredByHeader: false,
 
@@ -54,6 +55,12 @@ const nextConfig: NextConfig = {
         hostname: "localhost",
         port: "9001",
         pathname: `/${process.env.MINIO_BUCKET_NAME}/**`
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "9000",
+        pathname: `/${process.env.MINIO_BUCKET_NAME}/**`
       }
     ]
   },
@@ -83,6 +90,7 @@ const nextConfig: NextConfig = {
         fs: false,
         net: false,
         tls: false,
+        dns: false,
         crypto: require.resolve("crypto-browserify"),
         stream: require.resolve("stream-browserify"),
         util: require.resolve("util/"),

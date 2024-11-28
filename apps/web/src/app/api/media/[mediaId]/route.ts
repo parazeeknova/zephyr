@@ -1,10 +1,8 @@
+import { MINIO_BUCKET, minioClient, validateBucket } from "@/lib/minio";
 import {
-  MINIO_BUCKET,
   getContentDisposition,
-  minioClient,
-  shouldDisplayInline,
-  validateBucket
-} from "@/lib/minio";
+  shouldDisplayInline
+} from "@/lib/utils/mime-utils";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "@zephyr/db";
 import { NextResponse } from "next/server";

@@ -83,7 +83,6 @@ services:
         sleep 2
       done &&
       echo '✅ PostgreSQL is ready' &&
-      pnpm prisma generate &&
       pnpm prisma db push --accept-data-loss &&
       echo '✅ Prisma migrations completed!'"
 

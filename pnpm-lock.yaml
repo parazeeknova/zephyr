@@ -161,6 +161,9 @@ importers:
       framer-motion:
         specifier: ^11.11.17
         version: 11.11.17(@emotion/is-prop-valid@1.3.1)(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)
+      ioredis:
+        specifier: ^5.4.1
+        version: 5.4.1
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2

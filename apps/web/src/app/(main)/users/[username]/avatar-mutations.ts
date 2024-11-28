@@ -1,12 +1,8 @@
-import { deleteAvatar, uploadAvatar } from "@/lib/minio";
-import { getStreamClient } from "@/lib/stream";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { UpdateUserProfileValues } from "@zephyr/auth/validation";
-import { prisma } from "@zephyr/db";
 
 export function useUpdateAvatarMutation() {
   const queryClient = useQueryClient();
-  const streamClient = getStreamClient();
 
   return useMutation({
     mutationFn: async ({
@@ -18,30 +14,23 @@ export function useUpdateAvatarMutation() {
       userId: string;
       oldAvatarKey?: string;
     }) => {
-      const result = await uploadAvatar(file, userId);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", userId);
       if (oldAvatarKey) {
-        await deleteAvatar(oldAvatarKey);
+        formData.append("oldAvatarKey", oldAvatarKey);
       }
 
-      const updatedUser = await prisma.user.update({
-        where: { id: userId },
-        data: {
-          avatarUrl: result.url,
-          avatarKey: result.key
-        }
+      const response = await fetch("/api/users/avatar", {
+        method: "POST",
+        body: formData
       });
 
-      await streamClient.partialUpdateUser({
-        id: userId,
-        set: {
-          image: result.url
-        }
-      });
+      if (!response.ok) {
+        throw new Error("Failed to update avatar");
+      }
 
-      return {
-        user: updatedUser,
-        avatar: result
-      };
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
@@ -52,7 +41,6 @@ export function useUpdateAvatarMutation() {
 
 export function useUpdateProfileMutation() {
   const queryClient = useQueryClient();
-  const streamClient = getStreamClient();
 
   return useMutation({
     mutationFn: async ({
@@ -66,41 +54,26 @@ export function useUpdateProfileMutation() {
       userId: string;
       oldAvatarKey?: string;
     }) => {
-      // biome-ignore lint/suspicious/noImplicitAnyLet: Will be fixed in a future PR
-      let avatarResult;
-
+      const formData = new FormData();
+      formData.append("values", JSON.stringify(values));
       if (avatar) {
-        avatarResult = await uploadAvatar(avatar, userId);
-        if (oldAvatarKey) {
-          await deleteAvatar(oldAvatarKey);
-        }
+        formData.append("avatar", avatar);
+      }
+      formData.append("userId", userId);
+      if (oldAvatarKey) {
+        formData.append("oldAvatarKey", oldAvatarKey);
       }
 
-      const updatedUser = await prisma.user.update({
-        where: { id: userId },
-        data: {
-          displayName: values.displayName,
-          bio: values.bio,
-          ...(avatarResult && {
-            avatarUrl: avatarResult.url,
-            avatarKey: avatarResult.key
-          })
-        }
+      const response = await fetch("/api/users/profile", {
+        method: "POST",
+        body: formData
       });
 
-      if (avatarResult) {
-        await streamClient.partialUpdateUser({
-          id: userId,
-          set: {
-            image: avatarResult.url
-          }
-        });
+      if (!response.ok) {
+        throw new Error("Failed to update profile");
       }
 
-      return {
-        user: updatedUser,
-        avatar: avatarResult
-      };
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
