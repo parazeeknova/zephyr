@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^22.10.0",
+    "@types/node": "^22.10.1",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@zephyr/config": "workspace:*",
