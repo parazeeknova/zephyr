@@ -1,17 +1,17 @@
 "use client";
 
-import InfiniteScrollContainer from "@/components/Layouts/InfiniteScrollContainer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import type { HNStory } from "@zephyr/db";
+import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
+import type { HNApiResponse } from "@zephyr/aggregator/hackernews";
 import { AnimatePresence, motion } from "framer-motion";
 import { Clock, MessageSquare, RefreshCw, TrendingUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { HNSearchField } from "./HNSearchField";
 import { HackerNewsStory } from "./HackerNewsStory";
-import { HNSearchField } from "./components/HNSearchField";
 import { hackerNewsMutations } from "./mutations";
 
 const ITEMS_PER_PAGE = 20;
@@ -38,10 +38,6 @@ const itemVariants = {
   show: { opacity: 1, y: 0 }
 };
 
-interface PageData {
-  stories: HNStory[];
-}
-
 export function ClientHackerNews() {
   const [searchInput, setSearchInput] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>(SORT_OPTIONS.SCORE);
@@ -50,7 +46,7 @@ export function ClientHackerNews() {
   const queryClient = useQueryClient();
 
   const { data, fetchNextPage, hasNextPage, isLoading, isError, isFetching } =
-    useInfiniteQuery<PageData, Error>({
+    useInfiniteQuery<HNApiResponse>({
       queryKey: ["hackernews", searchInput, sortBy, activeTab],
       queryFn: async ({ pageParam = 0 }) => {
         const response = await hackerNewsMutations.fetchStories({
@@ -63,12 +59,12 @@ export function ClientHackerNews() {
         return response;
       },
       initialPageParam: 0,
-      getNextPageParam: (lastPage, allPages) => {
-        return lastPage.stories.length === ITEMS_PER_PAGE
-          ? allPages.length
+      getNextPageParam: (lastPage) => {
+        return lastPage.hasMore
+          ? lastPage.stories.length / ITEMS_PER_PAGE
           : undefined;
       },
-      staleTime: 1000 * 60 * 5
+      staleTime: 1000 * 60 * 5 // 5 minutes
     });
 
   const handleRefresh = async () => {
@@ -79,10 +75,10 @@ export function ClientHackerNews() {
         title: "Refreshed",
         description: "Stories have been updated"
       });
-    } catch (_error) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to refresh stories",
+        description: (error as Error)?.message || "Failed to refresh stories",
         variant: "destructive"
       });
     }

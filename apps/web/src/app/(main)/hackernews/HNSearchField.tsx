@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { SearchIcon } from "lucide-react";
 import { useRef } from "react";
 
@@ -15,7 +16,7 @@ export function HNSearchField({
   value,
   onChange,
   placeholder = "Search...",
-  className = ""
+  className
 }: HNSearchFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -24,7 +25,7 @@ export function HNSearchField({
   };
 
   return (
-    <div className={`relative w-full ${className}`}>
+    <div className={cn("relative w-full", className)}>
       <form onSubmit={handleSubmit} className="relative">
         <SearchIcon className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
         <Input

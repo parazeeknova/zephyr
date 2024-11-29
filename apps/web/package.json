@@ -37,6 +37,7 @@
     "@tsparticles/engine": "^3.7.1",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.7.1",
+    "@zephyr/aggregator": "workspace:*",
     "@zephyr/auth": "workspace:*",
     "@zephyr/db": "workspace:*",
     "@zephyr/ui": "workspace:*",

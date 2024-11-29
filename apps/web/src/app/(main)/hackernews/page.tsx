@@ -1,4 +1,4 @@
-import FeedViewSkeleton from "@/components/Layouts/skeletons/FeedViewSkeleton";
+import FeedViewSkeleton from "@zephyr-ui/Layouts/skeletons/FeedViewSkeleton";
 import { Suspense } from "react";
 import { ClientHackerNews } from "./ClientHackerNews";
 

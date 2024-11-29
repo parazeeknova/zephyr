@@ -1,5 +1,5 @@
 import ky from "@/lib/ky";
-import type { HNStory } from "@zephyr/db";
+import type { HNStory } from "@zephyr/aggregator/hackernews";
 
 export interface FetchStoriesParams {
   page: number;
@@ -7,6 +7,12 @@ export interface FetchStoriesParams {
   search?: string;
   sort?: string;
   type?: string;
+}
+
+export interface HNResponse {
+  stories: HNStory[];
+  hasMore: boolean;
+  total: number;
 }
 
 type SearchParamsRecord = Record<string, string | number | boolean>;
@@ -18,7 +24,7 @@ export const hackerNewsMutations = {
     search,
     sort,
     type
-  }: FetchStoriesParams): Promise<{ stories: HNStory[] }> => {
+  }: FetchStoriesParams): Promise<HNResponse> => {
     const params: SearchParamsRecord = {
       page: page.toString(),
       limit: limit.toString()
@@ -30,12 +36,25 @@ export const hackerNewsMutations = {
 
     return ky
       .get("/api/hackernews", {
-        searchParams: params
+        searchParams: params,
+        retry: {
+          limit: 2,
+          methods: ["GET"],
+          statusCodes: [408, 429, 500, 502, 503, 504]
+        }
       })
       .json();
   },
 
   refreshCache: async (): Promise<{ success: boolean }> => {
-    return ky.post("/api/hackernews").json();
+    return ky
+      .post("/api/hackernews", {
+        retry: {
+          limit: 2,
+          methods: ["POST"],
+          statusCodes: [408, 429, 500, 502, 503, 504]
+        }
+      })
+      .json();
   }
 };

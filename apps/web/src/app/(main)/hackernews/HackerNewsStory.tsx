@@ -1,22 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import type { HNStory } from "@zephyr/aggregator/hackernews";
 import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
 import { ArrowUpRight, ExternalLink, MessageCircle } from "lucide-react";
 
-interface Story {
-  id: number;
-  title: string;
-  url?: string;
-  score: number;
-  by: string;
-  time: number;
-  descendants: number;
-}
-
 interface HackerNewsStoryProps {
-  story: Story;
+  story: HNStory;
 }
 
 export function HackerNewsStory({ story }: HackerNewsStoryProps) {
