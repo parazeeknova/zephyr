@@ -1,6 +1,18 @@
 {
   "extends": "@zephyr/config/react.tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist"
-  }
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".turbo",
+    "build",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }

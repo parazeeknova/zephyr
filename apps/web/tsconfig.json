@@ -11,9 +11,22 @@
       "@/*": ["./src/*"],
       "@zephyr-ui/*": ["./src/components/*"],
       "@zephyr-assets/*": ["./src/app/assets/*"]
-    }
+    },
+    "noEmit": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true
   },
-  "lib": ["DOM", "ESNext", "DOM.Iterable"],
   "include": [
     "next-env.d.ts",
     "next.config.ts",

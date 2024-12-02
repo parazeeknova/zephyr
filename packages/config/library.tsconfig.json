@@ -1,10 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "React",
+  "display": "Library",
   "extends": "./base.tsconfig.json",
   "compilerOptions": {
-    "incremental": true,
-    "jsx": "preserve"
-  },
-  "exclude": [".next"]
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": false
+  }
 }
