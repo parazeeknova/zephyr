@@ -1,10 +1,12 @@
-import { Badge } from "@/components/ui/badge";
+"use client";
+
+import { Badge } from "@C/badge";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from "@/components/ui/tooltip";
+} from "@C/tooltip";
 import type { HNStory } from "@zephyr/aggregator/hackernews";
 import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
@@ -19,7 +21,7 @@ import {
   User
 } from "lucide-react";
 
-interface HackerNewsStoryProps {
+interface HNStoryProps {
   story: HNStory;
 }
 
@@ -37,7 +39,8 @@ const iconButtonVariants = {
   hover: { scale: 1.1 }
 };
 
-export function HackerNewsStory({ story }: HackerNewsStoryProps) {
+// biome-ignore lint/suspicious/noRedeclare: <explanation>
+export function HNStory({ story }: HNStoryProps) {
   const domain = story.url ? new URL(story.url).hostname : null;
   const timeAgo = formatDistanceToNow(story.time * 1000, { addSuffix: true });
 
@@ -63,6 +66,7 @@ export function HackerNewsStory({ story }: HackerNewsStoryProps) {
       // @ts-expect-error
       className="group relative px-4 py-6"
     >
+      {/* Story Content */}
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 space-y-2">
@@ -129,6 +133,7 @@ export function HackerNewsStory({ story }: HackerNewsStoryProps) {
           </div>
         </div>
 
+        {/* Story Actions */}
         <div className="flex items-center gap-4">
           <TooltipProvider>
             <Tooltip>
@@ -209,6 +214,7 @@ export function HackerNewsStory({ story }: HackerNewsStoryProps) {
         </div>
       </div>
 
+      {/* Hover Effect */}
       <motion.div
         // @ts-expect-error
         className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"

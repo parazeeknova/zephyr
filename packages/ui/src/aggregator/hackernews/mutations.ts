@@ -1,4 +1,3 @@
-import ky from "@/lib/ky";
 import type { HNStory } from "@zephyr/aggregator/hackernews";
 
 export interface FetchStoriesParams {
@@ -34,27 +33,26 @@ export const hackerNewsMutations = {
     if (sort) params.sort = sort;
     if (type && type !== "all") params.type = type;
 
-    return ky
-      .get("/api/hackernews", {
-        searchParams: params,
-        retry: {
-          limit: 2,
-          methods: ["GET"],
-          statusCodes: [408, 429, 500, 502, 503, 504]
-        }
-      })
-      .json();
+    const response = await fetch(
+      `/api/hackernews?${new URLSearchParams(params as Record<string, string>)}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch stories");
+    }
+
+    return response.json();
   },
 
   refreshCache: async (): Promise<{ success: boolean }> => {
-    return ky
-      .post("/api/hackernews", {
-        retry: {
-          limit: 2,
-          methods: ["POST"],
-          statusCodes: [408, 429, 500, 502, 503, 504]
-        }
-      })
-      .json();
+    const response = await fetch("/api/hackernews", {
+      method: "POST"
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to refresh cache");
+    }
+
+    return response.json();
   }
 };

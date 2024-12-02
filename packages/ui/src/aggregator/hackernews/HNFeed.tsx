@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@C/button";
+import { Card } from "@C/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@C/tabs";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import type { HNApiResponse } from "@zephyr/aggregator/hackernews";
 import { AnimatePresence, motion } from "framer-motion";
@@ -20,8 +20,8 @@ import {
   TrendingUp
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { HNSearchField } from "./HNSearchField";
-import { HackerNewsStory } from "./HackerNewsStory";
+import { HNSearchInput } from "./HNSearchInput";
+import { HNStory } from "./HNStory";
 import { hackerNewsMutations } from "./mutations";
 
 const ITEMS_PER_PAGE = 20;
@@ -61,7 +61,7 @@ const contentVariants = {
   }
 };
 
-export function ClientHackerNews() {
+export function HNFeed() {
   const [searchInput, setSearchInput] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>(SORT_OPTIONS.SCORE);
   const [activeTab, setActiveTab] = useState("all");
@@ -155,7 +155,7 @@ export function ClientHackerNews() {
                 HackerNews
               </motion.div>
 
-              <HNSearchField
+              <HNSearchInput
                 value={searchInput}
                 onChange={setSearchInput}
                 className="backdrop-blur-sm"
@@ -290,7 +290,7 @@ export function ClientHackerNews() {
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ type: "spring", stiffness: 100 }}
                           >
-                            <HackerNewsStory story={story} />
+                            <HNStory story={story} />
                           </motion.div>
                         ))}
                       </div>

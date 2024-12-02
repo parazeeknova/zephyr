@@ -42,7 +42,9 @@ export const searchSuggestionsCache = {
         const query = results[i];
         const count = parseInt(results[i + 1] || '0', 10);
         
+        // @ts-expect-error
         if (query.startsWith(normalizedPrefix)) {
+          // @ts-expect-error
           suggestions.push({ query, count });
           if (suggestions.length >= limit) break;
         }

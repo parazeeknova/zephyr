@@ -1,10 +1,12 @@
-import { Input } from "@/components/ui/input";
+"use client";
+
 import { cn } from "@/lib/utils";
+import { Input } from "@C/input";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { useRef, useState } from "react";
 
-interface HNSearchFieldProps {
+interface HNSearchInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -25,12 +27,12 @@ const searchVariants = {
   exit: { scale: 0.95, opacity: 0 }
 };
 
-export function HNSearchField({
+export function HNSearchInput({
   value,
   onChange,
   placeholder = "Search stories...",
   className
-}: HNSearchFieldProps) {
+}: HNSearchInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -98,7 +100,7 @@ export function HNSearchField({
       </div>
 
       <motion.div
-        // @ts-expect-error
+        //@ts-expect-error
         className="-z-10 absolute inset-0 rounded-full bg-gradient-to-r from-orange-500/20 to-yellow-500/20 opacity-0 blur-xl transition-opacity group-hover:opacity-100"
         initial={false}
         animate={{ opacity: isFocused ? 1 : 0 }}
