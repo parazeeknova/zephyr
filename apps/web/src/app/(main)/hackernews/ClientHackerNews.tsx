@@ -5,10 +5,20 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
 import type { HNApiResponse } from "@zephyr/aggregator/hackernews";
 import { AnimatePresence, motion } from "framer-motion";
-import { Clock, MessageSquare, RefreshCw, TrendingUp } from "lucide-react";
+import {
+  Activity,
+  Briefcase,
+  ChevronRight,
+  Clock,
+  HelpCircle,
+  MessageSquare,
+  Newspaper,
+  RefreshCw,
+  Search,
+  TrendingUp
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { HNSearchField } from "./HNSearchField";
 import { HackerNewsStory } from "./HackerNewsStory";
@@ -23,19 +33,32 @@ const SORT_OPTIONS = {
 
 type SortOption = (typeof SORT_OPTIONS)[keyof typeof SORT_OPTIONS];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
+const tabConfig = [
+  { id: "all", label: "All Stories", icon: <Newspaper className="h-4 w-4" /> },
+  { id: "story", label: "News", icon: <Activity className="h-4 w-4" /> },
+  { id: "job", label: "Jobs", icon: <Briefcase className="h-4 w-4" /> },
+  { id: "show", label: "Show HN", icon: <Search className="h-4 w-4" /> },
+  { id: "ask", label: "Ask HN", icon: <HelpCircle className="h-4 w-4" /> }
+];
+
+const sidebarVariants = {
+  hidden: { x: -50, opacity: 0 },
+  visible: {
+    x: 0,
     opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
+    transition: { type: "spring", stiffness: 100, damping: 15 }
   }
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 }
+const contentVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
 };
 
 export function ClientHackerNews() {
@@ -45,7 +68,7 @@ export function ClientHackerNews() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data, fetchNextPage, hasNextPage, isLoading, isError, isFetching } =
+  const { data, isLoading, isError, isFetching } =
     useInfiniteQuery<HNApiResponse>({
       queryKey: ["hackernews", searchInput, sortBy, activeTab],
       queryFn: async ({ pageParam = 0 }) => {
@@ -111,139 +134,189 @@ export function ClientHackerNews() {
   }, [data?.pages, sortBy]);
 
   return (
-    <div className="mx-auto min-h-screen max-w-5xl px-4 py-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        // @ts-expect-error
-        className="space-y-6"
-      >
-        <div className="flex flex-col items-center space-y-4">
-          <motion.h1
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        <div className="flex gap-8">
+          {/* Sticky Sidebar */}
+          <motion.div
+            variants={sidebarVariants}
+            initial="hidden"
+            animate="visible"
             // @ts-expect-error
-            className="bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text font-bold text-4xl text-transparent tracking-tight"
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            className="sticky top-8 w-80 space-y-6 self-start"
           >
-            HackerNews Feed
-          </motion.h1>
+            <div className="space-y-4">
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                // @ts-expect-error
+                className="bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text font-bold text-2xl text-transparent"
+              >
+                HackerNews
+              </motion.div>
 
-          <div className="flex w-full max-w-2xl flex-col gap-4">
-            <HNSearchField
-              value={searchInput}
-              onChange={setSearchInput}
-              placeholder="Search stories..."
-              className="w-full"
-            />
-
-            <div className="flex flex-wrap justify-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSortBy(SORT_OPTIONS.SCORE)}
-                className={
-                  sortBy === SORT_OPTIONS.SCORE
-                    ? "bg-orange-100 dark:bg-orange-900"
-                    : ""
-                }
-              >
-                <TrendingUp className="mr-2 h-4 w-4" />
-                Top
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSortBy(SORT_OPTIONS.TIME)}
-                className={
-                  sortBy === SORT_OPTIONS.TIME
-                    ? "bg-orange-100 dark:bg-orange-900"
-                    : ""
-                }
-              >
-                <Clock className="mr-2 h-4 w-4" />
-                Latest
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSortBy(SORT_OPTIONS.COMMENTS)}
-                className={
-                  sortBy === SORT_OPTIONS.COMMENTS
-                    ? "bg-orange-100 dark:bg-orange-900"
-                    : ""
-                }
-              >
-                <MessageSquare className="mr-2 h-4 w-4" />
-                Most Discussed
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleRefresh}
-                disabled={isFetching}
-                className="ml-auto"
-              >
-                <RefreshCw
-                  className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
-                />
-                Refresh
-              </Button>
+              <HNSearchField
+                value={searchInput}
+                onChange={setSearchInput}
+                className="backdrop-blur-sm"
+              />
             </div>
-          </div>
-        </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full justify-start">
-            <TabsTrigger value="all">All Stories</TabsTrigger>
-            <TabsTrigger value="story">News</TabsTrigger>
-            <TabsTrigger value="job">Jobs</TabsTrigger>
-            <TabsTrigger value="show">Show HN</TabsTrigger>
-            <TabsTrigger value="ask">Ask HN</TabsTrigger>
-          </TabsList>
+            <Card className="overflow-hidden bg-background/50 backdrop-blur-md">
+              <div className="space-y-4 p-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold">Filters</h3>
+                  <Button variant="ghost" size="sm" onClick={handleRefresh}>
+                    <RefreshCw
+                      className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
+                    />
+                  </Button>
+                </div>
 
-          <TabsContent value={activeTab} className="mt-6">
-            {isLoading ? (
-              <div className="space-y-4">
-                {[...Array(5)].map((_, i) => (
-                  <Card key={i} className="animate-pulse p-4">
-                    <div className="mb-2 h-6 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
-                    <div className="h-4 w-1/4 rounded bg-gray-200 dark:bg-gray-700" />
-                  </Card>
-                ))}
+                <div className="space-y-2">
+                  {Object.entries(SORT_OPTIONS).map(([key, value]) => (
+                    <Button
+                      key={key}
+                      variant="ghost"
+                      size="sm"
+                      className={`w-full justify-start ${
+                        sortBy === value
+                          ? "bg-orange-500/10 text-orange-500"
+                          : ""
+                      }`}
+                      onClick={() => setSortBy(value)}
+                    >
+                      {key === "SCORE" && (
+                        <TrendingUp className="mr-2 h-4 w-4" />
+                      )}
+                      {key === "TIME" && <Clock className="mr-2 h-4 w-4" />}
+                      {key === "COMMENTS" && (
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                      )}
+                      {key.charAt(0) + key.slice(1).toLowerCase()}
+                    </Button>
+                  ))}
+                </div>
               </div>
-            ) : (
-              <InfiniteScrollContainer
-                onBottomReached={() => {
-                  if (hasNextPage) {
-                    fetchNextPage();
-                  }
-                }}
-                className="space-y-4"
-              >
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="show"
+            </Card>
+
+            <Card className="overflow-hidden bg-background/50 backdrop-blur-md">
+              <div className="p-4">
+                <Tabs
+                  value={activeTab}
+                  onValueChange={setActiveTab}
+                  orientation="vertical"
+                  className="w-full"
                 >
-                  <AnimatePresence mode="popLayout">
-                    {sortedStories.map((story) => (
-                      <motion.div
-                        key={story.id}
-                        variants={itemVariants}
-                        layout
-                        exit={{ opacity: 0, y: -20 }}
+                  <TabsList className="flex w-full flex-col gap-2 bg-transparent">
+                    {tabConfig.map((tab) => (
+                      <TabsTrigger
+                        key={tab.id}
+                        value={tab.id}
+                        className={
+                          "w-full justify-start p-2 data-[state=active]:bg-orange-500/10 data-[state=active]:text-orange-500"
+                        }
                       >
-                        <HackerNewsStory story={story} />
-                      </motion.div>
+                        <div className="flex items-center">
+                          {tab.icon}
+                          <span className="ml-2">{tab.label}</span>
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: activeTab === tab.id ? 1 : 0 }}
+                            // @ts-expect-error
+                            className="ml-auto"
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </motion.div>
+                        </div>
+                      </TabsTrigger>
                     ))}
-                  </AnimatePresence>
-                </motion.div>
-              </InfiniteScrollContainer>
-            )}
-          </TabsContent>
-        </Tabs>
-      </motion.div>
+                  </TabsList>
+                </Tabs>
+              </div>
+            </Card>
+
+            <Card className="overflow-hidden bg-background/50 backdrop-blur-md">
+              <div className="p-4">
+                <h3 className="mb-3 font-semibold">Statistics</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="rounded-lg bg-background/50 p-2 text-center">
+                    <div className="font-bold text-2xl text-orange-500">
+                      {data?.pages[0]?.total || 0}
+                    </div>
+                    <div className="text-muted-foreground text-sm">Stories</div>
+                  </div>
+                  <div className="rounded-lg bg-background/50 p-2 text-center">
+                    <div className="font-bold text-2xl text-orange-500">
+                      {sortedStories.reduce(
+                        (acc, story) => acc + story.score,
+                        0
+                      )}
+                    </div>
+                    <div className="text-muted-foreground text-sm">
+                      Total Points
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Main Content */}
+          <motion.div
+            variants={contentVariants}
+            initial="hidden"
+            animate="visible"
+            // @ts-expect-error
+            className="flex-1"
+          >
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              {tabConfig.map((tab) => (
+                <TabsContent
+                  key={tab.id}
+                  value={tab.id}
+                  className="mt-0 focus-visible:outline-none focus-visible:ring-0"
+                >
+                  {isLoading ? (
+                    <LoadingState />
+                  ) : (
+                    <AnimatePresence mode="popLayout">
+                      <div className="divide-y divide-border/50">
+                        {sortedStories.map((story) => (
+                          <motion.div
+                            key={story.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ type: "spring", stiffness: 100 }}
+                          >
+                            <HackerNewsStory story={story} />
+                          </motion.div>
+                        ))}
+                      </div>
+                    </AnimatePresence>
+                  )}
+                </TabsContent>
+              ))}
+            </Tabs>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LoadingState() {
+  return (
+    <div className="space-y-4">
+      {[...Array(5)].map((_, i) => (
+        <Card key={i} className="bg-background/50 p-4 backdrop-blur-sm">
+          <div className="space-y-3">
+            <div className="h-6 w-3/4 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-1/4 animate-pulse rounded bg-muted" />
+          </div>
+        </Card>
+      ))}
     </div>
   );
 }
