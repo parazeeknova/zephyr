@@ -8,19 +8,20 @@
     "forceConsistentCasingInFileNames": true,
     "inlineSources": false,
     "isolatedModules": true,
-    "module": "ESNext",
     "moduleResolution": "Node",
-    "noEmit": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "preserveWatchOutput": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
     "target": "ESNext",
-    "paths": {
-      "@zephyr/web": ["../../apps/web/src"]
-    }
+    "module": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "jsx": "preserve",
+    "noEmit": true
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".turbo", "dist", "build"]
 }

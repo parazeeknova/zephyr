@@ -57,7 +57,7 @@ export const signUpSchema = z.object({
     .refine(
       (email) => {
         const domain = email.split("@")[1]?.toLowerCase();
-        return !DISPOSABLE_EMAIL_DOMAINS.includes(domain);
+        return domain ? !DISPOSABLE_EMAIL_DOMAINS.includes(domain) : false;
       },
       { message: "Please use a permanent email address" }
     )
