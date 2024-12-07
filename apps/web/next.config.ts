@@ -7,7 +7,17 @@ const nextConfig: NextConfig = {
   experimental: {
     staleTimes: {
       dynamic: 30
+    },
+    typedRoutes: true,
+    serverActions: {
+      bodySizeLimit: "1mb",
+      allowedOrigins: ["*"]
     }
+  },
+
+  typescript: {
+    ignoreBuildErrors: false,
+    tsconfigPath: "./tsconfig.json"
   },
 
   compiler: {

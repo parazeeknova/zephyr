@@ -71,7 +71,9 @@ export default function CreatePostCard({ isCollapsed }: CreatePostCardProps) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const formData = new FormData();
-        formData.append("file", file);
+        if (file) {
+          formData.append("file", file);
+        }
 
         const response = await fetch("/api/upload", {
           method: "POST",
@@ -84,7 +86,7 @@ export default function CreatePostCard({ isCollapsed }: CreatePostCardProps) {
 
         setAttachments((prev) =>
           prev.map((att) =>
-            att.file.name === file.name
+            file && att.file.name === file.name
               ? { ...att, isUploading: false, mediaId: data.mediaId }
               : att
           )

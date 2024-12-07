@@ -36,7 +36,8 @@ export async function GET(req: NextRequest) {
       cursor: cursor ? { id: cursor } : undefined
     });
 
-    const nextCursor = users.length > pageSize ? users[pageSize].id : null;
+    const nextCursor =
+      users.length > pageSize && users[pageSize] ? users[pageSize].id : null;
 
     return Response.json({
       users: users.slice(0, pageSize),

@@ -171,7 +171,6 @@ export function CodePreview({
           isFullScreen && "h-[calc(100%-3rem)]"
         )}
       >
-        {/* @ts-expect-error */}
         <SyntaxHighlighter
           language={normalizeLanguage(language)}
           style={isDarkTheme ? oneDark : oneLight}

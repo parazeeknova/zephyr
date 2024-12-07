@@ -23,7 +23,9 @@ export async function GET(req: NextRequest) {
       cursor: cursor ? { id: cursor } : undefined
     });
     const nextCursor =
-      notifications.length > pageSize ? notifications[pageSize].id : null;
+      notifications.length > pageSize && notifications[pageSize]
+        ? notifications[pageSize].id
+        : null;
     const data: NotificationsPage = {
       notifications: notifications.slice(0, pageSize),
       nextCursor

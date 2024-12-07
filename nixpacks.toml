@@ -1,0 +1,16 @@
+[phases.setup]
+nixPkgs = ["nodejs@20", "pnpm"]
+
+[phases.install]
+cmds = ["pnpm install --frozen-lockfile"]
+
+[phases.build]
+cmds = ["pnpm turbo run build --filter=web..."]
+
+[start]
+cmd = "cd apps/web && node .next/standalone/apps/web/server.js"
+
+# Environment variable defaults
+[variables]
+NODE_ENV = "production"
+HOSTNAME = "0.0.0.0"

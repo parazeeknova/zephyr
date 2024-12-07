@@ -4,17 +4,13 @@ import { type NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-type Params = {
-  userId: string;
+type RouteContext = {
+  params: { userId: string };
 };
 
-type Context = {
-  params: Params;
-};
-
-export async function GET(_request: NextRequest, { params }: Context) {
+export async function GET(_request: NextRequest, context: RouteContext) {
   try {
-    const { userId } = params;
+    const { userId } = context.params;
     const cachedAvatar = await avatarCache.get(userId);
 
     if (cachedAvatar) {

@@ -6,5 +6,5 @@
     "incremental": true,
     "jsx": "preserve"
   },
-  "exclude": [".next"]
+  "exclude": [".next", "node_modules"]
 }

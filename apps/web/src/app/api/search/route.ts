@@ -52,7 +52,8 @@ export async function GET(req: NextRequest) {
       cursor: cursor ? { id: cursor } : undefined
     });
 
-    const nextCursor = posts.length > pageSize ? posts[pageSize].id : null;
+    const nextCursor =
+      posts.length > pageSize && posts[pageSize] ? posts[pageSize].id : null;
 
     return Response.json({
       posts: posts.slice(0, pageSize),
