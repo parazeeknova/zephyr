@@ -1,12 +1,5 @@
 "use client";
 
-import { Badge } from "@C/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from "@C/tooltip";
 import type { HNStory } from "@zephyr/aggregator/hackernews";
 import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
@@ -20,6 +13,13 @@ import {
   ThumbsUp,
   User
 } from "lucide-react";
+import { Badge } from "../../components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "../../components/ui/tooltip";
 
 interface HNStoryProps {
   story: HNStory;

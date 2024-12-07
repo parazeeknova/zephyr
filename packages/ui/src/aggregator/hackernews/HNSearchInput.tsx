@@ -1,10 +1,10 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Input } from "@C/input";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { useRef, useState } from "react";
+import { Input } from "../../components/ui/input";
 
 interface HNSearchInputProps {
   value: string;

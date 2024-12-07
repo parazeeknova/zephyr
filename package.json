@@ -34,8 +34,8 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.10.1",
-    "@types/react": "npm:types-react@19.0.0-rc.1",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
     "husky": "^9.1.7",
     "turbo": "^2.3.3",
     "typescript": "^5.7.2"

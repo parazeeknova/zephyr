@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "@lucia-auth/adapter-prisma": "^4.0.1",
-    "@node-rs/argon2": "^2.0.0",
+    "@node-rs/argon2": "^2.0.2",
     "@zephyr/db": "workspace:*",
     "arctic": "^2.3.0",
     "deep-email-validator": "^0.1.21",
@@ -15,14 +15,14 @@
     "lucia": "^3.2.2",
     "next": "15.0.3",
     "nodemailer": "^6.9.16",
-    "react": "19.0.0-rc.1",
+    "react": "19.0.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.10.1",
     "@types/nodemailer": "^6.4.17",
-    "@types/react": "npm:types-react@19.0.0-rc.1",
+    "@types/react": "19.0.0",
     "@zephyr/config": "workspace:*",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"

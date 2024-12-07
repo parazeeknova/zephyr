@@ -9,11 +9,11 @@
     "date-fns": "^4.1.0",
     "ky": "^1.7.2",
     "next": "15.0.3",
-    "react": "19.0.0-rc.1"
+    "react": "19.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",
-    "@types/react": "npm:types-react@19.0.0-rc.1",
+    "@types/react": "19.0.0",
     "@zephyr/config": "workspace:*",
     "typescript": "^5.7.2"
   }

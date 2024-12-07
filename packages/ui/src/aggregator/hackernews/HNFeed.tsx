@@ -1,9 +1,6 @@
 "use client";
 
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@C/button";
-import { Card } from "@C/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@C/tabs";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import type { HNApiResponse } from "@zephyr/aggregator/hackernews";
 import { AnimatePresence, motion } from "framer-motion";
@@ -20,6 +17,14 @@ import {
   TrendingUp
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { Button } from "../../components/ui/button";
+import { Card } from "../../components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from "../../components/ui/tabs";
 import { HNSearchInput } from "./HNSearchInput";
 import { HNStory } from "./HNStory";
 import { hackerNewsMutations } from "./mutations";

@@ -1,6 +1,5 @@
 "use client";
 
-import { useUpdateProfileMutation } from "@/app/(main)/users/[username]/mutations";
 import {
   Form,
   FormControl,
@@ -22,6 +21,7 @@ import type { UserData } from "@zephyr/db";
 import { motion } from "framer-motion";
 import { UserCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { useUpdateProfileMutation } from "../../users/[username]/avatar-mutations";
 
 interface ProfileSettingsProps {
   user: UserData;
@@ -41,7 +41,10 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
 
   async function onSubmit(values: UpdateUserProfileValues) {
     mutation.mutate(
-      { values },
+      {
+        values,
+        userId: user.id
+      },
       {
         onSuccess: () => {
           toast({

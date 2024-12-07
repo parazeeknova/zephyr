@@ -5,11 +5,7 @@
   "private": true,
   "main": "./src/index.tsx",
   "types": "./src/index.ts",
-  "files": [
-    "src",
-    "styles",
-    "tailwind-preset.ts"
-  ],
+  "files": ["src", "styles", "tailwind-preset.ts"],
   "scripts": {
     "typecheck": "tsc --pretty",
     "generate:component": "turbo gen react-component"
@@ -28,7 +24,7 @@
     "@radix-ui/react-tabs": "^1.1.1",
     "@radix-ui/react-toast": "^1.2.2",
     "@radix-ui/react-tooltip": "^1.1.4",
-    "@tanstack/react-query": "^5.62.2",
+    "@tanstack/react-query": "^5.62.3",
     "@zephyr/aggregator": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -36,17 +32,17 @@
     "framer-motion": "^11.13.1",
     "lucide-react": "^0.462.0",
     "next": "15.0.3",
-    "next-themes": "^0.4.3",
-    "react": "19.0.0-rc.1",
-    "react-hook-form": "^7.53.2",
+    "next-themes": "^0.4.4",
+    "react": "19.0.0",
+    "react-hook-form": "^7.54.0",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@turbo/gen": "^2.3.3",
     "@types/node": "^22.10.1",
-    "@types/react": "npm:types-react@19.0.0-rc.1",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
     "@zephyr/config": "workspace:*",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
