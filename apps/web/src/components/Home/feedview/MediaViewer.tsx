@@ -56,6 +56,14 @@ const MediaViewer = ({
     try {
       setIsDownloading(true);
 
+      if (!currentMedia) {
+        toast({
+          title: "Download Failed",
+          description: "No media selected.",
+          variant: "destructive"
+        });
+        return;
+      }
       const response = await fetch(`/api/media/download/${currentMedia.id}`);
 
       if (response.status === 429) {
@@ -112,7 +120,7 @@ const MediaViewer = ({
       ) : (
         <>
           <Download className="h-4 w-4" />
-          Download {formatFileName(currentMedia.key)}
+          Download {currentMedia ? formatFileName(currentMedia.key) : ""}
         </>
       )}
     </Button>
@@ -137,6 +145,10 @@ const MediaViewer = ({
   }, [isOpen]);
 
   const renderMedia = () => {
+    if (!currentMedia) {
+      return <p className="text-destructive">No media available</p>;
+    }
+
     switch (currentMedia.type) {
       case "IMAGE":
         return (

@@ -145,7 +145,8 @@ export async function POST(
 
     const voteInfo: VoteInfo = {
       aura: updatedPost.aura,
-      userVote: updatedPost.vote.length > 0 ? updatedPost.vote[0].value : 0
+      userVote:
+        updatedPost.vote?.length > 0 ? (updatedPost.vote[0]?.value ?? 0) : 0
     };
 
     // @ts-expect-error

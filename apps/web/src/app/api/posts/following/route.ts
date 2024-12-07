@@ -31,7 +31,8 @@ export async function GET(req: NextRequest) {
       include: getPostDataInclude(user.id)
     });
 
-    const nextCursor = posts.length > pageSize ? posts[pageSize].id : null;
+    const nextCursor =
+      posts.length > pageSize && posts[pageSize] ? posts[pageSize].id : null;
 
     const data: PostsPage = {
       posts: posts.slice(0, pageSize),

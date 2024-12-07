@@ -1,17 +1,22 @@
-import { prisma } from "@zephyr/db";
-import { avatarCache } from "@zephyr/db/cache/avatar-cache";
-import { NextResponse } from "next/server";
+import { avatarCache, prisma } from "@zephyr/db";
+import { type NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  _request: Request,
-  { params }: { params: { userId: string } }
-) {
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+type RouteContext = {
+  params: { userId: string };
+};
+
+export async function GET(_request: NextRequest, context: RouteContext) {
   try {
-    const { userId } = params;
+    const { userId } = context.params;
     const cachedAvatar = await avatarCache.get(userId);
+
     if (cachedAvatar) {
       return NextResponse.json(cachedAvatar);
     }
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -21,12 +26,12 @@ export async function GET(
     });
 
     if (!user?.avatarUrl) {
-      return new NextResponse("Avatar not found", { status: 404 });
+      return NextResponse.json({ error: "Avatar not found" }, { status: 404 });
     }
 
     await avatarCache.set(userId, {
       url: user.avatarUrl,
-      // biome-ignore lint/style/noNonNullAssertion: We know `user.avatarKey` is defined
+      // biome-ignore lint/style/noNonNullAssertion: This is safe because we check for avatarUrl above
       key: user.avatarKey!,
       updatedAt: new Date().toISOString()
     });
@@ -37,6 +42,9 @@ export async function GET(
     });
   } catch (error) {
     console.error("Error fetching avatar:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

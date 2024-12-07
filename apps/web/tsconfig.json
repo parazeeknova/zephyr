@@ -1,7 +1,11 @@
 {
   "extends": "@zephyr/config/react.tsconfig.json",
   "compilerOptions": {
+    "types": ["react", "react-markdown"],
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "baseUrl": ".",
+    "jsxImportSource": "react",
     "plugins": [
       {
         "name": "next"
@@ -17,7 +21,6 @@
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "allowJs": true,
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -32,7 +35,8 @@
     "next.config.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src/types/**/*.d.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".next", "dist", "**/node_modules/*", ".pnpm"]
 }

@@ -12,7 +12,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import { Check, Loader2, SearchIcon, X } from "lucide-react";
-import { useState } from "react";
+import { type Key, useState } from "react";
 import type { UserResponse } from "stream-chat";
 import {
   type DefaultStreamChatGenerics,
@@ -116,7 +116,7 @@ export default function NewChatDialog({
           <hr />
           <div className="h-96 overflow-y-auto">
             {isSuccess &&
-              data.users.map((user) => (
+              data.users.map((user: { id: Key | null | undefined }) => (
                 <UserResult
                   key={user.id}
                   user={user}

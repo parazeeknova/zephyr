@@ -7,6 +7,8 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { validateFile } from "./utils/file-validation";
 import { getFileType } from "./utils/mime-utils";
 
+export { getContentDisposition } from "./utils/mime-utils";
+
 export const minioClient = new S3Client({
   region: "us-east-1",
   endpoint: process.env.MINIO_ENDPOINT || "http://localhost:9000",

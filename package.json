@@ -16,11 +16,7 @@
     "prepare": "husky",
     "typecheck": "pnpm --recursive --parallel run typecheck",
     "docker:status": "docker system df && docker ps && docker volume ls && docker network ls",
-    "docker:clean:prod": "docker compose -f docker-compose.prod.yml down -v --remove-orphans && docker volume rm zephyr_postgres_data_prod zephyr_redis_data_prod zephyr_minio_data_prod zephyr_postgres_logs_prod",
     "docker:clean:all": "docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker rmi $(docker images -q) -f && docker volume rm $(docker volume ls -q) && docker network prune -f && docker builder prune -af",
-    "docker:prod": "docker compose -f docker-compose.prod.yml up --build",
-    "docker:prod:detach": "docker compose -f docker-compose.prod.yml up --build -d",
-    "docker:logs:prod": "docker compose -f docker-compose.prod.yml logs -f",
     "docker:interactive": "node ./docker/scripts/clean-docker.js",
     "docker:dev": "docker compose -f docker-compose.dev.yml --profile init up --build",
     "docker:dev:detach": "docker compose -f docker-compose.dev.yml --profile init up --build -d",
@@ -34,11 +30,15 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.10.1",
-    "@types/react": "npm:types-react@19.0.0-rc.1",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
     "husky": "^9.1.7",
+    "react-markdown": "9.0.1",
     "turbo": "^2.3.3",
     "typescript": "^5.7.2"
   },
-  "packageManager": "pnpm@9.12.2+sha512.22721b3a11f81661ae1ec68ce1a7b879425a1ca5b991c975b074ac220b187ce56c708fe5db69f4c962c989452eee76c82877f4ee80f474cebd61ee13461b6228"
+  "packageManager": "pnpm@9.12.2+sha512.22721b3a11f81661ae1ec68ce1a7b879425a1ca5b991c975b074ac220b187ce56c708fe5db69f4c962c989452eee76c82877f4ee80f474cebd61ee13461b6228",
+  "resolutions": {
+    "react-markdown": "9.0.1"
+  }
 }

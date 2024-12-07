@@ -70,7 +70,7 @@ export default function SignUpForm() {
       toast({
         variant: "destructive",
         title: "Validation Error",
-        description: firstError.message
+        description: firstError?.message ?? "Unknown error"
       });
     }
   };

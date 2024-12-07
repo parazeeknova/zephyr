@@ -15,7 +15,6 @@ import ChatChannel from "./ChatChannel";
 import ChatSidebar from "./ChatSidebar";
 import { ChatThemeProvider } from "./ChatThemeProvider";
 
-// Welcome screen component
 const WelcomeScreen = ({ onNewChat }: { onNewChat: () => void }) => {
   return (
     <motion.div

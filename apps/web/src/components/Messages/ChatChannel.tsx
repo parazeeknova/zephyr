@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
 import {
-  Channel,
   ChannelHeader,
   type ChannelHeaderProps,
   MessageInput,
@@ -18,13 +17,11 @@ interface ChatChannelProps {
 export default function ChatChannel({ open, openSidebar }: ChatChannelProps) {
   return (
     <div className={cn("w-full md:block", !open && "hidden")}>
-      <Channel>
-        <Window>
-          <CustomChannelHeader openSidebar={openSidebar} />
-          <MessageList />
-          <MessageInput />
-        </Window>
-      </Channel>
+      <Window>
+        <CustomChannelHeader openSidebar={openSidebar} />
+        <MessageList />
+        <MessageInput />
+      </Window>
     </div>
   );
 }

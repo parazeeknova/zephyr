@@ -29,7 +29,8 @@ export async function GET(
       cursor: cursor ? { id: cursor } : undefined
     });
 
-    const previousCursor = comments.length > pageSize ? comments[0].id : null;
+    const previousCursor =
+      comments.length > pageSize ? (comments[0]?.id ?? null) : null;
 
     const data: CommentsPage = {
       comments: comments.length > pageSize ? comments.slice(1) : comments,

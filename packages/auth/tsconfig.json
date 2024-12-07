@@ -14,5 +14,6 @@
       "@zephyr/web": ["../../apps/web/src/*"]
     }
   },
-  "includes": ["**/*.ts", "./*.tsx", "./*.ts"]
+  "includes": ["**/*.ts", "./*.tsx", "./*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
