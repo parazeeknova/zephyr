@@ -1,11 +1,11 @@
 [phases.setup]
-nixPkgs = ["nodejs@20", "pnpm"]
+nixPkgs = ["nodejs@22", "pnpm"]
 
 [phases.install]
 cmds = ["pnpm install --frozen-lockfile"]
 
 [phases.build]
-cmds = ["pnpm turbo run build --filter=web..."]
+cmds = ["pnpm turbo build --filter=web..."]
 
 [start]
 cmd = "cd apps/web && node .next/standalone/apps/web/server.js"
@@ -14,3 +14,4 @@ cmd = "cd apps/web && node .next/standalone/apps/web/server.js"
 [variables]
 NODE_ENV = "production"
 HOSTNAME = "0.0.0.0"
+PORT = "3000"
