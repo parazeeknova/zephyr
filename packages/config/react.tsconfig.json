@@ -3,8 +3,11 @@
   "display": "React",
   "extends": "./base.tsconfig.json",
   "compilerOptions": {
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
     "incremental": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "esModuleInterop": true
   },
-  "exclude": [".next", "node_modules"]
+  "exclude": [".next", "node_modules", "**/node_modules/*"]
 }
