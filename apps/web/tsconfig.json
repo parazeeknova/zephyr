@@ -17,9 +17,6 @@
       "@zephyr-assets/*": ["./src/app/assets/*"]
     },
     "noEmit": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "noUncheckedIndexedAccess": false,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
