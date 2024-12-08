@@ -2,11 +2,30 @@ import IORedis, { type RedisOptions } from "ioredis";
 
 const redisUrl = process.env.REDIS_URL;
 
-const redisConfig: RedisOptions = {
+const parseRedisUrl = (url: string): RedisOptions => {
+  try {
+    const parsedUrl = new URL(url);
+    return {
+      host: parsedUrl.hostname,
+      port: Number(parsedUrl.port) || 6379,
+      username: parsedUrl.username || undefined,
+      password: parsedUrl.password || undefined,
+      db: parsedUrl.pathname ? Number(parsedUrl.pathname.split("/")[1]) : 0
+    };
+  } catch (error) {
+    console.error("Error parsing Redis URL:", error);
+    return defaultRedisConfig;
+  }
+};
+
+const defaultRedisConfig: RedisOptions = {
   host: process.env.REDIS_HOST || "localhost",
   port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
   password: process.env.REDIS_PASSWORD || "zephyrredis",
-  db: 0,
+  db: 0
+};
+
+const commonConfig: RedisOptions = {
   maxRetriesPerRequest: 3,
   retryStrategy(times: number) {
     const delay = Math.min(times * 50, 2000);
@@ -17,21 +36,30 @@ const redisConfig: RedisOptions = {
   reconnectOnError: (err: Error) => {
     console.error("Redis reconnect on error:", err);
     return true;
-  }
+  },
+  lazyConnect: true
 };
 
 let redis: IORedis;
 
 try {
-  redis = redisUrl ? new IORedis(redisUrl) : new IORedis(redisConfig);
+  const config = redisUrl
+    ? { ...commonConfig, ...parseRedisUrl(redisUrl) }
+    : { ...commonConfig, ...defaultRedisConfig };
+
+  redis = new IORedis(config);
 
   redis.on("error", (error) => {
     console.error("Redis connection error:", error);
     console.error("Redis connection details:", {
       connection: redisUrl || "Using individual config",
-      host: redis.options.host,
-      port: redis.options.port,
-      db: redis.options.db
+      config: {
+        host: redis.options.host,
+        port: redis.options.port,
+        db: redis.options.db,
+        username: redis.options.username ? "***" : undefined,
+        hasPassword: !!redis.options.password
+      }
     });
   });
 
@@ -45,6 +73,10 @@ try {
 
   redis.on("reconnecting", () => {
     console.log("Redis client reconnecting");
+  });
+
+  redis.connect().catch((error) => {
+    console.error("Failed to connect to Redis:", error);
   });
 } catch (error) {
   console.error("Failed to initialize Redis client:", error);
