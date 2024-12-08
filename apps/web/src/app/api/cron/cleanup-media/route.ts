@@ -53,6 +53,7 @@ export async function POST(req: Request) {
         const result = await prisma.media.deleteMany({
           where: {
             id: {
+              // @ts-ignore
               in: validMedia.map((m) => m.id)
             }
           }
