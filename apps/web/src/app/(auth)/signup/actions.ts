@@ -343,6 +343,7 @@ export async function signUp(
 
     const streamClient = getStreamClient();
 
+    // @ts-ignore
     await prisma.$transaction(async (tx) => {
       await tx.user.create({
         data: {

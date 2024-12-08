@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
@@ -28,7 +29,7 @@ import {
 import type { UserData } from "@zephyr/db";
 import { Camera } from "lucide-react";
 import Image, { type StaticImageData } from "next/image";
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { type UseFormReturn, useForm } from "react-hook-form";
 import Resizer from "react-image-file-resizer";
 import CropImageDialog from "./CropImageDialog";
@@ -45,6 +46,7 @@ export default function EditProfileDialog({
   open,
   onOpenChange
 }: EditProfileDialogProps) {
+  const { toast } = useToast(); // Add this hook
   const form = useForm<UpdateUserProfileValues>({
     resolver: zodResolver(updateUserProfileSchema),
     defaultValues: {
@@ -54,22 +56,45 @@ export default function EditProfileDialog({
   });
 
   const [croppedAvatar, setCroppedAvatar] = useState<Blob | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string>(
+    // @ts-ignore
+    user.avatarUrl || avatarPlaceholder
+  );
   const mutation = useUpdateAvatarMutation();
 
-  async function onSubmit(_values: UpdateUserProfileValues) {
-    if (croppedAvatar) {
-      const file = new File([croppedAvatar], `avatar_${user.id}.webp`, {
-        type: "image/webp"
-      });
+  useEffect(() => {
+    // @ts-ignore
+    return setAvatarUrl(user.avatarUrl || avatarPlaceholder);
+  }, [user.avatarUrl]);
 
-      await mutation.mutateAsync({
-        file,
-        userId: user.id,
-        oldAvatarKey: user.avatarKey || undefined
+  const handleSubmit = async (_values: UpdateUserProfileValues) => {
+    try {
+      if (croppedAvatar) {
+        const file = new File([croppedAvatar], `avatar_${user.id}.webp`, {
+          type: "image/webp"
+        });
+
+        await mutation.mutateAsync({
+          file,
+          userId: user.id,
+          oldAvatarKey: user.avatarKey || undefined
+        });
+
+        toast({
+          title: "Profile updated",
+          description: "Your profile has been successfully updated."
+        });
+      }
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      toast({
+        title: "Update failed",
+        description: "Failed to update your profile. Please try again.",
+        variant: "destructive"
       });
     }
-    onOpenChange(false);
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -80,11 +105,7 @@ export default function EditProfileDialog({
         <div className="space-y-1.5">
           <Label>Avatar</Label>
           <AvatarInput
-            src={
-              croppedAvatar
-                ? URL.createObjectURL(croppedAvatar)
-                : user.avatarUrl || avatarPlaceholder
-            }
+            src={croppedAvatar ? URL.createObjectURL(croppedAvatar) : avatarUrl}
             onImageCropped={setCroppedAvatar}
             form={form}
             isUploading={mutation.isPending}
@@ -92,7 +113,10 @@ export default function EditProfileDialog({
           />
         </div>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-3"
+          >
             <FormField
               control={form.control}
               name="displayName"
@@ -150,35 +174,68 @@ function AvatarInput({
   isUploading,
   user
 }: AvatarInputProps) {
+  const { toast } = useToast();
   const [imageToCrop, setImageToCrop] = useState<File>();
   const [gifToCenter, setGifToCenter] = useState<File>();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  async function onImageSelected(file: File | undefined) {
-    if (!file) return;
+  const onImageSelected = useCallback(
+    async (file: File | undefined) => {
+      if (!file) return;
 
-    if (file.type === "image/gif") {
-      setGifToCenter(file);
-      return;
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        toast({
+          title: "File too large",
+          description: "Image must be less than 10MB",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (file.type === "image/gif") {
+        setGifToCenter(file);
+        return;
+      }
+
+      try {
+        Resizer.imageFileResizer(
+          file,
+          1024,
+          1024,
+          "WEBP",
+          90,
+          0,
+          (uri) => setImageToCrop(uri as File),
+          "file",
+          512,
+          512
+        );
+      } catch (error) {
+        console.error("Error resizing image:", error);
+        toast({
+          title: "Error processing image",
+          description:
+            "Failed to resize the image. Please try again with a different image.",
+          variant: "destructive"
+        });
+        resetInput();
+      }
+    },
+    [toast]
+  );
+
+  const resetInput = useCallback(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
-
-    Resizer.imageFileResizer(
-      file,
-      1024,
-      1024,
-      "WEBP",
-      100,
-      0,
-      (uri) => setImageToCrop(uri as File),
-      "file"
-    );
-  }
+  }, []);
 
   return (
     <>
       <input
         type="file"
-        accept="image/*, image/gif"
+        accept="image/jpeg,image/png,image/webp,image/gif"
         onChange={(e) => onImageSelected(e.target.files?.[0])}
         ref={fileInputRef}
         className="sr-only hidden"
@@ -191,7 +248,11 @@ function AvatarInput({
           disabled={isUploading}
         >
           <Image
-            src={src}
+            src={
+              typeof src === "string" && src.startsWith("http://")
+                ? src.replace("http://", "https://")
+                : src
+            }
             alt="Avatar preview"
             width={150}
             height={150}
@@ -199,7 +260,13 @@ function AvatarInput({
               "size-32 flex-none rounded-full object-cover",
               isUploading && "opacity-50"
             )}
-            unoptimized={typeof src === "string" && src.endsWith(".gif")}
+            unoptimized={
+              typeof src === "string" &&
+              (src.endsWith(".gif") || src.includes("minio"))
+            }
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = avatarPlaceholder.src;
+            }}
           />
           <span className="absolute inset-0 m-auto flex size-12 items-center justify-center rounded-full bg-black bg-opacity-30 text-white transition-colors duration-200 group-hover:bg-opacity-25">
             {isUploading ? (
@@ -219,9 +286,7 @@ function AvatarInput({
           gifFile={gifToCenter}
           onClose={() => {
             setGifToCenter(undefined);
-            if (fileInputRef.current) {
-              fileInputRef.current.value = "";
-            }
+            resetInput();
           }}
           currentValues={{
             displayName: form.getValues("displayName"),
@@ -243,9 +308,7 @@ function AvatarInput({
           }}
           onClose={() => {
             setImageToCrop(undefined);
-            if (fileInputRef.current) {
-              fileInputRef.current.value = "";
-            }
+            resetInput();
           }}
         />
       )}

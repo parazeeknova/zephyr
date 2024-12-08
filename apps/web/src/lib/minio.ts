@@ -1,8 +1,10 @@
+import https from "node:https";
 import {
   GetObjectCommand,
   PutObjectCommand,
   S3Client
 } from "@aws-sdk/client-s3";
+import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { validateFile } from "./utils/file-validation";
 import { getFileType } from "./utils/mime-utils";
@@ -10,23 +12,42 @@ import { getFileType } from "./utils/mime-utils";
 export { getContentDisposition } from "./utils/mime-utils";
 
 export const minioClient = new S3Client({
-  region: "us-east-1",
-  endpoint: process.env.MINIO_ENDPOINT || "http://localhost:9000",
+  region: "ap-south-1",
+  endpoint:
+    process.env.NODE_ENV === "production"
+      ? "https://minio-objectstorage.zephyyrr.in"
+      : process.env.MINIO_ENDPOINT || "http://localhost:9000",
   credentials: {
     accessKeyId: process.env.MINIO_ROOT_USER || "minioadmin",
     secretAccessKey: process.env.MINIO_ROOT_PASSWORD || "minioadmin"
   },
   forcePathStyle: true,
-  maxAttempts: 3
+  maxAttempts: 3,
+  requestHandler: new NodeHttpHandler({
+    httpsAgent: new https.Agent({
+      rejectUnauthorized: process.env.NODE_ENV === "production"
+    })
+  })
 });
 
-export const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || "uploads";
+export const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || "zephyr";
 
 export const getPublicUrl = (key: string) => {
   if (!key) throw new Error("File key is required");
+
   const endpoint =
-    process.env.NEXT_PUBLIC_MINIO_ENDPOINT || "http://localhost:9001";
-  return `${endpoint}/${MINIO_BUCKET}/${encodeURIComponent(key)}`;
+    typeof window !== "undefined"
+      ? process.env.NEXT_PUBLIC_MINIO_ENDPOINT
+      : process.env.MINIO_ENDPOINT;
+
+  const productionEndpoint = "https://minio-objectstorage.zephyyrr.in";
+
+  const finalEndpoint =
+    process.env.NODE_ENV === "production"
+      ? productionEndpoint
+      : endpoint || "http://localhost:9001";
+
+  return `${finalEndpoint}/${MINIO_BUCKET}/${encodeURIComponent(key)}`;
 };
 
 export const validateBucket = async () => {

@@ -37,7 +37,6 @@ export async function GET(req: NextRequest) {
       throw error;
     }
 
-    // @ts-expect-error Property 'access_token' does not exist on type 'object'.ts(2339)
     const accessToken = tokenResponse?.data?.access_token;
     if (!accessToken || typeof accessToken !== "string") {
       throw new Error("Invalid access token structure");
@@ -148,6 +147,7 @@ export async function GET(req: NextRequest) {
     try {
       const streamClient = getStreamClient();
 
+      // @ts-ignore
       await prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
           data: {

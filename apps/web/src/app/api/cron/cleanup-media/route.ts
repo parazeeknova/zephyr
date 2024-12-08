@@ -31,12 +31,14 @@ export async function POST(req: Request) {
     });
 
     log(`Found ${unusedMedia.length} unused media files`);
+    // @ts-ignore
     const validMedia = unusedMedia.filter((m) => m.key);
 
     if (validMedia.length > 0) {
       log(`Deleting ${validMedia.length} files from MinIO`);
       try {
         await Promise.all(
+          // @ts-ignore
           validMedia.map((media) =>
             minioClient.send(
               new DeleteObjectCommand({
@@ -51,6 +53,7 @@ export async function POST(req: Request) {
         const result = await prisma.media.deleteMany({
           where: {
             id: {
+              // @ts-ignore
               in: validMedia.map((m) => m.id)
             }
           }

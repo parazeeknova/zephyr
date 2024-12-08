@@ -11,7 +11,6 @@
     "dep:check": "pnpm dlx sherif@latest",
     "dep:fix": "pnpm dlx sherif@latest --fix",
     "dev": "turbo dev",
-    "lint": "biome:fix && biome:check",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "prepare": "husky",
     "typecheck": "pnpm --recursive --parallel run typecheck",

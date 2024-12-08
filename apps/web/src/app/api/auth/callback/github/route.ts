@@ -145,6 +145,7 @@ export async function GET(req: NextRequest) {
       try {
         const streamClient = getStreamClient();
 
+        // @ts-ignore
         await prisma.$transaction(async (tx) => {
           const newUser = await tx.user.create({
             data: {

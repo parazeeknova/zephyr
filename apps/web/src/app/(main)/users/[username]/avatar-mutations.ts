@@ -27,14 +27,20 @@ export function useUpdateAvatarMutation() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update avatar");
+        const error = await response.text();
+        throw new Error(error || "Failed to update avatar");
       }
 
-      return response.json();
+      const data = await response.json();
+      if (process.env.NODE_ENV === "production" && data.avatar?.url) {
+        data.avatar.url = data.avatar.url.replace("http://", "https://");
+      }
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       queryClient.invalidateQueries({ queryKey: ["post-feed"] });
+      queryClient.invalidateQueries({ queryKey: ["avatar"] });
     }
   });
 }

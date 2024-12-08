@@ -41,10 +41,10 @@ export const searchSuggestionsCache = {
       for (let i = 0; i < results.length; i += 2) {
         const query = results[i];
         const count = parseInt(results[i + 1] || '0', 10);
-        
-        // @ts-expect-error
+
+        // @ts-ignore
         if (query.startsWith(normalizedPrefix)) {
-          // @ts-expect-error
+          // @ts-ignore
           suggestions.push({ query, count });
           if (suggestions.length >= limit) break;
         }

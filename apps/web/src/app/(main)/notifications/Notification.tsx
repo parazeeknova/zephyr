@@ -1,13 +1,14 @@
 import { cn } from "@/lib/utils";
-import type { NotificationType } from "@prisma/client";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import type { NotificationData } from "@zephyr/db";
+import type { NotificationData, NotificationType } from "@zephyr/db";
 import { Heart, MessageCircle, User2 } from "lucide-react";
 import Link from "next/link";
 import type { JSX } from "react";
 
 interface NotificationProps {
-  notification: NotificationData;
+  notification: NotificationData & {
+    type: NotificationType;
+  };
 }
 
 export default function Notification({ notification }: NotificationProps) {
@@ -32,7 +33,8 @@ export default function Notification({ notification }: NotificationProps) {
     }
   };
 
-  const { message, icon, href } = notificationTypeMap[notification.type];
+  const type = notification.type as NotificationType;
+  const { message, icon, href } = notificationTypeMap[type];
 
   return (
     <Link href={href} className="block">

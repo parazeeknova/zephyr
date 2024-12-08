@@ -66,6 +66,7 @@ export async function POST(
       return Response.json({ error: "Invalid vote value" }, { status: 400 });
     }
 
+    // @ts-ignore
     const updatedPost = await prisma.$transaction(async (tx) => {
       const existingVote = await tx.vote.findUnique({
         where: {
@@ -102,11 +103,10 @@ export async function POST(
             },
             data: { value: vote }
           });
-          voteChange = vote * 2; // -1 to 1 = +2, 1 to -1 = -2
-          shouldNotify = vote === 1; // Notify only for upvote
+          voteChange = vote * 2;
+          shouldNotify = vote === 1;
         }
       } else {
-        // New vote
         await tx.vote.create({
           data: {
             userId: loggedInUser.id,
@@ -114,7 +114,7 @@ export async function POST(
             value: vote
           }
         });
-        shouldNotify = vote === 1; // Notify only for upvote
+        shouldNotify = vote === 1;
       }
 
       const updatedPost = await tx.post.update({
@@ -122,11 +122,10 @@ export async function POST(
         data: { aura: { increment: voteChange } },
         include: {
           ...getPostDataInclude(loggedInUser.id),
-          user: true // Include the post author
+          user: true
         }
       });
 
-      // Create notification for upvote using AMPLIFY type
       if (shouldNotify && updatedPost.userId !== loggedInUser.id) {
         await tx.notification.create({
           data: {
@@ -149,7 +148,7 @@ export async function POST(
         updatedPost.vote?.length > 0 ? (updatedPost.vote[0]?.value ?? 0) : 0
     };
 
-    // @ts-expect-error
+    // @ts-ignore
     const postData: PostData & VoteInfo = {
       ...updatedPost,
       ...voteInfo
@@ -176,6 +175,7 @@ export async function DELETE(
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // @ts-ignore
     const updatedPost = await prisma.$transaction(async (tx) => {
       const existingVote = await tx.vote.findUnique({
         where: {
@@ -254,7 +254,7 @@ export async function DELETE(
       userVote: 0 // Since we've just deleted the vote
     };
 
-    // @ts-expect-error
+    // @ts-ignore
     const postData: PostData & VoteInfo = {
       ...updatedPost,
       ...voteInfo

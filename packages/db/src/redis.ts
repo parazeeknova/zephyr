@@ -1,42 +1,81 @@
 import IORedis, { type RedisOptions } from "ioredis";
 
-const redisUrl = process.env.REDIS_URL;
+const createRedisConfig = (): RedisOptions => {
+  const config: RedisOptions = {
+    host: process.env.REDIS_HOST,
+    port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
+    password: process.env.REDIS_PASSWORD,
+    db: 0,
+    maxRetriesPerRequest: 3,
+    retryStrategy(times: number) {
+      const delay = Math.min(times * 50, 2000);
+      return delay;
+    },
+    enableReadyCheck: true,
+    showFriendlyErrorStack: true
+  };
 
-const redisConfig: RedisOptions = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
-  password: process.env.REDIS_PASSWORD || "zephyrredis",
-  db: 0,
-  maxRetriesPerRequest: 3,
-  retryStrategy(times: number) {
-    const delay = Math.min(times * 50, 2000);
-    return delay;
-  },
-  enableReadyCheck: true,
-  showFriendlyErrorStack: true,
-  reconnectOnError: (err: Error) => {
-    console.error("Redis reconnect on error:", err);
-    return true;
-  }
+  console.log("Redis Config (sanitized):", {
+    host: config.host,
+    port: config.port,
+    hasPassword: !!config.password,
+    db: config.db
+  });
+
+  return config;
 };
 
 let redis: IORedis;
 
 try {
-  redis = redisUrl ? new IORedis(redisUrl) : new IORedis(redisConfig);
+  redis = new IORedis(createRedisConfig());
+
+  const debugRedis = {
+    async testConnection() {
+      try {
+        await redis.ping();
+        console.log("Redis connection test: SUCCESS");
+        return true;
+      } catch (error) {
+        console.error("Redis connection test: FAILED", error);
+        return false;
+      }
+    },
+
+    async testCache() {
+      try {
+        const testKey = "test:connection";
+        await redis.set(testKey, "working");
+        const value = await redis.get(testKey);
+        await redis.del(testKey);
+        console.log(
+          "Redis cache test:",
+          value === "working" ? "SUCCESS" : "FAILED"
+        );
+        return value === "working";
+      } catch (error) {
+        console.error("Redis cache test: FAILED", error);
+        return false;
+      }
+    }
+  };
 
   redis.on("error", (error) => {
     console.error("Redis connection error:", error);
     console.error("Redis connection details:", {
-      connection: redisUrl || "Using individual config",
       host: redis.options.host,
       port: redis.options.port,
+      hasPassword: !!redis.options.password,
       db: redis.options.db
     });
   });
 
   redis.on("connect", () => {
     console.log("Connected to Redis successfully");
+    debugRedis
+      .testConnection()
+      .then(() => debugRedis.testCache())
+      .catch(console.error);
   });
 
   redis.on("ready", () => {
