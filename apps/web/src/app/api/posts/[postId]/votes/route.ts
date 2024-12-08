@@ -103,11 +103,10 @@ export async function POST(
             },
             data: { value: vote }
           });
-          voteChange = vote * 2; // -1 to 1 = +2, 1 to -1 = -2
-          shouldNotify = vote === 1; // Notify only for upvote
+          voteChange = vote * 2;
+          shouldNotify = vote === 1;
         }
       } else {
-        // New vote
         await tx.vote.create({
           data: {
             userId: loggedInUser.id,
@@ -115,7 +114,7 @@ export async function POST(
             value: vote
           }
         });
-        shouldNotify = vote === 1; // Notify only for upvote
+        shouldNotify = vote === 1;
       }
 
       const updatedPost = await tx.post.update({
@@ -123,11 +122,10 @@ export async function POST(
         data: { aura: { increment: voteChange } },
         include: {
           ...getPostDataInclude(loggedInUser.id),
-          user: true // Include the post author
+          user: true
         }
       });
 
-      // Create notification for upvote using AMPLIFY type
       if (shouldNotify && updatedPost.userId !== loggedInUser.id) {
         await tx.notification.create({
           data: {
@@ -150,7 +148,7 @@ export async function POST(
         updatedPost.vote?.length > 0 ? (updatedPost.vote[0]?.value ?? 0) : 0
     };
 
-    // @ts-expect-error
+    // @ts-ignore
     const postData: PostData & VoteInfo = {
       ...updatedPost,
       ...voteInfo
