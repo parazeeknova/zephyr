@@ -15,11 +15,6 @@ RUN npm install -g pnpm@latest
 
 WORKDIR /app
 
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV SKIP_TYPE_CHECK=1
-ENV HUSKY=0
-ENV CI=1
-
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/turbo.json ./turbo.json
@@ -50,7 +45,5 @@ COPY --from=installer --chown=nextjs:nodejs /app/packages/db/prisma ./packages/d
 ENV PATH="/app/node_modules/.bin:${PATH}"
 
 USER nextjs
-
-EXPOSE 3000
 
 CMD ["node", "apps/web/server.js"]
