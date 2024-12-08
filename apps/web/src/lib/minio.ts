@@ -25,7 +25,10 @@ export const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || "uploads";
 export const getPublicUrl = (key: string) => {
   if (!key) throw new Error("File key is required");
   const endpoint =
-    process.env.NEXT_PUBLIC_MINIO_ENDPOINT || "http://localhost:9001";
+    process.env.NODE_ENV === "production"
+      ? process.env.NEXT_PUBLIC_MINIO_ENDPOINT
+      : process.env.NEXT_PUBLIC_MINIO_ENDPOINT || "http://localhost:9001";
+
   return `${endpoint}/${MINIO_BUCKET}/${encodeURIComponent(key)}`;
 };
 
