@@ -60,22 +60,26 @@ const nextConfig: NextConfig = {
         pathname: "/**"
       },
       {
-        protocol: "http",
-        hostname: "localhost",
-        port: "9001",
-        pathname: `/${process.env.MINIO_BUCKET_NAME}/**`
-      },
-      {
-        protocol: "http",
-        hostname: "localhost",
-        port: "9000",
-        pathname: `/${process.env.MINIO_BUCKET_NAME}/**`
-      },
-      {
         protocol: "https",
         hostname: "minio-objectstorage.zephyyrr.in",
         pathname: "/**"
-      }
+      },
+      ...(process.env.NODE_ENV === "development"
+        ? [
+            {
+              protocol: "http" as const,
+              hostname: "localhost",
+              port: "9001",
+              pathname: `/${process.env.MINIO_BUCKET_NAME}/**`
+            },
+            {
+              protocol: "http" as const,
+              hostname: "localhost",
+              port: "9000",
+              pathname: `/${process.env.MINIO_BUCKET_NAME}/**`
+            }
+          ]
+        : [])
     ]
   },
 

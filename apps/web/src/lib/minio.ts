@@ -1,8 +1,10 @@
+import https from "node:https";
 import {
   GetObjectCommand,
   PutObjectCommand,
   S3Client
 } from "@aws-sdk/client-s3";
+import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { validateFile } from "./utils/file-validation";
 import { getFileType } from "./utils/mime-utils";
@@ -11,25 +13,36 @@ export { getContentDisposition } from "./utils/mime-utils";
 
 export const minioClient = new S3Client({
   region: "ap-south-1",
-  endpoint: process.env.MINIO_ENDPOINT || "http://localhost:9000",
+  endpoint:
+    process.env.NODE_ENV === "production"
+      ? "https://minio-objectstorage.zephyyrr.in"
+      : process.env.MINIO_ENDPOINT || "http://localhost:9000",
   credentials: {
     accessKeyId: process.env.MINIO_ROOT_USER || "minioadmin",
     secretAccessKey: process.env.MINIO_ROOT_PASSWORD || "minioadmin"
   },
   forcePathStyle: true,
-  maxAttempts: 3
+  maxAttempts: 3,
+  requestHandler: new NodeHttpHandler({
+    httpsAgent: new https.Agent({
+      rejectUnauthorized: process.env.NODE_ENV === "production"
+    })
+  })
 });
 
-export const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || "uploads";
+export const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || "zephyr";
 
 export const getPublicUrl = (key: string) => {
   if (!key) throw new Error("File key is required");
   const endpoint =
     process.env.NODE_ENV === "production"
-      ? process.env.NEXT_PUBLIC_MINIO_ENDPOINT
+      ? "https://minio-objectstorage.zephyyrr.in"
       : process.env.NEXT_PUBLIC_MINIO_ENDPOINT || "http://localhost:9001";
 
-  return `${endpoint}/${MINIO_BUCKET}/${encodeURIComponent(key)}`;
+  return `${endpoint}/${MINIO_BUCKET}/${encodeURIComponent(key)}`.replace(
+    /([^:]\/)\/+/g,
+    "$1"
+  );
 };
 
 export const validateBucket = async () => {
