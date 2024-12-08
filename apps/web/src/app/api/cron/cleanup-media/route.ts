@@ -38,6 +38,7 @@ export async function POST(req: Request) {
       log(`Deleting ${validMedia.length} files from MinIO`);
       try {
         await Promise.all(
+          // @ts-ignore
           validMedia.map((media) =>
             minioClient.send(
               new DeleteObjectCommand({
