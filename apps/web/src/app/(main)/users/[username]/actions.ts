@@ -17,6 +17,7 @@ export async function updateUserProfile(values: UpdateUserProfileValues) {
 
   const streamClient = getStreamClient();
 
+  // @ts-ignore
   const updatedUser = await prisma.$transaction(async (tx) => {
     const updatedUser = await tx.user.update({
       where: { id: user.id },
