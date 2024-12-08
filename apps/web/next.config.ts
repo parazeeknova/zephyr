@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
     staleTimes: {
       dynamic: 30
     },
-    typedRoutes: true,
     serverActions: {
       bodySizeLimit: "1mb",
       allowedOrigins: ["*"]
