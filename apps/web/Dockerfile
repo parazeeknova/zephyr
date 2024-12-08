@@ -19,7 +19,8 @@ COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/turbo.json ./turbo.json
 
-RUN pnpm install --frozen-lockfile --ignore-scripts
+ENV HUSKY=0
+RUN pnpm install --frozen-lockfile
 
 COPY --from=builder /app/out/full/ .
 
