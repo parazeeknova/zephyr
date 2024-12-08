@@ -54,6 +54,7 @@ export async function GET() {
     });
 
     // Transform the data to include mutual followers in a cleaner format
+    // @ts-ignore
     const transformedUsers = suggestedUsers.map((user) => ({
       ...user,
       mutualFollowers: user.followers.map((f) => f.follower)
