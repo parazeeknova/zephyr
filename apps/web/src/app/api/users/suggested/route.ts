@@ -57,6 +57,7 @@ export async function GET() {
     // @ts-ignore
     const transformedUsers = suggestedUsers.map((user) => ({
       ...user,
+      // @ts-ignore
       mutualFollowers: user.followers.map((f) => f.follower)
     }));
 
