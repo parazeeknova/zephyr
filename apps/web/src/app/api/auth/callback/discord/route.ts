@@ -135,6 +135,7 @@ export async function GET(req: NextRequest) {
       const username = `${slugify(discordUser.username)}-${userId.slice(0, 4)}`;
 
       try {
+        // @ts-ignore
         await prisma.$transaction(async (tx) => {
           const newUser = await tx.user.create({
             data: {

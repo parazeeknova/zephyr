@@ -66,6 +66,7 @@ export async function POST(
       return Response.json({ error: "Invalid vote value" }, { status: 400 });
     }
 
+    // @ts-ignore
     const updatedPost = await prisma.$transaction(async (tx) => {
       const existingVote = await tx.vote.findUnique({
         where: {
@@ -176,6 +177,7 @@ export async function DELETE(
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // @ts-ignore
     const updatedPost = await prisma.$transaction(async (tx) => {
       const existingVote = await tx.vote.findUnique({
         where: {

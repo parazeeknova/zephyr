@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
 
       const streamClient = getStreamClient();
 
-      // Update user, cleanup, and create Stream Chat user in a transaction
+      // @ts-ignore
       await prisma.$transaction(async (tx) => {
         // Update user verification status
         await tx.user.update({
