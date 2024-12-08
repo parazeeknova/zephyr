@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
         : null;
 
     const data: PostsPage = {
+      // @ts-ignore
       posts: bookmarks.slice(0, pageSize).map((bookmark) => bookmark.post),
       nextCursor
     };
