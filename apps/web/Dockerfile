@@ -1,17 +1,15 @@
-FROM node:20-alpine AS base
+FROM node:latest AS base
 
 FROM base AS builder
-RUN apk update && apk add --no-cache libc6-compat git curl postgresql-client
+RUN apt-get update && apt-get install -y git
 WORKDIR /app
 RUN npm install -g pnpm@latest turbo@latest
 
 COPY . .
-
 RUN turbo prune --scope=@zephyr/web --docker
 
 FROM base AS installer
-RUN apk update && apk add --no-cache libc6-compat curl postgresql-client
-RUN npm install -g pnpm@latest
+RUN apt-get update && apt-get install -y
 
 WORKDIR /app
 
@@ -19,21 +17,22 @@ COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/turbo.json ./turbo.json
 
-ENV HUSKY=0
-RUN pnpm install --frozen-lockfile
+COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
+
+RUN npm install -g pnpm@latest turbo@latest && \
+  pnpm install --frozen-lockfile --ignore-scripts
+
+RUN cd packages/db && pnpm dlx prisma generate
 
 COPY --from=builder /app/out/full/ .
 
-COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
-RUN cd packages/db && pnpm dlx prisma generate
-
-RUN pnpm turbo build --filter=@zephyr/web... --force
+RUN pnpm exec turbo build --filter=@zephyr/web... --force
 
 FROM base AS runner
 WORKDIR /app
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN groupadd --system --gid 1001 nodejs && \
+  useradd --system --uid 1001 --gid nodejs nextjs
 
 RUN mkdir -p /app/packages/db/prisma && \
   chown -R nextjs:nodejs /app
@@ -44,6 +43,9 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/publ
 COPY --from=installer --chown=nextjs:nodejs /app/packages/db/prisma ./packages/db/prisma
 
 ENV PATH="/app/node_modules/.bin:${PATH}"
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV TURBO_TELEMETRY_DISABLED=1
 
 USER nextjs
 
