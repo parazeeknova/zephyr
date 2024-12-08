@@ -6,7 +6,9 @@ import Link from "next/link";
 import type { JSX } from "react";
 
 interface NotificationProps {
-  notification: NotificationData;
+  notification: NotificationData & {
+    type: NotificationType;
+  };
 }
 
 export default function Notification({ notification }: NotificationProps) {
@@ -31,7 +33,8 @@ export default function Notification({ notification }: NotificationProps) {
     }
   };
 
-  const { message, icon, href } = notificationTypeMap[notification.type];
+  const type = notification.type as NotificationType;
+  const { message, icon, href } = notificationTypeMap[type];
 
   return (
     <Link href={href} className="block">
