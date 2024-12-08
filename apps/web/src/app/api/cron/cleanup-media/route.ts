@@ -31,6 +31,7 @@ export async function POST(req: Request) {
     });
 
     log(`Found ${unusedMedia.length} unused media files`);
+    // @ts-ignore
     const validMedia = unusedMedia.filter((m) => m.key);
 
     if (validMedia.length > 0) {

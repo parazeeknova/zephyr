@@ -44,6 +44,7 @@ export async function POST(req: Request) {
       });
     }
 
+    // @ts-ignore
     const deletePromises = unusedMedia.map(async (media) => {
       if (media.key) {
         try {

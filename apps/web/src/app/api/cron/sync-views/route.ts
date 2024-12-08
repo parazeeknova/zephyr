@@ -46,6 +46,7 @@ async function syncViewCounts() {
       }
     });
 
+    // @ts-ignore
     const existingPostIds = new Set(existingPosts.map((post) => post.id));
     log(`Found ${existingPostIds.size} existing posts in database`);
 
