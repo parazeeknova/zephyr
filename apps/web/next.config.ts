@@ -70,6 +70,11 @@ const nextConfig: NextConfig = {
         hostname: "localhost",
         port: "9000",
         pathname: `/${process.env.MINIO_BUCKET_NAME}/**`
+      },
+      {
+        protocol: "https",
+        hostname: "minio-objectstorage.zephyyrr.in",
+        pathname: "/**"
       }
     ]
   },

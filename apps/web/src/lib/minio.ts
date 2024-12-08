@@ -10,7 +10,7 @@ import { getFileType } from "./utils/mime-utils";
 export { getContentDisposition } from "./utils/mime-utils";
 
 export const minioClient = new S3Client({
-  region: "us-east-1",
+  region: "ap-south-1",
   endpoint: process.env.MINIO_ENDPOINT || "http://localhost:9000",
   credentials: {
     accessKeyId: process.env.MINIO_ROOT_USER || "minioadmin",
