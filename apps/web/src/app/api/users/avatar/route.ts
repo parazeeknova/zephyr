@@ -17,6 +17,11 @@ export async function POST(request: Request) {
 
     const result = await uploadAvatar(file, userId);
 
+    const avatarUrl =
+      process.env.NODE_ENV === "production"
+        ? result.url.replace("http://", "https://")
+        : result.url;
+
     if (oldAvatarKey) {
       await deleteAvatar(oldAvatarKey);
     }
@@ -25,13 +30,13 @@ export async function POST(request: Request) {
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        avatarUrl: result.url,
+        avatarUrl: avatarUrl,
         avatarKey: result.key
       }
     });
 
     await avatarCache.set(userId, {
-      url: result.url,
+      url: avatarUrl,
       key: result.key,
       updatedAt: new Date().toISOString()
     });
@@ -39,11 +44,14 @@ export async function POST(request: Request) {
     await streamClient.partialUpdateUser({
       id: userId,
       set: {
-        image: result.url
+        image: avatarUrl
       }
     });
 
-    return NextResponse.json({ user: updatedUser, avatar: result });
+    return NextResponse.json({
+      user: updatedUser,
+      avatar: { ...result, url: avatarUrl }
+    });
   } catch (error) {
     console.error("Avatar update error:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
