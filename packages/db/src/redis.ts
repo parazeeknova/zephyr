@@ -2,50 +2,58 @@ import IORedis, { type RedisOptions } from "ioredis";
 
 const redisUrl = process.env.REDIS_URL;
 
-const redisConfig: RedisOptions = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
-  password: process.env.REDIS_PASSWORD || "zephyrredis",
-  db: 0,
-  maxRetriesPerRequest: 3,
-  retryStrategy(times: number) {
-    const delay = Math.min(times * 50, 2000);
-    return delay;
-  },
-  enableReadyCheck: true,
-  showFriendlyErrorStack: true,
-  reconnectOnError: (err: Error) => {
-    console.error("Redis reconnect on error:", err);
-    return true;
+console.log(
+  "Redis URL format:",
+  redisUrl?.replace(/\/\/.*@/, "//<credentials>@")
+);
+
+const createRedisConfig = (): RedisOptions => {
+  if (!redisUrl) {
+    return {
+      host: "localhost",
+      port: 6379,
+      password: "zephyrredis",
+      db: 0
+    };
   }
+
+  const url = new URL(redisUrl);
+  return {
+    host: url.hostname,
+    port: Number(url.port),
+    password: url.password,
+    db: url.pathname ? Number(url.pathname.split("/")[1]) : 0,
+    maxRetriesPerRequest: 3,
+    retryStrategy(times: number) {
+      const delay = Math.min(times * 50, 2000);
+      return delay;
+    },
+    enableReadyCheck: true,
+    showFriendlyErrorStack: true
+  };
 };
 
 let redis: IORedis;
 
 try {
-  const options = redisUrl
-    ? {
-        db: 0,
-        maxRetriesPerRequest: 3,
-        retryStrategy(times: number) {
-          const delay = Math.min(times * 50, 2000);
-          return delay;
-        },
-        enableReadyCheck: true,
-        showFriendlyErrorStack: true
-      }
-    : redisConfig;
+  const config = createRedisConfig();
 
-  redis = redisUrl ? new IORedis(redisUrl, options) : new IORedis(redisConfig);
+  console.log("Redis connection config:", {
+    host: config.host,
+    port: config.port,
+    hasPassword: !!config.password,
+    db: config.db
+  });
+
+  redis = new IORedis(config);
 
   redis.on("error", (error) => {
     console.error("Redis connection error:", error);
-    console.error("Redis connection attempt details:", {
-      url: redisUrl ? "Using Redis URL" : "Using individual config",
-      host: redis.options.host,
-      port: redis.options.port,
-      hasPassword: !!redis.options.password,
-      db: redis.options.db
+    console.error("Redis connection details:", {
+      host: config.host,
+      port: config.port,
+      hasPassword: !!config.password,
+      db: config.db
     });
   });
 
