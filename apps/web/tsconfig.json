@@ -19,7 +19,7 @@
     "noEmit": true,
     "strict": true,
     "strictNullChecks": true,
-    "noUncheckedIndexedAccess": true,
+    "noUncheckedIndexedAccess": false,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
