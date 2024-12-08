@@ -254,7 +254,7 @@ export async function DELETE(
       userVote: 0 // Since we've just deleted the vote
     };
 
-    // @ts-expect-error
+    // @ts-ignore
     const postData: PostData & VoteInfo = {
       ...updatedPost,
       ...voteInfo
