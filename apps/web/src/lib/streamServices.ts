@@ -7,6 +7,11 @@ export const createStreamUser = async (
 ) => {
   try {
     const client = getStreamClient();
+    if (!client) {
+      console.log("Skipping Stream user creation - client not initialized");
+      return;
+    }
+
     console.log("Creating Stream user:", {
       userId: `${userId.substring(0, 5)}...`,
       username: `${username.substring(0, 5)}...`

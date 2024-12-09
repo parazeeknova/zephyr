@@ -3,18 +3,20 @@ import { StreamChat } from "stream-chat";
 
 let streamClient: StreamChat | null = null;
 
-export function getStreamClient(): StreamChat {
-  if (!streamClient && isStreamConfigured()) {
-    const config = getStreamConfig();
-    console.log(
-      "Initializing Stream client with API key:",
-      `${config.apiKey.substring(0, 5)}...`
-    );
-    streamClient = StreamChat.getInstance(config.apiKey, config.secret);
+export function getStreamClient(): StreamChat | null {
+  if (typeof window === "undefined") {
+    return null;
   }
 
-  if (!streamClient) {
-    throw new Error("Stream client not initialized - missing configuration");
+  if (!streamClient && isStreamConfigured()) {
+    const config = getStreamConfig();
+    if (config.apiKey && config.secret) {
+      console.log(
+        "Initializing Stream client with API key:",
+        `${config.apiKey.substring(0, 5)}...`
+      );
+      streamClient = StreamChat.getInstance(config.apiKey, config.secret);
+    }
   }
 
   return streamClient;
@@ -23,6 +25,8 @@ export function getStreamClient(): StreamChat {
 export function generateStreamUserToken(userId: string): string | null {
   try {
     const client = getStreamClient();
+    if (!client) return null;
+
     const token = client.createToken(userId);
     console.log("Generated token for user:", `${userId.substring(0, 5)}...`);
     return token;

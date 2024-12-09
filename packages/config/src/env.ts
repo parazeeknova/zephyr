@@ -6,7 +6,8 @@ const REQUIRED_ENV_VARS = {
 export function validateStreamEnv() {
   if (
     process.env.NEXT_PUBLIC_SKIP_VALIDATION === "true" ||
-    process.env.NEXT_PHASE === "phase-production-build"
+    process.env.NEXT_PHASE === "phase-production-build" ||
+    process.env.NODE_ENV === "production"
   ) {
     return;
   }
@@ -23,6 +24,16 @@ export function validateStreamEnv() {
 }
 
 export function getStreamConfig() {
+  if (
+    process.env.NEXT_PHASE === "phase-production-build" ||
+    process.env.NODE_ENV === "production"
+  ) {
+    return {
+      apiKey: process.env.NEXT_PUBLIC_STREAM_KEY ?? "",
+      secret: process.env.STREAM_SECRET ?? ""
+    };
+  }
+
   validateStreamEnv();
 
   const apiKey = process.env.NEXT_PUBLIC_STREAM_KEY;
@@ -36,6 +47,13 @@ export function getStreamConfig() {
 }
 
 export function isStreamConfigured() {
+  if (
+    process.env.NEXT_PHASE === "phase-production-build" ||
+    process.env.NODE_ENV === "production"
+  ) {
+    return true;
+  }
+
   console.log("Stream env check:", {
     hasApiKey: !!process.env.NEXT_PUBLIC_STREAM_KEY,
     hasSecret: !!process.env.STREAM_SECRET
