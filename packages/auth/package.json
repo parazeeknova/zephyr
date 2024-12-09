@@ -16,6 +16,7 @@
     "next": "15.0.3",
     "nodemailer": "^6.9.16",
     "react": "19.0.0",
+    "stream-chat": "^8.46.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
-import { getStreamClient } from "@/lib/stream";
 import { slugify } from "@/lib/utils";
 import { github, lucia, validateRequest } from "@zephyr/auth/auth";
+import { createStreamUser } from "@zephyr/auth/src";
 import { prisma } from "@zephyr/db";
 import { OAuth2RequestError } from "arctic";
 import { generateIdFromEntropySize } from "lucia";
@@ -38,7 +38,6 @@ export async function GET(req: NextRequest) {
 
       const githubUser = await githubUserResponse.json();
 
-      // Get email from GitHub API
       const emailsResponse = await fetch("https://api.github.com/user/emails", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -100,7 +99,6 @@ export async function GET(req: NextRequest) {
         });
       }
 
-      // Regular sign-in/sign-up flow
       const existingUserWithEmail = await prisma.user.findUnique({
         where: {
           email: primaryEmail
@@ -138,33 +136,31 @@ export async function GET(req: NextRequest) {
         });
       }
 
-      // Create new user
       const userId = generateIdFromEntropySize(10);
       const username = `${slugify(githubUser.login)}-${userId.slice(0, 4)}`;
 
       try {
-        const streamClient = getStreamClient();
-
-        // @ts-ignore
-        await prisma.$transaction(async (tx) => {
-          const newUser = await tx.user.create({
-            data: {
-              id: userId,
-              username,
-              displayName: githubUser.name || githubUser.login,
-              githubId: githubUser.id.toString(),
-              email: primaryEmail,
-              avatarUrl: githubUser.avatar_url,
-              emailVerified: true
-            }
-          });
-
-          await streamClient.upsertUser({
-            id: newUser.id,
-            username: newUser.username,
-            name: newUser.displayName
-          });
+        const newUser = await prisma.user.create({
+          data: {
+            id: userId,
+            username,
+            displayName: githubUser.name || githubUser.login,
+            githubId: githubUser.id.toString(),
+            email: primaryEmail,
+            avatarUrl: githubUser.avatar_url,
+            emailVerified: true
+          }
         });
+
+        try {
+          await createStreamUser(
+            newUser.id,
+            newUser.username,
+            newUser.displayName
+          );
+        } catch (streamError) {
+          console.error("Failed to create Stream user:", streamError);
+        }
 
         const session = await lucia.createSession(userId, {});
         const sessionCookie = lucia.createSessionCookie(session.id);

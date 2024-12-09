@@ -1,6 +1,6 @@
-import { getStreamClient } from "@/lib/stream";
 import { slugify } from "@/lib/utils";
 import { lucia, twitter, validateRequest } from "@zephyr/auth/auth";
+import { createStreamUser } from "@zephyr/auth/src";
 import { prisma } from "@zephyr/db";
 import { OAuth2RequestError } from "arctic";
 import { generateIdFromEntropySize } from "lucia";
@@ -122,28 +122,27 @@ export async function GET(req: NextRequest) {
       const username = `${slugify(twitterUser.username)}-${userId.slice(0, 4)}`;
 
       try {
-        const streamClient = getStreamClient();
-
-        // @ts-ignore
-        await prisma.$transaction(async (tx) => {
-          const newUser = await tx.user.create({
-            data: {
-              id: userId,
-              username,
-              displayName: twitterUser.name,
-              twitterId: twitterUser.id,
-              email: `${userId}@twitter.placeholder.com`,
-              avatarUrl: twitterUser.profile_image_url,
-              emailVerified: false
-            }
-          });
-
-          await streamClient.upsertUser({
-            id: newUser.id,
-            username: newUser.username,
-            name: newUser.displayName
-          });
+        const newUser = await prisma.user.create({
+          data: {
+            id: userId,
+            username,
+            displayName: twitterUser.name,
+            twitterId: twitterUser.id,
+            email: `${userId}@twitter.placeholder.com`,
+            avatarUrl: twitterUser.profile_image_url,
+            emailVerified: false
+          }
         });
+
+        try {
+          await createStreamUser(
+            newUser.id,
+            newUser.username,
+            newUser.displayName
+          );
+        } catch (streamError) {
+          console.error("Failed to create Stream user:", streamError);
+        }
 
         const session = await lucia.createSession(userId, {});
         const sessionCookie = lucia.createSessionCookie(session.id);
@@ -160,7 +159,7 @@ export async function GET(req: NextRequest) {
           }
         });
       } catch (error) {
-        console.error("Transaction error:", error);
+        console.error("User creation error:", error);
         throw error;
       }
     } catch (error) {

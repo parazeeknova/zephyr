@@ -142,4 +142,5 @@ export interface NotificationCountInfo {
 
 export interface MessageCountInfo {
   unreadCount: number;
+  error?: string;
 }

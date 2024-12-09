@@ -1,6 +1,6 @@
-import { getStreamClient } from "@/lib/stream";
 import { slugify } from "@/lib/utils";
 import { google, lucia, validateRequest } from "@zephyr/auth/auth";
+import { createStreamUser } from "@zephyr/auth/src";
 import { prisma } from "@zephyr/db";
 import { OAuth2RequestError } from "arctic";
 import { generateIdFromEntropySize } from "lucia";
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
       return new Response(null, { status: 400 });
     }
 
-    // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+    // biome-ignore lint/suspicious/noImplicitAnyLet: this is a third-party library
     let tokenResponse;
     try {
       tokenResponse = await google.validateAuthorizationCode(
@@ -37,6 +37,7 @@ export async function GET(req: NextRequest) {
       throw error;
     }
 
+    // @ts-expect-error
     const accessToken = tokenResponse?.data?.access_token;
     if (!accessToken || typeof accessToken !== "string") {
       throw new Error("Invalid access token structure");
@@ -101,7 +102,6 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Check if user exists with email but without Google auth
     const existingUserWithEmail = await prisma.user.findUnique({
       where: {
         email: googleUser.email
@@ -117,7 +117,6 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Check for existing Google user
     const existingGoogleUser = await prisma.user.findUnique({
       where: {
         googleId: googleUser.id
@@ -140,33 +139,31 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Create new user
     const userId = generateIdFromEntropySize(10);
     const username = `${slugify(googleUser.name)}-${userId.slice(0, 4)}`;
 
     try {
-      const streamClient = getStreamClient();
-
-      // @ts-ignore
-      await prisma.$transaction(async (tx) => {
-        const newUser = await tx.user.create({
-          data: {
-            id: userId,
-            username,
-            displayName: googleUser.name,
-            googleId: googleUser.id,
-            email: googleUser.email,
-            avatarUrl: googleUser.picture,
-            emailVerified: true
-          }
-        });
-
-        await streamClient.upsertUser({
-          id: newUser.id,
-          username: newUser.username,
-          name: newUser.displayName
-        });
+      const newUser = await prisma.user.create({
+        data: {
+          id: userId,
+          username,
+          displayName: googleUser.name,
+          googleId: googleUser.id,
+          email: googleUser.email,
+          avatarUrl: googleUser.picture,
+          emailVerified: true
+        }
       });
+
+      try {
+        await createStreamUser(
+          newUser.id,
+          newUser.username,
+          newUser.displayName
+        );
+      } catch (streamError) {
+        console.error("Failed to create Stream user:", streamError);
+      }
 
       const session = await lucia.createSession(userId, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
@@ -183,7 +180,7 @@ export async function GET(req: NextRequest) {
         }
       });
     } catch (error) {
-      console.error("Transaction error:", error);
+      console.error("User creation error:", error);
       throw error;
     }
   } catch (error) {

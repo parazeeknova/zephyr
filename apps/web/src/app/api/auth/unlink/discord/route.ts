@@ -13,7 +13,6 @@ export async function POST() {
       );
     }
 
-    // Fetch full user data with email and hashedPassword
     const user = await prisma.user.findUnique({
       where: { id: sessionUser.id },
       select: {

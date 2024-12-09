@@ -33,7 +33,8 @@ const nextConfig: NextConfig = {
     "@node-rs/argon2",
     "@prisma/client",
     "@aws-sdk/client-s3",
-    "ioredis"
+    "ioredis",
+    "stream-chat"
   ],
   poweredByHeader: false,
 

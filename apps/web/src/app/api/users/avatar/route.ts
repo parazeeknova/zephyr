@@ -1,5 +1,5 @@
 import { deleteAvatar, uploadAvatar } from "@/lib/minio";
-import { getStreamClient } from "@/lib/stream";
+import { getStreamClient } from "@zephyr/auth/src";
 import { prisma } from "@zephyr/db";
 import { avatarCache } from "@zephyr/db";
 import { NextResponse } from "next/server";
@@ -26,7 +26,6 @@ export async function POST(request: Request) {
       await deleteAvatar(oldAvatarKey);
     }
 
-    const streamClient = getStreamClient();
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
@@ -41,12 +40,19 @@ export async function POST(request: Request) {
       updatedAt: new Date().toISOString()
     });
 
-    await streamClient.partialUpdateUser({
-      id: userId,
-      set: {
-        image: avatarUrl
+    try {
+      const streamClient = getStreamClient();
+      if (streamClient) {
+        await streamClient.partialUpdateUser({
+          id: userId,
+          set: {
+            image: avatarUrl
+          }
+        });
       }
-    });
+    } catch (streamError) {
+      console.error("Failed to update Stream user avatar:", streamError);
+    }
 
     return NextResponse.json({
       user: updatedUser,

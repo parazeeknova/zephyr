@@ -17,8 +17,6 @@ export async function PATCH(request: Request) {
 
     const body = await request.json();
     const { email } = emailSchema.parse(body);
-
-    // Check if email is already taken
     const existingUser = await prisma.user.findFirst({
       where: {
         email: { equals: email, mode: "insensitive" },
@@ -33,7 +31,6 @@ export async function PATCH(request: Request) {
       );
     }
 
-    // Update email and set emailVerified to false
     await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -42,7 +39,6 @@ export async function PATCH(request: Request) {
       }
     });
 
-    // Create and send verification token
     const token = await createVerificationTokenForUser(user.id, email);
     await sendVerificationEmail(email, token);
 

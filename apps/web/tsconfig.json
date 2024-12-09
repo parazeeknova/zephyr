@@ -20,6 +20,7 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
+    "strictNullChecks": true,
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
