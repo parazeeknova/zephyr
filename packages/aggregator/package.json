@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.1",
-    "@types/react": "19.0.0",
+    "@types/react": "19.0.1",
     "@zephyr/config": "workspace:*",
     "typescript": "^5.7.2"
   }
