@@ -1,15 +1,6 @@
 import { prisma } from "@zephyr/db";
-import {
-  POST_VIEWS_KEY_PREFIX,
-  POST_VIEWS_SET,
-  type TrendingTopic,
-  redis,
-  trendingTopicsCache
-} from "@zephyr/db";
+import { redis } from "@zephyr/db";
 import type { NextRequest } from "next/server";
-
-export const runtime = "edge";
-export const preferredRegion = "iad1";
 
 async function cleanupRedisCache() {
   const startTime = Date.now();
@@ -20,22 +11,21 @@ async function cleanupRedisCache() {
   };
 
   try {
-    // 1. Clean up post views for deleted posts
-    const postIdsWithViews = await redis.smembers(POST_VIEWS_SET);
+    // 1. Clean up post views
+    const postIdsWithViews = await redis.smembers("posts:with:views");
     console.log(`Found ${postIdsWithViews.length} posts with views to check`);
 
     const batchSize = 100;
     for (let i = 0; i < postIdsWithViews.length; i += batchSize) {
       const batch = postIdsWithViews.slice(i, i + batchSize);
+
       const existingPosts = await prisma.post.findMany({
         where: {
           id: {
             in: batch
           }
         },
-        select: {
-          id: true
-        }
+        select: { id: true }
       });
 
       const existingPostIds = new Set(existingPosts.map((p) => p.id));
@@ -43,8 +33,8 @@ async function cleanupRedisCache() {
 
       for (const postId of batch) {
         if (!existingPostIds.has(postId)) {
-          pipeline.srem(POST_VIEWS_SET, postId);
-          pipeline.del(`${POST_VIEWS_KEY_PREFIX}${postId}`);
+          pipeline.srem("posts:with:views", postId);
+          pipeline.del(`post:views:${postId}`);
           results.deletedPostViews++;
         }
       }
@@ -56,15 +46,12 @@ async function cleanupRedisCache() {
     }
 
     // 2. Clean up trending topics
-    const currentTrendingTopics = await trendingTopicsCache.get();
-    console.log(
-      `Found ${currentTrendingTopics.length} trending topics to check`
-    );
+    const currentTrendingTopics = await redis.get("trending:topics");
+    if (currentTrendingTopics) {
+      const topics = JSON.parse(currentTrendingTopics);
+      const validTopics = [];
 
-    if (currentTrendingTopics.length > 0) {
-      const validTopics: TrendingTopic[] = [];
-
-      for (const topic of currentTrendingTopics) {
+      for (const topic of topics) {
         const postsWithHashtag = await prisma.post.count({
           where: {
             content: {
@@ -85,7 +72,20 @@ async function cleanupRedisCache() {
       }
 
       if (results.cleanedTrendingTopics > 0) {
-        await trendingTopicsCache.set(validTopics);
+        const pipeline = redis.pipeline();
+        pipeline.set(
+          "trending:topics",
+          JSON.stringify(validTopics),
+          "EX",
+          3600
+        ); // 1 hour expiry
+        pipeline.set(
+          "trending:topics:backup",
+          JSON.stringify(validTopics),
+          "EX",
+          86400
+        ); // 24 hour backup
+        await pipeline.exec();
         console.log(
           `Updated trending topics cache, removed ${results.cleanedTrendingTopics} topics`
         );
