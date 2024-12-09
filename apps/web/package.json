@@ -91,7 +91,7 @@
     "@types/node": "^22.10.1",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "19.0.0",
-    "@types/react-dom": "19.0.0",
+    "@types/react-dom": "19.0.1",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@zephyr/config": "workspace:*",
     "autoprefixer": "^10.4.20",
