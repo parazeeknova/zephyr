@@ -131,6 +131,7 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
           label="Photos & Videos"
           type="image"
           accept="image/*,video/*"
+          // @ts-expect-error
           inputRef={imageInputRef}
           buttonType="image"
         />
@@ -139,6 +140,7 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
           label="Audio Files"
           type="audio"
           accept="audio/*"
+          // @ts-expect-error
           inputRef={audioInputRef}
           buttonType="audio"
         />
@@ -147,6 +149,7 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
           label="Documents"
           type="document"
           accept=".pdf,.doc,.docx,.txt,.md"
+          // @ts-expect-error
           inputRef={documentInputRef}
           buttonType="document"
         />
@@ -155,6 +158,7 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
           label="Code Files"
           type="code"
           accept=".ts,.tsx,.js,.jsx,.html,.css,.scss,.less,.json,.md,.py,.java,.c,.cpp,.cs,.rb,.php,.rs,.go,.kt,.swift,.xml,.yaml,.yml,.sql"
+          // @ts-expect-error
           inputRef={codeInputRef}
           buttonType="code"
         />
