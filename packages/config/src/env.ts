@@ -4,14 +4,9 @@ const REQUIRED_ENV_VARS = {
 } as const;
 
 export function validateStreamEnv() {
-  // Skip validation in these scenarios:
-  // 1. During not-found page generation
-  // 2. During static page generation
-  // 3. When explicitly skipped
   if (
-    process.env.NEXT_PRIVATE_SKIP_VALIDATION === "true" ||
-    process.env.NEXT_PHASE === "phase-production-build" ||
-    process.env.VERCEL_ENV === "production"
+    process.env.NEXT_PUBLIC_SKIP_VALIDATION === "true" ||
+    process.env.NEXT_PHASE === "phase-production-build"
   ) {
     return;
   }
@@ -21,38 +16,30 @@ export function validateStreamEnv() {
     .map(([key]) => key);
 
   if (missing.length > 0) {
-    if (process.env.NODE_ENV === "production") {
-      console.warn(
-        `Warning: Missing Stream Chat environment variables: ${missing.join(", ")}`
-      );
-      return;
-    }
-
-    if (process.env.NODE_ENV === "development") {
-      throw new Error(
-        `Stream Chat environment variables are not configured. Missing: ${missing.join(
-          ", "
-        )}`
-      );
-    }
-
-    console.warn(
-      `Warning: Missing Stream Chat environment variables: ${missing.join(", ")}`
+    throw new Error(
+      `Stream Chat environment variables are not configured. Missing: ${missing.join(", ")}`
     );
   }
 }
 
 export function getStreamConfig() {
-  if (process.env.NODE_ENV === "development") {
-    validateStreamEnv();
+  validateStreamEnv();
+
+  const apiKey = process.env.NEXT_PUBLIC_STREAM_KEY;
+  const secret = process.env.STREAM_SECRET;
+
+  if (!apiKey || !secret) {
+    throw new Error("Stream configuration is missing required values");
   }
 
-  return {
-    apiKey: process.env.NEXT_PUBLIC_STREAM_KEY ?? "",
-    secret: process.env.STREAM_SECRET ?? ""
-  };
+  return { apiKey, secret };
 }
 
 export function isStreamConfigured() {
+  console.log("Stream env check:", {
+    hasApiKey: !!process.env.NEXT_PUBLIC_STREAM_KEY,
+    hasSecret: !!process.env.STREAM_SECRET
+  });
+
   return !!(process.env.NEXT_PUBLIC_STREAM_KEY && process.env.STREAM_SECRET);
 }

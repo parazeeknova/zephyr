@@ -6,6 +6,10 @@ let streamClient: StreamChat | null = null;
 export function getStreamClient(): StreamChat {
   if (!streamClient && isStreamConfigured()) {
     const config = getStreamConfig();
+    console.log(
+      "Initializing Stream client with API key:",
+      `${config.apiKey.substring(0, 5)}...`
+    );
     streamClient = StreamChat.getInstance(config.apiKey, config.secret);
   }
 
@@ -19,9 +23,11 @@ export function getStreamClient(): StreamChat {
 export function generateStreamUserToken(userId: string): string | null {
   try {
     const client = getStreamClient();
-    return client.createToken(userId);
+    const token = client.createToken(userId);
+    console.log("Generated token for user:", `${userId.substring(0, 5)}...`);
+    return token;
   } catch (error) {
-    console.warn("Failed to generate Stream user token:", error);
+    console.error("Failed to generate Stream user token:", error);
     return null;
   }
 }
