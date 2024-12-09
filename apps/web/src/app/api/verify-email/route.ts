@@ -1,5 +1,5 @@
-import { getStreamClient } from "@/lib/stream";
 import { lucia } from "@zephyr/auth/auth";
+import { getStreamClient } from "@zephyr/auth/src";
 import { prisma } from "@zephyr/db";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
@@ -35,14 +35,15 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-      // Verify the token
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+      if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET not configured");
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
         userId: string;
         email: string;
       };
 
-      // Get user data for Stream Chat
       const user = await prisma.user.findUnique({
         where: { id: decoded.userId },
         select: {
@@ -58,34 +59,31 @@ export async function GET(req: NextRequest) {
         );
       }
 
-      const streamClient = getStreamClient();
-
-      // @ts-ignore
-      await prisma.$transaction(async (tx) => {
-        // Update user verification status
-        await tx.user.update({
+      await prisma.$transaction([
+        prisma.user.update({
           where: { id: decoded.userId },
           data: { emailVerified: true }
-        });
-
-        // Delete verification token
-        await tx.emailVerificationToken.delete({
+        }),
+        prisma.emailVerificationToken.delete({
           where: { id: verificationToken.id }
-        });
+        })
+      ]);
 
-        // Create Stream Chat user
-        await streamClient.upsertUser({
-          id: user.id,
-          name: user.displayName,
-          username: user.username
-        });
-      });
+      try {
+        const streamClient = getStreamClient();
+        if (streamClient) {
+          await streamClient.upsertUser({
+            id: user.id,
+            name: user.displayName,
+            username: user.username
+          });
+        }
+      } catch (streamError) {
+        console.error("Failed to create Stream user:", streamError);
+      }
 
-      // Create session
       const session = await lucia.createSession(decoded.userId, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
-
-      // Set cookie
       const cookieStore = await cookies();
       cookieStore.set(
         sessionCookie.name,

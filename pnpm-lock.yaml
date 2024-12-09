@@ -367,6 +367,9 @@ importers:
       react:
         specifier: 19.0.0
         version: 19.0.0
+      stream-chat:
+        specifier: ^8.46.0
+        version: 8.46.0
       zod:
         specifier: ^3.23.8
         version: 3.23.8

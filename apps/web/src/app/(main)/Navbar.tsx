@@ -1,6 +1,6 @@
-import { getStreamClient } from "@/lib/stream";
 import Header from "@zephyr-ui/Layouts/Header";
 import { validateRequest } from "@zephyr/auth/auth";
+import { getStreamClient } from "@zephyr/auth/src";
 import { prisma } from "@zephyr/db";
 
 export default async function Navbar() {
@@ -8,23 +8,33 @@ export default async function Navbar() {
 
   if (!user) return null;
 
-  const streamClient = getStreamClient();
+  let unreadNotificationCount = 0;
+  let unreadMessageCount = 0;
+  let bookmarkCount = 0;
 
-  const [unreadNotificationCount, unreadMessageCount] = await Promise.all([
-    prisma.notification.count({
+  try {
+    unreadNotificationCount = await prisma.notification.count({
       where: {
         recipientId: user.id,
         read: false
       }
-    }),
-    (await streamClient.getUnreadCount(user.id)).total_unread_count
-  ]);
+    });
 
-  let bookmarkCount = 0;
-  if (user) {
+    try {
+      const streamClient = getStreamClient();
+      if (streamClient) {
+        const unreadCounts = await streamClient.getUnreadCount(user.id);
+        unreadMessageCount = unreadCounts.total_unread_count;
+      }
+    } catch (streamError) {
+      console.error("Failed to get stream unread count:", streamError);
+    }
+
     bookmarkCount = await prisma.bookmark.count({
       where: { userId: user.id }
     });
+  } catch (error) {
+    console.error("Error fetching counts:", error);
   }
 
   return (

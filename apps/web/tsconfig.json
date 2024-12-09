@@ -18,6 +18,7 @@
     },
     "noEmit": true,
     "allowJs": true,
+    "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "module": "esnext",

@@ -1,6 +1,6 @@
-import { getStreamClient } from "@/lib/stream";
 import { slugify } from "@/lib/utils";
 import { discord, lucia, validateRequest } from "@zephyr/auth/auth";
+import { getStreamClient } from "@zephyr/auth/src";
 import { prisma } from "@zephyr/db";
 import { OAuth2RequestError } from "arctic";
 import { generateIdFromEntropySize } from "lucia";
@@ -107,7 +107,6 @@ export async function GET(req: NextRequest) {
         });
       }
 
-      // Check for existing Discord user
       const existingDiscordUser = await prisma.user.findUnique({
         where: {
           discordId: discordUser.id
@@ -130,12 +129,10 @@ export async function GET(req: NextRequest) {
         });
       }
 
-      // Create new user
       const userId = generateIdFromEntropySize(10);
       const username = `${slugify(discordUser.username)}-${userId.slice(0, 4)}`;
 
       try {
-        // @ts-ignore
         await prisma.$transaction(async (tx) => {
           const newUser = await tx.user.create({
             data: {
@@ -161,7 +158,6 @@ export async function GET(req: NextRequest) {
               });
             } catch (error) {
               console.warn("Failed to create Stream user:", error);
-              // Continue with auth flow even if Stream fails
             }
           }
         });

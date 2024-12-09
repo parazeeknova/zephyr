@@ -1,5 +1,5 @@
 import { deleteAvatar, uploadAvatar } from "@/lib/minio";
-import { getStreamClient } from "@/lib/stream";
+import { getStreamClient } from "@zephyr/auth/src";
 import { prisma } from "@zephyr/db";
 import { NextResponse } from "next/server";
 
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     const userId = formData.get("userId") as string;
     const oldAvatarKey = formData.get("oldAvatarKey") as string;
 
-    // biome-ignore lint/suspicious/noImplicitAnyLet: Any is used here because the type of `values` is unknown
+    // biome-ignore lint/suspicious/noImplicitAnyLet: need to use let here
     let avatarResult;
     if (avatar) {
       avatarResult = await uploadAvatar(avatar, userId);
@@ -20,7 +20,6 @@ export async function POST(request: Request) {
       }
     }
 
-    const streamClient = getStreamClient();
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
@@ -33,13 +32,19 @@ export async function POST(request: Request) {
       }
     });
 
-    if (avatarResult) {
-      await streamClient.partialUpdateUser({
-        id: userId,
-        set: {
-          image: avatarResult.url
-        }
-      });
+    try {
+      const streamClient = getStreamClient();
+      if (streamClient && avatarResult) {
+        await streamClient.partialUpdateUser({
+          id: userId,
+          set: {
+            image: avatarResult.url,
+            name: values.displayName
+          }
+        });
+      }
+    } catch (streamError) {
+      console.error("Failed to update Stream user profile:", streamError);
     }
 
     return NextResponse.json({

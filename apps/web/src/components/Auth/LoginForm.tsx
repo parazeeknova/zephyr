@@ -1,5 +1,4 @@
 "use client";
-
 import { login } from "@/app/(auth)/login/actions";
 import { resendVerificationEmail } from "@/app/(auth)/signup/actions";
 import {
@@ -67,43 +66,54 @@ export default function LoginForm() {
     setErrorFields({});
 
     startTransition(async () => {
-      const result = await login(values);
+      try {
+        const result = await login(values);
 
-      if (result.error) {
-        setError(result.error);
-        setShake(true);
-        if (result.error.includes("Incorrect username or password")) {
-          setErrorFields({ username: true, password: true });
+        if (result.error) {
+          setError(result.error);
+          setShake(true);
+          if (result.error.includes("Incorrect username or password")) {
+            setErrorFields({ username: true, password: true });
+          }
+          toast({
+            variant: "destructive",
+            title: "Login Failed",
+            description: (
+              <div className="flex items-center gap-2">
+                <XCircle className="h-4 w-4" />
+                {result.error}
+              </div>
+            ),
+            duration: 5000
+          });
+        } else if (result.emailVerification) {
+          setUnverifiedEmail(result.emailVerification.email);
+          if (result.emailVerification.isNewToken) {
+            setIsVerificationEmailSent(true);
+            toast({
+              title: "Verification Required",
+              description:
+                "Please check your inbox for the verification email.",
+              duration: 5000
+            });
+          }
+        } else if (result.success) {
+          toast({
+            title: "Welcome Back!",
+            description: "Successfully logged in to your account.",
+            duration: 3000
+          });
+          router.refresh();
+          router.push("/");
         }
+      } catch (error) {
+        console.error("Login error:", error);
         toast({
           variant: "destructive",
           title: "Login Failed",
-          description: (
-            <div className="flex items-center gap-2">
-              <XCircle className="h-4 w-4" />
-              {result.error}
-            </div>
-          ),
+          description: "An unexpected error occurred. Please try again.",
           duration: 5000
         });
-      } else if (result.emailVerification) {
-        setUnverifiedEmail(result.emailVerification.email);
-        if (result.emailVerification.isNewToken) {
-          setIsVerificationEmailSent(true);
-          toast({
-            title: "Verification Required",
-            description: "Please check your inbox for the verification email.",
-            duration: 5000
-          });
-        }
-      } else if (result.success) {
-        toast({
-          title: "Welcome Back!",
-          description: "Successfully logged in to your account.",
-          duration: 3000
-        });
-        router.refresh();
-        router.push("/");
       }
     });
   }
@@ -111,18 +121,28 @@ export default function LoginForm() {
   const handleResendVerification = async () => {
     if (!unverifiedEmail) return;
 
-    const result = await resendVerificationEmail(unverifiedEmail);
-    if (result.error) {
+    try {
+      const result = await resendVerificationEmail(unverifiedEmail);
+      if (result.error) {
+        toast({
+          variant: "destructive",
+          title: "Verification Failed",
+          description: result.error,
+          duration: 5000
+        });
+      } else if (result.success) {
+        toast({
+          title: "Verification Email Sent",
+          description: "Please check your inbox to verify your email address.",
+          duration: 5000
+        });
+      }
+    } catch (error) {
+      console.error("Resend verification error:", error);
       toast({
         variant: "destructive",
         title: "Verification Failed",
-        description: result.error,
-        duration: 5000
-      });
-    } else if (result.success) {
-      toast({
-        title: "Verification Email Sent",
-        description: "Please check your inbox to verify your email address.",
+        description: "An unexpected error occurred. Please try again.",
         duration: 5000
       });
     }
