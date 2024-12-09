@@ -1,16 +1,18 @@
-import { getStreamClient } from "@zephyr/auth/src/stream/services";
+import { getStreamConfig } from "@zephyr/config/src/env";
 import { prisma } from "@zephyr/db";
 import type { NextRequest } from "next/server";
-
-export const runtime = "edge";
-export const preferredRegion = "iad1";
+import { StreamChat } from "stream-chat";
 
 async function cleanupStreamUsers() {
-  const streamClient = getStreamClient();
-  if (!streamClient) {
-    throw new Error("Failed to initialize Stream client");
+  const { apiKey, secret } = getStreamConfig();
+  if (!apiKey || !secret) {
+    throw new Error(
+      "Stream Chat environment variables are required for this script. " +
+        "Please set NEXT_PUBLIC_STREAM_CHAT_API_KEY and STREAM_CHAT_SECRET"
+    );
   }
 
+  const streamClient = StreamChat.getInstance(apiKey, secret);
   const batchSize = 25;
   let deletedCount = 0;
   let errorCount = 0;
@@ -30,14 +32,7 @@ async function cleanupStreamUsers() {
     const dbUserIds = new Set(dbUsers.map((user) => user.id));
     const usersToDelete = users.filter((user) => !dbUserIds.has(user.id));
 
-    const logger = {
-      info: (...args: any[]) => console.log(new Date().toISOString(), ...args),
-      error: (...args: any[]) =>
-        console.error(new Date().toISOString(), ...args)
-    };
-
-    logger.info({
-      message: "Starting cleanup",
+    console.log({
       totalStreamUsers: users.length,
       totalDbUsers: dbUserIds.size,
       usersToDelete: usersToDelete.length
@@ -54,17 +49,13 @@ async function cleanupStreamUsers() {
               hard_delete: true
             });
             deletedCount++;
-            logger.info({
-              message: "Deleted user",
-              userId: user.id
-            });
+            console.log(`Deleted StreamChat user: ${user.id}`);
           } catch (error) {
             errorCount++;
-            logger.error({
-              message: "Failed to delete user",
-              userId: user.id,
-              error: error instanceof Error ? error.message : String(error)
-            });
+            console.error(
+              `Failed to delete StreamChat user ${user.id}:`,
+              error
+            );
           }
         })
       );
@@ -72,22 +63,26 @@ async function cleanupStreamUsers() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
-    const summary = {
+    return {
+      success: true,
       duration: Date.now() - startTime,
       totalProcessed: usersToDelete.length,
-      successfullyDeleted: deletedCount,
-      errors: errorCount
+      deletedCount,
+      errorCount,
+      timestamp: new Date().toISOString()
     };
-
-    logger.info({
-      message: "Cleanup completed",
-      ...summary
-    });
-
-    return summary;
   } catch (error) {
-    console.error("Fatal error during cleanup:", error);
-    throw error;
+    console.error("Stream cleanup error:", error);
+    return {
+      success: false,
+      duration: Date.now() - startTime,
+      deletedCount,
+      errorCount,
+      error: error instanceof Error ? error.message : "Unknown error",
+      timestamp: new Date().toISOString()
+    };
+  } finally {
+    streamClient.disconnectUser();
   }
 }
 
@@ -97,35 +92,45 @@ export async function GET(req: NextRequest) {
     const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
 
     if (!authHeader || authHeader !== expectedAuth) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" }
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Unauthorized",
+          timestamp: new Date().toISOString()
+        }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store"
+          }
+        }
+      );
     }
 
     const results = await cleanupStreamUsers();
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        ...results
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" }
+    return new Response(JSON.stringify(results), {
+      status: results.success ? 200 : 500,
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store"
       }
-    );
+    });
   } catch (error) {
     console.error("API route error:", error);
 
     return new Response(
       JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error"
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString()
       }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store"
+        }
       }
     );
   }
