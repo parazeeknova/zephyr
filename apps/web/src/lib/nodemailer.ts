@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { getBaseUrl } from "./utils/urls";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -10,16 +11,12 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const getBaseUrl = () => {
-  return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-};
-
 export async function sendVerificationEmail(
   email: string,
   token: string
 ): Promise<void> {
   const baseUrl = getBaseUrl().replace(/\/$/, "");
-  const verificationUrl = `${baseUrl}/verify-email?token=${token}`;
+  const verificationUrl = `${baseUrl}/verify-email?token=${token}&target=_self`;
 
   console.log("Verification URL:", verificationUrl);
 
@@ -34,6 +31,12 @@ export async function sendVerificationEmail(
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Verify your email</title>
+          <script>
+              function handleVerification(event) {
+                event.preventDefault();
+                window.location.href = event.target.href;
+              }
+          </script>
         </head>
         <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
           <div style="background: linear-gradient(45deg, #000014, #1a1a1a); width: 100%; padding: 40px 0;">
@@ -54,7 +57,7 @@ export async function sendVerificationEmail(
 
                 <!-- Verification Button -->
                 <div style="text-align: center; margin: 32px 0;">
-                  <a href="${verificationUrl}" style="display: inline-block; background: linear-gradient(45deg, #f97316, #fb923c); color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 6px rgba(249, 115, 22, 0.25);">
+                  <a href="${verificationUrl}" onclick="handleVerification(event)" style="display: inline-block; background: linear-gradient(45deg, #f97316, #fb923c); color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 6px rgba(249, 115, 22, 0.25);">
                     Verify My Email
                   </a>
                 </div>
