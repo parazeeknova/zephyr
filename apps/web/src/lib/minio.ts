@@ -144,9 +144,9 @@ export const uploadAvatar = async (file: File, userId: string) => {
     throw new Error("Unsupported file type for avatar");
   }
 
-  const maxSize = 20 * 1024 * 1024; // 20MB
+  const maxSize = 10 * 1024 * 1024;
   if (file.size > maxSize) {
-    throw new Error("Avatar file size must be less than 8MB");
+    throw new Error("Avatar file size must be less than 10MB");
   }
 
   const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
