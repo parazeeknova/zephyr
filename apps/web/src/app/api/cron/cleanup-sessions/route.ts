@@ -1,12 +1,17 @@
 import { prisma } from "@zephyr/db";
-import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 async function cleanupExpiredSessions() {
+  const logs: string[] = [];
   const startTime = Date.now();
-  console.log("Starting expired sessions cleanup");
+
+  const log = (message: string) => {
+    console.log(message);
+    logs.push(message);
+  };
 
   try {
-    // First get count of expired sessions
+    log("🚀 Starting expired sessions cleanup");
     const expiredCount = await prisma.session.count({
       where: {
         expiresAt: {
@@ -15,18 +20,21 @@ async function cleanupExpiredSessions() {
       }
     });
 
-    console.log(`Found ${expiredCount} expired sessions`);
+    log(`🔍 Found ${expiredCount} expired sessions`);
 
     if (expiredCount === 0) {
+      log("✨ No expired sessions to clean up");
       return {
         success: true,
         deletedCount: 0,
         duration: Date.now() - startTime,
+        logs,
         timestamp: new Date().toISOString()
       };
     }
+    const totalSessions = await prisma.session.count();
+    log(`📊 Current total sessions: ${totalSessions}`);
 
-    // Delete expired sessions
     const result = await prisma.session.deleteMany({
       where: {
         expiresAt: {
@@ -35,44 +43,66 @@ async function cleanupExpiredSessions() {
       }
     });
 
+    const remainingSessions = await prisma.session.count();
+
     const summary = {
       success: true,
       deletedCount: result.count,
       duration: Date.now() - startTime,
+      stats: {
+        beforeCleanup: totalSessions,
+        afterCleanup: remainingSessions,
+        deletionPercentage: ((result.count / totalSessions) * 100).toFixed(2)
+      },
+      logs,
       timestamp: new Date().toISOString()
     };
 
-    console.log("Sessions cleanup completed:", summary);
+    log(`✨ Sessions cleanup completed successfully:
+    - Deleted: ${result.count} sessions
+    - Duration: ${summary.duration}ms
+    - Before: ${totalSessions}
+    - After: ${remainingSessions}
+    - Cleaned: ${summary.stats.deletionPercentage}%`);
+
     return summary;
   } catch (error) {
-    console.error("Failed to cleanup expired sessions:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined
-    });
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    log(`❌ Failed to cleanup expired sessions: ${errorMessage}`);
+    console.error(
+      "Sessions cleanup error stack:",
+      error instanceof Error ? error.stack : "No stack trace"
+    );
 
     return {
       success: false,
       duration: Date.now() - startTime,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: errorMessage,
+      logs,
       timestamp: new Date().toISOString()
     };
+  } finally {
+    try {
+      await prisma.$disconnect();
+      log("👋 Database connection closed");
+    } catch (_error) {
+      log("❌ Error closing database connection");
+    }
   }
 }
 
-export async function GET(req: NextRequest) {
-  console.log("Received cleanup expired sessions request");
+export async function GET(request: Request) {
+  console.log("📥 Received cleanup expired sessions request");
 
   try {
-    const authHeader = req.headers.get("authorization");
-    const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
-
     if (!process.env.CRON_SECRET_KEY) {
-      console.error("CRON_SECRET_KEY environment variable not set");
-      return new Response(
-        JSON.stringify({
+      console.error("❌ CRON_SECRET_KEY environment variable not set");
+      return NextResponse.json(
+        {
           error: "Server configuration error",
           timestamp: new Date().toISOString()
-        }),
+        },
         {
           status: 500,
           headers: {
@@ -83,13 +113,16 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    const authHeader = request.headers.get("authorization");
+    const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
+
     if (!authHeader || authHeader !== expectedAuth) {
-      console.warn("Unauthorized cleanup attempt");
-      return new Response(
-        JSON.stringify({
+      console.warn("⚠️ Unauthorized cleanup attempt");
+      return NextResponse.json(
+        {
           error: "Unauthorized",
           timestamp: new Date().toISOString()
-        }),
+        },
         {
           status: 401,
           headers: {
@@ -102,7 +135,7 @@ export async function GET(req: NextRequest) {
 
     const results = await cleanupExpiredSessions();
 
-    return new Response(JSON.stringify(results), {
+    return NextResponse.json(results, {
       status: results.success ? 200 : 500,
       headers: {
         "Content-Type": "application/json",
@@ -110,17 +143,17 @@ export async function GET(req: NextRequest) {
       }
     });
   } catch (error) {
-    console.error("Cleanup route error:", {
+    console.error("❌ Sessions cleanup route error:", {
       error: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined
     });
 
-    return new Response(
-      JSON.stringify({
+    return NextResponse.json(
+      {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
         timestamp: new Date().toISOString()
-      }),
+      },
       {
         status: 500,
         headers: {
@@ -131,3 +164,6 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
