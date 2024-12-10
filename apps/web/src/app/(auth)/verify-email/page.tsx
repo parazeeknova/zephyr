@@ -13,6 +13,10 @@ const ERROR_MESSAGES = {
   "server-error": "An error occurred. Please try again."
 };
 
+const getBaseUrl = () => {
+  return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+};
+
 const VerificationAnimation = () => {
   return (
     <div className="flex flex-col items-center space-y-6">
@@ -201,14 +205,16 @@ export default function VerifyEmailPage() {
     const verified = searchParams.get("verified");
 
     if (verified) {
-      router.push("/?verified=true");
+      const baseUrl = getBaseUrl();
+      router.push(`${baseUrl}/?verified=true`);
       return;
     }
 
     if (error) {
       setStatus("error");
     } else if (token) {
-      router.push(`/api/verify-email?token=${token}`);
+      const baseUrl = getBaseUrl();
+      window.location.href = `${baseUrl}/api/verify-email?token=${token}`;
     } else {
       setStatus("error");
     }
