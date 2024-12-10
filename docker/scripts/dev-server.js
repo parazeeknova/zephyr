@@ -69,7 +69,6 @@ MINIO_ENABLE_OBJECT_LOCKING=on
 # Application
 JWT_SECRET=zephyrjwtsupersecret
 JWT_EXPIRES_IN=7d
-NEXT_PUBLIC_PORT=3000
 NEXT_PUBLIC_URL=http://localhost:3000
 NODE_ENV=development
 NEXT_TELEMETRY_DISABLED=1`.trim();
