@@ -208,7 +208,7 @@ export default function VerifyEmailPage() {
     if (error) {
       setStatus("error");
     } else if (token) {
-      window.location.href = `/api/verify-email?token=${token}`;
+      router.push(`/api/verify-email?token=${token}`);
     } else {
       setStatus("error");
     }
