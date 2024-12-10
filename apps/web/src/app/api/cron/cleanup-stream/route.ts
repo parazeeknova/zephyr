@@ -30,32 +30,60 @@ async function cleanupStreamUsers() {
       );
     }
 
-    // Initialize Stream client
     streamClient = StreamChat.getInstance(apiKey, secret);
     log("✅ Stream client initialized successfully");
 
-    // Fetch Stream users
     log("📥 Fetching Stream users...");
-    const { users } = await streamClient.queryUsers(
-      {},
-      { last_active: -1 },
-      { limit: 1000 }
-    );
-    log(`📊 Found ${users.length} total Stream users`);
+    let allUsers: any[] = [];
+    let offset = 0;
+    const queryLimit = 100;
 
-    // Fetch database users
+    while (true) {
+      try {
+        const { users } = await streamClient.queryUsers(
+          {},
+          { last_active: -1 },
+          {
+            limit: queryLimit,
+            offset: offset
+          }
+        );
+
+        if (users.length === 0) break;
+
+        allUsers = [...allUsers, ...users];
+        offset += users.length;
+
+        log(
+          `📊 Fetched batch of ${users.length} users (total: ${allUsers.length})`
+        );
+
+        if (users.length < queryLimit) break;
+
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      } catch (error) {
+        const errorMessage = `Error fetching users batch at offset ${offset}: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`;
+        log(`❌ ${errorMessage}`);
+        results.errors.push(errorMessage);
+        break;
+      }
+    }
+
+    log(`📊 Found ${allUsers.length} total Stream users`);
+
     log("🔍 Fetching database users...");
     const dbUsers = await prisma.user.findMany({
       select: { id: true }
     });
     log(`📊 Found ${dbUsers.length} database users`);
 
-    // Find users to delete
     const dbUserIds = new Set(dbUsers.map((user) => user.id));
-    const usersToDelete = users.filter((user) => !dbUserIds.has(user.id));
+    const usersToDelete = allUsers.filter((user) => !dbUserIds.has(user.id));
 
     const summary = {
-      totalStreamUsers: users.length,
+      totalStreamUsers: allUsers.length,
       totalDbUsers: dbUserIds.size,
       usersToDelete: usersToDelete.length
     };
@@ -76,15 +104,14 @@ async function cleanupStreamUsers() {
       };
     }
 
-    // Process deletions in batches
-    const batchSize = 25;
-    for (let i = 0; i < usersToDelete.length; i += batchSize) {
-      const batch = usersToDelete.slice(i, i + batchSize);
-      const batchNumber = Math.floor(i / batchSize) + 1;
-      const totalBatches = Math.ceil(usersToDelete.length / batchSize);
+    const deleteBatchSize = 25;
+    for (let i = 0; i < usersToDelete.length; i += deleteBatchSize) {
+      const batch = usersToDelete.slice(i, i + deleteBatchSize);
+      const batchNumber = Math.floor(i / deleteBatchSize) + 1;
+      const totalBatches = Math.ceil(usersToDelete.length / deleteBatchSize);
 
       log(
-        `🔄 Processing batch ${batchNumber}/${totalBatches} (${batch.length} users)`
+        `🔄 Processing deletion batch ${batchNumber}/${totalBatches} (${batch.length} users)`
       );
 
       const batchResults = await Promise.allSettled(
@@ -108,7 +135,7 @@ async function cleanupStreamUsers() {
       );
 
       // Process batch results
-      // biome-ignore lint/complexity/noForEach: Disable rule for this line
+      // biome-ignore lint/complexity/noForEach: Disable rule for this block
       batchResults.forEach((result) => {
         if (result.status === "fulfilled") {
           results.deletedCount++;
@@ -123,8 +150,8 @@ async function cleanupStreamUsers() {
       - Successful: ${results.deletedCount}
       - Failed: ${results.errorCount}`);
 
-      if (i + batchSize < usersToDelete.length) {
-        log("⏳ Rate limit pause between batches...");
+      if (i + deleteBatchSize < usersToDelete.length) {
+        log("⏳ Rate limit pause between deletion batches...");
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
