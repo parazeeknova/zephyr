@@ -194,6 +194,7 @@ export default function VerifyEmailPage() {
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading"
   );
+  const verificationChannel = new BroadcastChannel("email-verification");
 
   useEffect(() => {
     const error = searchParams.get("error");
@@ -201,6 +202,8 @@ export default function VerifyEmailPage() {
     const verified = searchParams.get("verified");
 
     if (verified) {
+      verificationChannel.postMessage("verification-success");
+      window.close();
       router.push("/");
       return;
     }
@@ -212,6 +215,10 @@ export default function VerifyEmailPage() {
     } else {
       setStatus("error");
     }
+
+    return () => {
+      verificationChannel.close();
+    };
   }, [searchParams, router]);
 
   const error = searchParams.get("error");

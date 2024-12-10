@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import localFont from "next/font/local";
 import ReactQueryProvider from "./ReactQueryProvider";
 import "./globals.css";
+import { VerificationProvider } from "@/context/VerificationContext";
 
 const SofiaProSoft = localFont({
   src: "./fonts/SofiaProSoftReg.woff2",
@@ -72,7 +73,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <VerificationProvider>{children}</VerificationProvider>
           </ThemeProvider>
         </ReactQueryProvider>
         <Toaster />
