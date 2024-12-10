@@ -6,13 +6,24 @@ const createRedisConfig = (): RedisOptions => {
     port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
     password: process.env.REDIS_PASSWORD,
     db: 0,
-    maxRetriesPerRequest: 3,
+    maxRetriesPerRequest: 2,
+    connectTimeout: 5000, // 5 seconds
+    commandTimeout: 3000, // 3 seconds
     retryStrategy(times: number) {
-      const delay = Math.min(times * 50, 2000);
+      const delay = Math.min(times * 50, 1000);
       return delay;
     },
     enableReadyCheck: true,
-    showFriendlyErrorStack: true
+    showFriendlyErrorStack: true,
+    keepAlive: 10000, // 10 seconds
+    autoResendUnfulfilledCommands: true,
+    reconnectOnError: (err) => {
+      const targetError = "READONLY";
+      if (err.message.includes(targetError)) {
+        return true;
+      }
+      return false;
+    }
   };
 
   console.log("Redis Config (sanitized):", {
