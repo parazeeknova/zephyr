@@ -10,11 +10,19 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+const getBaseUrl = () => {
+  const publicUrl = process.env.NEXT_PUBLIC_URL;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const defaultUrl = "https://development.zephyyrr.in";
+  return publicUrl || siteUrl || defaultUrl;
+};
+
 export async function sendVerificationEmail(
   email: string,
   token: string
 ): Promise<void> {
-  const verificationUrl = `${process.env.NEXT_PUBLIC_URL}/verify-email?token=${token}`;
+  const baseUrl = getBaseUrl();
+  const verificationUrl = `${baseUrl}/verify-email?token=${token}`;
 
   await transporter.sendMail({
     from: `"🚀 Zephyr" <${process.env.GMAIL_USER}>`,
@@ -107,7 +115,8 @@ export async function sendVerificationEmail(
 }
 
 export async function sendPasswordResetEmail(email: string, token: string) {
-  const resetUrl = `${process.env.NEXT_PUBLIC_URL}/reset-password/confirm?token=${token}`;
+  const baseUrl = getBaseUrl();
+  const resetUrl = `${baseUrl}/reset-password/confirm?token=${token}`;
 
   await transporter.sendMail({
     from: `"Zephyr" <${process.env.GMAIL_USER}>`,
