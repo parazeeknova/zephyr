@@ -1,10 +1,15 @@
 import { prisma } from "@zephyr/db";
 import { redis } from "@zephyr/db";
-import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 async function cleanupRedisCache() {
+  const logs: string[] = [];
   const startTime = Date.now();
-  console.log("Starting Redis cache cleanup");
+
+  const log = (message: string) => {
+    console.log(message);
+    logs.push(message);
+  };
 
   const results = {
     deletedPostViews: 0,
@@ -14,12 +19,26 @@ async function cleanupRedisCache() {
   };
 
   try {
-    // 1. Clean up post views with error handling for each operation
+    try {
+      await redis.ping();
+      log("✅ Redis connection successful");
+    } catch (error) {
+      log("❌ Redis connection failed");
+      console.error("Redis connection error:", error);
+      return { success: false, logs, error: "Redis connection failed" };
+    }
+
+    log("Starting Redis cache cleanup...");
+
+    // 1. Clean up post views
     const postIdsWithViews = await redis.smembers("posts:with:views");
-    console.log(`Found ${postIdsWithViews.length} posts with views to check`);
+    log(`Found ${postIdsWithViews.length} posts with views to check`);
 
     const batchSize = 100;
     for (let i = 0; i < postIdsWithViews.length; i += batchSize) {
+      const batchNumber = Math.floor(i / batchSize) + 1;
+      const totalBatches = Math.ceil(postIdsWithViews.length / batchSize);
+
       try {
         const batch = postIdsWithViews.slice(i, i + batchSize);
         results.processedKeys += batch.length;
@@ -44,21 +63,20 @@ async function cleanupRedisCache() {
         await pipeline.exec();
         results.deletedPostViews += batchDeletions;
 
-        console.log(
-          `Processed batch ${i / batchSize + 1}/${Math.ceil(
-            postIdsWithViews.length / batchSize
-          )}, deleted ${batchDeletions} views`
+        log(
+          `✅ Batch ${batchNumber}/${totalBatches}: processed ${batch.length} posts, deleted ${batchDeletions} views`
         );
       } catch (error) {
-        const errorMessage = `Error processing batch ${i / batchSize + 1}: ${
+        const errorMessage = `Error processing batch ${batchNumber}: ${
           error instanceof Error ? error.message : "Unknown error"
         }`;
-        console.error(errorMessage);
+        log(`❌ ${errorMessage}`);
         results.errors.push(errorMessage);
       }
     }
 
-    // 2. Clean up trending topics with backup handling
+    // 2. Clean up trending topics
+    log("\nStarting trending topics cleanup...");
     try {
       const [currentTrendingTopics, backupTopics] = await Promise.all([
         redis.get("trending:topics"),
@@ -68,9 +86,14 @@ async function cleanupRedisCache() {
       let topics = [];
       if (currentTrendingTopics) {
         topics = JSON.parse(currentTrendingTopics);
+        log(`Found ${topics.length} current trending topics`);
       } else if (backupTopics) {
         topics = JSON.parse(backupTopics);
-        console.log("Using backup topics due to missing current topics");
+        log(
+          `Using ${topics.length} backup topics due to missing current topics`
+        );
+      } else {
+        log("No trending topics found to clean");
       }
 
       if (topics.length > 0) {
@@ -91,16 +114,19 @@ async function cleanupRedisCache() {
                 hashtag: topic.hashtag,
                 count: postsWithHashtag
               });
+              log(
+                `✅ Topic ${topic.hashtag} validated with ${postsWithHashtag} posts`
+              );
             } else {
               results.cleanedTrendingTopics++;
+              log(`🧹 Removed inactive topic: ${topic.hashtag}`);
             }
           } catch (error) {
-            console.error(`Error processing topic ${topic.hashtag}:`, error);
-            results.errors.push(
-              `Failed to process topic ${topic.hashtag}: ${
-                error instanceof Error ? error.message : "Unknown error"
-              }`
-            );
+            const errorMessage = `Failed to process topic ${topic.hashtag}: ${
+              error instanceof Error ? error.message : "Unknown error"
+            }`;
+            log(`❌ ${errorMessage}`);
+            results.errors.push(errorMessage);
           }
         }
 
@@ -119,13 +145,16 @@ async function cleanupRedisCache() {
             86400
           );
           await pipeline.exec();
+          log(
+            `✅ Updated trending topics cache with ${validTopics.length} valid topics`
+          );
         }
       }
     } catch (error) {
       const errorMessage = `Error processing trending topics: ${
         error instanceof Error ? error.message : "Unknown error"
       }`;
-      console.error(errorMessage);
+      log(`❌ ${errorMessage}`);
       results.errors.push(errorMessage);
     }
 
@@ -133,43 +162,60 @@ async function cleanupRedisCache() {
       success: true,
       duration: Date.now() - startTime,
       ...results,
+      logs,
       timestamp: new Date().toISOString()
     };
 
-    console.log("Cache cleanup completed:", summary);
+    log("\n✅ Cache cleanup completed successfully");
+    log(`📊 Summary:
+    - Duration: ${summary.duration}ms
+    - Deleted Views: ${summary.deletedPostViews}
+    - Cleaned Topics: ${summary.cleanedTrendingTopics}
+    - Processed Keys: ${summary.processedKeys}
+    - Errors: ${summary.errors.length}`);
+
     return summary;
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
-    console.error("Redis cleanup error:", {
-      error: errorMessage,
-      stack: error instanceof Error ? error.stack : undefined
-    });
+    log(`❌ Fatal error during cleanup: ${errorMessage}`);
+    console.error(
+      "Cleanup error stack:",
+      error instanceof Error ? error.stack : "No stack trace"
+    );
 
     return {
       success: false,
       duration: Date.now() - startTime,
       ...results,
+      logs,
       error: errorMessage,
       timestamp: new Date().toISOString()
     };
+  } finally {
+    try {
+      await prisma.$disconnect();
+      log("✅ Database connection closed");
+    } catch (_error) {
+      log("❌ Error closing database connection");
+    }
   }
 }
 
-export async function GET(req: NextRequest) {
-  console.log("Received Redis cleanup request");
+export async function GET(request: Request) {
+  console.log("📥 Received Redis cleanup request");
 
   try {
-    const authHeader = req.headers.get("authorization");
+    const authHeader = request.headers.get("authorization");
     const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
 
     if (!process.env.CRON_SECRET_KEY) {
-      console.error("CRON_SECRET_KEY environment variable not set");
-      return new Response(
-        JSON.stringify({
+      console.error("❌ CRON_SECRET_KEY not configured");
+      return NextResponse.json(
+        {
           error: "Server configuration error",
           timestamp: new Date().toISOString()
-        }),
+        },
         {
           status: 500,
           headers: {
@@ -181,12 +227,12 @@ export async function GET(req: NextRequest) {
     }
 
     if (!authHeader || authHeader !== expectedAuth) {
-      console.warn("Unauthorized cleanup attempt");
-      return new Response(
-        JSON.stringify({
+      console.warn("⚠️ Unauthorized cleanup attempt");
+      return NextResponse.json(
+        {
           error: "Unauthorized",
           timestamp: new Date().toISOString()
-        }),
+        },
         {
           status: 401,
           headers: {
@@ -197,27 +243,23 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const results = await cleanupRedisCache();
+    const result = await cleanupRedisCache();
 
-    return new Response(JSON.stringify(results), {
-      status: results.success ? 200 : 500,
+    return NextResponse.json(result, {
+      status: result.success ? 200 : 500,
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "no-store"
       }
     });
   } catch (error) {
-    console.error("Cleanup route error:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined
-    });
-
-    return new Response(
-      JSON.stringify({
+    console.error("❌ Route error:", error);
+    return NextResponse.json(
+      {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : "Internal server error",
         timestamp: new Date().toISOString()
-      }),
+      },
       {
         status: 500,
         headers: {
@@ -228,3 +270,6 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
