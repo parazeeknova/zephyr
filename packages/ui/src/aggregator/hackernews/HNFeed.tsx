@@ -147,14 +147,12 @@ export function HNFeed() {
             variants={sidebarVariants}
             initial="hidden"
             animate="visible"
-            // @ts-expect-error
             className="sticky top-8 w-80 space-y-6 self-start"
           >
             <div className="space-y-4">
               <motion.div
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
-                // @ts-expect-error
                 className="bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text font-bold text-2xl text-transparent"
               >
                 HackerNews
@@ -228,7 +226,6 @@ export function HNFeed() {
                           <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: activeTab === tab.id ? 1 : 0 }}
-                            // @ts-expect-error
                             className="ml-auto"
                           >
                             <ChevronRight className="h-4 w-4" />
@@ -272,7 +269,6 @@ export function HNFeed() {
             variants={contentVariants}
             initial="hidden"
             animate="visible"
-            // @ts-expect-error
             className="flex-1"
           >
             <Tabs value={activeTab} onValueChange={setActiveTab}>
