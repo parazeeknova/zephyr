@@ -113,10 +113,8 @@ export default function PostEditor() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      // @ts-expect-error
       className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-5 transition-shadow duration-300 hover:shadow-lg"
     >
-      {/* @ts-expect-error */}
       <motion.div variants={itemVariants} className="flex gap-5">
         <div className="hidden sm:inline">
           <motion.div
@@ -130,7 +128,6 @@ export default function PostEditor() {
         <div {...rootProps} className="w-full">
           <motion.div
             variants={itemVariants}
-            // @ts-expect-error
             className={cn(
               "relative rounded-2xl transition-all duration-300",
               isDragActive && "ring-2 ring-primary ring-offset-2"
@@ -151,7 +148,6 @@ export default function PostEditor() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                // @ts-expect-error
                 className="absolute inset-0 flex items-center justify-center rounded-2xl bg-primary/10 backdrop-blur-sm"
               >
                 <p className="font-medium text-lg text-primary">
@@ -182,7 +178,6 @@ export default function PostEditor() {
 
       <motion.div
         variants={itemVariants}
-        // @ts-expect-error
         className="flex items-center justify-end gap-3"
       >
         <AnimatePresence>
@@ -191,7 +186,6 @@ export default function PostEditor() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              // @ts-expect-error
               className="flex items-center gap-2"
             >
               <span className="font-medium text-sm tabular-nums">
@@ -236,7 +230,6 @@ function AttachmentPreviews({
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      // @ts-expect-error
       className={cn(
         "flex flex-col gap-3",
         attachments.length > 1 && "sm:grid sm:grid-cols-2"

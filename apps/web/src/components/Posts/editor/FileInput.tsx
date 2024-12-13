@@ -27,6 +27,7 @@ interface FileButtonProps {
   accept: string;
   inputRef: RefObject<HTMLInputElement>;
   buttonType: FileButtonType;
+  capture?: string;
 }
 
 export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
@@ -52,7 +53,8 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
     type,
     accept,
     inputRef,
-    buttonType
+    buttonType,
+    capture
   }: FileButtonProps) => (
     <>
       <Tooltip>
@@ -112,6 +114,8 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
       <input
         type="file"
         accept={accept}
+        // @ts-expect-error
+        capture={capture}
         multiple
         ref={inputRef}
         className="sr-only"
@@ -130,7 +134,8 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
           icon={ImageIcon}
           label="Photos & Videos"
           type="image"
-          accept="image/*,video/*"
+          accept="image/*,video/*,.png,.jpg,.jpeg,.gif,.mp4,.mov,.avi"
+          capture="environment"
           // @ts-expect-error
           inputRef={imageInputRef}
           buttonType="image"
@@ -139,7 +144,8 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
           icon={FileAudioIcon}
           label="Audio Files"
           type="audio"
-          accept="audio/*"
+          accept="audio/*,.mp3,.wav,.ogg,.m4a"
+          capture="user"
           // @ts-expect-error
           inputRef={audioInputRef}
           buttonType="audio"
