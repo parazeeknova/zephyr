@@ -38,8 +38,10 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useMediaQuery } from "usehooks-ts";
 import { getRandomJoke } from "./constants/LogoutMessages";
+import { MobileUserMenu } from "./mobile/MobileUserMenu";
 
 interface UserButtonProps {
   className?: string;
@@ -50,12 +52,22 @@ export default function UserButton({ className }: UserButtonProps) {
   const { theme, setTheme } = useTheme();
   const queryClient = useQueryClient();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
-
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [logoutJoke, setLogoutJoke] = useState(getRandomJoke());
+
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  if (!isMounted) return null;
 
   const handleOpenDialog = () => {
     setLogoutJoke(getRandomJoke());
     setShowLogoutDialog(true);
+    setIsMobileMenuOpen(false);
   };
 
   const handleLogout = () => {
@@ -64,128 +76,291 @@ export default function UserButton({ className }: UserButtonProps) {
     logout();
   };
 
+  const UserTrigger = () => (
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="group relative"
+    >
+      <div className="-inset-[2px] absolute rounded-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100" />
+      <Button
+        variant="ghost"
+        className={cn(
+          "relative flex-none rounded-full border border-border/50 bg-background/40 p-0 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-border/80 hover:bg-background/60 hover:shadow-md",
+          className
+        )}
+      >
+        <UserAvatar
+          avatarUrl={user.avatarUrl}
+          size={35}
+          className="transition-transform duration-200"
+          priority
+        />
+      </Button>
+    </motion.div>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        <div onClick={() => setIsMobileMenuOpen(true)}>
+          <UserTrigger />
+        </div>
+
+        <MobileUserMenu
+          isOpen={isMobileMenuOpen}
+          onClose={() => setIsMobileMenuOpen(false)}
+          user={user}
+          theme={theme}
+          setTheme={setTheme}
+          onLogout={handleOpenDialog}
+        />
+
+        <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+          <DialogContent className="fixed top-[50%] left-[50%] w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] border border-border/50 bg-background/95 p-6 backdrop-blur-md duration-200 sm:w-full sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-center font-semibold text-xl">
+                Leaving so soon?
+              </DialogTitle>
+              <DialogDescription className="px-2 text-center text-base text-muted-foreground">
+                {logoutJoke}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => setShowLogoutDialog(false)}
+                className="w-full sm:w-auto"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleLogout}
+                className="w-full sm:w-auto"
+              >
+                Logout
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </>
+    );
+  }
+
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="group relative"
-          >
-            <div className="-inset-[2px] absolute rounded-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100" />
-            <Button
-              variant="ghost"
-              className={cn(
-                "relative flex-none rounded-full border border-border/50 bg-background/40 p-0 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-border/80 hover:bg-background/60 hover:shadow-md",
-                className
-              )}
-            >
-              <UserAvatar
-                avatarUrl={user.avatarUrl}
-                size={35}
-                className="transition-transform duration-200"
-                priority
-              />
-            </Button>
-          </motion.div>
+          <div className="z-40">
+            <UserTrigger />
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="w-56 border border-border/50 bg-background/95 shadow-lg backdrop-blur-md"
+          className="z-50 w-56 overflow-hidden bg-background/75 shadow-lg backdrop-blur-xl"
           sideOffset={8}
         >
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
+            initial="closed"
+            animate="open"
+            variants={{
+              closed: {
+                opacity: 0,
+                scale: 0.96,
+                transformOrigin: "top right"
+              },
+              open: {
+                opacity: 1,
+                scale: 1,
+                transition: {
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  mass: 0.8,
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+            className="relative"
           >
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
-                <p className="font-medium text-sm leading-none">
-                  @{user.username}
-                </p>
-                <p className="text-muted-foreground text-xs leading-none">
+            <motion.div
+              variants={{
+                closed: { opacity: 0, y: -10 },
+                open: {
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 25
+                  }
+                }
+              }}
+              className="relative overflow-hidden"
+            >
+              <DropdownMenuLabel className="relative font-normal">
+                <div className="flex flex-col space-y-1 p-2">
                   {/* @ts-expect-error */}
-                  {user.email}
-                </p>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-border/50" />
-            <DropdownMenuItem
-              asChild
-              className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10"
-            >
-              <Link
+                  {user.name && (
+                    <motion.div
+                      variants={{
+                        closed: { opacity: 0, x: -20 },
+                        open: {
+                          opacity: 1,
+                          x: 0,
+                          transition: {
+                            type: "spring",
+                            stiffness: 400,
+                            damping: 25
+                          }
+                        }
+                      }}
+                    >
+                      <p className="font-medium text-sm leading-none">
+                        {/* @ts-expect-error */}
+                        {user.name}
+                      </p>
+                    </motion.div>
+                  )}
+                  <motion.div
+                    variants={{
+                      closed: { opacity: 0, x: -20 },
+                      open: {
+                        opacity: 1,
+                        x: 0,
+                        transition: {
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 25,
+                          delay: 0.05
+                        }
+                      }
+                    }}
+                  >
+                    <p className="text-muted-foreground text-sm leading-none">
+                      @{user.username}
+                    </p>
+                  </motion.div>
+                  <motion.div
+                    variants={{
+                      closed: { opacity: 0, x: -20 },
+                      open: {
+                        opacity: 1,
+                        x: 0,
+                        transition: {
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 25,
+                          delay: 0.1
+                        }
+                      }
+                    }}
+                  >
+                    <p className="text-muted-foreground text-xs leading-none">
+                      {/* @ts-expect-error */}
+                      {user.email}
+                    </p>
+                  </motion.div>
+                </div>
+              </DropdownMenuLabel>
+            </motion.div>
+
+            <div className="h-px bg-border/10" />
+
+            <div className="p-1">
+              <MenuItem
+                icon={<UserIcon className="mr-2 size-4" />}
                 href={`/users/${user.username}`}
-                className="flex items-center"
+                label="Profile"
+              />
+
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="relative my-1 w-full cursor-pointer rounded-md transition-colors duration-200 hover:bg-primary/10 focus:bg-primary/10">
+                  <Monitor className="mr-2 size-4" />
+                  <span>Theme</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent className="animate-in cursor-pointer bg-background/90 shadow-lg backdrop-blur-xl">
+                    {[
+                      { icon: Monitor, label: "System", value: "system" },
+                      { icon: Sun, label: "Light", value: "light" },
+                      { icon: Moon, label: "Dark", value: "dark" }
+                    ].map(({ icon: Icon, label, value }) => (
+                      <motion.div
+                        key={value}
+                        whileHover={{
+                          backgroundColor: "rgba(var(--primary), 0.1)",
+                          transition: { duration: 0.2 }
+                        }}
+                      >
+                        <DropdownMenuItem
+                          onClick={() => setTheme(value)}
+                          className="cursor-pointer pr-2 focus:bg-primary/10"
+                        >
+                          <Icon className="mr-2 size-4" />
+                          <span>{label}</span>
+                          {theme === value && (
+                            <motion.div
+                              initial={{ scale: 0, rotate: -90 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              transition={{
+                                type: "spring",
+                                stiffness: 400,
+                                damping: 17
+                              }}
+                              className="ml-auto pl-4"
+                            >
+                              <Check className="size-4" />
+                            </motion.div>
+                          )}
+                        </DropdownMenuItem>
+                      </motion.div>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+
+              <MenuItem
+                icon={<Settings2Icon className="mr-2 size-4" />}
+                href="/settings"
+                label="Settings"
+              />
+
+              <div className="my-1 h-px bg-border/10" />
+
+              <DropdownMenuSeparator />
+
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2 }}
               >
-                <UserIcon className="mr-2 size-4" />
-                <span>Profile</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10">
-                <Monitor className="mr-2 size-4" />
-                <span>Theme</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent className="cursor-pointer border border-border/50 bg-background/95 backdrop-blur-md">
-                  <DropdownMenuItem
-                    onClick={() => setTheme("system")}
-                    className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10"
+                <DropdownMenuItem
+                  onClick={handleOpenDialog}
+                  className="group cursor-pointer rounded-md text-red-500 hover:bg-red-500/10 focus:bg-red-500/10 focus:text-red-500"
+                >
+                  <motion.div
+                    whileHover={{ rotate: 15 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   >
-                    <Monitor className="mr-2 size-4" />
-                    <span>System</span>
-                    {theme === "system" && <Check className="ml-auto size-4" />}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setTheme("light")}
-                    className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10"
-                  >
-                    <Sun className="mr-2 size-4" />
-                    <span>Light</span>
-                    {theme === "light" && <Check className="ml-auto size-4" />}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setTheme("dark")}
-                    className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10"
-                  >
-                    <Moon className="mr-2 size-4" />
-                    <span>Dark</span>
-                    {theme === "dark" && <Check className="ml-auto size-4" />}
-                  </DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-            <DropdownMenuItem
-              asChild
-              className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10"
-            >
-              <Link href="/settings" className="flex items-center">
-                <Settings2Icon className="mr-2 size-4" />
-                <span>Settings</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-border/50" />
-            <DropdownMenuItem
-              onClick={handleOpenDialog}
-              className="cursor-pointer text-red-500 hover:bg-red-500/10 focus:bg-red-500/10 focus:text-red-500"
-            >
-              <LogOutIcon className="mr-2 size-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
+                    <LogOutIcon className="mr-2 size-4" />
+                  </motion.div>
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </motion.div>
+            </div>
           </motion.div>
         </DropdownMenuContent>
       </DropdownMenu>
 
       <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <DialogContent className="data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-[48%] data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-top-[48%] fixed top-[50%] left-[50%] w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] border border-border/50 bg-background/95 p-6 backdrop-blur-md duration-200 data-[state=closed]:animate-out data-[state=open]:animate-in sm:w-full sm:max-w-md">
-          <DialogHeader className="space-y-4">
-            <DialogTitle className="text-center font-semibold text-xl">
+        <DialogContent className="fixed top-[50%] left-[50%] w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] border border-border/50 bg-background/95 p-6 backdrop-blur-md duration-200 sm:w-full sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-left font-semibold text-xl">
               Leaving so soon?
             </DialogTitle>
-            <DialogDescription className="px-2 text-center text-base text-muted-foreground">
+            <DialogDescription className="px-0 text-left text-base text-muted-foreground">
               {logoutJoke}
             </DialogDescription>
           </DialogHeader>
@@ -210,3 +385,49 @@ export default function UserButton({ className }: UserButtonProps) {
     </>
   );
 }
+
+const MenuItem = ({ icon, label, href }: any) => (
+  <motion.div
+    variants={{
+      closed: { opacity: 0, x: -20 },
+      open: {
+        opacity: 1,
+        x: 0,
+        transition: {
+          type: "spring",
+          stiffness: 400,
+          damping: 25
+        }
+      }
+    }}
+  >
+    <motion.div
+      whileHover={{ scale: 1.02, x: 4 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{
+        type: "spring",
+        stiffness: 400,
+        damping: 17
+      }}
+    >
+      <DropdownMenuItem
+        asChild
+        className="cursor-pointer rounded-md transition-colors duration-200 hover:bg-primary/10 focus:bg-primary/10"
+      >
+        <Link href={href} className="flex items-center">
+          <motion.div
+            whileHover={{ rotate: 10, scale: 1.1 }}
+            transition={{
+              type: "spring",
+              stiffness: 400,
+              damping: 17
+            }}
+          >
+            {icon}
+          </motion.div>
+          <span>{label}</span>
+        </Link>
+      </DropdownMenuItem>
+    </motion.div>
+  </motion.div>
+);

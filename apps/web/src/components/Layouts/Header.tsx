@@ -91,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="fixed top-0 right-0 left-0 z-50 flex h-14 items-center justify-between border-border border-b bg-background/60 px-4 backdrop-blur-md sm:px-6"
+        className="fixed top-0 right-0 left-0 z-30 flex h-14 items-center justify-between border-border border-b bg-background/60 px-4 backdrop-blur-md sm:px-6"
       >
         <Link href="/">
           <motion.h1
@@ -133,7 +133,7 @@ const Header: React.FC<HeaderProps> = ({
             className="group relative mt-2"
           >
             <div className="-inset-[1px] absolute rounded-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 opacity-0 blur transition duration-500 group-hover:opacity-100" />
-            <div className="relative">
+            <div className="relative z-50">
               <UserButton />
             </div>
           </motion.div>
@@ -142,7 +142,7 @@ const Header: React.FC<HeaderProps> = ({
 
       <div className="h-14" />
 
-      <div className="fixed right-0 bottom-6 left-0 flex justify-center md:hidden">
+      <div className="fixed right-0 bottom-6 left-0 z-40 flex justify-center md:hidden">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
