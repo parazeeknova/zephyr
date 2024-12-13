@@ -1,6 +1,5 @@
 import { createVerificationTokenForUser } from "@/app/(auth)/login/server-actions";
-import { sendVerificationEmail } from "@/lib/nodemailer";
-import { validateRequest } from "@zephyr/auth/auth";
+import { sendVerificationEmail, validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
 import { z } from "zod";
 

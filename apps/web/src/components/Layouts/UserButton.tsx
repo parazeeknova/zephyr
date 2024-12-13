@@ -47,7 +47,6 @@ export default function UserButton({ className }: UserButtonProps) {
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          // @ts-expect-error
           className="group relative"
         >
           <div className="-inset-[2px] absolute rounded-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100" />
@@ -62,7 +61,7 @@ export default function UserButton({ className }: UserButtonProps) {
               avatarUrl={user.avatarUrl}
               size={35}
               className="transition-transform duration-200"
-              priority // Add priority for faster loading
+              priority
             />
           </Button>
         </motion.div>
@@ -135,7 +134,10 @@ export default function UserButton({ className }: UserButtonProps) {
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-          <DropdownMenuItem className="hover:bg-primary/10 focus:bg-primary/10">
+          <DropdownMenuItem
+            asChild
+            className="hover:bg-primary/10 focus:bg-primary/10"
+          >
             <Link href="/settings" className="flex items-center">
               <Settings2Icon className="mr-2 size-4" />
               <span>Settings</span>
