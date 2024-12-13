@@ -1,4 +1,3 @@
-// In Comments.tsx
 import kyInstance from "@/lib/ky";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import CommentsSkeleton from "@zephyr-ui/Layouts/skeletons/CommentsSkeleton";

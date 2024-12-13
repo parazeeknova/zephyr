@@ -9,12 +9,12 @@
     "start": "next start"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.705.0",
+    "@aws-sdk/client-s3": "^3.709.0",
     "@aws-sdk/node-http-handler": "^3.374.0",
-    "@aws-sdk/s3-request-presigner": "^3.705.0",
+    "@aws-sdk/s3-request-presigner": "^3.709.0",
     "@emotion/styled": "^11.14.0",
     "@hookform/resolvers": "^3.9.1",
-    "@mui/icons-material": "^6.1.10",
+    "@mui/icons-material": "^6.2.0",
     "@node-rs/argon2": "^2.0.2",
     "@prisma/client": "^6.0.1",
     "@radix-ui/react-avatar": "^1.1.1",
@@ -29,8 +29,8 @@
     "@radix-ui/react-tabs": "^1.1.1",
     "@radix-ui/react-toast": "^1.2.2",
     "@radix-ui/react-tooltip": "^1.1.4",
-    "@tanstack/react-query": "^5.62.3",
-    "@tanstack/react-query-devtools": "^5.62.3",
+    "@tanstack/react-query": "^5.62.7",
+    "@tanstack/react-query-devtools": "^5.62.7",
     "@tiptap/extension-placeholder": "^2.10.3",
     "@tiptap/react": "^2.10.3",
     "@tiptap/starter-kit": "^2.10.3",
@@ -53,10 +53,10 @@
     "deep-email-validator": "^0.1.21",
     "email-validator": "^2.0.4",
     "file-type": "^19.6.0",
-    "framer-motion": "^11.13.1",
+    "framer-motion": "^11.13.5",
     "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.2",
-    "ky": "^1.7.2",
+    "ky": "^1.7.3",
     "lucia": "^3.2.2",
     "lucide-react": "^0.468.0",
     "mime-types": "^2.1.35",
@@ -82,7 +82,7 @@
     "usehooks-ts": "^3.1.0",
     "util": "^0.12.5",
     "webpack": "^5.97.1",
-    "zod": "^3.23.8"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "0.4.2",

@@ -1,8 +1,8 @@
 "use server";
 
-import { sendVerificationEmail } from "@/lib/nodemailer";
 import { verify } from "@node-rs/argon2";
 import { lucia } from "@zephyr/auth/auth";
+import { sendVerificationEmail } from "@zephyr/auth/src/email/service";
 import { type LoginValues, loginSchema } from "@zephyr/auth/validation";
 import { prisma } from "@zephyr/db";
 import jwt from "jsonwebtoken";

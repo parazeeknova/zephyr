@@ -11,6 +11,7 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useVerification } from "@/context/VerificationContext";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoadingButton } from "@zephyr-ui/Auth/LoadingButton";
@@ -26,6 +27,8 @@ import { PasswordStrengthChecker } from "./PasswordStrengthChecker";
 
 export default function SignUpForm() {
   const { toast } = useToast();
+  const { setIsVerifying } = useVerification();
+  const verificationChannel = new BroadcastChannel("email-verification");
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
     useCountdown({
       countStart: 60,
@@ -38,6 +41,23 @@ export default function SignUpForm() {
       resetCountdown();
     }
   }, [count]);
+
+  useEffect(() => {
+    const handleVerificationSuccess = () => {
+      setIsVerifying(false);
+      window.location.reload();
+    };
+
+    verificationChannel.addEventListener("message", (event) => {
+      if (event.data === "verification-success") {
+        handleVerificationSuccess();
+      }
+    });
+
+    return () => {
+      verificationChannel.close();
+    };
+  }, []);
 
   const texts = [
     "Elevate your ideas, accelerate your impact.",
@@ -62,7 +82,6 @@ export default function SignUpForm() {
     }
   });
 
-  // Show validation errors as toasts
   const handleInvalidSubmit = () => {
     const errors = form.formState.errors;
     if (Object.keys(errors).length > 0) {
@@ -87,6 +106,7 @@ export default function SignUpForm() {
           description: error
         });
       } else if (success) {
+        setIsVerifying(true);
         setIsVerificationEmailSent(true);
         startCountdown();
         toast({

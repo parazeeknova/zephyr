@@ -47,7 +47,6 @@ export function HNSearchInput({
       initial="initial"
       animate="animate"
       exit="exit"
-      // @ts-expect-error
       className={cn("relative", className)}
     >
       <div className="relative flex items-center">
@@ -56,7 +55,6 @@ export function HNSearchInput({
             scale: isFocused ? 1.1 : 1,
             color: isFocused ? "var(--orange-500)" : "var(--muted-foreground)"
           }}
-          // @ts-expect-error
           className="pointer-events-none absolute left-3"
         >
           <Search className="h-4 w-4" />
@@ -88,7 +86,6 @@ export function HNSearchInput({
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0 }}
-              // @ts-expect-error
               onClick={handleClear}
               className="absolute right-3 text-muted-foreground transition-colors hover:text-foreground"
               type="button"
@@ -100,7 +97,6 @@ export function HNSearchInput({
       </div>
 
       <motion.div
-        //@ts-expect-error
         className="-z-10 absolute inset-0 rounded-full bg-gradient-to-r from-orange-500/20 to-yellow-500/20 opacity-0 blur-xl transition-opacity group-hover:opacity-100"
         initial={false}
         animate={{ opacity: isFocused ? 1 : 0 }}

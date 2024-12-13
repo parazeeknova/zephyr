@@ -20,7 +20,6 @@ const VerificationAnimation = () => {
         <motion.div
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          // @ts-expect-error
           className="absolute top-0 left-0 h-20 w-20 rounded-xl border border-primary/20 bg-primary/5 p-4"
         >
           {/* biome-ignore lint/a11y/noSvgWithoutTitle: SVG is purely decorative */}
@@ -40,7 +39,6 @@ const VerificationAnimation = () => {
         </motion.div>
 
         <motion.div
-          // @ts-expect-error
           className="-translate-x-1/2 absolute top-8 left-1/2 h-1 w-20"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
@@ -52,7 +50,6 @@ const VerificationAnimation = () => {
         <motion.div
           initial={{ x: 100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          // @ts-expect-error
           className="absolute top-0 right-0 h-20 w-20 rounded-xl border border-primary/20 bg-primary/5 p-4"
         >
           {/* biome-ignore lint/a11y/noSvgWithoutTitle: SVG is purely decorative */}
@@ -72,7 +69,6 @@ const VerificationAnimation = () => {
         </motion.div>
 
         <motion.div
-          // @ts-expect-error
           className="absolute top-0 left-0 h-full w-1 bg-primary/50"
           initial={{ x: 0 }}
           animate={{ x: 256 }}
@@ -87,11 +83,9 @@ const VerificationAnimation = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        // @ts-expect-error
         className="text-center"
       >
         <motion.p
-          // @ts-expect-error
           className="font-medium text-foreground text-lg"
           animate={{ opacity: [1, 0.5, 1] }}
           transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
@@ -99,7 +93,6 @@ const VerificationAnimation = () => {
           Verifying your email...
         </motion.p>
         <motion.p
-          // @ts-expect-error
           className="mt-2 text-muted-foreground text-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -109,12 +102,10 @@ const VerificationAnimation = () => {
         </motion.p>
       </motion.div>
 
-      {/* @ts-expect-error */}
       <motion.div className="flex gap-2">
         {[0, 1, 2].map((i) => (
           <motion.div
             key={i}
-            // @ts-expect-error
             className="h-2 w-2 rounded-full bg-primary"
             animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
             transition={{
@@ -135,7 +126,6 @@ const AnimatedZephyrText = () => {
 
   return (
     <motion.div
-      // @ts-expect-error
       className="pointer-events-none select-none font-bold text-4xl sm:text-6xl"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -145,7 +135,6 @@ const AnimatedZephyrText = () => {
         {letters.map((letter, i) => (
           <motion.span
             key={i}
-            // @ts-expect-error
             className="text-primary/50"
             initial={{ opacity: 0, y: 20 }}
             animate={{
@@ -169,7 +158,6 @@ const AnimatedZephyrText = () => {
         ))}
       </div>
       <motion.div
-        // @ts-expect-error
         className="absolute bottom-0 left-0 h-0.5 bg-primary/30"
         initial={{ scaleX: 0 }}
         animate={{
@@ -194,6 +182,7 @@ export default function VerifyEmailPage() {
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading"
   );
+  const verificationChannel = new BroadcastChannel("email-verification");
 
   useEffect(() => {
     const error = searchParams.get("error");
@@ -201,17 +190,23 @@ export default function VerifyEmailPage() {
     const verified = searchParams.get("verified");
 
     if (verified) {
-      router.push("/?verified=true");
+      verificationChannel.postMessage("verification-success");
+      window.close();
+      router.push("/");
       return;
     }
 
     if (error) {
       setStatus("error");
     } else if (token) {
-      window.location.href = `/api/verify-email?token=${token}`;
+      router.push(`/api/verify-email?token=${token}`);
     } else {
       setStatus("error");
     }
+
+    return () => {
+      verificationChannel.close();
+    };
   }, [searchParams, router]);
 
   const error = searchParams.get("error");
@@ -222,7 +217,6 @@ export default function VerifyEmailPage() {
   return (
     <AnimatePresence>
       <motion.div
-        // @ts-expect-error
         className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-background via-background/95 to-background"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -239,7 +233,6 @@ export default function VerifyEmailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            // @ts-expect-error
             className="w-full max-w-md rounded-lg border border-border/50 bg-background/60 p-8 shadow-lg backdrop-blur-xl"
           >
             {status === "loading" && <VerificationAnimation />}
@@ -248,7 +241,6 @@ export default function VerifyEmailPage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                // @ts-expect-error
                 className="flex flex-col items-center space-y-4"
               >
                 <XCircle className="h-16 w-16 text-destructive" />
@@ -272,7 +264,6 @@ export default function VerifyEmailPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            // @ts-expect-error
             className="-translate-x-1/2 absolute bottom-8 left-1/2"
           >
             <AnimatedZephyrText />

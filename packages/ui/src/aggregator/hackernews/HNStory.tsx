@@ -63,16 +63,13 @@ export function HNStory({ story }: HNStoryProps) {
       initial="initial"
       animate="animate"
       whileHover="hover"
-      // @ts-expect-error
       className="group relative px-4 py-6"
     >
-      {/* Story Content */}
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
               <motion.a
-                // @ts-expect-error
                 href={story.url}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -121,7 +118,6 @@ export function HNStory({ story }: HNStoryProps) {
               </TooltipProvider>
 
               <motion.div
-                // @ts-expect-error
                 className="flex items-center gap-1 text-orange-500"
                 variants={iconButtonVariants}
                 whileHover="hover"
@@ -133,13 +129,11 @@ export function HNStory({ story }: HNStoryProps) {
           </div>
         </div>
 
-        {/* Story Actions */}
         <div className="flex items-center gap-4">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.a
-                  // @ts-expect-error
                   href={`https://news.ycombinator.com/item?id=${story.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -159,7 +153,6 @@ export function HNStory({ story }: HNStoryProps) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
-                  // @ts-expect-error
                   onClick={handleShare}
                   className="flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-orange-500"
                   variants={iconButtonVariants}
@@ -177,7 +170,6 @@ export function HNStory({ story }: HNStoryProps) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
-                  // @ts-expect-error
                   className="flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-orange-500"
                   variants={iconButtonVariants}
                   whileHover="hover"
@@ -195,7 +187,6 @@ export function HNStory({ story }: HNStoryProps) {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <motion.a
-                    // @ts-expect-error
                     href={story.url}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -214,9 +205,7 @@ export function HNStory({ story }: HNStoryProps) {
         </div>
       </div>
 
-      {/* Hover Effect */}
       <motion.div
-        // @ts-expect-error
         className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
         initial={false}
         animate={{ opacity: 0 }}
