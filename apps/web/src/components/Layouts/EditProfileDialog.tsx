@@ -1,4 +1,7 @@
-import { useUpdateAvatarMutation } from "@/app/(main)/users/[username]/avatar-mutations";
+import {
+  useUpdateAvatarMutation,
+  useUpdateProfileMutation
+} from "@/app/(main)/users/[username]/avatar-mutations";
 import avatarPlaceholder from "@/app/assets/avatar-placeholder.png";
 import {
   Dialog,
@@ -20,8 +23,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { getSecureImageUrl } from "@/utils/imageUrl";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
+import { AnimatedWordCounter } from "@zephyr-ui/misc/AnimatedWordCounter";
 import {
   type UpdateUserProfileValues,
   updateUserProfileSchema
@@ -29,7 +34,7 @@ import {
 import type { UserData } from "@zephyr/db";
 import { Camera } from "lucide-react";
 import Image, { type StaticImageData } from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type UseFormReturn, useForm } from "react-hook-form";
 import Resizer from "react-image-file-resizer";
 import CropImageDialog from "./CropImageDialog";
@@ -46,7 +51,7 @@ export default function EditProfileDialog({
   open,
   onOpenChange
 }: EditProfileDialogProps) {
-  const { toast } = useToast(); // Add this hook
+  const { toast } = useToast();
   const form = useForm<UpdateUserProfileValues>({
     resolver: zodResolver(updateUserProfileSchema),
     defaultValues: {
@@ -56,41 +61,70 @@ export default function EditProfileDialog({
   });
 
   const [croppedAvatar, setCroppedAvatar] = useState<Blob | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string>(
-    // @ts-ignore
-    user.avatarUrl || avatarPlaceholder
-  );
+  const [gifToCenter, setGifToCenter] = useState<File | null>(null);
   const mutation = useUpdateAvatarMutation();
+  const profileMutation = useUpdateProfileMutation();
+  const isUpdating = mutation.isPending || profileMutation.isPending;
 
   useEffect(() => {
-    // @ts-ignore
-    return setAvatarUrl(user.avatarUrl || avatarPlaceholder);
-  }, [user.avatarUrl]);
+    if (!open) {
+      setCroppedAvatar(null);
+      setGifToCenter(null);
+      form.reset({
+        displayName: user.displayName,
+        bio: user.bio || ""
+      });
+    }
+  }, [open, user]);
 
-  const handleSubmit = async (_values: UpdateUserProfileValues) => {
+  const handleSubmit = async (values: UpdateUserProfileValues) => {
     try {
-      if (croppedAvatar) {
-        const file = new File([croppedAvatar], `avatar_${user.id}.webp`, {
-          type: "image/webp"
-        });
+      const hasProfileChanges =
+        values.displayName !== user.displayName || values.bio !== user.bio;
+      const hasAvatarChanges = croppedAvatar || gifToCenter;
 
-        await mutation.mutateAsync({
-          file,
-          userId: user.id,
-          oldAvatarKey: user.avatarKey || undefined
-        });
-
+      if (!hasProfileChanges && !hasAvatarChanges) {
         toast({
-          title: "Profile updated",
-          description: "Your profile has been successfully updated."
+          title: "No changes",
+          description: "No changes were made to your profile"
+        });
+        return;
+      }
+
+      if (hasProfileChanges) {
+        await profileMutation.mutateAsync({
+          values,
+          userId: user.id
         });
       }
+
+      if (hasAvatarChanges) {
+        const file = croppedAvatar
+          ? new File([croppedAvatar], `avatar_${user.id}.webp`, {
+              type: "image/webp"
+            })
+          : gifToCenter;
+
+        if (file) {
+          await mutation.mutateAsync({
+            file,
+            userId: user.id,
+            oldAvatarKey: user.avatarKey || undefined
+          });
+        }
+      }
+
       onOpenChange(false);
+      toast({
+        title: "Success",
+        description: "Profile updated successfully"
+      });
     } catch (error) {
       console.error("Failed to update profile:", error);
       toast({
-        title: "Update failed",
-        description: "Failed to update your profile. Please try again.",
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "An error occurred",
         variant: "destructive"
       });
     }
@@ -105,8 +139,13 @@ export default function EditProfileDialog({
         <div className="space-y-1.5">
           <Label>Avatar</Label>
           <AvatarInput
-            src={croppedAvatar ? URL.createObjectURL(croppedAvatar) : avatarUrl}
+            src={
+              croppedAvatar
+                ? URL.createObjectURL(croppedAvatar)
+                : (user.avatarUrl ?? avatarPlaceholder.src)
+            }
             onImageCropped={setCroppedAvatar}
+            onGifSelected={setGifToCenter}
             form={form}
             isUploading={mutation.isPending}
             user={user}
@@ -137,18 +176,29 @@ export default function EditProfileDialog({
                 <FormItem>
                   <FormLabel>Bio</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Tell us a little bit about yourself"
-                      className="resize-none"
-                      {...field}
-                    />
+                    <div className="space-y-1">
+                      <Textarea
+                        placeholder="Tell us a little bit about yourself"
+                        className="resize-none"
+                        {...field}
+                      />
+                      <div className="flex justify-end">
+                        <AnimatedWordCounter
+                          current={
+                            field.value.trim().split(/\s+/).filter(Boolean)
+                              .length
+                          }
+                          max={400}
+                        />
+                      </div>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <LoadingButton type="submit" loading={mutation.isPending}>
+              <LoadingButton type="submit" loading={isUpdating}>
                 Save
               </LoadingButton>
             </DialogFooter>
@@ -162,6 +212,7 @@ export default function EditProfileDialog({
 interface AvatarInputProps {
   src: string | StaticImageData;
   onImageCropped: (blob: Blob | null) => void;
+  onGifSelected: (file: File | null) => void;
   form: UseFormReturn<UpdateUserProfileValues>;
   isUploading: boolean;
   user: UserData;
@@ -170,6 +221,7 @@ interface AvatarInputProps {
 function AvatarInput({
   src,
   onImageCropped,
+  onGifSelected,
   form,
   isUploading,
   user
@@ -178,6 +230,13 @@ function AvatarInput({
   const [imageToCrop, setImageToCrop] = useState<File>();
   const [gifToCenter, setGifToCenter] = useState<File>();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const avatarSrc = useMemo(() => {
+    if (typeof src === "string") {
+      return getSecureImageUrl(src);
+    }
+    return avatarPlaceholder.src;
+  }, [src]);
 
   const onImageSelected = useCallback(
     async (file: File | undefined) => {
@@ -195,6 +254,7 @@ function AvatarInput({
 
       if (file.type === "image/gif") {
         setGifToCenter(file);
+        onGifSelected(file);
         return;
       }
 
@@ -222,7 +282,7 @@ function AvatarInput({
         resetInput();
       }
     },
-    [toast]
+    [toast, onGifSelected]
   );
 
   const resetInput = useCallback(() => {
@@ -248,11 +308,7 @@ function AvatarInput({
           disabled={isUploading}
         >
           <Image
-            src={
-              typeof src === "string" && src.startsWith("http://")
-                ? src.replace("http://", "https://")
-                : src
-            }
+            src={avatarSrc}
             alt="Avatar preview"
             width={150}
             height={150}
@@ -261,8 +317,8 @@ function AvatarInput({
               isUploading && "opacity-50"
             )}
             unoptimized={
-              typeof src === "string" &&
-              (src.endsWith(".gif") || src.includes("minio"))
+              typeof avatarSrc === "string" &&
+              (avatarSrc.endsWith(".gif") || avatarSrc.includes("minio"))
             }
             onError={(e) => {
               (e.target as HTMLImageElement).src = avatarPlaceholder.src;

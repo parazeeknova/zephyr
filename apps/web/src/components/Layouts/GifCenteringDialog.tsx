@@ -1,4 +1,4 @@
-import { useUpdateProfileMutation } from "@/app/(main)/users/[username]/avatar-mutations";
+import { useUpdateAvatarMutation } from "@/app/(main)/users/[username]/avatar-mutations";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,7 +27,7 @@ interface GifCenteringDialogProps {
     displayName: string;
     bio: string;
     userId: string;
-    oldAvatarKey?: string;
+    oldAvatarKey?: string | null;
   };
 }
 
@@ -41,7 +41,7 @@ export default function GifCenteringDialog({
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
 
-  const mutation = useUpdateProfileMutation();
+  const mutation = useUpdateAvatarMutation();
   const { toast } = useToast();
 
   const MOVE_AMOUNT = 10;
@@ -73,19 +73,23 @@ export default function GifCenteringDialog({
 
   const handleComplete = async () => {
     try {
-      const transformedFileName = `avatar_${Date.now()}_x${position.x}_y${position.y}_z${zoom}.gif`;
+      const timestamp = Date.now();
+      const safePosition = {
+        x: Math.round(position.x * 100) / 100,
+        y: Math.round(position.y * 100) / 100,
+        z: Math.round(zoom * 100) / 100
+      };
+
+      const transformedFileName = `avatar_${timestamp}_x${safePosition.x}_y${safePosition.y}_z${safePosition.z}.gif`;
+
       const file = new File([gifFile], transformedFileName, {
         type: "image/gif"
       });
 
       await mutation.mutateAsync({
-        values: {
-          displayName: currentValues.displayName,
-          bio: currentValues.bio
-        },
-        avatar: file,
+        file,
         userId: currentValues.userId,
-        oldAvatarKey: currentValues.oldAvatarKey
+        oldAvatarKey: currentValues.oldAvatarKey || undefined
       });
 
       onClose();
@@ -112,7 +116,6 @@ export default function GifCenteringDialog({
             className="relative size-64 overflow-hidden rounded-full border-2 border-border bg-secondary"
           >
             <motion.div
-              // @ts-expect-error
               className="absolute inset-0 flex items-center justify-center"
               animate={{
                 x: position.x,

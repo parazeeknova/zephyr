@@ -10,11 +10,12 @@ import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
-import type { ClipboardEvent } from "react";
+import { type ClipboardEvent, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { AttachmentPreview } from "./AttachmentPreview";
 import { FileInput } from "./FileInput";
 import "./styles.css";
+import { useQuery } from "@tanstack/react-query";
 import useMediaUpload, { type Attachment } from "./useMediaUpload";
 
 const containerVariants = {
@@ -37,6 +38,11 @@ const itemVariants = {
 export default function PostEditor() {
   const { user } = useSession();
   const mutation = useSubmitPostMutation();
+  const { data: userData } = useQuery({
+    queryKey: ["user", user.id],
+    initialData: user,
+    staleTime: 1000 * 60 * 5
+  });
 
   const {
     startUpload,
@@ -86,7 +92,7 @@ export default function PostEditor() {
 
   const input = editor?.getText({ blockSeparator: "\n" }) || "";
 
-  function onSubmit() {
+  const onSubmit = useCallback(() => {
     mutation.mutate(
       {
         content: input,
@@ -99,14 +105,17 @@ export default function PostEditor() {
         }
       }
     );
-  }
+  }, [input, attachments, mutation, editor, resetMediaUploads]);
 
-  function onPaste(e: ClipboardEvent<HTMLInputElement>) {
-    const files = Array.from(e.clipboardData.items)
-      .filter((item) => item.kind === "file")
-      .map((item) => item.getAsFile()) as File[];
-    startUpload(files);
-  }
+  const onPaste = useCallback(
+    (e: ClipboardEvent<HTMLInputElement>) => {
+      const files = Array.from(e.clipboardData.items)
+        .filter((item) => item.kind === "file")
+        .map((item) => item.getAsFile()) as File[];
+      startUpload(files);
+    },
+    [startUpload]
+  );
 
   return (
     <motion.div
@@ -122,7 +131,7 @@ export default function PostEditor() {
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            <UserAvatar avatarUrl={user.avatarUrl} />
+            <UserAvatar avatarUrl={userData.avatarUrl} />
           </motion.div>
         </div>
         <div {...rootProps} className="w-full">

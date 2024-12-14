@@ -65,23 +65,20 @@ const nextConfig: NextConfig = {
         hostname: "minio-objectstorage.zephyyrr.in",
         pathname: "/**"
       },
-      ...(process.env.NODE_ENV === "development"
-        ? [
-            {
-              protocol: "http" as const,
-              hostname: "localhost",
-              port: "9001",
-              pathname: `/${process.env.MINIO_BUCKET_NAME}/**`
-            },
-            {
-              protocol: "http" as const,
-              hostname: "localhost",
-              port: "9000",
-              pathname: `/${process.env.MINIO_BUCKET_NAME}/**`
-            }
-          ]
-        : [])
-    ]
+      // Development patterns - simplified and more permissive
+      {
+        protocol: "http",
+        hostname: "localhost",
+        pathname: "/**"
+      },
+      {
+        protocol: "https",
+        hostname: "localhost",
+        pathname: "/**"
+      }
+    ],
+    domains: ["localhost"], // Add this as a fallback
+    unoptimized: process.env.NODE_ENV === "development" // Add this for development
   },
 
   rewrites: async () => {
