@@ -77,8 +77,7 @@ const nextConfig: NextConfig = {
         pathname: "/**"
       }
     ],
-    domains: ["localhost"], // Add this as a fallback
-    unoptimized: process.env.NODE_ENV === "development" // Add this for development
+    unoptimized: process.env.NODE_ENV === "development"
   },
 
   rewrites: async () => {

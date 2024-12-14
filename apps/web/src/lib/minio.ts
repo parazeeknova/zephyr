@@ -5,6 +5,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { FetchHttpHandler } from "@smithy/fetch-http-handler";
+import { NodeHttpHandler } from "@smithy/node-http-handler";
 import { validateFile } from "./utils/file-validation";
 import { getFileType } from "./utils/mime-utils";
 
@@ -22,7 +23,15 @@ export const minioClient = new S3Client({
   },
   forcePathStyle: true,
   maxAttempts: 3,
-  requestHandler: new FetchHttpHandler()
+  requestHandler:
+    typeof window === "undefined"
+      ? new NodeHttpHandler({
+          connectionTimeout: 5000,
+          socketTimeout: 5000
+        })
+      : new FetchHttpHandler({
+          requestTimeout: 5000
+        })
 });
 
 export const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || "zephyr";

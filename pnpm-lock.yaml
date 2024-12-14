@@ -95,6 +95,9 @@ importers:
       '@smithy/fetch-http-handler':
         specifier: ^4.1.2
         version: 4.1.2
+      '@smithy/node-http-handler':
+        specifier: ^3.3.2
+        version: 3.3.2
       '@tanstack/react-query':
         specifier: ^5.62.7
         version: 5.62.7(react@19.0.0)

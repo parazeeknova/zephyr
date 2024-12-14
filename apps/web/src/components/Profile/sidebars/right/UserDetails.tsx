@@ -181,7 +181,12 @@ const UserDetails: React.FC<UserDetailsProps> = ({
                     initialState={followerInfo}
                   />
                 )}
-                <Button variant="ghost" size="icon">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="More options"
+                  disabled
+                >
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </div>

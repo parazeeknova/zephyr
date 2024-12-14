@@ -29,6 +29,7 @@
     "@radix-ui/react-toast": "^1.2.2",
     "@radix-ui/react-tooltip": "^1.1.4",
     "@smithy/fetch-http-handler": "^4.1.2",
+    "@smithy/node-http-handler": "^3.3.2",
     "@tanstack/react-query": "^5.62.7",
     "@tanstack/react-query-devtools": "^5.62.7",
     "@tiptap/extension-placeholder": "^2.10.3",
