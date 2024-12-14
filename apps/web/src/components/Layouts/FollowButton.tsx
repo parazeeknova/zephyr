@@ -17,18 +17,21 @@ interface FollowButtonProps {
     isFollowedByUser: boolean;
   };
   className?: string;
+  onFollowed?: () => void;
 }
 
 const FollowButton: React.FC<FollowButtonProps> = ({
   userId,
   initialState,
-  className
+  className,
+  onFollowed
 }) => {
   return (
     <ClientFollowButton
       userId={userId}
       initialState={initialState}
       className={className}
+      onFollowed={onFollowed}
     />
   );
 };
