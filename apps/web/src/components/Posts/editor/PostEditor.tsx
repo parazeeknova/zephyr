@@ -169,9 +169,10 @@ export default function PostEditor() {
         </div>
       </motion.div>
 
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {!!attachments.length && (
           <motion.div
+            layout
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
@@ -247,13 +248,16 @@ function AttachmentPreviews({
       {attachments.map((attachment, index) => (
         <motion.div
           key={attachment.file.name}
+          layoutId={attachment.file.name}
           variants={itemVariants}
           custom={index}
-          layout
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          transition={{ duration: 0.2 }}
+          transition={{
+            duration: 0.2,
+            layout: { duration: 0.2 }
+          }}
         >
           <AttachmentPreview
             attachment={attachment}
