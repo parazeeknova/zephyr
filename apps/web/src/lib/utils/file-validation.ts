@@ -1,30 +1,56 @@
 import {
-  allowedFileTypes,
+  type AllowedAvatarExtension,
   avatarConfig,
   maxFileSizes
 } from "../config/file-config";
-import type { AllowedFileType } from "../config/file-config";
-import { getFileType } from "./mime-utils";
+import { getFileConfigFromMime } from "./mime-utils";
 
 export const validateFile = (file: File) => {
-  const fileType = getFileType(file.type);
-  const maxSize = maxFileSizes[fileType as keyof typeof maxFileSizes];
-  if (!allowedFileTypes.includes(file.type as AllowedFileType)) {
-    throw new Error("File type not supported");
+  if (!file) {
+    throw new Error("No file provided");
   }
+
+  const fileConfig = getFileConfigFromMime(file.type);
+  console.log("File validation:", {
+    type: file.type,
+    config: fileConfig,
+    size: file.size
+  });
+
+  if (!fileConfig) {
+    throw new Error(`File type ${file.type} not supported`);
+  }
+
+  const category = fileConfig.category;
+  const maxSize = maxFileSizes[category];
+
   if (file.size > maxSize) {
-    throw new Error(`File size exceeds ${maxSize / (1024 * 1024)}MB limit`);
+    const sizeMB = Math.round(maxSize / (1024 * 1024));
+    throw new Error(
+      `File size must be less than ${sizeMB}MB for ${category} files`
+    );
   }
 
   return true;
 };
 
 export const validateAvatar = (file: File) => {
-  const { maxSize, allowedTypes } = avatarConfig;
-  if (!allowedTypes.includes(file.type as any)) {
-    throw new Error("Avatar must be JPEG, PNG, GIF, or WebP");
+  const extension = file.name.split(".").pop()?.toLowerCase();
+
+  const isAllowedExtension = (
+    ext: string | undefined
+  ): ext is AllowedAvatarExtension => {
+    return (
+      !!ext &&
+      avatarConfig.allowedExtensions.includes(ext as AllowedAvatarExtension)
+    );
+  };
+
+  if (!isAllowedExtension(extension)) {
+    throw new Error("Avatar must be in JPG, PNG, GIF, WebP, or HEIC format");
   }
-  if (file.size > maxSize) {
+
+  if (file.size > avatarConfig.maxSize) {
     throw new Error("Avatar size must be less than 8MB");
   }
 

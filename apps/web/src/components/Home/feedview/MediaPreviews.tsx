@@ -9,6 +9,7 @@ import { FileAudioIcon, FileCode, FileIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
+import { FileTypeWatermark } from "./FileTypeWatermark";
 import MediaViewer from "./MediaViewer";
 
 interface MediaPreviewsProps {
@@ -36,12 +37,6 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
   const remainingAttachments = attachments.slice(initialCount);
   const remainingCount = attachments.length - initialCount;
 
-  const FileTypeWatermark = ({ type }: { type: string }) => (
-    <div className="absolute top-2 right-2 rounded-md bg-black/50 px-2 py-1 backdrop-blur-sm">
-      <span className="font-medium text-white text-xs">{type}</span>
-    </div>
-  );
-
   const renderPreview = (m: Media, _index: number, isSmall = false) => {
     const commonClasses = cn(
       "mx-auto w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105",
@@ -62,7 +57,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
               style={{ objectFit: "cover" }}
             />
             <FileTypeWatermark
-              type={m.key.split(".").pop()?.toUpperCase() || "IMG"}
+              type={m.key.split(".").pop()?.toUpperCase() || "FILE"}
             />
             <div className="absolute inset-0 bg-black/5 transition-opacity group-hover:opacity-0" />
           </div>
@@ -91,13 +86,11 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
               className="absolute inset-0 flex items-center justify-center"
             >
               <div className="relative">
-                {/* Ripple effect */}
                 <div className="-inset-4 absolute">
                   <div className="absolute inset-0 rounded-full bg-white/10 group-hover:animate-[ping_1s_cubic-bezier(0,0,0.2,1)_infinite]" />
                   <div className="absolute inset-0 rounded-full bg-black/20 blur-sm group-hover:animate-pulse" />
                 </div>
 
-                {/* Play button */}
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 360 }}
                   transition={{ type: "spring", stiffness: 260, damping: 20 }}
@@ -114,15 +107,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
                 </motion.div>
               </div>
 
-              {/* Animated badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="absolute right-2 bottom-2 rounded bg-black/60 px-2 py-1 backdrop-blur-sm"
-              >
-                <span className="font-medium text-white text-xs">VIDEO</span>
-              </motion.div>
+              <FileTypeWatermark type={m.key.split(".").pop() || "FILE"} />
             </motion.div>
 
             {/* Dynamic gradient */}
@@ -151,7 +136,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
               </div>
             </div>
             <FileTypeWatermark
-              type={m.key.split(".").pop()?.toUpperCase() || "AUDIO"}
+              type={m.key.split(".").pop()?.toUpperCase() || "FILE"}
             />
           </div>
         );
@@ -182,7 +167,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
               </div>
             </div>
             <FileTypeWatermark
-              type={m.key.split(".").pop()?.toUpperCase() || "CODE"}
+              type={m.key.split(".").pop()?.toUpperCase() || "FILE"}
             />
           </div>
         );
@@ -208,7 +193,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
               </div>
             </div>
             <FileTypeWatermark
-              type={m.key.split(".").pop()?.toUpperCase() || "DOC"}
+              type={m.key.split(".").pop()?.toUpperCase() || "FILE"}
             />
           </div>
         );

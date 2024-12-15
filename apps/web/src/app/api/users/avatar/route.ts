@@ -1,4 +1,4 @@
-import { deleteAvatar, uploadAvatar } from "@/lib/minio";
+import { deleteAvatar, uploadAvatar } from "@/lib/minio"; // Add deleteAvatar import
 import { getStreamClient } from "@zephyr/auth/src";
 import { prisma } from "@zephyr/db";
 import { avatarCache } from "@zephyr/db";
@@ -15,6 +15,16 @@ export async function POST(request: Request) {
       return new NextResponse("Missing required fields", { status: 400 });
     }
 
+    console.log("Avatar update started:", {
+      userId,
+      oldAvatarKey: oldAvatarKey || "none",
+      newFile: {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      }
+    });
+
     const result = await uploadAvatar(file, userId);
 
     const avatarUrl =
@@ -23,7 +33,12 @@ export async function POST(request: Request) {
         : result.url;
 
     if (oldAvatarKey) {
-      await deleteAvatar(oldAvatarKey);
+      try {
+        await deleteAvatar(oldAvatarKey);
+        console.log("Old avatar deleted successfully:", oldAvatarKey);
+      } catch (deleteError) {
+        console.error("Failed to delete old avatar:", deleteError);
+      }
     }
 
     const updatedUser = await prisma.user.update({
@@ -49,10 +64,16 @@ export async function POST(request: Request) {
             image: avatarUrl
           }
         });
+        console.log("Stream user avatar updated successfully");
       }
     } catch (streamError) {
       console.error("Failed to update Stream user avatar:", streamError);
     }
+
+    console.log("Avatar update completed successfully:", {
+      userId,
+      newAvatarKey: result.key
+    });
 
     return NextResponse.json({
       user: updatedUser,
@@ -60,7 +81,59 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Avatar update error:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : "Failed to update avatar"
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { avatarKey, userId } = await request.json();
+
+    if (!avatarKey || !userId) {
+      return new NextResponse("Missing required fields", { status: 400 });
+    }
+    await deleteAvatar(avatarKey);
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        avatarUrl: null,
+        avatarKey: null
+      }
+    });
+
+    await avatarCache.del(userId);
+
+    try {
+      const streamClient = getStreamClient();
+      if (streamClient) {
+        await streamClient.partialUpdateUser({
+          id: userId,
+          set: {
+            image: null
+          }
+        });
+      }
+    } catch (streamError) {
+      console.error("Failed to update Stream user avatar:", streamError);
+    }
+
+    return NextResponse.json({ success: true, user: updatedUser });
+  } catch (error) {
+    console.error("Avatar deletion error:", error);
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : "Failed to delete avatar"
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -99,6 +172,11 @@ export async function GET(
     });
   } catch (error) {
     console.error("Error fetching avatar:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : "Failed to fetch avatar"
+      },
+      { status: 500 }
+    );
   }
 }

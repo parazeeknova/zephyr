@@ -79,6 +79,7 @@
     "react-intersection-observer": "^9.13.1",
     "react-linkify-it": "^1.0.8",
     "react-syntax-highlighter": "^15.6.1",
+    "sonner": "^1.7.1",
     "stream-browserify": "^3.0.0",
     "stream-chat": "^8.46.0",
     "stream-chat-react": "^12.7.1",

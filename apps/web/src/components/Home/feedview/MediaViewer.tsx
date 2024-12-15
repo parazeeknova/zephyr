@@ -17,6 +17,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { CodePreview } from "./CodePreview";
 import { CustomVideoPlayer } from "./CustomVideoPlayer";
+import { FileTypeWatermark } from "./FileTypeWatermark";
 
 const FALLBACK_IMAGE = fallbackImage;
 
@@ -177,6 +178,12 @@ const MediaViewer = ({
                 setIsLoading(false);
               }}
             />
+            {!isLoading && (
+              <FileTypeWatermark
+                type={currentMedia.mimeType?.split("/")[1] || "image"}
+                showCategory={false}
+              />
+            )}
           </div>
         );
 
