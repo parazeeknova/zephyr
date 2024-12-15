@@ -21,6 +21,7 @@ import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
 import { MediaPreviews } from "./MediaPreviews";
+import ShareButton from "./ShareButton";
 
 interface PostCardProps {
   post: PostData;
@@ -111,6 +112,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
           <CommentButton
             post={post}
             onClick={() => setShowComments(!showComments)}
+          />
+          <ShareButton
+            postId={post.id}
+            title={post.content}
+            thumbnail={post.attachments[0]?.url}
+            description={post.content}
           />
           <Link href={`/posts/${post.id}`} suppressHydrationWarning>
             <Button

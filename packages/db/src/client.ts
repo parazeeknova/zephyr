@@ -144,3 +144,17 @@ export interface MessageCountInfo {
   unreadCount: number;
   error?: string;
 }
+
+export interface ShareStats {
+  platform: string;
+  shares: number;
+  clicks: number;
+}
+
+export interface ShareResponse {
+  shares: number;
+}
+
+export interface ClickResponse {
+  clicks: number;
+}

@@ -105,6 +105,7 @@ model Post {
   comments            Comment[]
   linkedNotifications Notification[]
   vote                Vote[]
+  shareStats          ShareStats[]
 
   createdAt DateTime @default(now())
 
@@ -206,6 +207,21 @@ enum NotificationType {
   AMPLIFY
   FOLLOW
   COMMENT
+}
+
+// ShareStats model
+model ShareStats {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  platform  String
+  shares    Int      @default(0)
+  clicks    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([postId, platform])
+  @@map("share_stats")
 }
 
 // Prisma schema for the Zephyr database
