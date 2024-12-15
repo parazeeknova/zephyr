@@ -69,6 +69,7 @@
     "nodemailer": "^6.9.16",
     "prism-react-renderer": "^2.4.0",
     "process": "^0.11.10",
+    "qrcode.react": "^4.2.0",
     "react": "19.0.0",
     "react-cropper": "^2.3.3",
     "react-dom": "19.0.0",

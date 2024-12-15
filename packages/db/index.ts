@@ -6,3 +6,4 @@ export * from "./cache/avatar-cache";
 export * from "./src/types";
 export * from "./cache/followbutton-cache";
 export * from "./constants/cache-keys";
+export * from "./cache/share-cache";

@@ -104,3 +104,19 @@
   outline: none !important;
   box-shadow: none !important;
 }
+
+.suggested-connection-card {
+  @apply transition-all duration-300;
+}
+
+.user-avatar-hover {
+  @apply transform transition-transform duration-300 hover:scale-110;
+}
+
+.connection-item {
+  @apply relative overflow-hidden rounded-lg;
+}
+
+.connection-item:hover {
+  @apply bg-accent/5;
+}
