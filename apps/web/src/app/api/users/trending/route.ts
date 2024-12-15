@@ -1,9 +1,18 @@
+import { validateRequest } from "@zephyr/auth/src";
 import { getUserDataSelect, prisma } from "@zephyr/db";
 
 export async function GET() {
   try {
+    const { user } = await validateRequest();
+    const userId = user?.id;
+
     const trendingUsers = await prisma.user.findMany({
       take: 6,
+      where: {
+        id: {
+          not: userId
+        }
+      },
       orderBy: [
         {
           followers: {

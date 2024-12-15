@@ -3,15 +3,20 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import type React from "react";
+import { useEffect } from "react";
 
 import UserTooltip from "@/components/Layouts/UserTooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSuggestedConnections } from "@/state/UserActions";
-import FollowButton from "@zephyr-ui/Layouts/FollowButton";
+import FollowButton, {
+  preloadFollowButton
+} from "@zephyr-ui/Layouts/FollowButton";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import SuggestedConnectionsSkeleton from "@zephyr-ui/Layouts/skeletons/SCSkeleton";
+import { debugLog } from "@zephyr/config/debug";
 
 interface SerializableUserData {
+  followState: { followers: number; isFollowedByUser: false };
   id: string;
   username: string;
   displayName: string;
@@ -24,6 +29,11 @@ interface SerializableUserData {
 }
 
 const SuggestedConnections: React.FC = () => {
+  // Preload the FollowButton component
+  useEffect(() => {
+    preloadFollowButton();
+  }, []);
+
   const {
     data: connections,
     isLoading,
@@ -32,10 +42,21 @@ const SuggestedConnections: React.FC = () => {
     queryKey: ["suggested-connections"],
     queryFn: async () => {
       const result = await getSuggestedConnections();
-      if (result instanceof Error) {
-        throw result;
-      }
-      return result;
+      if (result instanceof Error) throw result;
+
+      const followStates = await fetch("/api/users/follow-states", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userIds: result.map((user: { id: any }) => user.id)
+        })
+      }).then((r) => r.json());
+
+      // Combine user data with follow states
+      return result.map((user: { id: string | number }) => ({
+        ...user,
+        followState: followStates[user.id]
+      }));
     }
   });
 
@@ -102,12 +123,18 @@ const SuggestedConnections: React.FC = () => {
                 </UserTooltip>
                 <FollowButton
                   userId={connection.id}
-                  initialState={{
-                    followers: connection._count.followers,
-                    isFollowedByUser: false
+                  initialState={
+                    connection.followState || {
+                      followers: connection._count.followers,
+                      isFollowedByUser: false
+                    }
+                  }
+                  className="min-w-[80px]"
+                  onFollowed={() => {
+                    debugLog.component(
+                      `User followed: ${connection.displayName}`
+                    );
                   }}
-                  // @ts-expect-error
-                  userData={connection}
                 />
               </li>
             ))}
@@ -121,5 +148,7 @@ const SuggestedConnections: React.FC = () => {
     </Card>
   );
 };
+
+SuggestedConnections.displayName = "SuggestedConnections";
 
 export default SuggestedConnections;

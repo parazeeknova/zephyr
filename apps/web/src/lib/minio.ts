@@ -1,15 +1,19 @@
-import https from "node:https";
 import {
   GetObjectCommand,
   PutObjectCommand,
   S3Client
 } from "@aws-sdk/client-s3";
-import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { FetchHttpHandler } from "@smithy/fetch-http-handler";
+import { NodeHttpHandler } from "@smithy/node-http-handler";
+import { toast } from "sonner";
 import { validateFile } from "./utils/file-validation";
-import { getFileType } from "./utils/mime-utils";
+import { getContentType, getFileConfigFromMime } from "./utils/mime-utils";
+import { uploadToasts } from "./utils/upload-messages";
 
 export { getContentDisposition } from "./utils/mime-utils";
+
+const isClient = typeof window !== "undefined";
 
 export const minioClient = new S3Client({
   region: "ap-south-1",
@@ -23,11 +27,15 @@ export const minioClient = new S3Client({
   },
   forcePathStyle: true,
   maxAttempts: 3,
-  requestHandler: new NodeHttpHandler({
-    httpsAgent: new https.Agent({
-      rejectUnauthorized: process.env.NODE_ENV === "production"
-    })
-  })
+  requestHandler:
+    typeof window === "undefined"
+      ? new NodeHttpHandler({
+          connectionTimeout: 5000,
+          socketTimeout: 5000
+        })
+      : new FetchHttpHandler({
+          requestTimeout: 5000
+        })
 });
 
 export const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || "zephyr";
@@ -86,40 +94,81 @@ export const generatePresignedUrl = async (key: string) => {
 export const uploadToMinio = async (file: File, userId: string) => {
   if (!file || !userId) throw new Error("File and userId are required");
 
-  validateFile(file);
-  const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-  const uniquePrefix = `${Date.now()}-${crypto.randomUUID()}`;
-  const key = `${userId}/${uniquePrefix}-${cleanFileName}`;
+  const toastId = isClient
+    ? toast.loading(uploadToasts.started(file.name).description)
+    : undefined;
 
   try {
-    const buffer = Buffer.from(await file.arrayBuffer());
+    console.log("Starting upload:", {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    });
+
+    validateFile(file);
+
+    const fileConfig = getFileConfigFromMime(file.type);
+    const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+    const uniquePrefix = `${Date.now()}-${crypto.randomUUID()}`;
+    const key = `${userId}/${uniquePrefix}-${cleanFileName}`;
+    const extension = file.name.split(".").pop()?.toLowerCase() || "";
+
+    let buffer: Buffer;
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      buffer = Buffer.from(arrayBuffer);
+    } catch (error) {
+      console.error("Buffer conversion error:", error);
+      throw new Error("Failed to process file data");
+    }
+
     await minioClient.send(
       new PutObjectCommand({
         Bucket: MINIO_BUCKET,
         Key: key,
         Body: buffer,
-        ContentType: file.type,
+        ContentType: getContentType(file.name),
         Metadata: {
           userId,
           originalName: file.name,
-          uploadedAt: new Date().toISOString()
+          uploadedAt: new Date().toISOString(),
+          category: fileConfig?.category || "DOCUMENT",
+          fileType: extension
         }
       })
     );
 
     const url = getPublicUrl(key);
 
+    if (isClient && toastId) {
+      toast.success(
+        uploadToasts.success(file.name, fileConfig?.category || "DOCUMENT")
+          .description,
+        { id: toastId }
+      );
+    }
+
     return {
       key,
       url,
-      type: getFileType(file.type),
+      type: fileConfig?.category || "DOCUMENT",
       mimeType: file.type,
       size: file.size,
-      originalName: file.name
+      originalName: file.name,
+      extension,
+      tag: fileConfig?.tag
     };
   } catch (error) {
     console.error("MinIO upload error:", error);
-    throw new Error("Failed to upload file to MinIO");
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to upload file";
+
+    if (isClient && toastId) {
+      toast.error(uploadToasts.error(errorMessage).description, {
+        id: toastId
+      });
+    }
+    throw error;
   }
 };
 
@@ -139,21 +188,47 @@ export const checkFileExists = async (key: string) => {
 export const uploadAvatar = async (file: File, userId: string) => {
   if (!file || !userId) throw new Error("File and userId are required");
 
-  const supportedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-  if (!supportedTypes.includes(file.type)) {
-    throw new Error("Unsupported file type for avatar");
-  }
-
-  const maxSize = 10 * 1024 * 1024;
-  if (file.size > maxSize) {
-    throw new Error("Avatar file size must be less than 10MB");
-  }
-
-  const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-  const key = `avatars/${userId}/${Date.now()}-${crypto.randomUUID()}-${cleanFileName}`;
+  const toastId = isClient
+    ? toast.loading("Updating profile picture...")
+    : undefined;
 
   try {
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const supportedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/heic"
+    ];
+
+    console.log("Avatar upload started:", {
+      fileType: file.type,
+      fileName: file.name,
+      fileSize: file.size
+    });
+
+    if (!supportedTypes.includes(file.type)) {
+      throw new Error("Avatar must be in JPG, PNG, GIF, WebP, or HEIC format");
+    }
+
+    const maxSize = 8 * 1024 * 1024;
+    if (file.size > maxSize) {
+      throw new Error("Avatar file size must be less than 8MB");
+    }
+
+    const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+    const uniquePrefix = `${Date.now()}-${crypto.randomUUID()}`;
+    const key = `avatars/${userId}/${uniquePrefix}-${cleanFileName}`;
+
+    let buffer: Buffer;
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      buffer = Buffer.from(arrayBuffer);
+    } catch (error) {
+      console.error("Buffer conversion error:", error);
+      throw new Error("Failed to process avatar image");
+    }
+
     await minioClient.send(
       new PutObjectCommand({
         Bucket: MINIO_BUCKET,
@@ -163,39 +238,110 @@ export const uploadAvatar = async (file: File, userId: string) => {
         Metadata: {
           userId,
           originalName: file.name,
-          uploadedAt: new Date().toISOString()
-        }
+          uploadedAt: new Date().toISOString(),
+          category: "AVATAR",
+          fileType: file.name.split(".").pop()?.toLowerCase() || ""
+        },
+        CacheControl: "public, max-age=31536000"
       })
     );
 
     const url = getPublicUrl(key);
 
+    if (isClient && toastId) {
+      toast.success(uploadToasts.avatarSuccess().description, {
+        id: toastId
+      });
+    }
+
+    console.log("Avatar upload successful:", {
+      key,
+      url,
+      size: file.size
+    });
+
     return {
       key,
       url,
-      type: getFileType(file.type),
+      type: "IMAGE",
       mimeType: file.type,
-      size: file.size
+      size: file.size,
+      originalName: file.name
     };
   } catch (error) {
-    console.error("MinIO avatar upload error:", error);
-    throw new Error("Failed to upload avatar to MinIO");
+    console.error("Avatar upload error:", error);
+
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Failed to update profile picture";
+
+    if (isClient && toastId) {
+      toast.error(uploadToasts.avatarError(errorMessage).description, {
+        id: toastId
+      });
+    }
+
+    console.error("Detailed avatar upload error:", {
+      error,
+      file: {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      },
+      userId
+    });
+
+    throw error;
   }
 };
 
 export const deleteAvatar = async (key: string) => {
-  if (!key) return;
+  if (!key) throw new Error("Avatar key is required");
+
+  const toastId = isClient
+    ? toast.loading("Removing profile picture...")
+    : undefined;
 
   try {
+    console.log("Starting avatar deletion:", { key });
+
     const { DeleteObjectCommand } = await import("@aws-sdk/client-s3");
+
     await minioClient.send(
       new DeleteObjectCommand({
         Bucket: MINIO_BUCKET,
         Key: key
       })
     );
+
+    if (isClient && toastId) {
+      toast.success("Profile picture removed successfully", {
+        id: toastId
+      });
+    }
+
+    console.log("Avatar deleted successfully:", { key });
+    return true;
   } catch (error) {
     console.error("Failed to delete avatar:", error);
-    throw new Error("Failed to delete avatar from MinIO");
+
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Failed to remove profile picture";
+
+    if (isClient && toastId) {
+      toast.error(uploadToasts.error(errorMessage).description, {
+        id: toastId
+      });
+    }
+
+    console.error("Detailed avatar deletion error:", {
+      error,
+      key
+    });
+
+    throw new Error(`Failed to delete avatar: ${errorMessage}`);
   }
 };

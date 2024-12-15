@@ -1,59 +1,32 @@
 "use client";
 
-import { useToast } from "@/hooks/use-toast";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import type { HNApiResponse } from "@zephyr/aggregator/hackernews";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Activity,
   Briefcase,
-  ChevronRight,
-  Clock,
+  ChevronDown,
   HelpCircle,
-  MessageSquare,
   Newspaper,
   RefreshCw,
-  Search,
-  TrendingUp
+  Search
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useToast } from "../../../hooks/use-toast";
 import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
+import { Tabs, TabsContent } from "../../components/ui/tabs";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-} from "../../components/ui/tabs";
-import { HNSearchInput } from "./HNSearchInput";
+  HNSidebar,
+  SORT_OPTIONS,
+  type SortOption,
+  TAB_CONFIG
+} from "./HNSidebar";
 import { HNStory } from "./HNStory";
+import { MobileSidebarToggle } from "./mobile/MobileSidebarToggle";
 import { hackerNewsMutations } from "./mutations";
 
 const ITEMS_PER_PAGE = 20;
-const SORT_OPTIONS = {
-  SCORE: "score",
-  TIME: "time",
-  COMMENTS: "comments"
-} as const;
-
-type SortOption = (typeof SORT_OPTIONS)[keyof typeof SORT_OPTIONS];
-
-const tabConfig = [
-  { id: "all", label: "All Stories", icon: <Newspaper className="h-4 w-4" /> },
-  { id: "story", label: "News", icon: <Activity className="h-4 w-4" /> },
-  { id: "job", label: "Jobs", icon: <Briefcase className="h-4 w-4" /> },
-  { id: "show", label: "Show HN", icon: <Search className="h-4 w-4" /> },
-  { id: "ask", label: "Ask HN", icon: <HelpCircle className="h-4 w-4" /> }
-];
-
-const sidebarVariants = {
-  hidden: { x: -50, opacity: 0 },
-  visible: {
-    x: 0,
-    opacity: 1,
-    transition: { type: "spring", stiffness: 100, damping: 15 }
-  }
-};
 
 const contentVariants = {
   hidden: { opacity: 0 },
@@ -70,30 +43,38 @@ export function HNFeed() {
   const [searchInput, setSearchInput] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>(SORT_OPTIONS.SCORE);
   const [activeTab, setActiveTab] = useState("all");
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError, isFetching } =
-    useInfiniteQuery<HNApiResponse>({
-      queryKey: ["hackernews", searchInput, sortBy, activeTab],
-      queryFn: async ({ pageParam = 0 }) => {
-        const response = await hackerNewsMutations.fetchStories({
-          page: pageParam as number,
-          limit: ITEMS_PER_PAGE,
-          search: searchInput || undefined,
-          sort: sortBy,
-          type: activeTab
-        });
-        return response;
-      },
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) => {
-        return lastPage.hasMore
-          ? lastPage.stories.length / ITEMS_PER_PAGE
-          : undefined;
-      },
-      staleTime: 1000 * 60 * 5 // 5 minutes
-    });
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isError,
+    isFetching,
+    isFetchingNextPage
+  } = useInfiniteQuery<HNApiResponse>({
+    queryKey: ["hackernews", searchInput, sortBy, activeTab],
+    queryFn: async ({ pageParam = 0 }) => {
+      const response = await hackerNewsMutations.fetchStories({
+        page: pageParam as number,
+        limit: ITEMS_PER_PAGE,
+        search: searchInput || undefined,
+        sort: sortBy,
+        type: activeTab
+      });
+      return response;
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      return lastPage.hasMore
+        ? lastPage.stories.length / ITEMS_PER_PAGE
+        : undefined;
+    },
+    staleTime: 1000 * 60 * 5
+  });
 
   const handleRefresh = async () => {
     try {
@@ -138,141 +119,85 @@ export function HNFeed() {
     });
   }, [data?.pages, sortBy]);
 
+  const totalPoints = useMemo(
+    () => sortedStories.reduce((acc, story) => acc + story.score, 0),
+    [sortedStories]
+  );
+
+  const totalStories = data?.pages[0]?.total || 0;
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    queryClient.resetQueries({ queryKey: ["hackernews"] });
+  };
+
+  const handleSortChange = (value: SortOption) => {
+    setSortBy(value);
+    queryClient.resetQueries({ queryKey: ["hackernews"] });
+  };
+
+  const handleLoadMore = async () => {
+    try {
+      setIsLoadingMore(true);
+      await fetchNextPage();
+    } catch (_error) {
+      toast({
+        title: "Error",
+        description: "Failed to load more stories",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
       <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="flex gap-8">
-          {/* Sticky Sidebar */}
-          <motion.div
-            variants={sidebarVariants}
-            initial="hidden"
-            animate="visible"
-            className="sticky top-8 w-80 space-y-6 self-start"
-          >
-            <div className="space-y-4">
-              <motion.div
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                className="bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text font-bold text-2xl text-transparent"
-              >
-                HackerNews
-              </motion.div>
-
-              <HNSearchInput
-                value={searchInput}
-                onChange={setSearchInput}
-                className="backdrop-blur-sm"
+          {/* Desktop Sidebar */}
+          <div className="hidden w-80 shrink-0 md:block">
+            <div className="fixed w-80">
+              <HNSidebar
+                searchInput={searchInput}
+                setSearchInput={setSearchInput}
+                sortBy={sortBy}
+                setSortBy={handleSortChange}
+                activeTab={activeTab}
+                setActiveTab={handleTabChange}
+                totalStories={totalStories}
+                totalPoints={totalPoints}
+                isFetching={isFetching}
+                onRefresh={handleRefresh}
               />
             </div>
+          </div>
 
-            <Card className="overflow-hidden bg-background/50 backdrop-blur-md">
-              <div className="space-y-4 p-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold">Filters</h3>
-                  <Button variant="ghost" size="sm" onClick={handleRefresh}>
-                    <RefreshCw
-                      className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
-                    />
-                  </Button>
-                </div>
+          <div className="md:hidden">
+            <MobileSidebarToggle>
+              <HNSidebar
+                searchInput={searchInput}
+                setSearchInput={setSearchInput}
+                sortBy={sortBy}
+                setSortBy={handleSortChange}
+                activeTab={activeTab}
+                setActiveTab={handleTabChange}
+                totalStories={totalStories}
+                totalPoints={totalPoints}
+                isFetching={isFetching}
+                onRefresh={handleRefresh}
+              />
+            </MobileSidebarToggle>
+          </div>
 
-                <div className="space-y-2">
-                  {Object.entries(SORT_OPTIONS).map(([key, value]) => (
-                    <Button
-                      key={key}
-                      variant="ghost"
-                      size="sm"
-                      className={`w-full justify-start ${
-                        sortBy === value
-                          ? "bg-orange-500/10 text-orange-500"
-                          : ""
-                      }`}
-                      onClick={() => setSortBy(value)}
-                    >
-                      {key === "SCORE" && (
-                        <TrendingUp className="mr-2 h-4 w-4" />
-                      )}
-                      {key === "TIME" && <Clock className="mr-2 h-4 w-4" />}
-                      {key === "COMMENTS" && (
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                      )}
-                      {key.charAt(0) + key.slice(1).toLowerCase()}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </Card>
-
-            <Card className="overflow-hidden bg-background/50 backdrop-blur-md">
-              <div className="p-4">
-                <Tabs
-                  value={activeTab}
-                  onValueChange={setActiveTab}
-                  orientation="vertical"
-                  className="w-full"
-                >
-                  <TabsList className="flex w-full flex-col gap-2 bg-transparent">
-                    {tabConfig.map((tab) => (
-                      <TabsTrigger
-                        key={tab.id}
-                        value={tab.id}
-                        className={
-                          "w-full justify-start p-2 data-[state=active]:bg-orange-500/10 data-[state=active]:text-orange-500"
-                        }
-                      >
-                        <div className="flex items-center">
-                          {tab.icon}
-                          <span className="ml-2">{tab.label}</span>
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: activeTab === tab.id ? 1 : 0 }}
-                            className="ml-auto"
-                          >
-                            <ChevronRight className="h-4 w-4" />
-                          </motion.div>
-                        </div>
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-                </Tabs>
-              </div>
-            </Card>
-
-            <Card className="overflow-hidden bg-background/50 backdrop-blur-md">
-              <div className="p-4">
-                <h3 className="mb-3 font-semibold">Statistics</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-lg bg-background/50 p-2 text-center">
-                    <div className="font-bold text-2xl text-orange-500">
-                      {data?.pages[0]?.total || 0}
-                    </div>
-                    <div className="text-muted-foreground text-sm">Stories</div>
-                  </div>
-                  <div className="rounded-lg bg-background/50 p-2 text-center">
-                    <div className="font-bold text-2xl text-orange-500">
-                      {sortedStories.reduce(
-                        (acc, story) => acc + story.score,
-                        0
-                      )}
-                    </div>
-                    <div className="text-muted-foreground text-sm">
-                      Total Points
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
-
-          {/* Main Content */}
           <motion.div
             variants={contentVariants}
             initial="hidden"
             animate="visible"
             className="flex-1"
           >
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              {tabConfig.map((tab) => (
+            <Tabs value={activeTab} onValueChange={handleTabChange}>
+              {TAB_CONFIG.map((tab) => (
                 <TabsContent
                   key={tab.id}
                   value={tab.id}
@@ -282,18 +207,69 @@ export function HNFeed() {
                     <LoadingState />
                   ) : (
                     <AnimatePresence mode="popLayout">
-                      <div className="divide-y divide-border/50">
-                        {sortedStories.map((story) => (
-                          <motion.div
-                            key={story.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ type: "spring", stiffness: 100 }}
-                          >
-                            <HNStory story={story} />
-                          </motion.div>
-                        ))}
+                      <div className="space-y-4">
+                        {sortedStories.length > 0 ? (
+                          <>
+                            <div className="divide-y divide-border/50">
+                              {sortedStories.map((story) => (
+                                <div key={story.id} className="relative">
+                                  <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{
+                                      type: "spring",
+                                      stiffness: 100
+                                    }}
+                                    className="relative"
+                                  >
+                                    <HNStory story={story} />
+                                  </motion.div>
+                                </div>
+                              ))}
+                            </div>
+
+                            {hasNextPage && (
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="flex justify-center py-8"
+                              >
+                                <Button
+                                  size="lg"
+                                  onClick={handleLoadMore}
+                                  disabled={isLoadingMore || isFetchingNextPage}
+                                  className="relative overflow-hidden bg-orange-500 text-white hover:bg-orange-600"
+                                >
+                                  {isLoadingMore || isFetchingNextPage ? (
+                                    <>
+                                      <motion.div
+                                        className="absolute inset-0 bg-orange-600"
+                                        animate={{
+                                          x: ["0%", "100%"],
+                                          opacity: [0.5, 0]
+                                        }}
+                                        transition={{
+                                          duration: 1,
+                                          repeat: Number.POSITIVE_INFINITY
+                                        }}
+                                      />
+                                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                                      Loading more stories...
+                                    </>
+                                  ) : (
+                                    <>
+                                      Load More Stories
+                                      <ChevronDown className="ml-2 h-4 w-4" />
+                                    </>
+                                  )}
+                                </Button>
+                              </motion.div>
+                            )}
+                          </>
+                        ) : (
+                          <EmptyState type={tab.id} onRefresh={handleRefresh} />
+                        )}
                       </div>
                     </AnimatePresence>
                   )}
@@ -319,5 +295,61 @@ function LoadingState() {
         </Card>
       ))}
     </div>
+  );
+}
+
+function EmptyState({
+  type,
+  onRefresh
+}: { type: string; onRefresh: () => void }) {
+  const messages = {
+    job: {
+      title: "No jobs available",
+      description:
+        "There are currently no job postings available on HackerNews."
+    },
+    show: {
+      title: "No Show HN posts",
+      description: "There are currently no Show HN posts available."
+    },
+    ask: {
+      title: "No Ask HN posts",
+      description: "There are currently no Ask HN questions available."
+    },
+    default: {
+      title: "No stories available",
+      description: "There are currently no stories matching your criteria."
+    }
+  };
+
+  const message = messages[type as keyof typeof messages] || messages.default;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col items-center justify-center py-16"
+    >
+      <div className="relative rounded-full bg-orange-500/10 p-4">
+        {type === "job" && <Briefcase className="h-8 w-8 text-orange-500" />}
+        {type === "show" && <Search className="h-8 w-8 text-orange-500" />}
+        {type === "ask" && <HelpCircle className="h-8 w-8 text-orange-500" />}
+        {!["job", "show", "ask"].includes(type) && (
+          <Newspaper className="h-8 w-8 text-orange-500" />
+        )}
+      </div>
+      <h3 className="mt-4 font-semibold text-lg">{message.title}</h3>
+      <p className="mt-2 text-muted-foreground text-sm">
+        {message.description}
+      </p>
+      <Button
+        onClick={onRefresh}
+        variant="outline"
+        className="mt-4 hover:bg-orange-500/10 hover:text-orange-500"
+      >
+        <RefreshCw className="mr-2 h-4 w-4" />
+        Refresh
+      </Button>
+    </motion.div>
   );
 }

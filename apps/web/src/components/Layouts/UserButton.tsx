@@ -24,7 +24,8 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { useQueryClient } from "@tanstack/react-query";
+import { getSecureImageUrl } from "@/utils/imageUrl";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import { motion } from "framer-motion";
 import {
@@ -55,6 +56,33 @@ export default function UserButton({ className }: UserButtonProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [logoutJoke, setLogoutJoke] = useState(getRandomJoke());
 
+  const { data: avatarData } = useQuery({
+    queryKey: ["avatar", user.id],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`/api/users/avatar/${user.id}`);
+        if (!response.ok) throw new Error("Failed to fetch avatar");
+        const data = await response.json();
+        return {
+          url: getSecureImageUrl(data.url),
+          key: data.key
+        };
+      } catch (_error) {
+        return {
+          url: user.avatarUrl ? getSecureImageUrl(user.avatarUrl) : null,
+          // @ts-expect-error
+          key: user.avatarKey
+        };
+      }
+    },
+    initialData: {
+      url: user.avatarUrl ? getSecureImageUrl(user.avatarUrl) : null,
+      // @ts-expect-error
+      key: user.avatarKey
+    },
+    staleTime: 1000 * 60 * 5
+  });
+
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
@@ -72,6 +100,9 @@ export default function UserButton({ className }: UserButtonProps) {
 
   const handleLogout = () => {
     setShowLogoutDialog(false);
+    queryClient.removeQueries({ queryKey: ["user"] });
+    queryClient.removeQueries({ queryKey: ["avatar"] });
+    queryClient.removeQueries({ queryKey: ["post-feed"] });
     queryClient.clear();
     logout();
   };
@@ -91,7 +122,7 @@ export default function UserButton({ className }: UserButtonProps) {
         )}
       >
         <UserAvatar
-          avatarUrl={user.avatarUrl}
+          avatarUrl={avatarData?.url}
           size={35}
           className="transition-transform duration-200"
           priority
@@ -110,7 +141,10 @@ export default function UserButton({ className }: UserButtonProps) {
         <MobileUserMenu
           isOpen={isMobileMenuOpen}
           onClose={() => setIsMobileMenuOpen(false)}
-          user={user}
+          user={{
+            ...user,
+            avatarUrl: avatarData?.url
+          }}
           theme={theme}
           setTheme={setTheme}
           onLogout={handleOpenDialog}

@@ -1,5 +1,7 @@
 "use client";
 
+import { getSecureImageUrl } from "@/utils/imageUrl";
+import { useQuery } from "@tanstack/react-query";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import { AnimatePresence, type Variants, motion } from "framer-motion";
 import {
@@ -17,7 +19,14 @@ import Link from "next/link";
 interface MobileUserMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  user: any;
+  user: {
+    id: string;
+    username: string;
+    email?: string;
+    bio?: string;
+    avatarUrl?: string | null;
+    avatarKey?: string | null;
+  };
   theme?: string;
   setTheme: (theme: string) => void;
   onLogout: () => void;
@@ -57,6 +66,31 @@ export function MobileUserMenu({
   setTheme,
   onLogout
 }: MobileUserMenuProps) {
+  const { data: avatarData } = useQuery({
+    queryKey: ["avatar", user.id],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`/api/users/avatar/${user.id}`);
+        if (!response.ok) throw new Error("Failed to fetch avatar");
+        const data = await response.json();
+        return {
+          url: getSecureImageUrl(data.url),
+          key: data.key
+        };
+      } catch (_error) {
+        return {
+          url: user.avatarUrl ? getSecureImageUrl(user.avatarUrl) : null,
+          key: user.avatarKey
+        };
+      }
+    },
+    initialData: {
+      url: user.avatarUrl ? getSecureImageUrl(user.avatarUrl) : null,
+      key: user.avatarKey
+    },
+    staleTime: 1000 * 60 * 5
+  });
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -96,7 +130,7 @@ export function MobileUserMenu({
                     >
                       <div className="-inset-4 absolute rounded-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 opacity-75 blur-md" />
                       <UserAvatar
-                        avatarUrl={user.avatarUrl}
+                        avatarUrl={avatarData?.url}
                         size={100}
                         className="relative border-4 border-background shadow-xl"
                         priority

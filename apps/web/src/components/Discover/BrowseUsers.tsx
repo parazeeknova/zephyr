@@ -15,11 +15,18 @@ import { formatNumber } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import FollowButton from "@zephyr-ui/Layouts/FollowButton";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import type { UserData } from "@zephyr/db";
+import type { UserData as BaseUserData } from "@zephyr/db";
 import { motion } from "framer-motion";
 import { BadgeCheckIcon, Search, Users } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+
+interface UserData extends BaseUserData {
+  followState?: {
+    followers: number;
+    isFollowedByUser: boolean;
+  };
+}
 
 interface BrowseUsersProps {
   userId?: string;
@@ -39,7 +46,18 @@ const BrowseUsers: React.FC<BrowseUsersProps> = ({ userId }) => {
         sortBy
       });
       const response = await fetch(`/api/users/browse?${params}`);
-      return response.json();
+      const users = await response.json();
+
+      const followStates = await fetch("/api/users/follow-states", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userIds: users.map((u: UserData) => u.id) })
+      }).then((r) => r.json());
+
+      return users.map((user: UserData) => ({
+        ...user,
+        followState: followStates[user.id]
+      }));
     }
   });
 
@@ -88,7 +106,6 @@ const BrowseUsers: React.FC<BrowseUsersProps> = ({ userId }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          // @ts-expect-error
           className="grid gap-4 md:grid-cols-2"
         >
           {users?.map((user, index) => (
@@ -126,10 +143,12 @@ const BrowseUsers: React.FC<BrowseUsersProps> = ({ userId }) => {
                 </div>
                 <FollowButton
                   userId={user.id}
-                  initialState={{
-                    followers: user._count.followers,
-                    isFollowedByUser: false
-                  }}
+                  initialState={
+                    user.followState || {
+                      followers: user._count.followers,
+                      isFollowedByUser: false
+                    }
+                  }
                   // @ts-expect-error
                   size="sm"
                 />

@@ -6,11 +6,26 @@ import { cn } from "@/lib/utils";
 import SearchField from "@zephyr-ui/Layouts/SearchField";
 import UserButton from "@zephyr-ui/Layouts/UserButton";
 import { motion } from "framer-motion";
-import { Bookmark, Compass, Home, MessageSquare } from "lucide-react";
+import {
+  Bookmark,
+  Compass,
+  Home,
+  MessageSquare,
+  MoreHorizontal,
+  Newspaper,
+  Settings
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import MessagesButton from "../Messages/MessagesButton";
 import { HeaderIconButton } from "../Styles/HeaderButtons";
+import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "../ui/dropdown-menu";
 import NotificationsButton from "./NotificationsButton";
 
 interface HeaderProps {
@@ -28,6 +43,69 @@ const Header: React.FC<HeaderProps> = ({
   const isActivePath = (path: string) => {
     return pathname === path;
   };
+
+  const MobileMoreMenu = () => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative flex flex-col items-center"
+        >
+          <div className="relative flex items-center justify-center">
+            <MoreHorizontal className="h-[18px] w-[18px] text-muted-foreground" />
+          </div>
+          <span className="mt-0.5 font-medium text-[10px] text-muted-foreground">
+            More
+          </span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        className="w-60 rounded-xl border-border/50 bg-background/95 p-2 backdrop-blur-lg"
+      >
+        <DropdownMenuItem asChild>
+          <Link
+            href="/messages"
+            className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-primary/10"
+          >
+            <MessageSquare className="h-4 w-4" />
+            <div className="flex flex-1 items-center justify-between">
+              <span>Messages</span>
+              {unreadMessageCount > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="ml-2 bg-primary/10 text-xs"
+                >
+                  {unreadMessageCount}
+                </Badge>
+              )}
+            </div>
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild>
+          <Link
+            href="/discover"
+            className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-primary/10"
+          >
+            <Compass className="h-4 w-4" />
+            <span>Discover</span>
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild>
+          <Link
+            href="/settings"
+            className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-primary/10"
+          >
+            <Settings className="h-4 w-4" />
+            <span>Settings</span>
+          </Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 
   const MobileNavLink = ({
     href,
@@ -155,12 +233,6 @@ const Header: React.FC<HeaderProps> = ({
           />
 
           <MobileNavLink
-            href="/discover"
-            icon={<Compass className="h-[18px] w-[18px]" />}
-            label="Zephyrians"
-          />
-
-          <MobileNavLink
             href="/bookmarks"
             icon={<Bookmark className="h-[18px] w-[18px]" />}
             label="Bookmarks"
@@ -168,11 +240,14 @@ const Header: React.FC<HeaderProps> = ({
           />
 
           <MobileNavLink
-            href="/messages"
-            icon={<MessageSquare className="h-[18px] w-[18px]" />}
-            label="Whispers"
-            badge={unreadMessageCount}
+            href="/hackernews"
+            icon={<Newspaper className="h-[18px] w-[18px]" />}
+            label="HackerNews"
           />
+
+          <div className="flex flex-col items-center px-2">
+            <MobileMoreMenu />
+          </div>
         </motion.div>
       </div>
     </>

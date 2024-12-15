@@ -1,83 +1,54 @@
-export type AllowedFileType =
-  | "image/jpeg"
-  | "image/png"
-  | "image/gif"
-  | "image/webp"
-  | "video/mp4"
-  | "video/webm"
-  | "audio/mpeg"
-  | "audio/wav"
-  | "audio/ogg"
-  | "application/pdf"
-  | "application/msword"
-  | "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  | "text/plain"
-  | "text/html"
-  | "text/css"
-  | "text/javascript"
-  | "text/typescript"
-  | "application/json"
-  | "text/markdown"
-  | "text/x-python"
-  | "text/x-java"
-  | "text/x-c"
-  | "text/x-cpp"
-  | "text/x-csharp"
-  | "text/x-ruby"
-  | "text/x-php"
-  | "text/x-rust"
-  | "text/x-go"
-  | "text/x-kotlin"
-  | "text/x-swift"
-  | "application/xml"
-  | "text/x-yaml"
-  | "text/x-sql";
+import { FILE_CONFIGS } from "../utils/mime-utils";
 
-export const allowedFileTypes: AllowedFileType[] = [
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-  "video/mp4",
-  "video/webm",
-  "audio/mpeg",
-  "audio/wav",
-  "audio/ogg",
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "text/plain",
-  "text/html",
-  "text/css",
-  "text/javascript",
-  "text/typescript",
-  "application/json",
-  "text/markdown",
-  "text/x-python",
-  "text/x-java",
-  "text/x-c",
-  "text/x-cpp",
-  "text/x-csharp",
-  "text/x-ruby",
-  "text/x-php",
-  "text/x-rust",
-  "text/x-go",
-  "text/x-kotlin",
-  "text/x-swift",
-  "application/xml",
-  "text/x-yaml",
-  "text/x-sql"
-];
+export type FileCategory = "IMAGE" | "VIDEO" | "AUDIO" | "CODE" | "DOCUMENT";
 
 export const maxFileSizes = {
-  image: 25 * 1024 * 1024, // 25MB
-  video: 250 * 1024 * 1024, // 250MB
-  audio: 20 * 1024 * 1024, // 20MB
-  document: 200 * 1024 * 1024, // 200MB
-  code: 10 * 1024 * 1024 // 10MB
+  IMAGE: 25 * 1024 * 1024,
+  VIDEO: 250 * 1024 * 1024,
+  AUDIO: 20 * 1024 * 1024,
+  DOCUMENT: 200 * 1024 * 1024,
+  CODE: 10 * 1024 * 1024
 } as const;
 
+export const FILE_SIZE_UNITS = {
+  KB: 1024,
+  MB: 1024 * 1024,
+  GB: 1024 * 1024 * 1024
+} as const;
+
+export type AllowedAvatarExtension =
+  | "jpg"
+  | "jpeg"
+  | "png"
+  | "gif"
+  | "webp"
+  | "heic"
+  | "heif";
+
 export const avatarConfig = {
-  maxSize: 8 * 1024 * 1024, // 8MB
-  allowedTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"] as const
+  maxSize: 8 * 1024 * 1024,
+  allowedExtensions: [
+    "jpg",
+    "jpeg",
+    "png",
+    "gif",
+    "webp",
+    "heic",
+    "heif"
+  ] as AllowedAvatarExtension[]
+} as const;
+
+export const getAllowedMimeTypes = () => {
+  return Object.values(FILE_CONFIGS).map((config) => config.mime);
+};
+
+export type AllowedFileType = ReturnType<typeof getAllowedMimeTypes>[number];
+
+export const allowedFileTypes = getAllowedMimeTypes();
+
+export const formatFileSize = (bytes: number): string => {
+  if (bytes < FILE_SIZE_UNITS.MB) {
+    return `${(bytes / FILE_SIZE_UNITS.KB).toFixed(2)} KB`;
+  }
+  return `${(bytes / FILE_SIZE_UNITS.MB).toFixed(2)} MB`;
 };

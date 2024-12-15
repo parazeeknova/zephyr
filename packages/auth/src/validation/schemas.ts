@@ -72,7 +72,13 @@ export const createPostSchema = z.object({
 
 export const updateUserProfileSchema = z.object({
   displayName: requiredString,
-  bio: z.string().max(1000, "Must be at most 1000 characters")
+  bio: z
+    .string()
+    .max(2000, "Bio must be at most 2000 characters")
+    .refine(
+      (text) => text.trim().split(/\s+/).filter(Boolean).length <= 400,
+      "Bio must not exceed 400 words"
+    )
 });
 
 export const createCommentSchema = z.object({

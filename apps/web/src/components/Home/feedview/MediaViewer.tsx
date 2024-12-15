@@ -7,12 +7,17 @@ import { getLanguageFromFileName } from "@/lib/codefileExtensions";
 import { formatFileName } from "@/lib/formatFileName";
 import { cn } from "@/lib/utils";
 import type { Media } from "@prisma/client";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import fallbackImage from "@zephyr-assets/fallback.png";
 import { MediaViewerSkeleton } from "@zephyr-ui/Layouts/skeletons/MediaViewerSkeleton";
+import {} from "framer-motion";
 import { ChevronLeft, ChevronRight, Download, FileIcon, X } from "lucide-react";
+import {} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { CodePreview } from "./CodePreview";
+import { CustomVideoPlayer } from "./CustomVideoPlayer";
+import { FileTypeWatermark } from "./FileTypeWatermark";
 
 const FALLBACK_IMAGE = fallbackImage;
 
@@ -173,26 +178,28 @@ const MediaViewer = ({
                 setIsLoading(false);
               }}
             />
+            {!isLoading && (
+              <FileTypeWatermark
+                type={currentMedia.mimeType?.split("/")[1] || "image"}
+                showCategory={false}
+              />
+            )}
           </div>
         );
 
       case "VIDEO":
         return (
-          <div className="relative max-h-full max-w-full">
+          <div className="relative max-h-full max-w-full focus-within:outline-none">
             {isLoading && <MediaViewerSkeleton type="VIDEO" />}
-            <video
+            <CustomVideoPlayer
               src={getMediaUrl(currentMedia.id)}
-              controls
               className={cn(
-                "max-h-[85vh] w-auto",
+                "max-h-[85vh] w-auto outline-none focus:outline-none focus-visible:outline-none",
                 "shadow-lg transition-transform duration-200",
                 isLoading && "hidden"
               )}
-              autoPlay
-              playsInline
               onLoadedData={() => setIsLoading(false)}
               onError={() => setIsLoading(false)}
-              aria-label={`Video ${currentIndex + 1} of ${media.length}`}
             />
           </div>
         );
@@ -294,8 +301,10 @@ const MediaViewer = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-h-[95vh] max-w-[95vw] border-none bg-transparent p-0">
-        <DialogTitle className="sr-only">
-          Media Viewer - {currentIndex + 1} of {media.length}
+        <DialogTitle asChild>
+          <VisuallyHidden>
+            Media Viewer - {currentIndex + 1} of {media.length}
+          </VisuallyHidden>
         </DialogTitle>
 
         <div className="relative flex h-full min-h-[50vh] w-full items-center justify-center">

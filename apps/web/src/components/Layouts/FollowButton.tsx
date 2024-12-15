@@ -1,12 +1,18 @@
 "use client";
 
+import { ErrorBoundary } from "@/components/misc/ErrorBoundary";
+import { debugLog } from "@zephyr/config/debug";
 import dynamic from "next/dynamic";
 import type React from "react";
+import { Button } from "../ui/button";
 
 const ClientFollowButton = dynamic(
   () => import("./client/ClientFollowButton"),
   {
-    ssr: false
+    ssr: false,
+    loading: () => (
+      <Button className="h-8 w-20 animate-pulse rounded-md bg-secondary/50" />
+    )
   }
 );
 
@@ -17,20 +23,47 @@ interface FollowButtonProps {
     isFollowedByUser: boolean;
   };
   className?: string;
+  onFollowed?: () => void;
 }
+
+const WrappedClientFollowButton: React.FC<FollowButtonProps> = (props) => {
+  return (
+    <ErrorBoundary
+      onReset={() => {
+        debugLog.component("Follow button error boundary reset:", props.userId);
+      }}
+    >
+      <ClientFollowButton {...props} />
+    </ErrorBoundary>
+  );
+};
 
 const FollowButton: React.FC<FollowButtonProps> = ({
   userId,
   initialState,
-  className
+  className,
+  onFollowed
 }) => {
+  debugLog.component("Rendering FollowButton:", {
+    userId,
+    initialState,
+    className
+  });
+
   return (
-    <ClientFollowButton
+    <WrappedClientFollowButton
       userId={userId}
       initialState={initialState}
       className={className}
+      onFollowed={onFollowed}
     />
   );
 };
 
+FollowButton.displayName = "FollowButton";
+
 export default FollowButton;
+
+export function preloadFollowButton() {
+  void import("./client/ClientFollowButton");
+}

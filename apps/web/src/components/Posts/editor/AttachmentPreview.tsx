@@ -2,7 +2,7 @@ import { getLanguageFromFileName } from "@/lib/codefileExtensions";
 import { formatFileName } from "@/lib/formatFileName";
 import { cn } from "@/lib/utils";
 import { FileAudioIcon, FileCode, FileIcon, X } from "lucide-react";
-import Image from "next/image";
+import { memo, useEffect, useState } from "react";
 import type { Attachment } from "./useMediaUpload";
 
 interface AttachmentPreviewProps {
@@ -10,23 +10,30 @@ interface AttachmentPreviewProps {
   onRemoveClick: () => void;
 }
 
-export function AttachmentPreview({
+export const AttachmentPreview = memo(function AttachmentPreview({
   attachment: { file, isUploading },
   onRemoveClick
 }: AttachmentPreviewProps) {
-  const src = URL.createObjectURL(file);
+  const [objectUrl, setObjectUrl] = useState<string>("");
   const fileName = file.name;
 
+  useEffect(() => {
+    const url = URL.createObjectURL(file);
+    setObjectUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
   const renderPreview = () => {
+    if (!objectUrl) return null;
+
     if (file.type.startsWith("image")) {
       return (
         <div className="relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden rounded-2xl bg-primary/5">
-          <Image
-            src={src}
+          <img
+            src={objectUrl}
             alt={fileName}
-            width={500}
-            height={500}
-            className="h-full w-full object-cover"
+            className="h-full w-full rounded-2xl object-cover"
+            loading="lazy"
           />
         </div>
       );
@@ -60,8 +67,13 @@ export function AttachmentPreview({
     if (file.type.startsWith("video")) {
       return (
         <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-primary/5">
-          <video controls className="h-full w-full object-cover">
-            <source src={src} type={file.type} />
+          <video
+            controls
+            className="h-full w-full object-cover"
+            preload="metadata"
+          >
+            <source src={objectUrl} type={file.type} />
+            Your browser does not support the video tag.
           </video>
         </div>
       );
@@ -79,15 +91,16 @@ export function AttachmentPreview({
                 {formatFileName(fileName)}
               </p>
             </div>
-            <audio controls className="w-full max-w-md">
-              <source src={src} type={file.type} />
+            <audio controls className="w-full max-w-md" preload="metadata">
+              <source src={objectUrl} type={file.type} />
+              Your browser does not support the audio element.
             </audio>
           </div>
         </div>
       );
     }
 
-    // Document or other file types
+    // Default file preview
     return (
       <div className="w-full rounded-2xl bg-primary/5 p-6">
         <div className="flex flex-col items-center gap-4">
@@ -108,17 +121,23 @@ export function AttachmentPreview({
   };
 
   return (
-    <div className={cn("relative w-full", isUploading && "opacity-50")}>
+    <div
+      className={cn(
+        "relative w-full transition-opacity duration-200",
+        isUploading && "opacity-50"
+      )}
+    >
       {renderPreview()}
       {!isUploading && (
         <button
           type="button"
           onClick={onRemoveClick}
-          className="absolute top-3 right-3 rounded-full bg-foreground p-1.5 text-background transition-colors hover:bg-foreground/60"
+          className="absolute top-3 right-3 rounded-full bg-foreground p-1.5 text-background transition-colors hover:bg-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary"
+          aria-label="Remove attachment"
         >
           <X size={20} />
         </button>
       )}
     </div>
   );
-}
+});
