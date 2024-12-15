@@ -1,4 +1,5 @@
 import { hackerNewsAPI } from "@zephyr/aggregator/hackernews";
+import { checkRateLimit } from "@zephyr/aggregator/hackernews/rate-limiter";
 import { validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
 
@@ -8,6 +9,11 @@ export async function GET(request: Request) {
 
     if (!loggedInUser) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const canProceed = await checkRateLimit(`bookmarks:${loggedInUser.id}`);
+    if (!canProceed) {
+      return Response.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -28,15 +34,23 @@ export async function GET(request: Request) {
       bookmarks.map((bookmark) => hackerNewsAPI.fetchStory(bookmark.storyId))
     );
 
-    return Response.json({
-      stories: stories.filter(Boolean),
-      nextCursor:
-        hasMore && bookmarks[bookmarks.length - 1]
-          ? bookmarks[bookmarks.length - 1]?.id
-          : null
-    });
+    return new Response(
+      JSON.stringify({
+        stories: stories.filter(Boolean),
+        nextCursor:
+          hasMore && bookmarks.length > 0
+            ? bookmarks[bookmarks.length - 1]?.id
+            : null
+      }),
+      {
+        headers: {
+          "Cache-Control": "public, max-age=30",
+          "Content-Type": "application/json"
+        }
+      }
+    );
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching bookmarked stories:", error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

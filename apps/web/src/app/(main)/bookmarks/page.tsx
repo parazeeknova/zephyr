@@ -18,10 +18,20 @@ export default async function Page() {
   const userData = user ? await getUserData(user.id) : null;
 
   let bookmarkCount = 0;
+  let hnBookmarkCount = 0;
+
   if (user) {
-    bookmarkCount = await prisma.bookmark.count({
-      where: { userId: user.id }
-    });
+    const [postBookmarks, hnBookmarks] = await Promise.all([
+      prisma.bookmark.count({
+        where: { userId: user.id }
+      }),
+      prisma.hNBookmark.count({
+        where: { userId: user.id }
+      })
+    ]);
+
+    bookmarkCount = postBookmarks;
+    hnBookmarkCount = hnBookmarks;
   }
 
   return (
@@ -52,11 +62,19 @@ export default async function Page() {
         <div className="space-y-5 rounded-2xl border border-border bg-card p-5 shadow-sm">
           <h2 className="font-bold text-xl">Bookmarks Info</h2>
           <p className="text-muted-foreground">
-            Here you can view and manage your bookmarked posts.
+            Here you can view and manage your bookmarked content.
           </p>
-          <p className="text-muted-foreground">
-            Total bookmarks: {bookmarkCount}
-          </p>
+          <div className="space-y-2">
+            <p className="text-muted-foreground">
+              Posts bookmarks: {bookmarkCount}
+            </p>
+            <p className="text-muted-foreground">
+              HackerNews bookmarks: {hnBookmarkCount}
+            </p>
+            <p className="text-muted-foreground">
+              Total bookmarks: {bookmarkCount + hnBookmarkCount}
+            </p>
+          </div>
         </div>
         <div className="mt-2 mb-2">
           <TrendingTopics />

@@ -96,7 +96,10 @@ export function HNStory({ story }: HNStoryProps) {
       const response = await fetch(`/api/hackernews/${story.id}/bookmark`);
       if (!response.ok) throw new Error("Failed to fetch bookmark status");
       return response.json();
-    }
+    },
+    staleTime: 30000,
+    refetchOnWindowFocus: false,
+    retry: false
   });
 
   const { mutate: toggleBookmark } = useMutation({
