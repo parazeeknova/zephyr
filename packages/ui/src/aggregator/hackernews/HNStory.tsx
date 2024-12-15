@@ -119,7 +119,7 @@ export function HNStory({ story }: HNStoryProps) {
       initial="initial"
       animate="animate"
       whileHover="hover"
-      className="group relative px-4 py-6"
+      className="group relative px-2 py-4 sm:px-4 sm:py-6"
     >
       <motion.div
         className="-z-10 absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
@@ -128,10 +128,10 @@ export function HNStory({ story }: HNStoryProps) {
         whileHover={{ opacity: 0.1 }}
       />
 
-      <div className="pointer-events-auto relative z-10 space-y-3">
-        <div className="flex items-start justify-between gap-4">
+      <div className="pointer-events-auto relative z-10 space-y-2 sm:space-y-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div className="flex-1 space-y-2">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <motion.a
                 href={story.url}
                 target="_blank"
@@ -169,7 +169,7 @@ export function HNStory({ story }: HNStoryProps) {
               )}
             </div>
 
-            <div className="flex items-center gap-4 text-muted-foreground text-sm">
+            <div className="flex flex-wrap items-center gap-2 text-muted-foreground text-sm sm:gap-4">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -210,7 +210,7 @@ export function HNStory({ story }: HNStoryProps) {
           </div>
         </div>
 
-        <div className="relative z-10 flex items-center gap-4">
+        <div className="relative z-10 flex flex-wrap items-center gap-2 sm:gap-4">
           <motion.button
             // @ts-expect-error
             onClick={handleCommentClick}

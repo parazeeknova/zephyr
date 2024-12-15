@@ -80,7 +80,7 @@ export function HNSidebar({
       variants={sidebarVariants}
       initial="hidden"
       animate="visible"
-      className="h-[calc(100vh-2rem)] overflow-hidden rounded-lg border border-border/50 bg-background/95 backdrop-blur-sm"
+      className="h-[calc(100vh-2rem)] overflow-hidden rounded-lg border border-border/50 bg-background/95 backdrop-blur-sm md:h-[calc(100vh-2rem)]"
     >
       <div className="flex h-full flex-col">
         <div className="h-full overflow-y-auto rounded-lg border border-border/50 bg-background/95 backdrop-blur-sm">

@@ -23,6 +23,7 @@ import {
   TAB_CONFIG
 } from "./HNSidebar";
 import { HNStory } from "./HNStory";
+import { MobileSidebarToggle } from "./mobile/MobileSidebarToggle";
 import { hackerNewsMutations } from "./mutations";
 
 const ITEMS_PER_PAGE = 20;
@@ -154,7 +155,8 @@ export function HNFeed() {
     <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
       <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="flex gap-8">
-          <div className="w-80 shrink-0">
+          {/* Desktop Sidebar */}
+          <div className="hidden w-80 shrink-0 md:block">
             <div className="fixed w-80">
               <HNSidebar
                 searchInput={searchInput}
@@ -169,6 +171,23 @@ export function HNFeed() {
                 onRefresh={handleRefresh}
               />
             </div>
+          </div>
+
+          <div className="md:hidden">
+            <MobileSidebarToggle>
+              <HNSidebar
+                searchInput={searchInput}
+                setSearchInput={setSearchInput}
+                sortBy={sortBy}
+                setSortBy={handleSortChange}
+                activeTab={activeTab}
+                setActiveTab={handleTabChange}
+                totalStories={totalStories}
+                totalPoints={totalPoints}
+                isFetching={isFetching}
+                onRefresh={handleRefresh}
+              />
+            </MobileSidebarToggle>
           </div>
 
           <motion.div
