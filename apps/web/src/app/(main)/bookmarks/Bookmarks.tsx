@@ -111,16 +111,17 @@ export default function Bookmarks() {
           animate="visible"
           variants={tabVariants}
           transition={{ duration: 0.5 }}
-          className="relative"
+          className="relative w-full px-4 sm:w-auto sm:px-0"
         >
-          <div className="-inset-3 absolute rounded-lg bg-gradient-to-r from-orange-500/20 via-yellow-500/20 to-orange-500/20 blur-xl" />
-          <TabsList className="relative grid w-[400px] grid-cols-2 rounded-full bg-background/95 p-1 text-muted-foreground shadow-xl backdrop-blur-sm">
+          <div className="-inset-3 absolute hidden rounded-lg bg-gradient-to-r from-orange-500/20 via-yellow-500/20 to-orange-500/20 blur-xl sm:block" />
+          <TabsList className="relative grid w-full grid-cols-2 rounded-full bg-background/95 p-1 text-muted-foreground shadow-xl backdrop-blur-sm sm:w-[400px]">
             <TabsTrigger
               value="posts"
               className="relative rounded-full data-[state=active]:bg-orange-500/10 data-[state=active]:text-orange-500"
             >
               <Newspaper className="mr-2 h-4 w-4" />
-              Posts
+              <span className="hidden sm:inline">Posts</span>
+              <span className="sm:hidden">Posts</span>
               {posts.length > 0 && (
                 <span className="ml-2 rounded-full bg-orange-500/10 px-2 py-0.5 text-orange-500 text-xs">
                   {posts.length}
@@ -132,7 +133,8 @@ export default function Bookmarks() {
               className="relative rounded-full data-[state=active]:bg-orange-500/10 data-[state=active]:text-orange-500"
             >
               <Terminal className="mr-2 h-4 w-4" />
-              HackerNews
+              <span className="hidden sm:inline">HackerNews</span>
+              <span className="sm:hidden">HN</span>
               {hnStories.length > 0 && (
                 <span className="ml-2 rounded-full bg-orange-500/10 px-2 py-0.5 text-orange-500 text-xs">
                   {hnStories.length}
