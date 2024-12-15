@@ -98,7 +98,6 @@ export class HackerNewsAPI {
     identifier = "anonymous"
   }: FetchStoriesOptions): Promise<HNApiResponse> {
     try {
-      // Check rate limit first
       if (identifier) {
         const canProceed = await checkRateLimit(identifier);
         if (!canProceed) {
@@ -164,7 +163,6 @@ export class HackerNewsAPI {
     try {
       await hackerNewsCache.invalidateStories();
       const stories = await this.fetchTopStories();
-      // Prefetch first page
       const firstPageIds = stories.slice(0, 30);
       await Promise.all(firstPageIds.map((id) => this.fetchStory(id)));
     } catch (error) {

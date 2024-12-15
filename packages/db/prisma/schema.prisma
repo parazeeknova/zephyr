@@ -38,6 +38,7 @@ model User {
   vote                    Vote[]
   receivedNotifications   Notification[]           @relation("Recipient")
   issuedNotifications     Notification[]           @relation("Issuer")
+  hnbookmark              HNBookmark[]
 
   createdAt DateTime @default(now())
 
@@ -158,6 +159,17 @@ model Bookmark {
 
   @@unique([userId, postId])
   @@map("bookmarks")
+}
+
+model HNBookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  storyId   Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, storyId])
+  @@index([userId])
 }
 
 // Comment model

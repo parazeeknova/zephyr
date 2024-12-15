@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { CompassIcon, Home, Search, TrendingUp } from "lucide-react";
+import { CompassIcon, Home, Newspaper, Search, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
 interface NavigationCardProps {
@@ -91,6 +91,28 @@ export default function NavigationCard({
                   }`}
                 />
                 {!isCollapsed && <span>Zephyrians</span>}
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+
+        <div className="block w-full">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link href="/hackernews" className="block w-full">
+              <Button
+                variant="ghost"
+                size={isCollapsed ? "icon" : "lg"}
+                className={`w-full ${
+                  isCollapsed ? "justify-center" : "justify-start"
+                }`}
+                title="Aggregator (BETA)"
+              >
+                <Newspaper
+                  className={`h-5 w-5 text-muted-foreground ${
+                    isCollapsed ? "" : "mr-4"
+                  }`}
+                />
+                {!isCollapsed && <span>HackerNews</span>}
               </Button>
             </Link>
           </motion.div>

@@ -1,6 +1,8 @@
 "use client";
 
-import type { HNStory } from "@zephyr/aggregator/hackernews";
+import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
 import {
@@ -21,10 +23,6 @@ import {
   TooltipTrigger
 } from "../../components/ui/tooltip";
 
-interface HNStoryProps {
-  story: HNStory;
-}
-
 const storyVariants = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -39,23 +37,78 @@ const iconButtonVariants = {
   hover: { scale: 1.1 }
 };
 
-// biome-ignore lint/suspicious/noRedeclare: <explanation>
+interface HNStoryProps {
+  story: {
+    id: number;
+    title: string;
+    url?: string;
+    by: string;
+    time: number;
+    score: number;
+    descendants: number;
+  };
+}
+
 export function HNStory({ story }: HNStoryProps) {
   const domain = story.url ? new URL(story.url).hostname : null;
   const timeAgo = formatDistanceToNow(story.time * 1000, { addSuffix: true });
 
   const handleShare = async () => {
     try {
-      await navigator.share({
-        title: story.title,
-        url: story.url || `https://news.ycombinator.com/item?id=${story.id}`
-      });
-    } catch (_err) {
-      navigator.clipboard.writeText(
-        story.url || `https://news.ycombinator.com/item?id=${story.id}`
-      );
+      if (navigator.share) {
+        await navigator.share({
+          title: story.title,
+          url: story.url || `https://news.ycombinator.com/item?id=${story.id}`
+        });
+      } else {
+        await navigator.clipboard.writeText(
+          story.url || `https://news.ycombinator.com/item?id=${story.id}`
+        );
+        toast({
+          title: "Copied to clipboard",
+          description: "Link has been copied to your clipboard"
+        });
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
     }
   };
+
+  const handleVisit = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.stopPropagation(); // Prevent event bubbling
+    window.open(story.url, "_blank", "noopener,noreferrer");
+  };
+
+  const handleCommentClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.stopPropagation(); // Prevent event bubbling
+    window.open(
+      `https://news.ycombinator.com/item?id=${story.id}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
+  const queryClient = useQueryClient();
+
+  const { data: bookmarkData } = useQuery({
+    queryKey: ["hn-bookmark", story.id],
+    queryFn: async () => {
+      const response = await fetch(`/api/hackernews/${story.id}/bookmark`);
+      if (!response.ok) throw new Error("Failed to fetch bookmark status");
+      return response.json();
+    }
+  });
+
+  const { mutate: toggleBookmark } = useMutation({
+    mutationFn: async () => {
+      const method = bookmarkData?.isBookmarked ? "DELETE" : "POST";
+      await fetch(`/api/hackernews/${story.id}/bookmark`, { method });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["hn-bookmark", story.id] });
+      queryClient.invalidateQueries({ queryKey: ["hn-bookmarks"] });
+    }
+  });
 
   return (
     <motion.div
@@ -65,7 +118,14 @@ export function HNStory({ story }: HNStoryProps) {
       whileHover="hover"
       className="group relative px-4 py-6"
     >
-      <div className="space-y-3">
+      <motion.div
+        className="-z-10 absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
+        initial={false}
+        animate={{ opacity: 0 }}
+        whileHover={{ opacity: 0.1 }}
+      />
+
+      <div className="pointer-events-auto relative z-10 space-y-3">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
@@ -73,7 +133,8 @@ export function HNStory({ story }: HNStoryProps) {
                 href={story.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-xl transition-colors hover:text-orange-500"
+                onClick={handleVisit}
+                className="relative z-10 cursor-pointer font-medium text-xl transition-colors hover:text-orange-500"
                 whileHover={{ x: 2 }}
               >
                 {story.title}
@@ -81,14 +142,23 @@ export function HNStory({ story }: HNStoryProps) {
               {domain && (
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
-                      <Badge
-                        variant="secondary"
-                        className="text-xs hover:bg-orange-500/10 hover:text-orange-500"
+                    <TooltipTrigger asChild>
+                      <motion.a
+                        href={story.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={handleVisit}
+                        className="inline-flex items-center"
+                        whileHover={{ scale: 1.05 }}
                       >
-                        <Link className="mr-1 h-3 w-3" />
-                        {domain}
-                      </Badge>
+                        <Badge
+                          variant="secondary"
+                          className="cursor-pointer text-xs hover:bg-orange-500/10 hover:text-orange-500"
+                        >
+                          <Link className="mr-1 h-3 w-3" />
+                          {domain}
+                        </Badge>
+                      </motion.a>
                     </TooltipTrigger>
                     <TooltipContent>Visit website</TooltipContent>
                   </Tooltip>
@@ -99,11 +169,19 @@ export function HNStory({ story }: HNStoryProps) {
             <div className="flex items-center gap-4 text-muted-foreground text-sm">
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger className="flex items-center gap-1 hover:text-orange-500">
-                    <User className="h-4 w-4" />
-                    <span>{story.by}</span>
+                  <TooltipTrigger asChild>
+                    <motion.a
+                      href={`https://news.ycombinator.com/user?id=${story.by}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 hover:text-orange-500"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <User className="h-4 w-4" />
+                      <span>{story.by}</span>
+                    </motion.a>
                   </TooltipTrigger>
-                  <TooltipContent>Author</TooltipContent>
+                  <TooltipContent>View author profile</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
 
@@ -129,88 +207,53 @@ export function HNStory({ story }: HNStoryProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <motion.a
-                  href={`https://news.ycombinator.com/item?id=${story.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-orange-500"
-                  variants={iconButtonVariants}
-                  whileHover="hover"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  <span>{story.descendants} comments</span>
-                </motion.a>
-              </TooltipTrigger>
-              <TooltipContent>View discussion</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        <div className="relative z-10 flex items-center gap-4">
+          <motion.button
+            // @ts-expect-error
+            onClick={handleCommentClick}
+            className="group flex cursor-pointer items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-orange-500"
+            whileHover={{ scale: 1.05 }}
+          >
+            <MessageCircle className="h-4 w-4" />
+            <span>{story.descendants} comments</span>
+          </motion.button>
 
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <motion.button
-                  onClick={handleShare}
-                  className="flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-orange-500"
-                  variants={iconButtonVariants}
-                  whileHover="hover"
-                >
-                  <Share2 className="h-4 w-4" />
-                  <span>Share</span>
-                </motion.button>
-              </TooltipTrigger>
-              <TooltipContent>Share this story</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <motion.button
+            onClick={handleShare}
+            className="group flex cursor-pointer items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-orange-500"
+            whileHover={{ scale: 1.05 }}
+          >
+            <Share2 className="h-4 w-4" />
+            <span>Share</span>
+          </motion.button>
 
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <motion.button
-                  className="flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-orange-500"
-                  variants={iconButtonVariants}
-                  whileHover="hover"
-                >
-                  <Bookmark className="h-4 w-4" />
-                  <span>Save</span>
-                </motion.button>
-              </TooltipTrigger>
-              <TooltipContent>Save for later</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <motion.button
+            onClick={() => toggleBookmark()}
+            className={cn(
+              "group flex cursor-pointer items-center gap-2 text-sm transition-colors",
+              bookmarkData?.isBookmarked
+                ? "text-orange-500"
+                : "text-muted-foreground hover:text-orange-500"
+            )}
+            whileHover={{ scale: 1.05 }}
+          >
+            <Bookmark className="h-4 w-4" />
+            <span>{bookmarkData?.isBookmarked ? "Saved" : "Save"}</span>
+          </motion.button>
 
           {story.url && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <motion.a
-                    href={story.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-auto flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-orange-500"
-                    variants={iconButtonVariants}
-                    whileHover="hover"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    <span>Visit</span>
-                  </motion.a>
-                </TooltipTrigger>
-                <TooltipContent>Open original link</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <motion.button
+              // @ts-expect-error
+              onClick={handleVisit}
+              className="group ml-auto flex cursor-pointer items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-orange-500"
+              whileHover={{ scale: 1.05 }}
+            >
+              <ExternalLink className="h-4 w-4" />
+              <span>Visit</span>
+            </motion.button>
           )}
         </div>
       </div>
-
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
-        initial={false}
-        animate={{ opacity: 0 }}
-        whileHover={{ opacity: 0.1 }}
-      />
     </motion.div>
   );
 }
