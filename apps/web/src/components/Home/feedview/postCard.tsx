@@ -33,14 +33,14 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
 
   const PostContent = () => (
     <>
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div className="flex min-w-0 items-center space-x-2">
           <UserTooltip user={post.user}>
             <Link href={`/users/${post.user.username}`}>
               <UserAvatar avatarUrl={post.user.avatarUrl} />
             </Link>
           </UserTooltip>
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0">
             <UserTooltip user={post.user}>
               <Link href={`/users/${post.user.username}`}>
                 <h3 className="truncate font-semibold text-foreground">
@@ -49,29 +49,27 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
               </Link>
             </UserTooltip>
             <Link href={`/posts/${post.id}`} suppressHydrationWarning>
-              <p className="truncate text-muted-foreground text-xs hover:underline sm:text-sm">
+              <p className="truncate text-muted-foreground text-sm hover:underline">
                 {formatRelativeDate(post.createdAt)}
               </p>
             </Link>
           </div>
         </div>
 
-        <div className="flex items-center justify-end space-x-2">
+        <div className="flex shrink-0 items-center space-x-2">
           {post.user.id === user.id && (
             <PostMoreButton
               post={post}
-              className="opacity-100 transition-opacity group-hover/post:opacity-100 sm:opacity-0"
+              className="opacity-0 transition-opacity group-hover/post:opacity-100"
             />
           )}
           <Button
             variant="ghost"
             size="sm"
-            className="flex items-center space-x-1 text-muted-foreground"
+            className="flex items-center space-x-2 text-muted-foreground"
           >
             <Eye className="h-4 w-4" />
-            <span className="text-xs tabular-nums sm:text-sm">
-              {post.viewCount}
-            </span>
+            <span className="text-sm tabular-nums">{post.viewCount}</span>
           </Button>
           <BookmarkButton
             postId={post.id}
@@ -84,38 +82,32 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
         </div>
       </div>
 
-      <div className="px-1 sm:px-0">
-        <AuraCount postId={post.id} initialAura={post.aura} />
-      </div>
+      <AuraCount postId={post.id} initialAura={post.aura} />
 
       <Linkify>
-        <p className="overflow-wrap-anywhere mb-4 max-w-full whitespace-pre-wrap break-words px-1 text-foreground text-sm sm:px-0 sm:text-base">
+        <p className="overflow-wrap-anywhere mb-4 max-w-full whitespace-pre-wrap break-words text-foreground">
           {post.content}
         </p>
       </Linkify>
 
       {!!post.attachments.length && (
-        <div className="-mx-4 max-w-full overflow-hidden sm:mx-0">
+        <div className="max-w-full overflow-hidden">
           <MediaPreviews attachments={post.attachments} />
         </div>
       )}
 
-      {!!post.attachments.length && (
-        <Separator className="-mx-4 mt-4 sm:mx-0" />
-      )}
+      {!!post.attachments.length && <Separator className="mt-4" />}
 
-      <div className="mt-2 flex items-center justify-between gap-2 px-1 sm:px-0">
-        <div className="flex-1">
-          <AuraVoteButton
-            postId={post.id}
-            initialState={{
-              aura: post.aura,
-              userVote: post.vote[0]?.value || 0
-            }}
-            authorName={post.user.displayName}
-          />
-        </div>
-        <div className="flex items-center space-x-1 sm:space-x-2">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+        <AuraVoteButton
+          postId={post.id}
+          initialState={{
+            aura: post.aura,
+            userVote: post.vote[0]?.value || 0
+          }}
+          authorName={post.user.displayName}
+        />
+        <div className="flex items-center space-x-2">
           <CommentButton
             post={post}
             onClick={() => setShowComments(!showComments)}
@@ -124,19 +116,14 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
             <Button
               variant="ghost"
               size="sm"
-              className="text-muted-foreground hover:text-foreground"
+              className="hover: text-muted-foreground"
             >
-              <ArrowUpRight className="h-4 w-4 sm:h-5 sm:w-5" />
+              <ArrowUpRight className="h-5 w-5" />
             </Button>
           </Link>
         </div>
       </div>
-
-      {showComments && (
-        <div className="-mx-4 mt-2 sm:mx-0">
-          <Comments post={post} />
-        </div>
-      )}
+      {showComments && <Comments post={post} />}
     </>
   );
 
@@ -146,18 +133,17 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       id={`post-${post.id}`}
-      className="w-full"
     >
       <ViewTracker postId={post.id} />
       {isJoined ? (
         <div className="group/post">
-          <div className="px-4 py-3 sm:p-4">
+          <div className="p-4">
             <PostContent />
           </div>
         </div>
       ) : (
         <Card className="group/post border-border border-t border-b bg-background">
-          <CardContent className="px-4 py-3 sm:p-4">
+          <CardContent className="p-4">
             <PostContent />
           </CardContent>
         </Card>
@@ -175,12 +161,12 @@ function CommentButton({ post, onClick }: CommentButtonProps) {
   return (
     <Button
       onClick={onClick}
-      className="flex items-center space-x-1 text-muted-foreground hover:text-foreground sm:space-x-2"
+      className="flex items-center space-x-2 text-muted-foreground hover:text-foreground"
       variant="ghost"
       size="sm"
     >
-      <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
-      <span className="font-medium text-xs tabular-nums sm:text-sm">
+      <MessageSquare className="size-5" />
+      <span className="font-medium text-sm tabular-nums">
         {post._count.comments} <span className="hidden sm:inline">Eddies</span>
       </span>
     </Button>
