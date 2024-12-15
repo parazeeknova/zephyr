@@ -10,10 +10,13 @@ import type { Media } from "@prisma/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import fallbackImage from "@zephyr-assets/fallback.png";
 import { MediaViewerSkeleton } from "@zephyr-ui/Layouts/skeletons/MediaViewerSkeleton";
+import {} from "framer-motion";
 import { ChevronLeft, ChevronRight, Download, FileIcon, X } from "lucide-react";
+import {} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { CodePreview } from "./CodePreview";
+import { CustomVideoPlayer } from "./CustomVideoPlayer";
 
 const FALLBACK_IMAGE = fallbackImage;
 
@@ -179,21 +182,17 @@ const MediaViewer = ({
 
       case "VIDEO":
         return (
-          <div className="relative max-h-full max-w-full">
+          <div className="relative max-h-full max-w-full focus-within:outline-none">
             {isLoading && <MediaViewerSkeleton type="VIDEO" />}
-            <video
+            <CustomVideoPlayer
               src={getMediaUrl(currentMedia.id)}
-              controls
               className={cn(
-                "max-h-[85vh] w-auto",
+                "max-h-[85vh] w-auto outline-none focus:outline-none focus-visible:outline-none",
                 "shadow-lg transition-transform duration-200",
                 isLoading && "hidden"
               )}
-              autoPlay
-              playsInline
               onLoadedData={() => setIsLoading(false)}
               onError={() => setIsLoading(false)}
-              aria-label={`Video ${currentIndex + 1} of ${media.length}`}
             />
           </div>
         );
