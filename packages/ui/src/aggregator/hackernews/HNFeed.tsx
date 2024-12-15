@@ -1,7 +1,5 @@
 "use client";
 
-import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/src/components/ui/button";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import type { HNApiResponse } from "@zephyr/aggregator/hackernews";
 import { AnimatePresence, motion } from "framer-motion";
@@ -14,6 +12,8 @@ import {
   Search
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useToast } from "../../../hooks/use-toast";
+import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
 import { Tabs, TabsContent } from "../../components/ui/tabs";
 import {
