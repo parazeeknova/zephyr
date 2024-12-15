@@ -7,6 +7,7 @@ import { getLanguageFromFileName } from "@/lib/codefileExtensions";
 import { formatFileName } from "@/lib/formatFileName";
 import { cn } from "@/lib/utils";
 import type { Media } from "@prisma/client";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import fallbackImage from "@zephyr-assets/fallback.png";
 import { MediaViewerSkeleton } from "@zephyr-ui/Layouts/skeletons/MediaViewerSkeleton";
 import { ChevronLeft, ChevronRight, Download, FileIcon, X } from "lucide-react";
@@ -294,8 +295,10 @@ const MediaViewer = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-h-[95vh] max-w-[95vw] border-none bg-transparent p-0">
-        <DialogTitle className="sr-only">
-          Media Viewer - {currentIndex + 1} of {media.length}
+        <DialogTitle asChild>
+          <VisuallyHidden>
+            Media Viewer - {currentIndex + 1} of {media.length}
+          </VisuallyHidden>
         </DialogTitle>
 
         <div className="relative flex h-full min-h-[50vh] w-full items-center justify-center">

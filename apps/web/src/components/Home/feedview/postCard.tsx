@@ -1,10 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowUpRight, Eye, MessageSquare } from "lucide-react";
-import Link from "next/link";
-import type React from "react";
-
 import { useSession } from "@/app/(main)/SessionProvider";
 import UserTooltip from "@/components/Layouts/UserTooltip";
 import ViewTracker from "@/components/Posts/ViewCounter";
@@ -20,6 +15,10 @@ import AuraVoteButton from "@zephyr-ui/Posts/AuraVoteButton";
 import BookmarkButton from "@zephyr-ui/Posts/BookmarkButton";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
 import type { PostData } from "@zephyr/db";
+import { motion } from "framer-motion";
+import { ArrowUpRight, Eye, MessageSquare } from "lucide-react";
+import Link from "next/link";
+import type React from "react";
 import { useState } from "react";
 import { MediaPreviews } from "./MediaPreviews";
 
@@ -133,7 +132,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      // @ts-expect-error
       id={`post-${post.id}`}
     >
       <ViewTracker postId={post.id} />
