@@ -16,14 +16,21 @@ import { formatNumber } from "@/lib/utils";
 import { getSecureImageUrl } from "@/utils/imageUrl";
 import { useQuery } from "@tanstack/react-query";
 import FollowButton from "@zephyr-ui/Layouts/FollowButton";
-import FollowerCount from "@zephyr-ui/Layouts/FollowerCount";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import type { UserData } from "@zephyr/db";
 import { formatDate, parseISO } from "date-fns";
 import { motion } from "framer-motion";
-import { BadgeCheckIcon, Flame, MoreVertical } from "lucide-react";
+import {
+  BadgeCheckIcon,
+  Flame,
+  MoreVertical,
+  UserPlus,
+  Users
+} from "lucide-react";
 import type React from "react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import FollowersList from "../../FollowersList";
+import FollowingList from "../../FollowingList";
 
 interface UserDetailsProps {
   userData: UserData;
@@ -34,6 +41,8 @@ const UserDetails: React.FC<UserDetailsProps> = ({
   userData: initialUserData,
   loggedInUserId
 }) => {
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
   const { toast } = useToast();
 
   const {
@@ -144,42 +153,93 @@ const UserDetails: React.FC<UserDetailsProps> = ({
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
-              <div className="flex items-center justify-between">
+              <div className="mb-3 flex items-center justify-between">
                 <h1 className="font-bold text-3xl">{userData.displayName}</h1>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <div className="flex items-center font-semibold text-foreground text-lg">
-                        <Flame className="mr-1 h-6 w-6 text-orange-500" />0
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Aura</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <div className="space-y-2">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div className="flex items-center justify-end font-semibold text-foreground text-lg">
+                          <Flame className="mr-1 h-6 w-6 text-orange-500" />0
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Aura</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center justify-end gap-1.5 text-sm"
+                  >
+                    <span className="font-medium">
+                      {formatNumber(userData?._count?.posts ?? 0)}
+                    </span>
+                    <span className="text-muted-foreground">posts</span>
+                  </motion.div>
+                </div>
               </div>
-              <div className="flex items-center text-muted-foreground">
-                @{userData.username}
-                <BadgeCheckIcon className="ml-1 h-4 w-4" />
-              </div>
-              <div className="text-muted-foreground">
-                Member since{" "}
-                {userData?.createdAt
-                  ? formatCreatedAt(userData.createdAt)
-                  : "Unknown date"}
-              </div>
-              <div className="flex items-center gap-3">
-                <span>
-                  Posts:{" "}
-                  <span className="font-semibold">
-                    {formatNumber(userData?._count?.posts ?? 0)}
-                  </span>
-                </span>
-                <FollowerCount
-                  userId={userData?.id ?? ""}
-                  initialState={followerInfo}
-                />
+
+              {/* User info and stats */}
+              <div className="space-y-3">
+                <div className="flex items-center text-muted-foreground">
+                  @{userData.username}
+                  <BadgeCheckIcon className="ml-1 h-4 w-4" />
+                </div>
+                <div className="text-muted-foreground">
+                  Member since{" "}
+                  {userData?.createdAt
+                    ? formatCreatedAt(userData.createdAt)
+                    : "Unknown date"}
+                </div>
+
+                {/* Followers and Following stats */}
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.45 }}
+                    className="relative"
+                  >
+                    <motion.button
+                      onClick={() => setShowFollowers(true)}
+                      className="flex items-center gap-1.5 rounded-md px-3 py-1.5 transition-all duration-200 hover:bg-accent/50"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Users className="h-4 w-4 text-primary" />
+                      <span>
+                        <span className="font-semibold">
+                          {formatNumber(followerInfo.followers)}
+                        </span>{" "}
+                        <span className="text-muted-foreground">Followers</span>
+                      </span>
+                    </motion.button>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="relative"
+                  >
+                    <motion.button
+                      onClick={() => setShowFollowing(true)}
+                      className="flex items-center gap-1.5 rounded-md px-3 py-1.5 transition-all duration-200 hover:bg-accent/50"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <UserPlus className="h-4 w-4 text-primary" />
+                      <span>
+                        <span className="font-semibold">
+                          {formatNumber(userData?._count?.following ?? 0)}
+                        </span>{" "}
+                        <span className="text-muted-foreground">Following</span>
+                      </span>
+                    </motion.button>
+                  </motion.div>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 {userData.id === loggedInUserId ? (
@@ -222,6 +282,18 @@ const UserDetails: React.FC<UserDetailsProps> = ({
           )}
         </CardContent>
       </Card>
+      <FollowersList
+        userId={userData?.id ?? ""}
+        isOpen={showFollowers}
+        onClose={() => setShowFollowers(false)}
+        loggedInUserId={loggedInUserId}
+      />
+      <FollowingList
+        userId={userData?.id ?? ""}
+        isOpen={showFollowing}
+        onClose={() => setShowFollowing(false)}
+        loggedInUserId={loggedInUserId}
+      />
     </motion.div>
   );
 };
