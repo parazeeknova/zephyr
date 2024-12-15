@@ -26,13 +26,6 @@ const createRedisConfig = (): RedisOptions => {
     }
   };
 
-  console.log("Redis Config (sanitized):", {
-    host: config.host,
-    port: config.port,
-    hasPassword: !!config.password,
-    db: config.db
-  });
-
   return config;
 };
 
@@ -40,62 +33,6 @@ let redis: IORedis;
 
 try {
   redis = new IORedis(createRedisConfig());
-
-  const debugRedis = {
-    async testConnection() {
-      try {
-        await redis.ping();
-        console.log("Redis connection test: SUCCESS");
-        return true;
-      } catch (error) {
-        console.error("Redis connection test: FAILED", error);
-        return false;
-      }
-    },
-
-    async testCache() {
-      try {
-        const testKey = "test:connection";
-        await redis.set(testKey, "working");
-        const value = await redis.get(testKey);
-        await redis.del(testKey);
-        console.log(
-          "Redis cache test:",
-          value === "working" ? "SUCCESS" : "FAILED"
-        );
-        return value === "working";
-      } catch (error) {
-        console.error("Redis cache test: FAILED", error);
-        return false;
-      }
-    }
-  };
-
-  redis.on("error", (error) => {
-    console.error("Redis connection error:", error);
-    console.error("Redis connection details:", {
-      host: redis.options.host,
-      port: redis.options.port,
-      hasPassword: !!redis.options.password,
-      db: redis.options.db
-    });
-  });
-
-  redis.on("connect", () => {
-    console.log("Connected to Redis successfully");
-    debugRedis
-      .testConnection()
-      .then(() => debugRedis.testCache())
-      .catch(console.error);
-  });
-
-  redis.on("ready", () => {
-    console.log("Redis client ready");
-  });
-
-  redis.on("reconnecting", () => {
-    console.log("Redis client reconnecting");
-  });
 } catch (error) {
   console.error("Failed to initialize Redis client:", error);
   throw error;

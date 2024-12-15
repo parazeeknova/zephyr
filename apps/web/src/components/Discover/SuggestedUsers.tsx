@@ -9,6 +9,7 @@ import {
   TooltipTrigger
 } from "@/components/ui/tooltip";
 import Linkify from "@/helpers/global/Linkify";
+import { useFollowStates } from "@/hooks/useFollowStates";
 import { formatNumber } from "@/lib/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import FollowButton from "@zephyr-ui/Layouts/FollowButton";
@@ -29,6 +30,10 @@ interface EnhancedUserData extends UserData {
     displayName: string;
     avatarUrl: string | null;
   }[];
+  followState?: {
+    followers: number;
+    isFollowedByUser: boolean;
+  };
 }
 
 const MutualFollowers = ({
@@ -116,11 +121,13 @@ const MutualFollowers = ({
 const UserCard = ({
   user,
   index,
-  onFollowed
+  onFollowed,
+  initialFollowState
 }: {
   user: EnhancedUserData;
   index: number;
   onFollowed: () => void;
+  initialFollowState?: boolean;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -143,13 +150,11 @@ const UserCard = ({
       className="relative"
     >
       <Card className="group relative h-full overflow-hidden bg-gradient-to-br from-background to-muted/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10">
-        {/* Background gradients */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,#000,transparent_70%)]" />
         </div>
 
         <div className="relative p-6">
-          {/* Header - Avatar and Stats */}
           <div className="flex items-center justify-between">
             <motion.div
               initial={false}
@@ -165,7 +170,6 @@ const UserCard = ({
               </Link>
             </motion.div>
 
-            {/* Stats */}
             <div className="flex flex-col items-end space-y-1">
               <TooltipProvider>
                 <Tooltip>
@@ -209,7 +213,6 @@ const UserCard = ({
             </div>
           </div>
 
-          {/* User Info Section */}
           <div className="mt-4 space-y-2">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
@@ -243,7 +246,6 @@ const UserCard = ({
               </div>
             </div>
 
-            {/* Bio Section */}
             <AnimatePresence>
               {user.bio && (
                 <motion.div
@@ -261,14 +263,10 @@ const UserCard = ({
                 </motion.div>
               )}
             </AnimatePresence>
-
-            {/* Mutual Followers */}
             {user.mutualFollowers && (
               <MutualFollowers followers={user.mutualFollowers} />
             )}
           </div>
-
-          {/* Follow Button */}
           <motion.div
             className="mt-4"
             initial={false}
@@ -282,7 +280,7 @@ const UserCard = ({
               userId={user.id}
               initialState={{
                 followers: user._count.followers,
-                isFollowedByUser: false
+                isFollowedByUser: initialFollowState ?? false
               }}
               className="w-full bg-primary/90 hover:bg-primary"
               onFollowed={onFollowed}
@@ -290,7 +288,6 @@ const UserCard = ({
           </motion.div>
         </div>
 
-        {/* Decorative Gradients */}
         <motion.div
           initial={false}
           animate={{
@@ -330,6 +327,13 @@ const SuggestedUsers: React.FC<SuggestedUsersProps> = ({ userId }) => {
     staleTime: 30000,
     refetchOnWindowFocus: false
   });
+
+  const { data: followStates } = useFollowStates(users?.map((u) => u.id) || []);
+
+  const _enhancedUsers = users?.map((user) => ({
+    ...user,
+    followState: followStates?.[user.id]
+  }));
 
   const handleUserFollowed = useCallback(
     (followedUserId: string) => {
@@ -400,9 +404,17 @@ const SuggestedUsers: React.FC<SuggestedUsersProps> = ({ userId }) => {
               }}
             >
               <UserCard
-                user={user}
+                user={{
+                  ...user,
+                  _count: {
+                    ...user._count,
+                    followers:
+                      user.followState?.followers ?? user._count.followers
+                  }
+                }}
                 index={index}
                 onFollowed={() => handleUserFollowed(user.id)}
+                initialFollowState={user.followState?.isFollowedByUser}
               />
             </motion.div>
           ))}

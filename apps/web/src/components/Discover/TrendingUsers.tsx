@@ -6,17 +6,35 @@ import { formatNumber } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import FollowButton from "@zephyr-ui/Layouts/FollowButton";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import type { UserData } from "@zephyr/db";
+import type { UserData as BaseUserData } from "@zephyr/db";
 import { motion } from "framer-motion";
 import { BadgeCheckIcon, Flame } from "lucide-react";
 import Link from "next/link";
+
+interface UserData extends BaseUserData {
+  followState?: {
+    followers: number;
+    isFollowedByUser: boolean;
+  };
+}
 
 const TrendingUsers = () => {
   const { data: users, isLoading } = useQuery<UserData[]>({
     queryKey: ["trending-users"],
     queryFn: async () => {
       const response = await fetch("/api/users/trending");
-      return response.json();
+      const users = await response.json();
+
+      const followStates = await fetch("/api/users/follow-states", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userIds: users.map((u: UserData) => u.id) })
+      }).then((r) => r.json());
+
+      return users.map((user: UserData) => ({
+        ...user,
+        followState: followStates[user.id]
+      }));
     }
   });
 
@@ -97,10 +115,12 @@ const TrendingUsers = () => {
                 </div>
                 <FollowButton
                   userId={user.id}
-                  initialState={{
-                    followers: user._count.followers,
-                    isFollowedByUser: false
-                  }}
+                  initialState={
+                    user.followState || {
+                      followers: user._count.followers,
+                      isFollowedByUser: false
+                    }
+                  }
                   className="w-full"
                 />
               </div>

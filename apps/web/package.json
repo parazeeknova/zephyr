@@ -56,6 +56,7 @@
     "file-type": "^19.6.0",
     "framer-motion": "^11.13.5",
     "ioredis": "^5.4.1",
+    "jotai": "^2.10.3",
     "jsonwebtoken": "^9.0.2",
     "ky": "^1.7.3",
     "lucia": "^3.2.2",

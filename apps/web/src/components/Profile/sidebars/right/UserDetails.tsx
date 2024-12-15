@@ -45,10 +45,19 @@ const UserDetails: React.FC<UserDetailsProps> = ({
     queryFn: async () => {
       try {
         const response = await fetch(`/api/users/${initialUserData.id}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch user data");
-        }
-        return await response.json();
+        if (!response.ok) throw new Error("Failed to fetch user data");
+        const userData = await response.json();
+
+        const followStates = await fetch("/api/users/follow-states", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userIds: [userData.id] })
+        }).then((r) => r.json());
+
+        return {
+          ...userData,
+          followState: followStates[userData.id]
+        };
       } catch (_err) {
         toast({
           title: "Error",
@@ -178,7 +187,12 @@ const UserDetails: React.FC<UserDetailsProps> = ({
                 ) : (
                   <FollowButton
                     userId={userData.id}
-                    initialState={followerInfo}
+                    initialState={
+                      userData.followState || {
+                        followers: userData._count.followers,
+                        isFollowedByUser: false
+                      }
+                    }
                   />
                 )}
                 <Button

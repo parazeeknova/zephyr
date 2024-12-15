@@ -1,14 +1,20 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import useFollowerInfo from "@/hooks/userFollowerInfo";
+import { useToast } from "@/hooks/use-toast";
 import {
   useFollowUserMutation,
   useUnfollowUserMutation
 } from "@/hooks/userMutations";
 import { cn } from "@/lib/utils";
+import { followStateAtom } from "@/state/followState";
+import { useQueryClient } from "@tanstack/react-query";
+import { debugLog } from "@zephyr/config/debug";
+import type { FollowerInfo } from "@zephyr/db";
 import { AnimatePresence, motion } from "framer-motion";
+import { useAtom } from "jotai/react";
 import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface ClientFollowButtonProps {
   userId: string;
@@ -76,37 +82,151 @@ const ButtonContent = ({
   </AnimatePresence>
 );
 
+const useFollowState = (userId: string, initialState: FollowerInfo) => {
+  const [globalFollowState, setGlobalFollowState] = useAtom(followStateAtom);
+  const [localState, setLocalState] = useState<FollowerInfo>(initialState);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const persistedState = globalFollowState[userId];
+    if (persistedState && persistedState.lastUpdated > Date.now() - 300000) {
+      setLocalState({
+        followers: persistedState.followers,
+        isFollowedByUser: persistedState.isFollowing
+      });
+    }
+  }, [userId, globalFollowState]);
+
+  const updateState = useCallback(
+    (newState: FollowerInfo) => {
+      setLocalState(newState);
+      setGlobalFollowState((prev) => ({
+        ...prev,
+        [userId]: {
+          isFollowing: newState.isFollowedByUser,
+          followers: newState.followers,
+          lastUpdated: Date.now()
+        }
+      }));
+
+      queryClient.invalidateQueries({ queryKey: ["follower-info", userId] });
+      queryClient.invalidateQueries({ queryKey: ["suggested-connections"] });
+      queryClient.invalidateQueries({ queryKey: ["trending-users"] });
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+    },
+    [userId, setGlobalFollowState, queryClient]
+  );
+
+  return [localState, updateState] as const;
+};
+
+const useFollowMutations = (userId: string, onFollowed?: () => void) => {
+  const { toast } = useToast();
+  const followMutation = useFollowUserMutation();
+  const unfollowMutation = useUnfollowUserMutation();
+
+  const handleFollow = async () => {
+    try {
+      const result = await followMutation.mutateAsync(userId);
+      toast({
+        title: "Success",
+        description: `You are now following ${result.displayName || result.username}`
+      });
+      onFollowed?.();
+      return result;
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to follow user. Please try again.",
+        variant: "destructive"
+      });
+      throw error;
+    }
+  };
+
+  const handleUnfollow = async () => {
+    try {
+      const result = await unfollowMutation.mutateAsync(userId);
+      toast({
+        title: "Success",
+        description: `You have unfollowed ${result.displayName || result.username}`
+      });
+      return result;
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to unfollow user. Please try again.",
+        variant: "destructive"
+      });
+      throw error;
+    }
+  };
+
+  return {
+    handleFollow,
+    handleUnfollow,
+    isLoading: followMutation.isPending || unfollowMutation.isPending
+  };
+};
+
+const useOptimisticUpdate = (
+  localState: FollowerInfo,
+  updateState: (state: FollowerInfo) => void
+) => {
+  const performOptimisticUpdate = (isFollowing: boolean) => {
+    const optimisticState = {
+      followers: isFollowing
+        ? localState.followers + 1
+        : Math.max(localState.followers - 1, 0),
+      isFollowedByUser: isFollowing
+    };
+    updateState(optimisticState);
+    return optimisticState;
+  };
+
+  const revertOptimisticUpdate = (previousState: FollowerInfo) => {
+    updateState(previousState);
+  };
+
+  return { performOptimisticUpdate, revertOptimisticUpdate };
+};
+
 const ClientFollowButton: React.FC<ClientFollowButtonProps> = ({
   userId,
   initialState,
   className,
   onFollowed
 }) => {
-  const { data, isFetching } = useFollowerInfo(userId, initialState);
-  const followMutation = useFollowUserMutation();
-  const unfollowMutation = useUnfollowUserMutation();
-
-  const isLoading =
-    isFetching || followMutation.isPending || unfollowMutation.isPending;
+  const [localState, updateState] = useFollowState(userId, initialState);
+  const { handleFollow, handleUnfollow, isLoading } = useFollowMutations(
+    userId,
+    onFollowed
+  );
+  const { performOptimisticUpdate, revertOptimisticUpdate } =
+    useOptimisticUpdate(localState, updateState);
 
   const handleFollowToggle = async () => {
+    const previousState = { ...localState };
+    const isFollowing = !localState.isFollowedByUser;
+
     try {
-      if (data?.isFollowedByUser) {
-        await unfollowMutation.mutateAsync(userId);
-      } else {
-        await followMutation.mutateAsync(userId);
-        onFollowed?.();
-      }
-    } catch (error) {
-      console.error("Failed to toggle follow status:", error);
+      performOptimisticUpdate(isFollowing);
+      const result = isFollowing
+        ? await handleFollow()
+        : await handleUnfollow();
+      updateState(result);
+    } catch (_error) {
+      revertOptimisticUpdate(previousState);
     }
   };
 
-  const isFollowing = followMutation.isPending
-    ? true
-    : unfollowMutation.isPending
-      ? false
-      : data?.isFollowedByUser;
+  debugLog.component("ClientFollowButton render:", {
+    userId,
+    localState,
+    isLoading
+  });
+
+  const isFollowing = localState.isFollowedByUser;
 
   return (
     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>

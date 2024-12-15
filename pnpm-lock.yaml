@@ -176,6 +176,9 @@ importers:
       ioredis:
         specifier: ^5.4.1
         version: 5.4.1
+      jotai:
+        specifier: ^2.10.3
+        version: 2.10.3(@types/react@19.0.1)(react@19.0.0)
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -3675,6 +3678,18 @@ packages:
   jiti@1.21.6:
     resolution: {integrity: sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==}
     hasBin: true
+
+  jotai@2.10.3:
+    resolution: {integrity: sha512-Nnf4IwrLhNfuz2JOQLI0V/AgwcpxvVy8Ec8PidIIDeRi4KCFpwTFIpHAAcU+yCgnw/oASYElq9UY0YdUUegsSA==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=17.0.0'
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
 
   jquery@3.7.1:
     resolution: {integrity: sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg==}
@@ -9288,6 +9303,11 @@ snapshots:
       supports-color: 8.1.1
 
   jiti@1.21.6: {}
+
+  jotai@2.10.3(@types/react@19.0.1)(react@19.0.0):
+    optionalDependencies:
+      '@types/react': 19.0.1
+      react: 19.0.0
 
   jquery@3.7.1:
     optional: true

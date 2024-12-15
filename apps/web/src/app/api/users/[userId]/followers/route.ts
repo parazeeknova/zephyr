@@ -1,10 +1,6 @@
 import { validateRequest } from "@zephyr/auth/src";
-import {
-  type FollowerInfo,
-  followerInfoCache,
-  prisma,
-  redis
-} from "@zephyr/db";
+import { debugLog } from "@zephyr/config/debug";
+import { type FollowerInfo, followerInfoCache, prisma } from "@zephyr/db";
 import { suggestedUsersCache } from "../../suggested/route";
 
 export async function POST(
@@ -14,15 +10,18 @@ export async function POST(
   const params = await props.params;
   const { userId } = params;
 
+  debugLog.api("Processing follow request:", userId);
+
   try {
     const { user: loggedInUser } = await validateRequest();
 
     if (!loggedInUser) {
+      debugLog.api("Unauthorized follow attempt");
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await prisma.$transaction([
-      prisma.follow.upsert({
+    const result = await prisma.$transaction(async (tx) => {
+      const follow = await tx.follow.upsert({
         where: {
           followerId_followingId: {
             followerId: loggedInUser.id,
@@ -34,34 +33,50 @@ export async function POST(
           followingId: userId
         },
         update: {}
-      }),
-      prisma.notification.create({
+      });
+
+      const notification = await tx.notification.create({
         data: {
           issuerId: loggedInUser.id,
           recipientId: userId,
           type: "FOLLOW"
         }
-      })
-    ]);
+      });
 
-    await Promise.all([
-      followerInfoCache.invalidate(userId),
-      suggestedUsersCache.invalidateForUser(userId),
-      redis.del(`user:${userId}`)
-    ]);
+      const userData = await tx.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          displayName: true,
+          username: true,
+          _count: { select: { followers: true } }
+        }
+      });
 
-    const userData = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        displayName: true,
-        _count: { select: { followers: true } }
-      }
+      return { follow, notification, userData };
     });
 
-    return Response.json(userData);
+    debugLog.api("Follow transaction completed:", result);
+
+    if (!result.userData) {
+      return Response.json({ error: "User data not found" }, { status: 404 });
+    }
+
+    const followerInfo: FollowerInfo & {
+      displayName: string;
+      username: string;
+    } = {
+      followers: result.userData._count.followers,
+      isFollowedByUser: true,
+      displayName: result.userData.displayName,
+      username: result.userData.username
+    };
+
+    await followerInfoCache.invalidate(params.userId);
+
+    return Response.json(followerInfo);
   } catch (error) {
-    console.error(error);
+    debugLog.api("Follow request failed:", error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -75,7 +90,6 @@ export async function GET(
 
   try {
     const { user: loggedInUser } = await validateRequest();
-
     if (!loggedInUser) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -85,24 +99,24 @@ export async function GET(
       return Response.json(cachedData);
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        followers: {
-          where: {
-            followerId: loggedInUser.id
-          },
-          select: {
-            followerId: true
-          }
-        },
-        _count: {
-          select: {
-            followers: true
+    const [user, isFollowing] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          _count: {
+            select: { followers: true }
           }
         }
-      }
-    });
+      }),
+      prisma.follow.findUnique({
+        where: {
+          followerId_followingId: {
+            followerId: loggedInUser.id,
+            followingId: userId
+          }
+        }
+      })
+    ]);
 
     if (!user) {
       return Response.json({ error: "User not found" }, { status: 404 });
@@ -110,14 +124,14 @@ export async function GET(
 
     const data: FollowerInfo = {
       followers: user._count.followers,
-      isFollowedByUser: !!user.followers.length
+      isFollowedByUser: !!isFollowing
     };
 
     await followerInfoCache.set(userId, data);
 
     return Response.json(data);
   } catch (error) {
-    console.error(error);
+    console.error("GET follower info error:", error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -152,26 +166,38 @@ export async function DELETE(
       })
     ]);
 
-    await Promise.all([
-      followerInfoCache.invalidate(userId),
-      suggestedUsersCache.invalidateForUser(userId),
-      redis.del(`user:${userId}`)
-    ]);
-
     const userData = await prisma.user.findUnique({
       where: { id: userId },
       select: {
-        id: true,
         displayName: true,
+        username: true,
         _count: { select: { followers: true } }
       }
     });
 
-    await followerInfoCache.invalidate(userId);
+    if (!userData) {
+      return Response.json({ error: "User not found" }, { status: 404 });
+    }
 
-    return Response.json(userData);
+    const followerInfo: FollowerInfo & {
+      displayName: string;
+      username: string;
+    } = {
+      followers: userData._count.followers,
+      isFollowedByUser: false,
+      displayName: userData.displayName,
+      username: userData.username
+    };
+
+    // Invalidate caches
+    await Promise.all([
+      followerInfoCache.invalidate(userId),
+      suggestedUsersCache.invalidateForUser(userId)
+    ]);
+
+    return Response.json(followerInfo);
   } catch (error) {
-    console.error(error);
+    console.error("Unfollow error:", error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
