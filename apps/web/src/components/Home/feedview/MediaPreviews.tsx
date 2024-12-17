@@ -45,6 +45,23 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
 
     switch (m.type) {
       case "IMAGE":
+        if (m.mimeType === "image/svg+xml") {
+          return (
+            <div
+              className={cn("group relative w-full", isSmall ? "h-20" : "h-48")}
+            >
+              <object
+                data={getMediaUrl(m.id)}
+                type="image/svg+xml"
+                className={commonClasses}
+              >
+                Your browser does not support SVG
+              </object>
+              <FileTypeWatermark type="SVG" />
+              <div className="absolute inset-0 bg-black/5 transition-opacity group-hover:opacity-0" />
+            </div>
+          );
+        }
         return (
           <div
             className={cn("group relative w-full", isSmall ? "h-20" : "h-48")}
@@ -110,7 +127,6 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
               <FileTypeWatermark type={m.key.split(".").pop() || "FILE"} />
             </motion.div>
 
-            {/* Dynamic gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-40 transition-all duration-300 group-hover:opacity-20" />
           </div>
         );

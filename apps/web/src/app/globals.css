@@ -120,3 +120,8 @@
 .connection-item:hover {
   @apply bg-accent/5;
 }
+
+.dialog-content {
+  min-width: 320px;
+  min-height: 50vh;
+}
