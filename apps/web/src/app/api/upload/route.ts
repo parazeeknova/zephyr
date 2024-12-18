@@ -4,7 +4,6 @@ import { validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
 import { NextResponse } from "next/server";
 
-// route.ts
 export async function POST(request: Request) {
   try {
     const { user } = await validateRequest();

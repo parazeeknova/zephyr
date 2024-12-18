@@ -297,7 +297,6 @@ export default function SignUpForm() {
                   {count > 0 && count < 60 ? (
                     <>
                       <motion.div
-                        // @ts-expect-error
                         className="absolute top-0 left-0 h-full bg-primary/10"
                         initial={{ width: "100%" }}
                         animate={{ width: "0%" }}
@@ -314,7 +313,6 @@ export default function SignUpForm() {
                   )}
                 </Button>
 
-                {/* Additional Help Text */}
                 <p className="text-center text-muted-foreground text-xs">
                   Check your spam folder if you don't see the email in your
                   inbox

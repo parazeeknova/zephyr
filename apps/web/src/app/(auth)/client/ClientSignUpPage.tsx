@@ -65,7 +65,6 @@ const AnimatedZephyrText = () => {
 
   return (
     <motion.div
-      // @ts-expect-error
       className="pointer-events-none fixed bottom-4 left-4 z-10 select-none font-bold text-4xl sm:text-6xl"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -75,7 +74,6 @@ const AnimatedZephyrText = () => {
         {letters.map((letter, i) => (
           <motion.span
             key={i}
-            // @ts-expect-error
             className="text-primary/50"
             initial={{ opacity: 0, y: 20 }}
             animate={{
@@ -99,7 +97,6 @@ const AnimatedZephyrText = () => {
         ))}
       </div>
       <motion.div
-        // @ts-expect-error
         className="absolute bottom-0 left-0 h-0.5 bg-primary/30"
         initial={{ scaleX: 0 }}
         animate={{
@@ -122,7 +119,6 @@ export default function ClientSignupPage() {
   return (
     <AnimatePresence>
       <motion.div
-        // @ts-expect-error
         className="relative flex min-h-screen overflow-hidden bg-background"
         initial="hidden"
         animate="visible"
@@ -131,7 +127,6 @@ export default function ClientSignupPage() {
         <div className="absolute inset-0 z-0 bg-gradient-to-bl from-primary/5 via-background to-background/95" />
 
         <motion.div
-          // @ts-expect-error
           className="absolute right-20 hidden h-full items-center md:flex"
           variants={slideIn}
         >
@@ -151,7 +146,6 @@ export default function ClientSignupPage() {
 
         <div className="relative z-10 flex flex-1 items-center justify-center p-4 sm:p-8">
           <motion.div
-            // @ts-expect-error
             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-card/40 shadow-2xl backdrop-blur-xl lg:flex-row"
             variants={scaleUp}
             whileHover={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
@@ -159,7 +153,6 @@ export default function ClientSignupPage() {
             <div className="relative z-10 flex w-full flex-col justify-center px-6 py-12 sm:px-8 lg:w-1/2">
               <div className="mx-auto w-full max-w-sm">
                 <motion.h2
-                  // @ts-expect-error
                   className="mb-6 text-center font-bold text-3xl text-primary sm:text-4xl"
                   variants={contentAnimation}
                   custom={0}
@@ -172,7 +165,6 @@ export default function ClientSignupPage() {
                 </motion.div>
 
                 <motion.div
-                  // @ts-expect-error
                   className="mt-6 text-center"
                   variants={contentAnimation}
                   custom={2}
@@ -185,7 +177,6 @@ export default function ClientSignupPage() {
                       Already have an account? Login
                     </span>
                     <motion.span
-                      // @ts-expect-error
                       className="absolute bottom-0 left-0 h-0.5 w-full bg-primary/40"
                       initial={{ scaleX: 0 }}
                       whileHover={{ scaleX: 1 }}
@@ -197,14 +188,12 @@ export default function ClientSignupPage() {
             </div>
 
             <motion.div
-              // @ts-expect-error
               className="relative min-h-[200px] w-full bg-primary/80 lg:min-h-[600px] lg:w-1/2"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <motion.div
-                // @ts-expect-error
                 className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/20"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -225,7 +214,6 @@ export default function ClientSignupPage() {
         <AnimatedZephyrText />
 
         <motion.div
-          // @ts-expect-error
           className="absolute top-0 left-0 h-full w-full bg-center bg-cover opacity-5 blur-md lg:w-1/2"
           style={{ backgroundImage: `url(${signupImage.src})` }}
           initial={{ opacity: 0 }}

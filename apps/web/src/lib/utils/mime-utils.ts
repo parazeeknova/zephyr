@@ -337,13 +337,14 @@ export const getFileCategory = (mimeType: string): FileCategory => {
   return "DOCUMENT";
 };
 
-export const normalizeMimeType = (mimeType: string): string => {
+export const normalizeMimeType = (mimeType: string | undefined): string => {
+  if (!mimeType) return "application/octet-stream";
   if (mimeType.includes("quicktime")) return "video/mp4";
   if (mimeType.includes("x-matroska")) return "video/webm";
   return mimeType.toLowerCase();
 };
 
-export const getFileConfigFromMime = (mimeType: string) => {
+export const getFileConfigFromMime = (mimeType: string | undefined) => {
   const normalizedMime = normalizeMimeType(mimeType);
   const config = Object.values(FILE_CONFIGS).find(
     (config) => config.mime === normalizedMime
