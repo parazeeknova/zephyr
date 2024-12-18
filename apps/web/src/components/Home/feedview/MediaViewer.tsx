@@ -10,14 +10,13 @@ import type { Media } from "@prisma/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import fallbackImage from "@zephyr-assets/fallback.png";
 import { MediaViewerSkeleton } from "@zephyr-ui/Layouts/skeletons/MediaViewerSkeleton";
-import {} from "framer-motion";
 import { ChevronLeft, ChevronRight, Download, FileIcon, X } from "lucide-react";
-import {} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { CodePreview } from "./CodePreview";
 import { CustomVideoPlayer } from "./CustomVideoPlayer";
 import { FileTypeWatermark } from "./FileTypeWatermark";
+import { SVGViewer } from "./SVGViewer";
 
 const FALLBACK_IMAGE = fallbackImage;
 
@@ -94,7 +93,6 @@ const MediaViewer = ({
       document.body.appendChild(a);
       a.click();
 
-      // Cleanup
       window.URL.revokeObjectURL(downloadUrl);
       document.body.removeChild(a);
     } catch (error) {
@@ -156,6 +154,29 @@ const MediaViewer = ({
 
     switch (currentMedia.type) {
       case "IMAGE":
+        if (currentMedia.mimeType === "image/svg+xml") {
+          return (
+            <div
+              className="relative flex h-full w-full items-center justify-center"
+              style={{ minHeight: "85vh" }}
+            >
+              {isLoading && <MediaViewerSkeleton type="IMAGE" />}
+              <SVGViewer
+                url={getMediaUrl(currentMedia.id)}
+                className={cn(
+                  "flex h-full w-full items-center justify-center",
+                  isLoading && "hidden"
+                )}
+                onLoad={() => setIsLoading(false)}
+                onDownload={handleDownload}
+              />
+              {!isLoading && (
+                <FileTypeWatermark type="SVG" showCategory={false} />
+              )}
+            </div>
+          );
+        }
+
         return (
           <div className="relative max-h-full max-w-full">
             {isLoading && <MediaViewerSkeleton type="IMAGE" />}
