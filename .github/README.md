@@ -1,3 +1,6 @@
+> [!NOTE]
+> Due to university exams, development is paused till 10' 25 
+
 <div align="center">
 
   <a href="https://github.com/parazeeknova/zephyr">
