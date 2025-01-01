@@ -28,8 +28,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/node": "^22.10.2",
-    "@types/react": "19.0.1",
+    "@types/node": "^22.10.3",
+    "@types/react": "19.0.2",
     "@types/react-dom": "19.0.1",
     "husky": "^9.1.7",
     "react-markdown": "9.0.1",
