@@ -1,6 +1,3 @@
-> [!NOTE]
-> Due to university exams, development is paused till 10' 25 
-
 <div align="center">
 
   <a href="https://github.com/parazeeknova/zephyr">
@@ -24,6 +21,14 @@
 <p align="left">
 <strong>Zephyr</strong> is a Social aggregator, part social media platform, part news aggregator. It is a platform that allows users to share and discover content from around the web. Completly open-source and community-driven, Zephyr is a platform that is built by the community, for the community.
 </p>
+
+#### _<div align="left"><sub>// Sub-services under Zephyr</sub></div>_
+
+- **[Zephyr](https://development.zephyyrr.in)**: Main platform for zephyr.
+- **[Zephyr Support](https://development.zephyyrr.in/support)**: Support platform for zephyr.
+- **[Zephyr AI](https://devai.zephyyrr.in)**: AI platform for zephyr uses ollama & open web ui with llama 3.2 1B & 2B models. 
+- **[Velastria / Zephyr chat](https://dev-chat.zephyyrr.in)**: Chat platform for zephyr.
+
 
 #### _<div align="left"><sub>// Local Development Setup</sub></div>_
 
