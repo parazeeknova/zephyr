@@ -13,7 +13,7 @@
   <a href="https://github.com//parazeeknova/zephyr#-development-setup-for-contributers"><kbd> <br> Development <br> </kbd></a>&ensp;&ensp;
   <a href="https://github.com/parazeeknova/zephyr/blob/main/.github/CONTRIBUTING.md"><kbd> <br> Contribution <br> </kbd></a>&ensp;&ensp;
   <a href="https://github.com/parazeeknova/zephyr/wiki"><kbd> <br> Wiki <br> </kbd></a>&ensp;&ensp;
-  <a href="https://github.com/parazeeknova/zephyr/wiki/Blueprint---Roadmap-%E2%80%90-Stack-%E2%80%90-STC"><kbd> <br> Roadmap <br> </kbd></a>&ensp;&ensp;
+  <a href="https://github.com/parazeeknova/zephyr/issues"><kbd> <br> Roadmap <br> </kbd></a>&ensp;&ensp;
 </div>
 
 #### _<div align="left"><sub>// Project Overview</sub></div>_
