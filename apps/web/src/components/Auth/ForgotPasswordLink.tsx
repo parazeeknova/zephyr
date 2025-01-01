@@ -9,7 +9,6 @@ export default function ForgotPasswordLink() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.2 }}
-      // @ts-expect-error
       className="text-center"
     >
       <Link

@@ -70,7 +70,6 @@ export const AnimatedZephyrText = () => {
 
   return (
     <motion.div
-      // @ts-expect-error
       className="pointer-events-none fixed right-4 bottom-4 z-10 select-none font-bold text-4xl sm:text-6xl"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -80,7 +79,6 @@ export const AnimatedZephyrText = () => {
         {letters.map((letter, i) => (
           <motion.span
             key={i}
-            // @ts-expect-error
             className="text-primary/50"
             initial={{ opacity: 0, y: 20 }}
             animate={{
@@ -105,7 +103,6 @@ export const AnimatedZephyrText = () => {
       </div>
 
       <motion.div
-        // @ts-expect-error
         className="absolute bottom-0 left-0 h-0.5 bg-primary/30"
         initial={{ scaleX: 0 }}
         animate={{
@@ -128,7 +125,6 @@ export default function ClientLoginPage() {
   return (
     <AnimatePresence>
       <motion.div
-        // @ts-expect-error
         className="relative flex min-h-screen overflow-hidden bg-background"
         initial="hidden"
         animate="visible"
@@ -137,7 +133,6 @@ export default function ClientLoginPage() {
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/5 via-background to-background/95" />
 
         <motion.div
-          // @ts-expect-error
           className="absolute left-20 hidden h-full items-center md:flex"
           variants={slideIn}
         >
@@ -157,20 +152,17 @@ export default function ClientLoginPage() {
 
         <div className="relative z-10 flex flex-1 items-center justify-center p-4 sm:p-8">
           <motion.div
-            // @ts-expect-error
             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-card/40 shadow-2xl backdrop-blur-xl lg:flex-row"
             variants={scaleUp}
             whileHover={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
           >
             <motion.div
-              // @ts-expect-error
               className="relative min-h-[200px] w-full bg-primary/80 lg:min-h-[600px] lg:w-1/2"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <motion.div
-                // @ts-expect-error
                 className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/20"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -189,7 +181,6 @@ export default function ClientLoginPage() {
             <div className="relative z-10 flex w-full flex-col justify-center px-6 py-12 sm:px-8 lg:w-1/2">
               <div className="mx-auto w-full max-w-sm">
                 <motion.h2
-                  // @ts-expect-error
                   className="mb-6 text-center font-bold text-3xl text-primary sm:text-4xl"
                   variants={contentAnimation}
                   custom={0}
@@ -198,7 +189,6 @@ export default function ClientLoginPage() {
                 </motion.h2>
 
                 <motion.div
-                  // @ts-expect-error
                   className="mb-6 space-y-4"
                   variants={contentAnimation}
                   custom={1}
@@ -223,13 +213,11 @@ export default function ClientLoginPage() {
                 </motion.div>
 
                 <motion.div
-                  // @ts-expect-error
                   className="my-6 flex items-center gap-3"
                   variants={contentAnimation}
                   custom={2}
                 >
                   <motion.div
-                    // @ts-expect-error
                     className="h-px flex-1 bg-muted"
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
@@ -237,7 +225,6 @@ export default function ClientLoginPage() {
                   />
                   <span className="px-2 text-muted-foreground text-sm">OR</span>
                   <motion.div
-                    // @ts-expect-error
                     className="h-px flex-1 bg-muted"
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
@@ -250,7 +237,6 @@ export default function ClientLoginPage() {
                 </motion.div>
 
                 <motion.div
-                  // @ts-expect-error
                   className="mt-6 text-center"
                   variants={contentAnimation}
                   custom={4}
@@ -263,7 +249,6 @@ export default function ClientLoginPage() {
                       Don&apos;t have an account? Sign Up
                     </span>
                     <motion.span
-                      // @ts-expect-error
                       className="absolute bottom-0 left-0 h-0.5 w-full bg-primary/40"
                       initial={{ scaleX: 0 }}
                       whileHover={{ scaleX: 1 }}
@@ -274,7 +259,6 @@ export default function ClientLoginPage() {
                 <motion.div
                   variants={contentAnimation}
                   custom={5}
-                  // @ts-expect-error
                   className="mt-8"
                 >
                   <div className="rounded-lg border border-primary/10 bg-primary/5 p-4 backdrop-blur-sm">
@@ -317,14 +301,15 @@ export default function ClientLoginPage() {
                       <p className="text-[10px] text-muted-foreground">
                         By signing in, you agree to our terms and privacy policy
                       </p>
-                      <motion.div
-                        initial={{ scale: 0.95 }}
-                        whileHover={{ scale: 1 }}
-                        // @ts-expect-error
-                        className="rounded-full bg-primary/10 p-1.5"
-                      >
-                        <ArrowRight className="h-3 w-3 text-primary" />
-                      </motion.div>
+                      <Link href="/privacy">
+                        <motion.div
+                          initial={{ scale: 0.95 }}
+                          whileHover={{ scale: 1 }}
+                          className="rounded-full bg-primary/10 p-1.5"
+                        >
+                          <ArrowRight className="h-3 w-3 text-primary" />
+                        </motion.div>
+                      </Link>
                     </div>
                   </div>
                 </motion.div>
@@ -338,7 +323,6 @@ export default function ClientLoginPage() {
         </div>
 
         <motion.div
-          // @ts-expect-error
           className="absolute top-0 right-0 h-full w-full bg-center bg-cover opacity-5 blur-md lg:w-1/2"
           style={{ backgroundImage: `url(${loginImage.src})` }}
           initial={{ opacity: 0 }}

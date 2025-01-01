@@ -18,6 +18,7 @@ import { PasswordInput } from "@zephyr-ui/Auth/PasswordInput";
 import { type LoginValues, loginSchema } from "@zephyr/auth/validation";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, Mail, XCircle } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -167,7 +168,6 @@ export default function LoginForm() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                // @ts-expect-error
                 className="rounded-lg bg-destructive/15 p-3 text-center text-destructive text-sm"
               >
                 <p className="flex items-center justify-center gap-2">
@@ -182,7 +182,6 @@ export default function LoginForm() {
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              // @ts-expect-error
               className="rounded-lg border border-primary/20 bg-primary/5 p-6 text-sm"
             >
               <div className="flex flex-col items-center space-y-4">
@@ -244,7 +243,6 @@ export default function LoginForm() {
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        // @ts-expect-error
                         className="-translate-y-1/2 absolute top-1/2 right-3"
                       >
                         <XCircle className="h-4 w-4 text-destructive" />
@@ -283,6 +281,12 @@ export default function LoginForm() {
 
           <div className="flex items-center justify-end">
             <ForgotPasswordLink />
+            <p className="px-2 text-muted-foreground">or</p>
+            <Link href="/support">
+              <p className="text-muted-foreground text-sm transition-colors hover:text-primary">
+                Need help?
+              </p>
+            </Link>
           </div>
 
           <LoadingButton loading={isPending} type="submit" className="w-full">

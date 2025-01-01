@@ -50,7 +50,7 @@ const StickyFooter: React.FC = () => {
         </Link>
       </div>
       <div className="flex justify-center space-x-2">
-        <Link href="/soon" className="hover:underline">
+        <Link href="/support" className="hover:underline">
           Support
         </Link>
         <Link href="/soon" className="hover:underline">

@@ -3,25 +3,30 @@ import { formatFileName } from "@/lib/formatFileName";
 import { cn } from "@/lib/utils";
 import { FileAudioIcon, FileCode, FileIcon, X } from "lucide-react";
 import { memo, useEffect, useState } from "react";
-import type { Attachment } from "./useMediaUpload";
 
 interface AttachmentPreviewProps {
-  attachment: Attachment;
+  attachment: {
+    file: File;
+    isUploading: boolean;
+    previewUrl?: string;
+  };
   onRemoveClick: () => void;
 }
 
 export const AttachmentPreview = memo(function AttachmentPreview({
-  attachment: { file, isUploading },
+  attachment: { file, isUploading, previewUrl: existingPreviewUrl },
   onRemoveClick
 }: AttachmentPreviewProps) {
-  const [objectUrl, setObjectUrl] = useState<string>("");
+  const [objectUrl, setObjectUrl] = useState<string>(existingPreviewUrl || "");
   const fileName = file.name;
 
   useEffect(() => {
-    const url = URL.createObjectURL(file);
-    setObjectUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
+    if (!existingPreviewUrl) {
+      const url = URL.createObjectURL(file);
+      setObjectUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [file, existingPreviewUrl]);
 
   const renderPreview = () => {
     if (!objectUrl) return null;
