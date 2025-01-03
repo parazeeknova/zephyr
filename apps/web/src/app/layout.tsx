@@ -63,6 +63,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          defer
+          src="https://analytics-umami.zephyyrr.in/script.js"
+          data-website-id="fcacb118-4db6-446b-909f-0f95a3ccf0a3"
+        />
+      </head>
       <body
         className={`${SofiaProSoft.variable} min-h-screen font-sofiaProSoft antialiased`}
       >
