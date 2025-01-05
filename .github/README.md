@@ -24,6 +24,7 @@
 
 #### _<div align="left"><sub>// Sub-services under Zephyr</sub></div>_
 
+- **[Repository](https://share.zephyyrr.in/s/repo)**: Main repository for zephyr & its services. 
 - **[Zephyr](https://development.zephyyrr.in)**: Main platform for zephyr.
 - **[Zephyr Support](https://development.zephyyrr.in/support)**: Support platform for zephyr.
 - **[Zephyr AI](https://devai.zephyyrr.in)**: AI platform for zephyr uses ollama & open web ui with llama 3.2 1B & 2B models. 
