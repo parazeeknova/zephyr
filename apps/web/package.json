@@ -95,7 +95,7 @@
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/mime-types": "^2.1.4",
-    "@types/node": "^22.10.3",
+    "@types/node": "^22.10.5",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "19.0.2",
     "@types/react-dom": "19.0.1",
