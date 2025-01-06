@@ -7,7 +7,7 @@
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@node-rs/argon2": "^2.0.2",
     "@zephyr/db": "workspace:*",
-    "arctic": "^2.3.3",
+    "arctic": "^3.1.0",
     "deep-email-validator": "^0.1.21",
     "email-validator": "^2.0.4",
     "i": "^0.3.7",
