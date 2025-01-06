@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@turbo/gen": "^2.3.3",
-    "@types/node": "^22.10.3",
+    "@types/node": "^22.10.5",
     "@types/react": "19.0.2",
     "@types/react-dom": "19.0.1",
     "@zephyr/config": "workspace:*",
