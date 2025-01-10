@@ -1,3 +1,8 @@
+>[!IMPORTANT]
+> In Process of adding proper documentation for SWOC, all the contibution guidelines / notes will be added today
+
+<br>
+
 <div align="center">
 
   <a href="https://github.com/parazeeknova/zephyr">
