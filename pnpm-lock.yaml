@@ -20,6 +20,9 @@ importers:
       '@types/react-dom':
         specifier: 19.0.1
         version: 19.0.1
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -3114,6 +3117,10 @@ packages:
 
   dot-case@2.1.1:
     resolution: {integrity: sha512-HnM6ZlFqcajLsyudHq7LeeLDr2rFAVYtDv/hV5qchQEidSck8j9OPUsXY9KwJv/lHMtYlX4DjRQqwFYa+0r8Ug==}
+
+  dotenv@16.4.7:
+    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+    engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -8754,6 +8761,8 @@ snapshots:
   dot-case@2.1.1:
     dependencies:
       no-case: 2.3.2
+
+  dotenv@16.4.7: {}
 
   dunder-proto@1.0.1:
     dependencies:

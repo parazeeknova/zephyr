@@ -1,4 +1,4 @@
-const WEBSITE_URL = "https://development.zephyyrr.in";
+const WEBSITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 const ASSETS_URL =
   "https://github.com/parazeeknova/zephyr/blob/main/apps/web/src/app/assets";
 
@@ -6,7 +6,7 @@ export const emailConfig = {
   company: {
     name: "Zephyr",
     website: WEBSITE_URL,
-    supportEmail: process.env.GMAIL_USER || "dev.hashcodes@gmail.com"
+    supportEmail: process.env.SUPPORT_EMAIL
   },
 
   assets: {

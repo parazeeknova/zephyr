@@ -6,11 +6,14 @@
   "scripts": {
     "biome:check": "biome check .",
     "biome:fix": "biome check --write .",
+    "env:check": "node docker/scripts/check-env.js",
     "build": "turbo build",
     "codegen": "turbo codegen",
     "dep:check": "pnpm dlx sherif@latest",
     "dep:fix": "pnpm dlx sherif@latest --fix",
+    "predev": "node docker/scripts/pre-dev.js",
     "dev": "turbo dev",
+    "start": "node docker/scripts/start-dev.js",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "prepare": "husky",
     "typecheck": "pnpm --recursive --parallel run typecheck",
@@ -22,15 +25,14 @@
     "docker:start": "docker compose -f docker-compose.dev.yml up -d",
     "docker:down": "docker compose -f docker-compose.dev.yml down",
     "docker:clean:dev": "docker compose -f docker-compose.dev.yml down -v && docker volume rm zephyr_postgres_data_dev zephyr_redis_data_dev zephyr_minio_data_dev && rm -f .dev-init",
-    "docker:logs": "docker compose -f docker-compose.dev.yml logs -f",
-    "dev:server": "node docker/scripts/dev-server.js",
-    "dev:start": "pnpm run docker:dev:detach && pnpm run dev"
+    "docker:logs": "docker compose -f docker-compose.dev.yml logs -f"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.10.3",
     "@types/react": "19.0.2",
     "@types/react-dom": "19.0.1",
+    "dotenv": "^16.4.7",
     "husky": "^9.1.7",
     "react-markdown": "9.0.1",
     "turbo": "^2.3.3",

@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 });
 
 function getBaseUrl() {
-  return process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  return process.env.NEXT_PUBLIC_APP_URL || "https://development.zephyyrr.in";
 }
 
 export async function sendVerificationEmail(
@@ -43,7 +43,7 @@ export async function sendPasswordResetEmail(
   console.log("Reset URL:", resetUrl);
 
   await transporter.sendMail({
-    from: `"Zephyr" <${process.env.GMAIL_USER}>`,
+    from: `"🔒 Zephyr" <${process.env.GMAIL_USER}>`,
     to: email,
     subject: "Reset Your Password",
     html: getPasswordResetEmailTemplate(resetUrl)
