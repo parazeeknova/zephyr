@@ -16,20 +16,6 @@ const colors = {
   gray: "\x1b[90m"
 };
 
-function printBanner() {
-  console.log(colors.magenta);
-  console.log(`
-██████╗ ██████╗ ███████╗    ██████╗ ███████╗██╗   ██╗
-██╔══██╗██╔══██╗██╔════╝    ██╔══██╗██╔════╝██║   ██║
-██████╔╝██████╔╝█████╗      ██║  ██║█████╗  ██║   ██║
-██╔═══╝ ██╔══██╗██╔══╝      ██║  ██║██╔══╝  ╚██╗ ██╔╝
-██║     ██║  ██║███████╗    ██████╔╝███████╗ ╚████╔╝ 
-╚═╝     ╚═╝  ╚═╝╚══════╝    ╚═════╝ ╚══════╝  ╚═══╝  
-[PRE] Development Environment Setup
-`);
-  console.log(colors.reset);
-}
-
 async function checkPnpm() {
   try {
     console.log(
@@ -130,8 +116,6 @@ async function generatePrisma() {
 
 async function main() {
   try {
-    printBanner();
-
     // Check for pnpm
     const pnpmInstalled = await checkPnpm();
     if (!pnpmInstalled) {

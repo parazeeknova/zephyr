@@ -21,16 +21,17 @@ services:
       - POSTGRES_DB=zephyr
       - POSTGRES_PORT=5432
       - POSTGRES_HOST=postgres-dev
-      - DATABASE_URL=postgresql://postgres:postgres@%2Fvar%2Frun%2Fpostgresql/zephyr?schema=public
-      - POSTGRES_PRISMA_URL=postgresql://postgres:postgres@%2Fvar%2Frun%2Fpostgresql/zephyr?schema=public
-      - POSTGRES_URL_NON_POOLING=postgresql://postgres:postgres@%2Fvar%2Frun%2Fpostgresql/zephyr?schema=public
+      - PGDATA=/var/lib/postgresql/data/pgdata
     ports:
       - "5433:5432"
     volumes:
       - postgres_data_dev:/var/lib/postgresql/data
       - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
       - ./docker/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
-    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    command: 
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql/postgresql.conf"
     networks:
       - dev_network
     deploy:
@@ -41,15 +42,45 @@ services:
         reservations:
           cpus: '1'
           memory: 1G
-    labels:
-      <<: *common-labels
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d zephyr"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d zephyr"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
     restart: unless-stopped
+
+  postgres-init:
+    profiles: ["init"]
+    container_name: zephyr-postgres-init
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=zephyr
+    networks:
+      - dev_network
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
+    command: >
+      bash -c '
+      echo "⏳ Waiting for PostgreSQL..." &&
+      until PGPASSWORD=postgres psql -h postgres-dev -U postgres -d zephyr -c "\q"; do
+        echo "Waiting for PostgreSQL to be ready..."
+        sleep 2
+      done &&
+      echo "✅ PostgreSQL is ready" &&
+      echo "⏳ Initializing extensions..." &&
+      PGPASSWORD=postgres psql -h postgres-dev -U postgres -d zephyr -c "
+        CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";
+        CREATE EXTENSION IF NOT EXISTS \"pgcrypto\";
+        CREATE EXTENSION IF NOT EXISTS \"pg_stat_statements\";
+        ALTER DATABASE zephyr SET timezone TO '\''UTC'\'';
+      " &&
+      echo "✅ PostgreSQL extensions initialized successfully" &&
+      echo "🎉 Database initialization complete!"
+      '
 
   prisma-migrate:
     profiles: ["init"]
@@ -59,6 +90,8 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres-dev:5432/zephyr?schema=public
       - POSTGRES_PRISMA_URL=postgresql://postgres:postgres@postgres-dev:5432/zephyr?schema=public
       - POSTGRES_URL_NON_POOLING=postgresql://postgres:postgres@postgres-dev:5432/zephyr?schema=public
+      - NODE_ENV=development
+      - DEBUG=prisma:*
     volumes:
       - ./packages/db:/app/packages/db
       - ./package.json:/app/package.json
@@ -71,20 +104,27 @@ services:
         condition: service_healthy
     command: >
       sh -c "
-      apk add --no-cache netcat-openbsd &&
+      echo '⏳ Installing required packages...' &&
+      apk add --no-cache postgresql-client netcat-openbsd &&
       echo '⏳ Setting up Prisma...' &&
       npm install -g pnpm &&
       cd /app &&
+      echo '⏳ Installing dependencies...' &&
       pnpm install --frozen-lockfile &&
       cd packages/db &&
       echo '⏳ Waiting for PostgreSQL...' &&
-      until nc -z postgres-dev 5432; do
+      until pg_isready -h postgres-dev -p 5432 -U postgres; do
         echo 'Waiting for PostgreSQL to be ready...'
         sleep 2
       done &&
       echo '✅ PostgreSQL is ready' &&
-      pnpm prisma db push --accept-data-loss &&
-      echo '✅ Prisma migrations completed!'"
+      echo '⏳ Running Prisma migrations...' &&
+      pnpm prisma generate &&
+      echo '✅ Prisma Client generated' &&
+      sleep 2 &&
+      PRISMA_CLIENT_ENGINE_TYPE=binary DEBUG='*' pnpm prisma db push --accept-data-loss --skip-generate &&
+      echo '✅ Prisma migrations completed!' &&
+      echo '🎉 Database initialization complete!'"
 
   redis-dev:
     container_name: zephyr-redis-dev
@@ -133,6 +173,8 @@ services:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
       - MINIO_BROWSER_REDIRECT_URL=http://localhost:9001
+      - MINIO_CONSOLE_ADDRESS=:9001
+      - MINIO_API_ADDRESS=:9000
       - MINIO_ENABLE_OBJECT_LOCKING=on
     volumes:
       - minio_data_dev:/data
@@ -172,21 +214,24 @@ services:
     entrypoint: >
       /bin/sh -c '
       echo "⏳ Waiting for MinIO..." &&
-      sleep 5 &&
-      mc config host add minio http://minio-dev:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD &&
+      sleep 15 &&
+      until mc alias set minio http://minio-dev:9000 minioadmin minioadmin; do
+        echo "Waiting for MinIO to be ready..."
+        sleep 5
+      done &&
       echo "✅ MinIO is ready" &&
-      mc mb --ignore-existing minio/uploads &&
-      mc anonymous set download minio/uploads &&
-      mc version enable minio/uploads &&
-      mc mb --ignore-existing minio/avatars &&
-      mc anonymous set download minio/avatars &&
-      mc version enable minio/avatars &&
-      mc mb --ignore-existing minio/temp &&
-      mc anonymous set download minio/temp &&
-      mc version enable minio/temp &&
-      mc mb --ignore-existing --with-lock minio/backups &&
-      mc anonymous set download minio/backups &&
-      mc version enable minio/backups &&
+      mc mb minio/uploads || true &&
+      mc anonymous set download minio/uploads || true &&
+      mc version enable minio/uploads || true &&
+      mc mb minio/avatars || true &&
+      mc anonymous set download minio/avatars || true &&
+      mc version enable minio/avatars || true &&
+      mc mb minio/temp || true &&
+      mc anonymous set download minio/temp || true &&
+      mc version enable minio/temp || true &&
+      mc mb minio/backups || true &&
+      mc anonymous set download minio/backups || true &&
+      mc version enable minio/backups || true &&
       echo "🎉 MinIO initialization completed!"
       '
     networks:

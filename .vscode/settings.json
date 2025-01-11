@@ -1,27 +1,52 @@
 {
-  // TypeScript Configuration
+  // =============================================================================
+  //                         ZEPHYR DEVELOPMENT IDE
+  //                          VSCode Configuration
+  // =============================================================================
+  //
+  // Development Environment Configuration
+  // Last Updated: 2024
+  // Maintainer: Parazeeknova
+  //
+  // =============================================================================
+
+  // -----------------------------------------------------------------------------
+  //                         TYPESCRIPT CONFIGURATION
+  // -----------------------------------------------------------------------------
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
 
-  // Editor Configuration
+  // -----------------------------------------------------------------------------
+  //                         EDITOR CONFIGURATION
+  // -----------------------------------------------------------------------------
+  // Formatting Settings
   "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
+
+  // Visual Guides
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": true,
+  "editor.rulers": [80],
+  "editor.wordWrap": "off",
+
+  // Indentation Settings
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
-  "editor.rulers": [80],
-  "editor.wordWrap": "off",
+
+  // Auto-fix Actions
   "editor.codeActionsOnSave": {
     "quickfix.biome": "explicit",
     "source.organizeImports.biome": "explicit",
     "source.fixAll.biome": "explicit"
   },
 
-  // Language-specific Settings
+  // -----------------------------------------------------------------------------
+  //                      LANGUAGE-SPECIFIC SETTINGS
+  // -----------------------------------------------------------------------------
+  // TypeScript/JavaScript Settings
   "[typescript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
@@ -44,6 +69,8 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
+
+  // Markup & Style Settings
   "[json]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
@@ -53,20 +80,29 @@
   "[tailwindcss]": {
     "editor.defaultFormatter": "bradlc.vscode-tailwindcss"
   },
+
+  // Docker Settings
   "[dockercompose]": {
     "editor.defaultFormatter": "ms-azuretools.vscode-docker"
   },
   "[dockerfile]": {
     "editor.defaultFormatter": "ms-azuretools.vscode-docker"
   },
+
+  // Database Settings
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
+
+  // Documentation Settings
   "[markdown]": {
     "editor.defaultFormatter": "yzhang.markdown-all-in-one"
   },
 
-  // File Explorer & Search
+  // -----------------------------------------------------------------------------
+  //                      FILE EXPLORER & SEARCH
+  // -----------------------------------------------------------------------------
+  // File Exclusions
   "files.exclude": {
     "**/.git": true,
     "**/.DS_Store": true,
@@ -75,6 +111,8 @@
     "**/dist": true,
     "**/build": true
   },
+
+  // Search Exclusions
   "search.exclude": {
     "**/node_modules": true,
     "**/.next": true,
@@ -82,6 +120,8 @@
     "**/build": true,
     "**/.git": true
   },
+
+  // File Watcher Exclusions
   "files.watcherExclude": {
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true,
@@ -89,25 +129,39 @@
     "**/.next/**": true
   },
 
-  // Git Configuration
+  // -----------------------------------------------------------------------------
+  //                         GIT CONFIGURATION
+  // -----------------------------------------------------------------------------
+  // Version Control Settings
   "git.autofetch": true,
   "git.confirmSync": false,
   "git.enableSmartCommit": true,
   "git.pruneOnFetch": true,
   "git.fetchOnPull": true,
 
-  // Emmet & Other Tools
+  // -----------------------------------------------------------------------------
+  //                         EMMET & TOOLS
+  // -----------------------------------------------------------------------------
+  // Emmet Settings
   "emmet.showExpandedAbbreviation": "never",
   "emmet.excludeLanguages": ["markdown", "typescript", "javascript"],
 
-  // Terminal Settings
+  // -----------------------------------------------------------------------------
+  //                         TERMINAL SETTINGS
+  // -----------------------------------------------------------------------------
+  // Shell Configuration
   "terminal.integrated.defaultProfile.linux": "bash",
   "terminal.integrated.defaultProfile.windows": "PowerShell",
   "terminal.integrated.defaultProfile.osx": "zsh",
 
-  // Workbench Settings
+  // -----------------------------------------------------------------------------
+  //                         WORKBENCH SETTINGS
+  // -----------------------------------------------------------------------------
+  // Editor Behavior
   "workbench.editor.enablePreview": false,
   "workbench.startupEditor": "none",
+
+  // Theme Customization
   "workbench.colorCustomizations": {
     "editorRuler.foreground": "#3f3f3f"
   }
