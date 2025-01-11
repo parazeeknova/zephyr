@@ -6,7 +6,7 @@
 <div align="center">
 
   <a href="https://github.com/parazeeknova/zephyr">
-    <img src="./assets/Zephyr-Banner.png" alt="Banner" width="98%"/>
+    <img src="./assets/zephyr-banner-round.png" alt="Banner" width="95%"/>
   </a>
 </div>
 
@@ -127,9 +127,5 @@ Password: minioadmin
 <p align="left">
 <strong>Zephyr</strong> is licensed under the <a href="https://github.com/parazeeknova/zephyr/blob/main/LICENSE">AGPL License</a>.
 </p>
-
-<div align="right">
-  <a href="#-project-overview"><kbd> <br> 🡅 <br> </kbd></a>
-</div>
 
 ---
