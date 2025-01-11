@@ -6,7 +6,8 @@ const colors = {
   yellow: "\x1b[33m",
   red: "\x1b[31m",
   green: "\x1b[32m",
-  gray: "\x1b[90m"
+  gray: "\x1b[90m",
+  cyan: "\x1b[36m"
 };
 
 module.exports = colors;

@@ -1,6 +1,6 @@
 const { execSync } = require("node:child_process");
 const colors = require("./colors");
-const { createStatusTable, getSpinnerFrame } = require("./ui");
+const { createStatusTable } = require("./ui");
 const os = require("node:os");
 
 const SERVICES = {
@@ -145,82 +145,51 @@ async function waitForInitServices(maxAttempts = 60) {
 
   const terminalWidth = process.stdout.columns || 80;
   const terminalHeight = process.stdout.rows || 24;
-  const tableWidth = 58;
-  const tablePadding = Math.max(
-    0,
-    Math.floor((terminalWidth - tableWidth) / 2)
-  );
 
-  const renderTable = async (currentAttempt) => {
-    console.clear();
-    const totalLines = 10;
+  const renderFrame = async (currentAttempt) => {
+    process.stdout.write("\x1b[2J\x1b[0f");
+
+    const contentHeight = 12;
     const topPadding = Math.max(
       0,
-      Math.floor((terminalHeight - totalLines) / 2)
+      Math.floor((terminalHeight - contentHeight) / 2)
     );
     console.log("\n".repeat(topPadding));
 
-    const banner = `${colors.blue}🚀 Initializing Services${colors.reset}`;
-    const bannerPadding = Math.max(
-      0,
-      Math.floor((terminalWidth - banner.length) / 2)
+    const banner = "🚀 Initializing Services";
+    const bannerPadding = " ".repeat(
+      Math.max(0, Math.floor((terminalWidth - banner.length) / 2))
     );
-    console.log(`${" ".repeat(bannerPadding) + banner}\n`);
-
-    const paddingStr = " ".repeat(tablePadding);
+    console.log(`${bannerPadding}${colors.blue}${banner}${colors.reset}\n`);
 
     const progress = Math.min(
       100,
       Math.floor((currentAttempt / maxAttempts) * 100)
     );
-    const progressWidth = 50;
-    const filledWidth = Math.floor((progressWidth * progress) / 100);
-    const emptyWidth = progressWidth - filledWidth;
-    const progressBar = `${colors.blue}[${"■".repeat(filledWidth)}${"□".repeat(emptyWidth)}] ${progress}%${colors.reset}`;
-
-    const table = [
-      `${colors.gray}┌───────────────┬──────────────────────────────┬──────────┐${colors.reset}`,
-      `${colors.gray}│${colors.blue} SERVICE       ${colors.gray}│${colors.blue} ENDPOINT                     ${colors.gray}│${colors.blue} STATUS   ${colors.gray}│${colors.reset}`,
-      `${colors.gray}├───────────────┼──────────────────────────────┼──────────┤${colors.reset}`
-    ];
-
-    for (const [name, { url, status }] of Object.entries(initStatus)) {
-      let statusSymbol;
-      let statusColor;
-
-      if (status === "Ready") {
-        statusSymbol = "✓";
-        statusColor = colors.green;
-      } else if (status === "Failed") {
-        statusSymbol = "✗";
-        statusColor = colors.red;
-      } else {
-        statusSymbol = getSpinnerFrame();
-        statusColor = colors.yellow;
-      }
-
-      table.push(
-        `${colors.gray}│${colors.reset} ${name.padEnd(13)}${colors.gray}│${colors.reset} ${url.padEnd(28)}${colors.gray}│${statusColor} ${statusSymbol}${" ".repeat(8)}${colors.gray}│${colors.reset}`
-      );
-    }
-
-    table.push(
-      `${colors.gray}└───────────────┴──────────────────────────────┴──────────┘${colors.reset}`
+    const progressWidth = 40;
+    const filled = Math.floor((progressWidth * progress) / 100);
+    const empty = progressWidth - filled;
+    const progressBar = `[${colors.blue}${"█".repeat(filled)}${colors.gray}${"░".repeat(empty)}${colors.reset}] ${progress}%`;
+    const progressPadding = " ".repeat(
+      Math.max(0, Math.floor((terminalWidth - progressBar.length) / 2))
     );
+    console.log(`${progressPadding}${progressBar}\n`);
 
-    // biome-ignore lint/complexity/noForEach: ignore
-    table.forEach((line) => console.log(paddingStr + line));
-    console.log(`\n${" ".repeat(tablePadding)}${progressBar}`);
-    console.log(
-      `\n${" ".repeat(tablePadding)}${colors.dim}⚠️  Initialization time may vary based on system performance${colors.reset}`
+    const logs = getDockerLogs("zephyr-prisma-migrate");
+    const lastLogLine =
+      logs.split("\n").filter(Boolean).pop() || "Waiting for services...";
+    const logPadding = " ".repeat(
+      Math.max(0, Math.floor((terminalWidth - lastLogLine.length) / 2))
     );
-    console.log(
-      `${" ".repeat(tablePadding)}${colors.dim}💡 Please wait while services are being configured...${colors.reset}`
+    console.log(`${logPadding}${colors.cyan}${lastLogLine}${colors.reset}\n`);
+
+    const helpText =
+      "⚠️  Initialization time may vary based on system performance";
+    const helpPadding = " ".repeat(
+      Math.max(0, Math.floor((terminalWidth - helpText.length) / 2))
     );
+    console.log(`${helpPadding}${colors.dim}${helpText}${colors.reset}`);
   };
-
-  let lastUpdate = Date.now();
-  const updateInterval = 100;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
@@ -228,33 +197,22 @@ async function waitForInitServices(maxAttempts = 60) {
 
       if (logs.includes("🎉 Database initialization complete")) {
         initStatus["Init Services"].status = "Ready";
-        await renderTable(attempt);
+        await renderFrame(maxAttempts);
         return true;
       }
 
       if (logs.match(/Error:|error:|prisma:error/)) {
         initStatus["Init Services"].status = "Failed";
-        await renderTable(attempt);
-        console.log(
-          `\n${" ".repeat(tablePadding)}${colors.red}❌ Initialization Failed${colors.reset}`
-        );
+        await renderFrame(maxAttempts);
         return false;
       }
 
-      const now = Date.now();
-      if (now - lastUpdate >= updateInterval) {
-        await renderTable(attempt);
-        lastUpdate = now;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await renderFrame(attempt);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       // biome-ignore lint/correctness/noUnusedVariables: ignore
     } catch (error) {
       initStatus["Init Services"].status = "Failed";
-      await renderTable(maxAttempts);
-      console.log(
-        `\n${" ".repeat(tablePadding)}${colors.red}❌ Initialization Error${colors.reset}`
-      );
+      await renderFrame(maxAttempts);
       return false;
     }
   }
