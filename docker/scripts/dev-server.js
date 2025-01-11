@@ -69,7 +69,7 @@ async function main() {
       `${colors.gray}------------------------------------------${colors.reset}`
     );
     console.log("1. Open a new terminal");
-    console.log(`2. Run: ${colors.cyan}pnpm turbo dev${colors.reset}`);
+    console.log(`2. Run: ${colors.cyan}pnpm run dev${colors.reset}`);
 
     console.log(`\n${colors.yellow}🔍 Monitoring:${colors.reset}`);
     console.log(

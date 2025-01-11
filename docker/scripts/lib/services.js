@@ -3,14 +3,6 @@ const colors = require("./colors");
 const { createStatusTable } = require("./ui");
 const os = require("node:os");
 
-const spinnerFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-let spinnerIndex = 0;
-
-const getSpinnerFrame = () => {
-  spinnerIndex = (spinnerIndex + 1) % spinnerFrames.length;
-  return spinnerFrames[spinnerIndex];
-};
-
 const SERVICES = {
   PostgreSQL: {
     name: "PostgreSQL",
@@ -152,29 +144,50 @@ async function waitForInitServices(maxAttempts = 60) {
   };
 
   const terminalWidth = process.stdout.columns || 80;
-  const tableWidth = 58;
-  const padding = Math.max(0, Math.floor((terminalWidth - tableWidth) / 2));
-  const paddingStr = " ".repeat(padding);
-
-  const centerText = (text, width = terminalWidth) => {
-    const spaces = Math.max(0, Math.floor((width - text.length) / 2));
-    return " ".repeat(spaces) + text;
-  };
+  const terminalHeight = process.stdout.rows || 24;
 
   const renderTable = async () => {
     console.clear();
-    console.log("\n");
-    console.log(
-      centerText(`${colors.blue}🚀 Initializing Services${colors.reset}`)
-    );
-    console.log("\n");
 
+    // Calculate vertical centering
+    const totalLines = 10; // Banner + Table + Messages
+    const topPadding = Math.max(
+      0,
+      Math.floor((terminalHeight - totalLines) / 2)
+    );
+    console.log("\n".repeat(topPadding));
+
+    // Centered banner
+    const banner = `${colors.blue}🚀 Initializing Services${colors.reset}`;
+    const bannerPadding = Math.max(
+      0,
+      Math.floor((terminalWidth - banner.length) / 2)
+    );
+    console.log(`${" ".repeat(bannerPadding) + banner}\n`);
+
+    // Table constants
+    const tableWidth = 58;
+    const tablePadding = Math.max(
+      0,
+      Math.floor((terminalWidth - tableWidth) / 2)
+    );
+    const paddingStr = " ".repeat(tablePadding);
+
+    // Progress calculation
+    const progress = Math.min(100, Math.floor((attempt / maxAttempts) * 100));
+    const progressWidth = 50;
+    const filledWidth = Math.floor((progressWidth * progress) / 100);
+    const emptyWidth = progressWidth - filledWidth;
+    const progressBar = `${colors.blue}[${"■".repeat(filledWidth)}${"□".repeat(emptyWidth)}] ${progress}%${colors.reset}`;
+
+    // Render table
     const table = [
       `${colors.gray}┌───────────────┬──────────────────────────────┬──────────┐${colors.reset}`,
       `${colors.gray}│${colors.blue} SERVICE       ${colors.gray}│${colors.blue} ENDPOINT                     ${colors.gray}│${colors.blue} STATUS   ${colors.gray}│${colors.reset}`,
       `${colors.gray}├───────────────┼──────────────────────────────┼──────────┤${colors.reset}`
     ];
 
+    // Service status row
     for (const [name, { url, status }] of Object.entries(initStatus)) {
       let statusSymbol;
       let statusColor;
@@ -186,7 +199,7 @@ async function waitForInitServices(maxAttempts = 60) {
         statusSymbol = "✗";
         statusColor = colors.red;
       } else {
-        statusSymbol = getSpinnerFrame();
+        statusSymbol = spinnerFrames[spinnerIndex];
         statusColor = colors.yellow;
       }
 
@@ -199,85 +212,73 @@ async function waitForInitServices(maxAttempts = 60) {
       `${colors.gray}└───────────────┴──────────────────────────────┴──────────┘${colors.reset}`
     );
 
-    for (const line of table) {
-      console.log(paddingStr + line);
-    }
+    // Render centered table
+    // biome-ignore lint/complexity/noForEach: ignore
+    table.forEach((line) => console.log(paddingStr + line));
 
-    console.log("\n");
+    // Progress bar and messages
+    console.log(`\n${" ".repeat(tablePadding)}${progressBar}`);
     console.log(
-      centerText(
-        `${colors.dim}⚠️  Initialization time may vary based on system performance${colors.reset}`
-      )
+      `\n${" ".repeat(tablePadding)}${colors.dim}⚠️  Initialization time may vary based on system performance${colors.reset}`
     );
     console.log(
-      centerText(
-        `${colors.dim}💡 Please wait while services are being configured...${colors.reset}`
-      )
+      `${" ".repeat(tablePadding)}${colors.dim}💡 Please wait while services are being configured...${colors.reset}`
     );
-    console.log("\n");
   };
 
   let lastUpdate = Date.now();
   const updateInterval = 100;
+  let spinnerIndex = 0;
+  const spinnerFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
-  for (const [_key, service] of Object.entries({
-    prisma: {
-      name: "Prisma Migrations",
-      container: "zephyr-prisma-migrate",
-      successPattern: "🎉 Database initialization complete",
-      errorPattern: "Error:|error:|prisma:error"
-    }
-  })) {
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      try {
-        const logs = getDockerLogs(service.container);
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const logs = getDockerLogs("zephyr-prisma-migrate");
 
-        if (logs.includes(service.successPattern)) {
-          initStatus["Init Services"].status = "Ready";
-          await renderTable();
-          return true;
-        }
+      if (logs.includes("🎉 Database initialization complete")) {
+        initStatus["Init Services"].status = "Ready";
+        await renderTable();
+        return true;
+      }
 
-        if (logs.match(service.errorPattern)) {
-          initStatus["Init Services"].status = "Failed";
-          await renderTable();
-          console.log(
-            centerText(`${colors.red}❌ Initialization Failed${colors.reset}`)
-          );
-          return false;
-        }
-
-        const now = Date.now();
-        if (now - lastUpdate >= updateInterval) {
-          await renderTable();
-          lastUpdate = now;
-        }
-
-        if (attempt === maxAttempts) {
-          initStatus["Init Services"].status = "Failed";
-          await renderTable();
-          console.log(
-            centerText(
-              `${colors.red}❌ Initialization Timed Out${colors.reset}`
-            )
-          );
-          return false;
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        // biome-ignore lint/correctness/noUnusedVariables: ignore
-      } catch (error) {
+      if (logs.match(/Error:|error:|prisma:error/)) {
         initStatus["Init Services"].status = "Failed";
         await renderTable();
         console.log(
-          centerText(`${colors.red}❌ Initialization Error${colors.reset}`)
+          `\n${" ".repeat(tablePadding)}${colors.red}❌ Initialization Failed${colors.reset}`
         );
         return false;
       }
+
+      const now = Date.now();
+      if (now - lastUpdate >= updateInterval) {
+        spinnerIndex = (spinnerIndex + 1) % spinnerFrames.length;
+        await renderTable();
+        lastUpdate = now;
+      }
+
+      if (attempt === maxAttempts) {
+        initStatus["Init Services"].status = "Failed";
+        await renderTable();
+        console.log(
+          `\n${" ".repeat(tablePadding)}${colors.red}❌ Initialization Timed Out${colors.reset}`
+        );
+        return false;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // biome-ignore lint/correctness/noUnusedVariables: ignore
+    } catch (error) {
+      initStatus["Init Services"].status = "Failed";
+      await renderTable();
+      console.log(
+        `\n${" ".repeat(tablePadding)}${colors.red}❌ Initialization Error${colors.reset}`
+      );
+      return false;
     }
   }
 
-  return true;
+  return false;
 }
 
 module.exports = {

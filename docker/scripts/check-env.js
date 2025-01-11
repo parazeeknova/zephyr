@@ -45,7 +45,6 @@ const REQUIRED_ENVS = {
     "NODE_ENV",
     "NEXT_TELEMETRY_DISABLED",
     "TURBO_TELEMERY_DISABLED",
-    "CRON_SECRET",
     "JWT_EXPIRES_IN",
     "NEXT_PUBLIC_URL",
     "NEXT_PUBLIC_SITE_URL"
@@ -75,7 +74,8 @@ const OPTIONAL_ENVS = {
     "GOOGLE_CLIENT_SECRET"
   ],
   mail: ["SUPPORT_EMAIL", "GMAIL_USER", "GMAIL_APP_PASSWORD"],
-  chat: ["NEXT_PUBLIC_STREAM_KEY", "STREAM_SECRET"]
+  chat: ["NEXT_PUBLIC_STREAM_KEY", "STREAM_SECRET"],
+  misc: ["CRON_SECRET"]
 };
 
 function printBanner() {
@@ -254,7 +254,8 @@ function getWarningMessage(variable) {
     STREAM_SECRET: "Chat features will not work",
     TWITTER_CLIENT_ID: "Twitter login will not work",
     GITHUB_CLIENT_ID: "GitHub login will not work",
-    GOOGLE_CLIENT_ID: "Google login will not work"
+    GOOGLE_CLIENT_ID: "Google login will not work",
+    CRON_SECRET: "Scheduled tasks will not work (not important in development)"
   };
   return warnings[variable] || "Feature may be limited";
 }

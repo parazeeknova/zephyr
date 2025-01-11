@@ -26,7 +26,6 @@ async function startDockerServices(isFirstRun) {
       ignoreError: true
     });
 
-    // Clean up any existing volumes
     await execAsync(
       "docker volume rm zephyr_postgres_data_dev zephyr_redis_data_dev zephyr_minio_data_dev",
       {
@@ -34,7 +33,6 @@ async function startDockerServices(isFirstRun) {
       }
     );
 
-    // Force remove any existing networks
     await execAsync("docker network prune -f", { ignoreError: true });
 
     console.log(

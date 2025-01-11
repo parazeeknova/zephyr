@@ -114,27 +114,47 @@ async function generatePrisma() {
   }
 }
 
+async function formatbiome() {
+  console.log(
+    `${colors.green}🌱 Applying Linting & Formatting.. ${colors.reset}`
+  );
+  try {
+    execSync("pnpm run biome:fix", {
+      stdio: "inherit",
+      cwd: PROJECT_ROOT
+    });
+    console.log(`${colors.green}✅ Applied Successfully${colors.reset}`);
+    return true;
+  } catch (error) {
+    console.error(
+      `${colors.red}Failed to format, fix the following issue:${colors.reset}`,
+      error.message
+    );
+  }
+}
+
 async function main() {
   try {
-    // Check for pnpm
     const pnpmInstalled = await checkPnpm();
     if (!pnpmInstalled) {
       process.exit(1);
     }
 
-    // Show pnpm version
     const pnpmVersion = execSync("pnpm --version", { encoding: "utf8" }).trim();
     console.log(
       `${colors.green}✓ Using pnpm version:${colors.reset} ${pnpmVersion}`
     );
 
-    // Install dependencies
     const depsInstalled = await installDependencies();
     if (!depsInstalled) {
       process.exit(1);
     }
 
-    // Generate Prisma Client
+    const biomeFormatted = await formatbiome();
+    if (!biomeFormatted) {
+      process.exit(1);
+    }
+
     const prismaGenerated = await generatePrisma();
     if (!prismaGenerated) {
       process.exit(1);
