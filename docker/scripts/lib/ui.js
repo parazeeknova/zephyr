@@ -19,6 +19,14 @@ function printBanner() {
   );
 }
 
+const spinnerFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+let spinnerIndex = 0;
+function getSpinnerFrame() {
+  const frame = spinnerFrames[spinnerIndex];
+  spinnerIndex = (spinnerIndex + 1) % spinnerFrames.length;
+  return frame;
+}
+
 async function createStatusTable(services) {
   const maxNameLength = 15;
   const maxUrlLength = 30;
@@ -63,5 +71,7 @@ async function createStatusTable(services) {
 
 module.exports = {
   printBanner,
-  createStatusTable
+  createStatusTable,
+  getSpinnerFrame,
+  spinnerFrames
 };

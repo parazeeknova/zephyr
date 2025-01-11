@@ -4,47 +4,52 @@ const colors = require("./colors");
 const { PROJECT_ROOT } = require("./utils");
 
 function createEnvFile() {
+  const REDIS_PASSWORD = "zephyrredis";
+  const REDIS_HOST = "localhost";
+  const REDIS_PORT = "6379";
+  const MINIO_HOST = "localhost";
+  const MINIO_PORT = "9000";
+
   const webEnvContent = `
-# Database
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=zephyr
-POSTGRES_PORT=5433
-POSTGRES_HOST=localhost
-DATABASE_URL=postgresql://postgres:postgres@localhost:5433/zephyr?schema=public
-POSTGRES_PRISMA_URL=postgresql://postgres:postgres@localhost:5433/zephyr?schema=public
-POSTGRES_URL_NON_POOLING=postgresql://postgres:postgres@localhost:5433/zephyr?schema=public
+  # Database
+  POSTGRES_USER=postgres
+  POSTGRES_PASSWORD=postgres
+  POSTGRES_DB=zephyr
+  POSTGRES_PORT=5433
+  POSTGRES_HOST=localhost
+  DATABASE_URL=postgresql://postgres:postgres@localhost:5433/zephyr?schema=public
+  POSTGRES_PRISMA_URL=postgresql://postgres:postgres@localhost:5433/zephyr?schema=public
+  POSTGRES_URL_NON_POOLING=postgresql://postgres:postgres@localhost:5433/zephyr?schema=public
 
-# Redis
-REDIS_PASSWORD=zephyrredis
-REDIS_PORT=6379
-REDIS_HOST=localhost
-REDIS_URL=redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/0
+  # Redis
+  REDIS_PASSWORD=${REDIS_PASSWORD}
+  REDIS_PORT=${REDIS_PORT}
+  REDIS_HOST=${REDIS_HOST}
+  REDIS_URL=redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/0
 
-# MinIO
-MINIO_ROOT_USER=minioadmin
-MINIO_ROOT_PASSWORD=minioadmin
-MINIO_BUCKET_NAME=uploads
-MINIO_PORT=9000
-MINIO_CONSOLE_PORT=9001
-MINIO_HOST=localhost
-MINIO_ENDPOINT=http://${MINIO_HOST}:${MINIO_PORT}
-NEXT_PUBLIC_MINIO_ENDPOINT=http://localhost:${MINIO_PORT}
-MINIO_ENABLE_OBJECT_LOCKING=on
+  # MinIO
+  MINIO_ROOT_USER=minioadmin
+  MINIO_ROOT_PASSWORD=minioadmin
+  MINIO_BUCKET_NAME=uploads
+  MINIO_PORT=${MINIO_PORT}
+  MINIO_CONSOLE_PORT=9001
+  MINIO_HOST=${MINIO_HOST}
+  MINIO_ENDPOINT=http://${MINIO_HOST}:${MINIO_PORT}
+  NEXT_PUBLIC_MINIO_ENDPOINT=http://localhost:${MINIO_PORT}
+  MINIO_ENABLE_OBJECT_LOCKING=on
 
-# Application
-JWT_SECRET=zephyrjwtsupersecret
-JWT_EXPIRES_IN=7d
-NEXT_PUBLIC_PORT=3000
-NEXT_PUBLIC_URL=http://localhost:3000
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+  # Application
+  JWT_SECRET=zephyrjwtsupersecret
+  JWT_EXPIRES_IN=7d
+  NEXT_PUBLIC_PORT=3000
+  NEXT_PUBLIC_URL=http://localhost:3000
+  NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
-#Mics
-NODE_ENV=development
-NEXT_TELEMETRY_DISABLED=1
-TURBO_TELEMERY_DISABLED=1
-
-`.trim();
+  #Mics
+  NODE_ENV=development
+  NEXT_TELEMETRY_DISABLED=1
+  TURBO_TELEMERY_DISABLED=1
+  `.trim();
 
   const dbEnvContent = `
 # Database URLs for Prisma

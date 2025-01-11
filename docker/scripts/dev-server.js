@@ -5,7 +5,6 @@ const path = require("node:path");
 const colors = require("./lib/colors");
 const { checkRequiredServices, startDockerServices } = require("./lib/docker");
 const { waitForServices, waitForInitServices } = require("./lib/services");
-const { printBanner } = require("./lib/ui");
 const { PROJECT_ROOT, execAsync } = require("./lib/utils");
 const { createEnvFile } = require("./lib/env");
 
@@ -13,8 +12,6 @@ const INIT_FLAG_FILE = path.join(PROJECT_ROOT, ".init-complete");
 
 async function main() {
   try {
-    printBanner();
-
     const servicesOk = await checkRequiredServices();
     if (!servicesOk) {
       throw new Error("Required services are not available");
