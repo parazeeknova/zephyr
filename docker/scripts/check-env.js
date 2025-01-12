@@ -73,7 +73,7 @@ const OPTIONAL_ENVS = {
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET"
   ],
-  mail: ["SUPPORT_EMAIL", "GMAIL_USER", "GMAIL_APP_PASSWORD"],
+  mail: ["SUPPORT_EMAIL", "UNSEND_API_KEY"],
   chat: ["NEXT_PUBLIC_STREAM_KEY", "STREAM_SECRET"],
   misc: ["CRON_SECRET"]
 };
@@ -247,8 +247,7 @@ function validateEnvs(envs, location) {
 
 function getWarningMessage(variable) {
   const warnings = {
-    GMAIL_USER: "Email functionality will not work",
-    GMAIL_APP_PASSWORD: "Email functionality will not work",
+    UNSEND_API_KEY: "Email functionality will not work",
     SUPPORT_EMAIL: "Support email features will be disabled",
     NEXT_PUBLIC_STREAM_KEY: "Chat features will not work",
     STREAM_SECRET: "Chat features will not work",
