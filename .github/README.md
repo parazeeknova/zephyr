@@ -27,27 +27,35 @@
 
 #### _<div align="left"><sub>// Sub-services under Zephyr</sub></div>_
 
-- **[Repository](https://share.zephyyrr.in/s/repo)**: Mirrored Zephyr services and repositories (self hosted).
-- **[Zephyr](https://development.zephyyrr.in)**: Development preview for zephyr (development branch).
-- **[Zephyr Support](https://development.zephyyrr.in/support)**: Support platform for zephyr.
-- **[Velastria / Zephyr chat](https://dev-chat.zephyyrr.in)**: Chat platform for zephyr (WIP).
-- **[Zephyr Forge](https://forge.zephyyrr.in)**: Easily setup zephyr on your own localhost with a single command.
+<div align="center">
 
+<p>
+  <a href="https://share.zephyyrr.in/s/repo"><strong>Zephyr Services (GITEA)</strong></a> | 
+  <a href="https://development.zephyyrr.in/support"><strong>Zephyr Support</strong></a> | 
+  <a href="https://github.com/parazeeknova/velastria"><strong>Velastria / Zephyr chat</strong></a> | 
+  <a href="https://github.com/parazeeknova/zephyr-forge"><strong>Zephyr Forge</strong></a>
+</p>
+
+</div>
 
 #### _<div align="left"><sub>// Local Development Setup</sub></div>_
 
+> [!NOTE]
+> **Note for SWOC contributors**: Zephyr is a large project with multiple services and dependencies. The Issues page containes list of issues that may or may not be suitable for SWOC contributions. Check ISSUES with `SWOC` label for issues that are suitable for SWOC contributions. If you are unsure about the issue, feel free to ask in the issue thread. You can also create a new issue with `SWOC` label for any feature or bug you want to work on.
+
 ###### _<div align="left"><sub>// Prerequisites</sub></div>_
 
-- [Node.js](https://nodejs.org/) (v20 or higher)
-- [pnpm](https://pnpm.io/installation) (Workspace management)
-- [Docker](https://www.docker.com/) (Containerization)
-- [Git](https://git-scm.com/) (Version control)
+<p align="center">
+  <a href="https://nodejs.org/">Node.js</a> (v20 or higher) | 
+  <a href="https://pnpm.io/installation">pnpm</a> (Workspace management) | 
+  <a href="https://www.docker.com/">Docker</a> (Containerization) | 
+  <a href="https://git-scm.com/">Git</a> (Version control)
+</p>
 
 ###### _<div align="left"><sub>// Installation</sub></div>_
 
-<p align="left">
-We use <strong>pnpm</strong> and <strong>turbo</strong> for managing the dependencies and the monorepo structutre. To install the dependencies and start the development server, run the following commands:
-</p>
+> [!NOTE]
+> **Zephyr** is a monorepo project, which means that it is composed of multiple packages that are managed together. The project uses [pnpm](https://pnpm.io/) for workspace management and [Docker](https://www.docker.com/) for containerization. Make sure you have the following prerequisites installed before setting up the development environment.
 
 ###### _<div align="center"><sub>Using Zephyr Forge (recommended)</sub></div>_
 
@@ -192,6 +200,8 @@ If you still encounter any issues with the development server, report the issue 
 
 #### _<div align="left"><sub>// Contributors</sub></div>_
 ##### _<div align="left"><sub>// Hall of Fame</sub></div>_
+
+<br>
 <a href="https://github.com/parazeeknova/zephyr/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=parazeeknova/zephyr" />
 </a>
