@@ -190,6 +190,12 @@ If you still encounter any issues with the development server, report the issue 
 #### _<div align="left"><sub>// Analytics</sub></div>_
 ![Alt](https://repobeats.axiom.co/api/embed/21d8d944036757fcd0624e71d0b2598ca8b8041f.svg "Repobeats analytics image")
 
+#### _<div align="left"><sub>// Contributors</sub></div>_
+##### _<div align="left"><sub>// Hall of Fame</sub></div>_
+<a href="https://github.com/parazeeknova/zephyr/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=parazeeknova/zephyr" />
+</a>
+
 <br>
 <br>
 
