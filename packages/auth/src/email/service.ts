@@ -2,10 +2,19 @@ import { Unsend } from "unsend";
 import { getPasswordResetEmailTemplate } from "./templates/reset-password";
 import { getVerificationEmailTemplate } from "./templates/verification";
 
-const unsend = new Unsend(
-  process.env.UNSEND_API_KEY,
-  "https://mails.zephyyrr.in"
-);
+let unsend: Unsend;
+
+const initializeUnsend = () => {
+  if (!unsend && process.env.UNSEND_API_KEY) {
+    unsend = new Unsend(
+      process.env.UNSEND_API_KEY,
+      "https://mails.zephyyrr.in"
+    );
+  } else if (!process.env.UNSEND_API_KEY) {
+    console.error("Missing UNSEND_API_KEY environment variable");
+  }
+};
+
 const SENDER = "zephyyrr.in";
 
 function getBaseUrl() {
@@ -16,6 +25,11 @@ export async function sendVerificationEmail(
   email: string,
   token: string
 ): Promise<void> {
+  initializeUnsend();
+  if (!unsend) {
+    throw new Error("Email service not initialized");
+  }
+
   const baseUrl = getBaseUrl().replace(/\/$/, "");
   const verificationUrl = `${baseUrl}/verify-email?token=${token}`;
 
@@ -38,6 +52,11 @@ export async function sendPasswordResetEmail(
   email: string,
   token: string
 ): Promise<void> {
+  initializeUnsend();
+  if (!unsend) {
+    throw new Error("Email service not initialized");
+  }
+
   const baseUrl = getBaseUrl().replace(/\/$/, "");
   const resetUrl = `${baseUrl}/reset-password/confirm?token=${token}`;
 
