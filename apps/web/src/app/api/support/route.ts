@@ -1,16 +1,13 @@
 import { rateLimitMiddleware } from "@/lib/rate-limiter";
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Unsend } from "unsend";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD
-  }
-});
+const unsend = new Unsend(
+  process.env.UNSEND_API_KEY,
+  "https://mails.zephyyrr.in"
+);
+
+const SENDER = "zephyyrr.in";
 
 export async function POST(request: Request) {
   try {
@@ -53,9 +50,9 @@ export async function POST(request: Request) {
          </ul>`
       : "";
 
-    await transporter.sendMail({
-      from: `"Zephyr Support" <${process.env.GMAIL_USER}>`,
-      to: process.env.GMAIL_USER,
+    await unsend.emails.send({
+      from: `Zephyr Support <no-reply@${SENDER}>`,
+      to: process.env.SUPPORT_EMAIL || "",
       subject: `[Zephyr Support - ${type}] ${subject}`,
       html: `
         <h2>New Support Request</h2>

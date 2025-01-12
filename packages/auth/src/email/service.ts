@@ -1,16 +1,12 @@
-import nodemailer from "nodemailer";
+import { Unsend } from "unsend";
 import { getPasswordResetEmailTemplate } from "./templates/reset-password";
 import { getVerificationEmailTemplate } from "./templates/verification";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD
-  }
-});
+const unsend = new Unsend(
+  process.env.UNSEND_API_KEY,
+  "https://mails.zephyyrr.in"
+);
+const SENDER = "zephyyrr.in";
 
 function getBaseUrl() {
   return process.env.NEXT_PUBLIC_APP_URL || "https://development.zephyyrr.in";
@@ -25,12 +21,17 @@ export async function sendVerificationEmail(
 
   console.log("Verification URL:", verificationUrl);
 
-  await transporter.sendMail({
-    from: `"🚀 Zephyr" <${process.env.GMAIL_USER}>`,
-    to: email,
-    subject: "🎉 One Last Step to Join the Zephyr Community!",
-    html: getVerificationEmailTemplate(verificationUrl)
-  });
+  try {
+    await unsend.emails.send({
+      from: `🚀 Zephyr <no-reply@${SENDER}>`,
+      to: email,
+      subject: "🎉 One Last Step to Join the Zephyr Community!",
+      html: getVerificationEmailTemplate(verificationUrl)
+    });
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+    throw error;
+  }
 }
 
 export async function sendPasswordResetEmail(
@@ -42,10 +43,15 @@ export async function sendPasswordResetEmail(
 
   console.log("Reset URL:", resetUrl);
 
-  await transporter.sendMail({
-    from: `"🔒 Zephyr" <${process.env.GMAIL_USER}>`,
-    to: email,
-    subject: "Reset Your Password",
-    html: getPasswordResetEmailTemplate(resetUrl)
-  });
+  try {
+    await unsend.emails.send({
+      from: `🔒 Zephyr <no-reply@${SENDER}>`,
+      to: email,
+      subject: "Reset Your Password",
+      html: getPasswordResetEmailTemplate(resetUrl)
+    });
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
+    throw error;
+  }
 }
