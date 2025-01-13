@@ -314,7 +314,11 @@ export default function SignUpForm() {
                         }}
                       />
                     </FormControl>
-                    <PasswordStrengthChecker password={password} />
+                    <PasswordStrengthChecker
+                      password={password}
+                      setValue={form.setValue}
+                      setPassword={setPassword}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
