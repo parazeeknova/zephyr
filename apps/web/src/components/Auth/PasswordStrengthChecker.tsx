@@ -1,7 +1,10 @@
 "use client";
 
+import type { SignUpValues } from "@zephyr/auth/src";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, X } from "lucide-react";
+import type { UseFormSetValue } from "react-hook-form";
+import { PasswordRecommender } from "./PasswordRecommender";
 
 interface Requirement {
   text: string;
@@ -41,10 +44,14 @@ const requirements: Requirement[] = [
 
 interface PasswordStrengthCheckerProps {
   password: string;
+  setValue: UseFormSetValue<SignUpValues>;
+  setPassword: (value: string) => void;
 }
 
 export function PasswordStrengthChecker({
-  password
+  password,
+  setValue,
+  setPassword
 }: PasswordStrengthCheckerProps) {
   const getStrengthPercent = () => {
     if (!password) return 0;
@@ -126,9 +133,17 @@ export function PasswordStrengthChecker({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, delay: 0.1 }}
           >
+            <PasswordRecommender
+              password={password}
+              requirements={requirements}
+              setValue={setValue}
+              setPassword={setPassword}
+            />
+
             <p className="text-muted-foreground text-xs">
               Password Requirements:
             </p>
+
             <div className="space-y-2">
               {requirements.map((req, index) => (
                 <div key={index} className="flex items-center gap-2">
