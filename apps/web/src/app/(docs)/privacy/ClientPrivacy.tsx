@@ -1,25 +1,11 @@
 "use client";
 
 import ScrollUpButton from "@/components/Layouts/ScrollUpButton";
+import { FossBanner } from "@/components/misc/foss-banner";
 import { Button } from "@/components/ui/button";
-import { FossBanner } from "@zephyr-ui/misc/foss-banner";
-import {
-  ArrowLeft,
-  Database,
-  Eye,
-  LockKeyhole,
-  Server,
-  Shield
-} from "lucide-react";
+import { ArrowLeft, LockKeyhole } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect } from "react";
-
-const PrivacyIcon = ({ icon: Icon, title }: { icon: any; title: string }) => (
-  <div className="mb-2 flex items-center gap-2 text-primary">
-    <Icon className="h-5 w-5" />
-    <span className="font-medium">{title}</span>
-  </div>
-);
 
 export default function PrivacyPolicyPage() {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -72,140 +58,193 @@ export default function PrivacyPolicyPage() {
 
         <div className="prose prose-neutral dark:prose-invert max-w-none">
           <p className="text-muted-foreground">
-            Last updated: 1st November 2024
+            Last updated: January 13, 2025
           </p>
 
           <section className="mt-8">
             <p className="text-lg text-muted-foreground">
               At Zephyr, we take your privacy seriously. This Privacy Policy
               explains how we collect, use, disclose, and safeguard your
-              information when you use our platform.
+              information when you use our platform. Our commitment to privacy
+              forms the foundation of our relationship with users, and we strive
+              to be transparent about our data practices.
             </p>
           </section>
 
           <section className="mt-8">
-            <PrivacyIcon icon={Eye} title="Information We Collect" />
-            <div className="mt-4 space-y-4">
-              <h3 className="font-medium text-xl">1. Personal Information</h3>
-              <ul className="list-disc space-y-2 pl-6">
-                <li>Name and username</li>
-                <li>Email address</li>
-                <li>Profile information</li>
-                <li>Profile picture</li>
-                <li>Social media connections</li>
-                <li>Authentication data from third-party services</li>
-              </ul>
-
-              <h3 className="font-medium text-xl">2. Content Information</h3>
-              <ul className="list-disc space-y-2 pl-6">
-                <li>Posts and comments</li>
-                <li>Images and media uploads</li>
-                <li>Reactions and interactions</li>
-                <li>Messages and communications</li>
-              </ul>
-            </div>
-          </section>
-
-          <section className="mt-8">
-            <PrivacyIcon icon={Database} title="How We Use Your Information" />
-            <div className="mt-4 space-y-4">
+            <h2 className="mb-4 font-semibold text-2xl">
+              Information Collection
+            </h2>
+            <div className="space-y-4">
+              <h3 className="font-medium text-xl">Personal Information</h3>
               <p>
-                We use the collected information for the following purposes:
+                We collect certain personal information necessary for platform
+                functionality and user experience enhancement. This includes
+                basic identification details such as your name and username,
+                which help create your unique identity within our platform. Your
+                email address serves as a primary contact point and
+                authentication method. We also maintain profile information that
+                you choose to share, including profile pictures and optional
+                biographical details. When you choose to connect social media
+                accounts, we store these connections to enable integrated
+                features and enhanced functionality.
               </p>
 
-              <h3 className="font-medium text-xl">1. Service Provision</h3>
-              <ul className="list-disc space-y-2 pl-6">
-                <li>Account creation and management</li>
-                <li>Content delivery and display</li>
-                <li>Feature functionality</li>
-                <li>User authentication</li>
-                <li>Communication services</li>
-              </ul>
+              <p>
+                Authentication data from third-party services is securely
+                processed and stored when you choose to use alternative login
+                methods. This information is handled with strict security
+                protocols and is used solely for authentication purposes. We
+                maintain this data in encrypted form and regularly audit our
+                authentication systems to ensure continued security.
+              </p>
 
-              <h3 className="font-medium text-xl">2. Platform Improvement</h3>
-              <ul className="list-disc space-y-2 pl-6">
-                <li>Analytics and performance monitoring</li>
-                <li>Feature development and optimization</li>
-                <li>Bug fixing and troubleshooting</li>
-                <li>User experience enhancement</li>
-              </ul>
-
-              {/* <h3 className="font-medium text-xl">3. Personalization</h3>
-            <ul className="list-disc space-y-2 pl-6">
-              <li>Content recommendations</li>
-              <li>User suggestions</li>
-              <li>Customized feeds</li>
-              <li>Relevant notifications</li>
-            </ul> */}
+              <h3 className="font-medium text-xl">Content Information</h3>
+              <p>
+                As you interact with our platform, we collect and store content
+                that you create and share. This includes posts, comments, and
+                any media uploads you make to the platform. Your interactions
+                with other users' content, such as reactions and responses, are
+                also recorded to enable social features and maintain
+                conversation threads. Messages and communications within the
+                platform are stored securely to ensure reliable delivery and
+                maintain conversation history.
+              </p>
             </div>
           </section>
 
           <section className="mt-8">
-            <PrivacyIcon icon={Server} title="Data Storage and Protection" />
-            <div className="mt-4 space-y-4">
-              <h3 className="font-medium text-xl">1. Data Security</h3>
-              <ul className="list-disc space-y-2 pl-6">
-                <li>End-to-end encryption for sensitive data</li>
-                <li>Regular security audits</li>
-                <li>Access control and authentication</li>
-                <li>Secure data transmission (SSL/TLS)</li>
-                <li>Regular backup procedures</li>
-              </ul>
+            <h2 className="mb-4 font-semibold text-2xl">Information Usage</h2>
+            <div className="space-y-4">
+              <h3 className="font-medium text-xl">Service Provision</h3>
+              <p>
+                Your information enables us to provide and maintain core
+                platform functionality. We use this data to manage your account,
+                authenticate your access, and deliver appropriate content to
+                you. Account-related information helps us maintain platform
+                security and ensure proper access control. Communication
+                services rely on stored user data to facilitate interactions
+                between users while maintaining privacy and security standards.
+              </p>
 
-              <h3 className="font-medium text-xl">2. Data Retention</h3>
-              <ul className="list-disc space-y-2 pl-6">
-                <li>Active account data retained until account deletion</li>
-                <li>Unverified accounts deleted after 1 day</li>
-                <li>Inactive accounts archived after 12 months</li>
-                <li>Backup retention for 1 day</li>
-                <li>Legal compliance data retained as required</li>
-              </ul>
-
-              <h3 className="font-medium text-xl">3. Third-Party Services</h3>
-              <p>We use trusted third-party services for:</p>
-              <ul className="list-disc space-y-2 pl-6">
-                <li>Cloud storage (AWS, Google Cloud)</li>
-                <li>Analytics (Google Analytics)</li>
-                <li>Authentication (OAuth providers)</li>
-                <li>Content delivery (CDN services)</li>
-              </ul>
+              <h3 className="font-medium text-xl">Platform Enhancement</h3>
+              <p>
+                We analyze platform usage patterns and performance metrics to
+                continuously improve our services. This analysis helps identify
+                areas for optimization and guides feature development decisions.
+                Technical issues and bugs are investigated using collected data,
+                enabling us to maintain platform stability and reliability. User
+                experience improvements are driven by careful analysis of
+                interaction patterns and user feedback, always prioritizing
+                privacy and data minimization principles.
+              </p>
             </div>
           </section>
 
           <section className="mt-8">
-            <PrivacyIcon icon={Shield} title="Your Rights and Controls" />
-            <div className="mt-4 space-y-4">
-              <p>You have the right to:</p>
-              <ul className="list-disc space-y-2 pl-6">
-                <li>Access your personal data</li>
-                <li>Correct inaccurate data</li>
-                <li>Request data deletion</li>
-                <li>Export your data</li>
-                <li>Opt-out of data collection</li>
-              </ul>
+            <h2 className="mb-4 font-semibold text-2xl">
+              Data Storage and Protection
+            </h2>
+            <div className="space-y-4">
+              <h3 className="font-medium text-xl">Security Infrastructure</h3>
+              <p>
+                We implement comprehensive security measures to protect your
+                data throughout its lifecycle. Sensitive information is
+                protected using end-to-end encryption, ensuring data remains
+                secure during transmission and storage. Our security
+                infrastructure undergoes regular audits by qualified security
+                professionals to identify and address potential vulnerabilities.
+                Access to user data is strictly controlled through sophisticated
+                authentication and authorization systems.
+              </p>
 
-              <div className="mt-4 rounded-lg bg-muted p-4">
-                <p className="text-sm">
-                  To exercise these rights, please contact our privacy team at{" "}
-                  <Link
-                    href="mailto:dev.hashcodes@gmail.com"
-                    className="text-primary hover:underline"
-                  >
-                    dev.hashcodes@gmail.com
-                  </Link>
-                </p>
-              </div>
+              <h3 className="font-medium text-xl">Data Retention Policies</h3>
+              <p>
+                Our data retention policies balance user needs with privacy
+                considerations. Active account data remains available throughout
+                the account's lifetime, enabling continuous service access.
+                Unverified accounts are automatically removed after 24 hours to
+                maintain platform security and data minimization. Accounts that
+                remain inactive for 12 months are archived to protect user
+                privacy while maintaining service integrity. We maintain backups
+                for a limited 24-hour period to ensure data recovery
+                capabilities while minimizing data retention periods.
+              </p>
+
+              <h3 className="font-medium text-xl">Third-Party Services</h3>
+              <p>
+                We carefully select and monitor third-party service providers
+                who assist in platform operation. Cloud storage services,
+                including AWS and Google Cloud, are used with strict security
+                configurations and data protection agreements. Analytics
+                services help us understand platform usage patterns while
+                respecting user privacy preferences. Authentication providers
+                and content delivery networks are chosen based on their security
+                standards and privacy commitments.
+              </p>
+            </div>
+          </section>
+
+          <section className="mt-8">
+            <h2 className="mb-4 font-semibold text-2xl">
+              User Rights and Controls
+            </h2>
+            <div className="space-y-4">
+              <p>
+                We are committed to protecting user privacy rights and providing
+                transparent control over personal data. Every user maintains the
+                right to access their personal information stored on our
+                platform. You can request corrections to any inaccurate data,
+                and we will process such requests promptly. Data deletion
+                requests are handled with priority, ensuring thorough removal of
+                personal information while maintaining platform integrity. We
+                provide data export capabilities, allowing you to obtain copies
+                of your information in standard formats.
+              </p>
+
+              <p>
+                Users can manage their privacy preferences through platform
+                settings, including options to opt-out of certain data
+                collection practices. These controls are designed to be
+                intuitive and accessible, empowering users to make informed
+                decisions about their privacy. To exercise any of these rights
+                or discuss privacy concerns, our dedicated privacy team can be
+                reached at{" "}
+                <Link
+                  href="mailto:zephyyrrnyx@gmail.com"
+                  className="text-primary hover:underline"
+                >
+                  zephyyrrnyx@gmail.com
+                </Link>
+                .
+              </p>
             </div>
           </section>
 
           <section className="mt-8">
             <h2 className="mb-4 font-semibold text-2xl">Cookie Policy</h2>
             <div className="space-y-4">
-              <p>We use cookies and similar technologies for:</p>
-              <ul className="list-disc space-y-2 pl-6">
-                <li>Essential platform functionality</li>
-                <li>Authentication state management</li>
-              </ul>
+              <p>
+                Our platform utilizes cookies and similar technologies to
+                enhance and maintain core functionality. These technologies play
+                a crucial role in providing a secure and seamless user
+                experience. Essential cookies enable fundamental platform
+                operations, including maintaining your authentication state
+                throughout your session. These cookies are necessary for proper
+                platform functionality and cannot be disabled without affecting
+                your ability to use core features.
+              </p>
+
+              <p>
+                We implement strict controls over cookie usage, limiting their
+                application to essential platform functions. Our cookie
+                implementation follows privacy-by-design principles, collecting
+                only necessary data and maintaining appropriate security
+                measures. Cookie lifetimes are carefully managed, with session
+                cookies being removed upon browser closure and persistent
+                cookies maintained only as long as necessary for proper platform
+                operation.
+              </p>
             </div>
           </section>
 
@@ -213,10 +252,26 @@ export default function PrivacyPolicyPage() {
             <h2 className="mb-4 font-semibold text-2xl">Children's Privacy</h2>
             <div className="space-y-4">
               <p>
-                Our platform is not intended for children under 13. We do not
-                knowingly collect information from children under 13. If you
-                believe we have collected information from a child under 13,
-                please contact us immediately.
+                We take the protection of children's privacy extremely seriously
+                and have designed our platform specifically for users aged 13
+                and above. We do not knowingly collect or maintain personal
+                information from children under the age of 13. Our registration
+                process includes age verification steps, and we implement
+                additional safeguards to prevent the creation of accounts by
+                underage users.
+              </p>
+
+              <p>
+                If we become aware that we have inadvertently collected personal
+                information from a child under 13, we take immediate steps to
+                delete such information from our systems. We encourage parents
+                and guardians to monitor their children's online activities and
+                help enforce this policy by instructing their children never to
+                provide personal information through our platform. If you
+                believe we might have collected information from a child under
+                13, please contact us immediately at our designated privacy
+                email address, and we will promptly investigate and address the
+                situation.
               </p>
             </div>
           </section>
@@ -227,11 +282,28 @@ export default function PrivacyPolicyPage() {
             </h2>
             <div className="space-y-4">
               <p>
-                Your information may be transferred to and processed in
-                countries other than your own. As we use cloud services, your
-                data may be stored on servers located in different regions. By
-                using our platform, you consent to these transfers. For more
-                information visit each third-party service's privacy policy.
+                As a global platform utilizing cloud-based infrastructure, your
+                information may be transferred to and processed in various
+                countries worldwide. These international transfers are necessary
+                to provide our services efficiently and maintain high
+                availability. We implement appropriate safeguards to protect
+                your information during these transfers, including standard
+                contractual clauses and data processing agreements with our
+                service providers.
+              </p>
+
+              <p>
+                When your data is processed in different regions, it remains
+                protected by robust security measures and data protection
+                standards. We carefully select cloud service providers who
+                maintain high security standards and comply with international
+                data protection regulations. Each third-party service provider
+                is bound by strict data protection requirements, and we
+                regularly audit their compliance with our privacy and security
+                standards. For detailed information about specific data transfer
+                mechanisms and safeguards, users are encouraged to review the
+                privacy policies of our third-party service providers or contact
+                our privacy team.
               </p>
             </div>
           </section>
@@ -242,46 +314,70 @@ export default function PrivacyPolicyPage() {
             </h2>
             <div className="space-y-4">
               <p>
-                We may update this Privacy Policy periodically. We will notify
-                you of any material changes through:
+                Our Privacy Policy evolves alongside our platform and services,
+                reflecting changes in our practices, legal requirements, and
+                user needs. When we make material changes to this policy, we
+                implement a comprehensive notification process to ensure users
+                are properly informed. This includes direct email notifications
+                to all registered users, prominent announcements within the
+                platform interface, and updates to our website's privacy policy
+                page.
               </p>
-              <ul className="list-disc space-y-2 pl-6">
-                <li>Email notifications</li>
-                <li>Platform announcements</li>
-                <li>Website notices</li>
-              </ul>
+
+              <p>
+                We encourage users to review policy updates carefully to
+                understand how they may affect their privacy rights and data
+                protection. Each update includes a summary of significant
+                changes and their potential impact on users. Policy changes
+                become effective upon publication, unless otherwise specified.
+                Users who continue to use our platform after policy updates are
+                considered to have accepted the revised terms. However, we
+                ensure that any significant changes affecting user rights or
+                data processing practices provide adequate notice and, where
+                appropriate, obtain renewed consent.
+              </p>
             </div>
           </section>
 
-          <FossBanner />
-
           <section className="mt-8">
-            <h2 className="mb-4 font-semibold text-2xl">Contact Us</h2>
+            <h2 className="mb-4 font-semibold text-2xl">Contact Information</h2>
             <div className="space-y-4">
               <p>
-                If you have questions about this Privacy Policy, please contact
-                us at:
+                We maintain open channels of communication for all
+                privacy-related inquiries and concerns. Our dedicated privacy
+                team is committed to addressing your questions and ensuring your
+                privacy rights are protected. Whether you need assistance
+                understanding our privacy practices, exercising your data
+                rights, or reporting potential privacy issues, we are here to
+                help.
               </p>
+
               <div className="rounded-lg bg-muted p-4">
                 <p>Zephyr FOSS</p>
                 <p>
                   Email:{" "}
                   <Link
-                    href="mailto:dev.hashcodes@gmail.com"
+                    href="mailto:zephyyrrnyx@gmail.com"
                     className="text-primary hover:underline"
                   >
-                    dev.hashcodes@gmail.com
+                    zephyyrrnyx@gmail.com
                   </Link>
                 </p>
               </div>
             </div>
           </section>
 
+          <FossBanner />
+
           <section className="mt-8 rounded-lg bg-muted p-4">
             <p className="text-muted-foreground text-sm">
               By using Zephyr, you acknowledge that you have read and understood
-              this Privacy Policy and agree to our collection, use, and
-              disclosure of your information as described.
+              this Privacy Policy in its entirety. Your continued use of our
+              platform indicates your agreement with our data collection,
+              processing, and protection practices as described in this policy.
+              We remain committed to protecting your privacy and maintaining the
+              trust you place in us by choosing Zephyr as your platform
+              provider.
             </p>
           </section>
         </div>
