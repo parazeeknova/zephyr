@@ -57,7 +57,7 @@
     "deep-email-validator": "^0.1.21",
     "email-validator": "^2.0.4",
     "file-type": "^19.6.0",
-    "framer-motion": "^11.15.0",
+    "framer-motion": "^11.17.0",
     "ioredis": "^5.4.2",
     "jotai": "^2.11.0",
     "jsonwebtoken": "^9.0.2",
