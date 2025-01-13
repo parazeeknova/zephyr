@@ -6,37 +6,45 @@ import { cache } from "react";
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
-export const lucia = new Lucia(adapter, {
-  sessionCookie: {
-    expires: false,
-    attributes: {
-      secure: process.env.NODE_ENV === "production"
-    }
-  },
-  getUserAttributes(databaseUserAttributes) {
-    return {
-      id: databaseUserAttributes.id,
-      username: databaseUserAttributes.username,
-      displayName: databaseUserAttributes.displayName,
-      avatarUrl: databaseUserAttributes.avatarUrl,
-      googleId: databaseUserAttributes.googleId
-    };
-  }
-});
-
-declare module "lucia" {
-  interface Register {
-    Lucia: typeof lucia;
-    DatabaseUserAttributes: DatabaseUserAttributes;
-  }
-}
-
 interface DatabaseUserAttributes {
   id: string;
   username: string;
   displayName: string;
   avatarUrl: string | null;
   googleId: string | null;
+  emailVerified: boolean;
+}
+
+export const lucia = new Lucia(adapter, {
+  sessionCookie: {
+    expires: process.env.NODE_ENV === "production",
+    attributes: {
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      domain: process.env.COOKIE_DOMAIN || undefined
+    }
+  },
+  getUserAttributes: (attributes) => ({
+    id: attributes.id,
+    username: attributes.username,
+    displayName: attributes.displayName,
+    avatarUrl: attributes.avatarUrl,
+    googleId: attributes.googleId,
+    emailVerified: attributes.emailVerified
+  })
+});
+
+interface SessionAttributes {
+  username: string;
+  email: string;
+}
+
+declare module "lucia" {
+  interface Register {
+    Lucia: typeof lucia;
+    DatabaseUserAttributes: DatabaseUserAttributes;
+    DatabaseSessionAttributes: SessionAttributes;
+  }
 }
 
 export const validateRequest = cache(
@@ -72,8 +80,28 @@ export const validateRequest = cache(
           sessionCookie.attributes
         );
       }
-    } catch {}
+    } catch (error) {
+      console.error("Session cookie handling error:", error);
+    }
 
     return result;
   }
 );
+
+export const createSessionCookie = async (sessionId: string) => {
+  const sessionCookie = lucia.createSessionCookie(sessionId);
+  (await cookies()).set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes
+  );
+};
+
+export const clearSessionCookie = async () => {
+  const sessionCookie = lucia.createBlankSessionCookie();
+  (await cookies()).set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes
+  );
+};

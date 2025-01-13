@@ -158,3 +158,14 @@ export interface ShareResponse {
 export interface ClickResponse {
   clicks: number;
 }
+
+export interface FormStatus {
+  isLoading: boolean;
+  isResending: boolean;
+  error?: string;
+}
+
+export interface SignUpFormProps {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+}

@@ -16,31 +16,83 @@ import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoadingButton } from "@zephyr-ui/Auth/LoadingButton";
 import { PasswordInput } from "@zephyr-ui/Auth/PasswordInput";
+import { isDevelopmentMode } from "@zephyr/auth/src/email/service";
 import { type SignUpValues, signUpSchema } from "@zephyr/auth/validation";
 import { motion } from "framer-motion";
 import { AlertCircle, Mail, User } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useCallback, useEffect, useState, useTransition } from "react";
+import {
+  type FieldValues,
+  type SubmitErrorHandler,
+  useForm
+} from "react-hook-form";
 import { useCountdown } from "usehooks-ts";
 import { Button } from "../ui/button";
 import { PasswordStrengthChecker } from "./PasswordStrengthChecker";
 
+const texts = [
+  "Elevate your ideas, accelerate your impact.",
+  "Transform thoughts into action.",
+  "Your journey to greatness starts here.",
+  "Start Your Adventure",
+  "Dive In!"
+];
+
+interface ErrorWithMessage {
+  message: string;
+}
+
+function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "message" in error &&
+    typeof (error as Record<string, unknown>).message === "string"
+  );
+}
+
+function toErrorWithMessage(maybeError: unknown): ErrorWithMessage {
+  if (isErrorWithMessage(maybeError)) return maybeError;
+  try {
+    return new Error(JSON.stringify(maybeError));
+  } catch {
+    return new Error(String(maybeError));
+  }
+}
+
 export default function SignUpForm() {
   const { toast } = useToast();
   const { setIsVerifying } = useVerification();
+  const [error, setError] = useState<string>();
+  const [password, setPassword] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [isVerificationEmailSent, setIsVerificationEmailSent] = useState(false);
   const verificationChannel = new BroadcastChannel("email-verification");
+
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
     useCountdown({
       countStart: 60,
       intervalMs: 1000
     });
 
+  const form = useForm<SignUpValues>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      email: "",
+      username: "",
+      password: ""
+    },
+    mode: "onBlur"
+  });
+
   useEffect(() => {
     if (count === 0) {
       stopCountdown();
       resetCountdown();
     }
-  }, [count]);
+  }, [count, stopCountdown, resetCountdown]);
 
   useEffect(() => {
     const handleVerificationSuccess = () => {
@@ -57,81 +109,126 @@ export default function SignUpForm() {
     return () => {
       verificationChannel.close();
     };
-  }, []);
+  }, [setIsVerifying]);
 
-  const texts = [
-    "Elevate your ideas, accelerate your impact.",
-    "Transform thoughts into action.",
-    "Your journey to greatness starts here.",
-    "Start Your Adventure",
-    "Dive In!"
-  ];
-
-  const [error, setError] = useState<string>();
-  const [password, setPassword] = useState("");
-  const [isPending, startTransition] = useTransition();
-  const [_isVerificationEmailSent, setIsVerificationEmailSent] =
-    useState(false);
-
-  const form = useForm<SignUpValues>({
-    resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      email: "",
-      username: "",
-      password: ""
-    }
-  });
-
-  const handleInvalidSubmit = () => {
-    const errors = form.formState.errors;
-    if (Object.keys(errors).length > 0) {
+  const handleInvalidSubmit: SubmitErrorHandler<FieldValues> = useCallback(
+    (errors) => {
       const firstError = Object.values(errors)[0];
+      const errorMessage =
+        (firstError?.message as string) || "Please check your input";
+
       toast({
         variant: "destructive",
-        title: "Validation Error",
-        description: firstError?.message ?? "Unknown error"
+        title: "Invalid Input",
+        description: errorMessage,
+        duration: 3000
       });
-    }
-  };
 
-  async function onSubmit(values: SignUpValues) {
+      const firstErrorField = Object.keys(errors)[0];
+      if (firstErrorField) {
+        scrollToError(firstErrorField);
+      }
+    },
+    [toast]
+  );
+
+  const onSubmit = async (values: SignUpValues) => {
     setError(undefined);
     startTransition(async () => {
-      const { error, success } = await signUp(values);
-      if (error) {
-        setError(error);
+      try {
+        setIsLoading(true);
+        const result = await signUp(values);
+
+        if (result.success) {
+          if (result.skipVerification) {
+            toast({
+              title: "Account Created",
+              description: isDevelopmentMode()
+                ? "Development mode: Email verification skipped"
+                : "Account created successfully",
+              duration: 3000
+            });
+
+            form.reset();
+
+            if (isDevelopmentMode()) {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+            }
+
+            window.location.href = "/";
+          } else {
+            setIsVerifying(true);
+            setIsVerificationEmailSent(true);
+            startCountdown();
+            toast({
+              title: "Verification Required",
+              description: "Please check your email to verify your account."
+            });
+
+            if (isDevelopmentMode() && result.verificationUrl) {
+              console.info(
+                "Development Mode - Verification URL:",
+                result.verificationUrl
+              );
+            }
+          }
+        } else if (result.error) {
+          setError(result.error);
+          toast({
+            variant: "destructive",
+            title: "Signup Failed",
+            description: result.error
+          });
+        }
+      } catch (error) {
+        const errorMessage = toErrorWithMessage(error).message;
+        console.error("Signup error:", error);
+        setError(errorMessage);
         toast({
           variant: "destructive",
-          title: "Signup Failed",
-          description: error
+          title: "Error",
+          description: isDevelopmentMode()
+            ? errorMessage
+            : "An unexpected error occurred"
         });
-      } else if (success) {
-        setIsVerifying(true);
-        setIsVerificationEmailSent(true);
-        startCountdown();
-        toast({
-          title: "Verification Email Sent",
-          description: "Please check your email to verify your account."
-        });
+      } finally {
+        setIsLoading(false);
       }
     });
-  }
+  };
 
   const onResendVerificationEmail = async () => {
-    const email = form.getValues("email");
-    const res = await resendVerificationEmail(email);
+    if (count > 0 && count < 60) return;
 
-    if (res.error) {
+    try {
+      setIsResending(true);
+      const email = form.getValues("email");
+      const result = await resendVerificationEmail(email);
+
+      if (result.success) {
+        startCountdown();
+        toast({
+          title: "Email Sent",
+          description: "A new verification email has been sent.",
+          duration: 3000
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Failed to Resend",
+          description: result.error || "Failed to resend verification email",
+          duration: 5000
+        });
+      }
+    } catch (error) {
+      console.error("Error resending verification email:", error);
       toast({
         variant: "destructive",
-        description: res.error
+        title: "Error",
+        description: "Failed to resend verification email. Please try again."
       });
-    } else if (res.success) {
-      startCountdown();
-      toast({
-        title: "Email Resent",
-        description: "Verification email has been resent to your inbox."
-      });
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -148,7 +245,7 @@ export default function SignUpForm() {
         {/* Signup Form */}
         <div
           className={`transition-all duration-500 ease-in-out ${
-            _isVerificationEmailSent
+            isVerificationEmailSent
               ? "pointer-events-none translate-y-[-20px] transform opacity-0"
               : "translate-y-0 transform opacity-100"
           }`}
@@ -174,7 +271,7 @@ export default function SignUpForm() {
                     <FormLabel>Username</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input placeholder="Username" {...field} />
+                        <Input placeholder="cooluser" {...field} />
                         <User className="-translate-y-1/2 absolute top-1/2 right-3 h-4 w-4 text-muted-foreground" />
                       </div>
                     </FormControl>
@@ -190,7 +287,11 @@ export default function SignUpForm() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input placeholder="Email" type="email" {...field} />
+                        <Input
+                          placeholder="you@example.com"
+                          type="email"
+                          {...field}
+                        />
                         <Mail className="-translate-y-1/2 absolute top-1/2 right-3 h-4 w-4 text-muted-foreground" />
                       </div>
                     </FormControl>
@@ -206,7 +307,7 @@ export default function SignUpForm() {
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <PasswordInput
-                        placeholder="Password"
+                        placeholder="••••••••"
                         {...field}
                         onChange={(e) => {
                           field.onChange(e);
@@ -220,7 +321,7 @@ export default function SignUpForm() {
                 )}
               />
               <LoadingButton
-                loading={isPending}
+                loading={isPending || isLoading}
                 type="submit"
                 className="w-full"
               >
@@ -233,7 +334,7 @@ export default function SignUpForm() {
         {/* Verification Message */}
         <div
           className={`absolute top-0 left-0 w-full transition-all duration-500 ease-in-out ${
-            _isVerificationEmailSent
+            isVerificationEmailSent
               ? "translate-y-0 transform opacity-100"
               : "pointer-events-none translate-y-[20px] transform opacity-0"
           }`}
@@ -290,11 +391,15 @@ export default function SignUpForm() {
 
                 <Button
                   onClick={onResendVerificationEmail}
-                  disabled={count > 0 && count < 60}
+                  disabled={isResending || (count > 0 && count < 60)}
                   variant="ghost"
                   className="group relative w-full overflow-hidden rounded-lg border border-border/50 bg-background/50 transition-all hover:bg-background/80"
                 >
-                  {count > 0 && count < 60 ? (
+                  {isResending ? (
+                    <span className="relative text-muted-foreground">
+                      Sending...
+                    </span>
+                  ) : count > 0 && count < 60 ? (
                     <>
                       <motion.div
                         className="absolute top-0 left-0 h-full bg-primary/10"
@@ -324,4 +429,14 @@ export default function SignUpForm() {
       </div>
     </div>
   );
+}
+
+function scrollToError(fieldName: string) {
+  requestAnimationFrame(() => {
+    const element = document.querySelector(`[name="${fieldName}"]`);
+    element?.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  });
 }
