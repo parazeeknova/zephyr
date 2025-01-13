@@ -98,7 +98,7 @@
     "@types/mime-types": "^2.1.4",
     "@types/node": "^22.10.3",
     "@types/react": "19.0.2",
-    "@types/react-dom": "19.0.1",
+    "@types/react-dom": "19.0.3",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@zephyr/config": "workspace:*",
     "autoprefixer": "^10.4.20",
