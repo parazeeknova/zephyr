@@ -397,10 +397,10 @@ export default function SignUpForm() {
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-border/30 border-t" />
+                  <span className="mt-2 w-full border-border/30 border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="px-2 text-muted-foreground">
+                  <span className="mt-2 px-2 text-muted-foreground">
                     or continue with
                   </span>
                 </div>

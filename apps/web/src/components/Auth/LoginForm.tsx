@@ -12,16 +12,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import supportImage from "@zephyr-assets/previews/help.png";
 import ForgotPasswordLink from "@zephyr-ui/Auth/ForgotPasswordLink";
 import { LoadingButton } from "@zephyr-ui/Auth/LoadingButton";
 import { PasswordInput } from "@zephyr-ui/Auth/PasswordInput";
 import { type LoginValues, loginSchema } from "@zephyr/auth/validation";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, Mail, XCircle } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { HelpLink } from "../Animations/ImageLinkPreview";
 
 export default function LoginForm() {
   const { toast } = useToast();
@@ -279,14 +280,14 @@ export default function LoginForm() {
             )}
           />
 
-          <div className="flex items-center justify-end">
+          <div className="flex items-center justify-end space-x-0">
             <ForgotPasswordLink />
-            <p className="px-2 text-muted-foreground">or</p>
-            <Link href="/support">
-              <p className="text-muted-foreground text-sm transition-colors hover:text-primary">
-                Need help?
-              </p>
-            </Link>
+            <span className="text-muted-foreground text-sm">or</span>
+            <HelpLink
+              href="/support"
+              text="Need help?"
+              previewImage={supportImage.src}
+            />
           </div>
 
           <LoadingButton loading={isPending} type="submit" className="w-full">
