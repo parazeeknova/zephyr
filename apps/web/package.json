@@ -83,7 +83,7 @@
     "sonner": "^1.7.1",
     "stream-browserify": "^3.0.0",
     "stream-chat": "^8.49.0",
-    "stream-chat-react": "^12.8.1",
+    "stream-chat-react": "^12.8.2",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "unsend": "^1.3.0",
