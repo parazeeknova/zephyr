@@ -1,11 +1,10 @@
 "use client";
 
+import signupImage from "@zephyr-assets/signup-image.jpg";
+import SignUpForm from "@zephyr-ui/Auth/SignUpForm";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-
-import signupImage from "@zephyr-assets/signup-image.jpg";
-import SignUpForm from "@zephyr-ui/Auth/SignUpForm";
 
 const fadeIn = {
   hidden: { opacity: 0 },

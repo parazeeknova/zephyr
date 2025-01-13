@@ -20,6 +20,7 @@ import { isDevelopmentMode } from "@zephyr/auth/src/email/service";
 import { type SignUpValues, signUpSchema } from "@zephyr/auth/validation";
 import { motion } from "framer-motion";
 import { AlertCircle, Mail, User } from "lucide-react";
+import Link from "next/link";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import {
   type FieldValues,
@@ -28,6 +29,7 @@ import {
 } from "react-hook-form";
 import { useCountdown } from "usehooks-ts";
 import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
 import { PasswordStrengthChecker } from "./PasswordStrengthChecker";
 
 const texts = [
@@ -35,6 +37,7 @@ const texts = [
   "Transform thoughts into action.",
   "Your journey to greatness starts here.",
   "Start Your Adventure",
+  "Let parazeeknova cook",
   "Dive In!"
 ];
 
@@ -70,6 +73,8 @@ export default function SignUpForm() {
   const [isResending, setIsResending] = useState(false);
   const [isVerificationEmailSent, setIsVerificationEmailSent] = useState(false);
   const verificationChannel = new BroadcastChannel("email-verification");
+  const [isAgeVerified, setIsAgeVerified] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
     useCountdown({
@@ -134,6 +139,15 @@ export default function SignUpForm() {
 
   const onSubmit = async (values: SignUpValues) => {
     setError(undefined);
+    if (!isAgeVerified || !acceptedTerms) {
+      toast({
+        variant: "destructive",
+        title: "Required Agreements",
+        description: "Please accept the age verification and terms of service.",
+        duration: 3000
+      });
+      return;
+    }
     startTransition(async () => {
       try {
         setIsLoading(true);
@@ -323,6 +337,7 @@ export default function SignUpForm() {
                   </FormItem>
                 )}
               />
+
               <LoadingButton
                 loading={isPending || isLoading}
                 type="submit"
@@ -330,11 +345,70 @@ export default function SignUpForm() {
               >
                 Create account
               </LoadingButton>
+
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="age-verify"
+                    checked={isAgeVerified}
+                    onCheckedChange={(checked) =>
+                      setIsAgeVerified(checked as boolean)
+                    }
+                    className="border-primary/20 data-[state=checked]:border-primary/80 data-[state=checked]:bg-primary/80"
+                  />
+                  <label
+                    htmlFor="age-verify"
+                    className="text-muted-foreground text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Yes, I've survived enough birthdays to be here
+                  </label>
+                </div>
+
+                <div className="flex items-start space-x-2">
+                  <Checkbox
+                    id="terms"
+                    checked={acceptedTerms}
+                    onCheckedChange={(checked) =>
+                      setAcceptedTerms(checked as boolean)
+                    }
+                    className="mt-1 border-primary/20 data-[state=checked]:border-primary/80 data-[state=checked]:bg-primary/80"
+                  />
+                  <label
+                    htmlFor="terms"
+                    className="text-muted-foreground text-sm leading-tight peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    I agree to the{" "}
+                    <Link
+                      href="/toc"
+                      className="font-medium text-primary underline-offset-4 hover:underline"
+                    >
+                      Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      href="/privacy"
+                      className="font-medium text-primary underline-offset-4 hover:underline"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </label>
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-border/30 border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="px-2 text-muted-foreground">
+                    or continue with
+                  </span>
+                </div>
+              </div>
             </form>
           </Form>
         </div>
 
-        {/* Verification Message */}
         <div
           className={`absolute top-0 left-0 w-full transition-all duration-500 ease-in-out ${
             isVerificationEmailSent
@@ -343,14 +417,12 @@ export default function SignUpForm() {
           }`}
         >
           <div className="relative overflow-hidden rounded-xl border border-border/50 bg-background/60 p-8 shadow-lg backdrop-blur-xl">
-            {/* Background Effects */}
             <div className="-z-10 absolute inset-0 overflow-hidden">
               <div className="-left-4 absolute top-0 h-[200px] w-[200px] rounded-full bg-primary/10 blur-[50px]" />
               <div className="absolute top-1/2 right-0 h-[150px] w-[150px] rounded-full bg-purple-500/10 blur-[50px]" />
             </div>
 
             <div className="flex flex-col items-center space-y-6 text-center">
-              {/* Icon Container */}
               <div className="relative">
                 <div className="absolute inset-0 animate-pulse rounded-full bg-primary/20 blur-md" />
                 <div className="relative rounded-full border border-primary/20 bg-background/80 p-4 backdrop-blur-sm">
@@ -358,7 +430,6 @@ export default function SignUpForm() {
                 </div>
               </div>
 
-              {/* Title with gradient */}
               <div className="space-y-2">
                 <h3 className="bg-gradient-to-r from-primary via-primary/80 to-primary bg-clip-text font-bold text-2xl text-transparent">
                   Check Your Email
@@ -366,7 +437,6 @@ export default function SignUpForm() {
                 <div className="mx-auto h-1 w-12 rounded-full bg-gradient-to-r from-primary/5 via-primary/60 to-primary/5" />
               </div>
 
-              {/* Email Info */}
               <div className="space-y-3">
                 <p className="text-muted-foreground text-sm">
                   We've sent a verification link to
@@ -379,7 +449,6 @@ export default function SignUpForm() {
                 </p>
               </div>
 
-              {/* Resend Section */}
               <div className="w-full space-y-4 pt-2">
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
