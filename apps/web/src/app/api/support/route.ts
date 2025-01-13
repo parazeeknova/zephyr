@@ -1,19 +1,32 @@
 import { rateLimitMiddleware } from "@/lib/rate-limiter";
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Unsend } from "unsend";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD
+let unsend: Unsend;
+
+const initializeUnsend = () => {
+  if (!unsend && process.env.UNSEND_API_KEY) {
+    unsend = new Unsend(
+      process.env.UNSEND_API_KEY,
+      "https://mails.zephyyrr.in"
+    );
+  } else if (!process.env.UNSEND_API_KEY) {
+    console.error("Missing UNSEND_API_KEY environment variable");
   }
-});
+};
+
+const SENDER = "zephyyrr.in";
 
 export async function POST(request: Request) {
   try {
+    initializeUnsend();
+    if (!unsend) {
+      return NextResponse.json(
+        { error: "Email service not initialized" },
+        { status: 500 }
+      );
+    }
+
     const forwardedFor = request.headers.get("x-forwarded-for");
     const identifier = (forwardedFor?.split(",")[0] || "unknown").trim();
 
@@ -53,9 +66,16 @@ export async function POST(request: Request) {
          </ul>`
       : "";
 
-    await transporter.sendMail({
-      from: `"Zephyr Support" <${process.env.GMAIL_USER}>`,
-      to: process.env.GMAIL_USER,
+    if (!process.env.SUPPORT_EMAIL) {
+      return NextResponse.json(
+        { error: "Support email not configured" },
+        { status: 500 }
+      );
+    }
+
+    await unsend.emails.send({
+      from: `Zephyr Support <no-reply@${SENDER}>`,
+      to: process.env.SUPPORT_EMAIL,
       subject: `[Zephyr Support - ${type}] ${subject}`,
       html: `
         <h2>New Support Request</h2>
