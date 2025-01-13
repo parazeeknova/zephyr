@@ -54,10 +54,24 @@ export const signUpSchema = z.object({
     /^[a-zA-Z0-9_]+$/,
     "Username can only contain letters, numbers, and underscores"
   ),
-  password: requiredString.regex(
-    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-    "Password must include: 8+ characters, uppercase & lowercase letters, number, and special character"
-  )
+  password: requiredString
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Must contain uppercase letter")
+    .regex(/[a-z]/, "Must contain lowercase letter")
+    .regex(/[0-9]/, "Must contain number")
+    .regex(/[@$!%*?&#]/, "Must contain special character")
+    .refine(
+      (password) => !/(.)\1{2,}/.test(password),
+      "Cannot contain repeated characters (3+ times)"
+    )
+    .refine(
+      (password) => !/(?:abc|123|qwe|xyz)/i.test(password),
+      "Cannot contain common sequences"
+    )
+    .refine((password) => {
+      const commonWords = ["password", "admin", "user", "login"];
+      return !commonWords.some((word) => password.toLowerCase().includes(word));
+    }, "Cannot contain common words")
 });
 
 export const loginSchema = z.object({

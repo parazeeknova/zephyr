@@ -242,7 +242,6 @@ export default function SignUpForm() {
       </div>
 
       <div className="relative">
-        {/* Signup Form */}
         <div
           className={`transition-all duration-500 ease-in-out ${
             isVerificationEmailSent
