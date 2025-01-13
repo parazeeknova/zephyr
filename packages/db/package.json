@@ -25,12 +25,12 @@
     "post:viewtest": "ts-node test/test-view-count.ts"
   },
   "devDependencies": {
-    "@prisma/client": "^6.1.0",
-    "@types/node": "^22.10.3",
+    "@prisma/client": "^6.2.1",
+    "@types/node": "^22.10.5",
     "@zephyr/config": "workspace:*",
     "prisma": "^6.2.1",
-    "ts-loader": "^9.5.1",
+    "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.3"
   }
 }
