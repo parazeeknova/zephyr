@@ -1,44 +1,125 @@
 "use server";
 
 import { hash } from "@node-rs/argon2";
-import { createStreamUser } from "@zephyr/auth/src";
-import { sendVerificationEmail } from "@zephyr/auth/src/email/service";
+import { createStreamUser, lucia } from "@zephyr/auth/src";
+import {
+  isDevelopmentMode,
+  isEmailServiceConfigured,
+  sendVerificationEmail
+} from "@zephyr/auth/src/email/service";
 import { EMAIL_ERRORS, isEmailValid } from "@zephyr/auth/src/email/validation";
 import { resendVerificationEmail } from "@zephyr/auth/src/verification/resend";
 import { type SignUpValues, signUpSchema } from "@zephyr/auth/validation";
 import { prisma } from "@zephyr/db";
 import jwt from "jsonwebtoken";
 import { generateIdFromEntropySize } from "lucia";
+import { cookies } from "next/headers";
+
+interface SignUpResponse {
+  verificationUrl?: string;
+  error?: string;
+  success: boolean;
+  skipVerification?: boolean;
+  message?: string;
+}
 
 const USERNAME_ERRORS = {
   TAKEN: "This username is already taken. Please choose another.",
   INVALID: "Username can only contain letters, numbers, and underscores.",
-  REQUIRED: "Username is required"
+  REQUIRED: "Username is required",
+  CREATION_FAILED: "Failed to create user account"
 };
 
 const SYSTEM_ERRORS = {
   JWT_SECRET: "System configuration error: JWT_SECRET is not configured",
   USER_ID: "Failed to generate user ID",
   TOKEN: "Failed to generate verification token",
-  INVALID_PAYLOAD: "Invalid token payload data"
+  INVALID_PAYLOAD: "Invalid token payload data",
+  SESSION_CREATION: "Failed to create user session"
 };
 
-if (!process.env.JWT_SECRET) {
-  throw new Error(SYSTEM_ERRORS.JWT_SECRET);
+async function createDevUser(
+  userId: string,
+  username: string,
+  email: string,
+  passwordHash: string
+): Promise<void> {
+  try {
+    const newUser = await prisma.user.create({
+      data: {
+        id: userId,
+        username,
+        displayName: username,
+        email,
+        passwordHash,
+        emailVerified: true
+      }
+    });
+
+    await createStreamUser(newUser.id, newUser.username, newUser.displayName);
+
+    // @ts-expect-error
+    const session = await lucia.createSession(userId, {});
+    const cookieStore = await cookies();
+    const sessionCookie = lucia.createSessionCookie(session.id);
+    cookieStore.set(
+      sessionCookie.name,
+      sessionCookie.value,
+      sessionCookie.attributes
+    );
+  } catch (error) {
+    console.error("Development user creation error:", error);
+    try {
+      await prisma.user.delete({ where: { id: userId } });
+    } catch (cleanupError) {
+      console.error("Cleanup failed:", cleanupError);
+    }
+    throw error;
+  }
+}
+
+async function createProdUser(
+  userId: string,
+  username: string,
+  email: string,
+  passwordHash: string,
+  verificationToken: string
+): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    const newUser = await tx.user.create({
+      data: {
+        id: userId,
+        username,
+        displayName: username,
+        email,
+        passwordHash,
+        emailVerified: false
+      }
+    });
+
+    await tx.emailVerificationToken.create({
+      data: {
+        token: verificationToken,
+        userId,
+        expiresAt: new Date(Date.now() + 3600000)
+      }
+    });
+
+    await createStreamUser(newUser.id, newUser.username, newUser.displayName);
+  });
 }
 
 export { resendVerificationEmail };
 
 export async function signUp(
   credentials: SignUpValues
-): Promise<{ error?: string; success?: boolean }> {
+): Promise<SignUpResponse> {
   try {
     if (!credentials) {
       return { error: "No credentials provided", success: false };
     }
 
     const validationResult = signUpSchema.safeParse(credentials);
-
     if (!validationResult.success) {
       const firstError = validationResult.error.errors[0];
       return {
@@ -84,40 +165,75 @@ export async function signUp(
       throw new Error(SYSTEM_ERRORS.USER_ID);
     }
 
-    const tokenPayload = { userId, email, timestamp: Date.now() };
-    if (!process.env.JWT_SECRET) {
-      throw new Error(SYSTEM_ERRORS.JWT_SECRET);
+    const skipEmailVerification =
+      isDevelopmentMode() && !isEmailServiceConfigured();
+
+    if (skipEmailVerification) {
+      try {
+        await createDevUser(userId, username, email, passwordHash);
+        return {
+          success: true,
+          skipVerification: true,
+          message: "Development mode: Email verification skipped"
+        };
+      } catch (error) {
+        console.error("Development signup error:", error);
+        return {
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to create account in development mode",
+          success: false
+        };
+      }
     }
-    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
-      expiresIn: "1h"
-    });
 
-    await prisma.$transaction(async (tx) => {
-      const newUser = await tx.user.create({
-        data: {
-          id: userId,
-          username,
-          displayName: username,
-          email,
-          passwordHash,
-          emailVerified: false
-        }
+    if (!process.env.JWT_SECRET) {
+      return {
+        error: SYSTEM_ERRORS.JWT_SECRET,
+        success: false
+      };
+    }
+
+    try {
+      const tokenPayload = { userId, email, timestamp: Date.now() };
+      const verificationToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+        expiresIn: "1h"
       });
 
-      await tx.emailVerificationToken.create({
-        data: {
-          token,
-          userId,
-          expiresAt: new Date(Date.now() + 3600000)
-        }
-      });
+      await createProdUser(
+        userId,
+        username,
+        email,
+        passwordHash,
+        verificationToken
+      );
 
-      await createStreamUser(newUser.id, newUser.username, newUser.displayName);
-    });
+      const emailResult = await sendVerificationEmail(email, verificationToken);
+      if (!emailResult.success) {
+        await prisma.user.delete({ where: { id: userId } });
+        return {
+          error: emailResult.error || "Failed to send verification email",
+          success: false
+        };
+      }
 
-    await sendVerificationEmail(email, token);
-
-    return { success: true };
+      return {
+        success: true,
+        skipVerification: false
+      };
+    } catch (error) {
+      console.error("Production signup error:", error);
+      try {
+        await prisma.user.delete({ where: { id: userId } });
+      } catch (cleanupError) {
+        console.error("Cleanup failed:", cleanupError);
+      }
+      return {
+        error: "Failed to create account",
+        success: false
+      };
+    }
   } catch (error) {
     console.error("Signup error:", error);
     return {
