@@ -1,10 +1,12 @@
 import { Toaster } from "@/components/ui/toaster";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "next-themes";
 import localFont from "next/font/local";
 import ReactQueryProvider from "./ReactQueryProvider";
 import "./globals.css";
 import { VerificationProvider } from "@/context/VerificationContext";
+import { colors } from "../config/colors";
+import { siteConfig } from "../config/site";
 
 const SofiaProSoft = localFont({
   src: "./fonts/SofiaProSoftReg.woff2",
@@ -18,41 +20,89 @@ const _SofiaProSoftMed = localFont({
   weight: "100 900"
 });
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: colors.light.primary },
+    { media: "(prefers-color-scheme: dark)", color: colors.dark.primary }
+  ]
+};
+
 const _SofiaProSoftBold = localFont({
   src: "./fonts/SofiaProSoftBold.woff2",
   variable: "--font-sofia-pro-soft-bold",
   weight: "100 900"
 });
 
-const description: string =
-  "The Next-Generation content aggregator for Content Creation and Collaboration platform";
-
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
-    template: "%s | Zephyr",
-    default: "Zephyr"
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`
   },
-  description,
-  keywords:
-    "blog accelerator, blogs, blogging platform, content, creation, collaboration, platform, zephyr, parazeeknova, hashcodes, AI, social, platform, content, creators, researchers, blogpost, summarization, collaborative, knowledge, sharing, blogging, research, writing, publishing, blog, accelerator, research accelerator, writing accelerator, collaborative accelerator, smart accelerator, AI accelerator, messaging",
-  authors: [
-    { name: "Parazeeknova", url: "https://harshsahu-portfolio.vercel.app/" }
-  ],
-  creator: "Harsh",
-  publisher: "Parazeeknova",
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: [...siteConfig.authors],
+  creator: siteConfig.creator,
   openGraph: {
-    title: "Zephyr",
-    description,
-    url: "https://github.com/Parazeeknova/zephyr",
-    siteName: "Zephyr - The Next-Generation Blog Accelerator",
-    images: ["/Banner.png"],
-    type: "website"
+    type: "website",
+    locale: "en_US",
+    url: siteConfig.url,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Zephyr",
-    description,
-    images: ["/Banner.png"]
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
+    creator: "@zephyyrr"
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1
+    }
+  },
+  icons: {
+    icon: [
+      { url: "/favicon/favicon.ico" },
+      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" }
+    ],
+    apple: [
+      {
+        url: "/favicon/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png"
+      }
+    ],
+    other: [
+      {
+        rel: "mask-icon",
+        url: "/favicon/maskable_icon.png",
+        color: colors.light.primary
+      }
+    ]
+  },
+  manifest: "site.webmanifest",
+  verification: {
+    google: "your-google-site-verification",
+    yandex: "your-yandex-verification",
+    me: ["your-personal-website"]
   }
 };
 
@@ -64,6 +114,46 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon/favicon-16x16.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          href="/favicon/favicon-96x96.png"
+          sizes="96x96"
+        />
+        <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon/favicon.ico" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/favicon/apple-touch-icon.png"
+        />
+        <meta
+          name="theme-color"
+          content="#F85522"
+          media="(prefers-color-scheme: light)"
+        />
+        <meta
+          name="theme-color"
+          content="#F85522"
+          media="(prefers-color-scheme: dark)"
+        />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Zephyr" />
+        <link rel="manifest" href="/site.webmanifest" />
         <script
           defer
           src="https://analytics-umami.zephyyrr.in/script.js"
