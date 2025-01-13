@@ -36,7 +36,7 @@
     "@tanstack/react-query": "^5.62.11",
     "@tanstack/react-query-devtools": "^5.64.1",
     "@tiptap/extension-placeholder": "^2.11.0",
-    "@tiptap/react": "^2.11.0",
+    "@tiptap/react": "^2.11.2",
     "@tiptap/starter-kit": "^2.11.0",
     "@tsparticles/engine": "^3.7.1",
     "@tsparticles/react": "^3.0.0",
