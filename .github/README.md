@@ -88,8 +88,8 @@ git clone https://github.com/zephyr.git && cd zephyr
 pnpm install
 
 # 3. First time setup or after clean
+# This will start the development server using docker and create the required services & prisma migrations
 pnpm run start
-(This will start the development server using docker and create the required services & migrations)
 
 # Clean everything and start fresh
 pnpm run docker:clean:dev && pnpm run start
@@ -101,6 +101,8 @@ copy .env.example .env # Windows
 
 # 5. Start the development server
 pnpm turbo dev
+# or
+turbo dev
 
 # Check package.json for more scripts in the root directory
 ```

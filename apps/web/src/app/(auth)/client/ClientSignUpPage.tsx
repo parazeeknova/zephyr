@@ -1,10 +1,11 @@
 "use client";
 
+import AnimatedAuthLink from "@/components/Auth/AnimatedAuthLink";
+import loginImage from "@zephyr-assets/previews/login.png";
 import signupImage from "@zephyr-assets/signup-image.jpg";
 import SignUpForm from "@zephyr-ui/Auth/SignUpForm";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 
 const fadeIn = {
   hidden: { opacity: 0 },
@@ -145,7 +146,7 @@ export default function ClientSignupPage() {
 
         <div className="relative z-10 flex flex-1 items-center justify-center p-4 sm:p-8">
           <motion.div
-            className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-card/40 shadow-2xl backdrop-blur-xl lg:flex-row"
+            className="relative flex w-full max-w-5xl flex-col rounded-2xl border border-white/10 bg-card/40 shadow-2xl backdrop-blur-xl lg:flex-row"
             variants={scaleUp}
             whileHover={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
           >
@@ -168,45 +169,38 @@ export default function ClientSignupPage() {
                   variants={contentAnimation}
                   custom={2}
                 >
-                  <Link
+                  <AnimatedAuthLink
                     href="/login"
-                    className="group relative inline-block text-primary text-sm"
-                  >
-                    <span className="relative z-10">
-                      Already have an account? Login
-                    </span>
-                    <motion.span
-                      className="absolute bottom-0 left-0 h-0.5 w-full bg-primary/40"
-                      initial={{ scaleX: 0 }}
-                      whileHover={{ scaleX: 1 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </Link>
+                    text="Already have an account? Login"
+                    previewImage={loginImage.src}
+                  />
                 </motion.div>
               </div>
             </div>
 
-            <motion.div
-              className="relative min-h-[200px] w-full bg-primary/80 lg:min-h-[600px] lg:w-1/2"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
+            <div className="overflow-hidden rounded-r-2xl lg:w-1/2">
               <motion.div
-                className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/20"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1 }}
-              />
-              <Image
-                src={signupImage}
-                alt="Signup illustration"
-                fill
-                priority
-                className="object-cover brightness-95"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            </motion.div>
+                className="relative min-h-[200px] w-full bg-primary/80 lg:min-h-[650px]"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/20"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1 }}
+                />
+                <Image
+                  src={signupImage}
+                  alt="Signup illustration"
+                  fill
+                  priority
+                  className="object-cover brightness-95"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+              </motion.div>
+            </div>
           </motion.div>
         </div>
 

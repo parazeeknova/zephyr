@@ -1,7 +1,9 @@
 "use client";
 
+import AnimatedAuthLink from "@/components/Auth/AnimatedAuthLink";
 import AuthButtonWrapper from "@/components/Auth/AuthButtonWrapper";
 import loginImage from "@zephyr-assets/login-image.jpg";
+import signupImage from "@zephyr-assets/previews/signup.png";
 import LoginForm from "@zephyr-ui/Auth/LoginForm";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, FileText, Shield } from "lucide-react";
@@ -152,31 +154,33 @@ export default function ClientLoginPage() {
 
         <div className="relative z-10 flex flex-1 items-center justify-center p-4 sm:p-8">
           <motion.div
-            className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-card/40 shadow-2xl backdrop-blur-xl lg:flex-row"
+            className="relative flex w-full max-w-5xl flex-col rounded-2xl border border-white/10 bg-card/40 shadow-2xl backdrop-blur-xl lg:flex-row"
             variants={scaleUp}
             whileHover={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
           >
-            <motion.div
-              className="relative min-h-[200px] w-full bg-primary/80 lg:min-h-[600px] lg:w-1/2"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
+            <div className="overflow-hidden rounded-l-2xl lg:w-1/2">
               <motion.div
-                className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/20"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1 }}
-              />
-              <Image
-                src={loginImage}
-                alt="Login illustration"
-                fill
-                priority
-                className="object-cover brightness-95"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            </motion.div>
+                className="relative min-h-[200px] w-full bg-primary/80 lg:min-h-[850px]"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/20"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1 }}
+                />
+                <Image
+                  src={loginImage}
+                  alt="Login illustration"
+                  fill
+                  priority
+                  className="object-cover brightness-95"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+              </motion.div>
+            </div>
 
             <div className="relative z-10 flex w-full flex-col justify-center px-6 py-12 sm:px-8 lg:w-1/2">
               <div className="mx-auto w-full max-w-sm">
@@ -241,20 +245,11 @@ export default function ClientLoginPage() {
                   variants={contentAnimation}
                   custom={4}
                 >
-                  <Link
+                  <AnimatedAuthLink
                     href="/signup"
-                    className="group relative inline-block text-primary text-sm"
-                  >
-                    <span className="relative z-10">
-                      Don&apos;t have an account? Sign Up
-                    </span>
-                    <motion.span
-                      className="absolute bottom-0 left-0 h-0.5 w-full bg-primary/40"
-                      initial={{ scaleX: 0 }}
-                      whileHover={{ scaleX: 1 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </Link>
+                    text="Don't have an account? Sign Up"
+                    previewImage={signupImage.src}
+                  />
                 </motion.div>
                 <motion.div
                   variants={contentAnimation}

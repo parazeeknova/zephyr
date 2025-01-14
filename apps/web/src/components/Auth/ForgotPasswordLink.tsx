@@ -1,22 +1,14 @@
 "use client";
 
-import { motion } from "framer-motion";
-import Link from "next/link";
+import resetPasswordImage from "@zephyr-assets/previews/passwordreset.png";
+import { HelpLink } from "../Animations/ImageLinkPreview";
 
 export default function ForgotPasswordLink() {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.2 }}
-      className="text-center"
-    >
-      <Link
-        href="/reset-password"
-        className="text-muted-foreground text-sm transition-colors hover:text-primary"
-      >
-        Forgot your password?
-      </Link>
-    </motion.div>
+    <HelpLink
+      href="/reset-password"
+      text="Forgot your password?"
+      previewImage={resetPasswordImage.src}
+    />
   );
 }
