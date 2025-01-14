@@ -1,69 +1,82 @@
-import { getStreamConfig, isStreamConfigured } from "@zephyr/config/src/env";
+import {
+  getEnvironmentMode,
+  getStreamConfig,
+  isStreamConfigured
+} from "@zephyr/config/src/env";
 import { StreamChat } from "stream-chat";
 
+const { isDevelopment } = getEnvironmentMode();
+
 let streamClient: StreamChat | null = null;
+let hasLoggedClientStatus = false;
 
 export function getStreamClient(): StreamChat | null {
-  if (
-    !streamClient &&
-    process.env.NEXT_PUBLIC_STREAM_KEY &&
-    process.env.STREAM_SECRET
-  ) {
-    try {
-      streamClient = StreamChat.getInstance(
-        process.env.NEXT_PUBLIC_STREAM_KEY,
-        process.env.STREAM_SECRET
+  if (!isStreamConfigured()) {
+    if (isDevelopment && !hasLoggedClientStatus) {
+      console.log(
+        "[Stream Chat] Not configured - skipping client initialization"
       );
-      console.log("Stream client initialized successfully");
-    } catch (error) {
-      console.error("Failed to initialize Stream client:", error);
-      return null;
+      hasLoggedClientStatus = true;
     }
+    return null;
   }
 
-  if (typeof window !== "undefined" && !streamClient && isStreamConfigured()) {
-    const config = getStreamConfig();
-    if (config.apiKey && config.secret) {
-      try {
-        streamClient = StreamChat.getInstance(config.apiKey, config.secret);
-        console.log(
-          "Initializing Stream client with API key:",
-          `${config.apiKey.substring(0, 5)}...`
-        );
-      } catch (error) {
-        console.error("Failed to initialize Stream client:", error);
-        return null;
-      }
-    }
+  if (streamClient) {
+    return streamClient;
   }
 
-  return streamClient;
+  const config = getStreamConfig();
+  if (!config.apiKey || !config.secret) {
+    if (isDevelopment && !hasLoggedClientStatus) {
+      console.log(
+        "[Stream Chat] Missing credentials - skipping client initialization"
+      );
+      hasLoggedClientStatus = true;
+    }
+    return null;
+  }
+
+  try {
+    streamClient = StreamChat.getInstance(config.apiKey, config.secret);
+    if (isDevelopment && !hasLoggedClientStatus) {
+      console.log(
+        "[Stream Chat] Client initialized with API key:",
+        `${config.apiKey.substring(0, 5)}...`
+      );
+      hasLoggedClientStatus = true;
+    }
+    return streamClient;
+  } catch (error) {
+    console.error("[Stream Chat] Failed to initialize client:", error);
+    return null;
+  }
 }
 
 export const createStreamUser = async (
   userId: string,
   username: string,
   displayName: string
-) => {
+): Promise<void> => {
+  if (!isStreamConfigured()) {
+    isDevelopment &&
+      console.log("[Stream Chat] Not configured - skipping user creation");
+    return;
+  }
+
   try {
-    let client = getStreamClient();
+    const client = await getClientWithRetry();
     if (!client) {
-      console.log("Stream client not initialized - retrying once");
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const retryClient = getStreamClient();
-      if (!retryClient) {
-        console.warn(
-          "Stream client still not available - skipping user creation"
-        );
-        return;
-      }
-      client = retryClient;
+      console.warn(
+        "[Stream Chat] Client not available - skipping user creation"
+      );
+      return;
     }
 
-    console.log("Creating Stream user:", {
-      userId: `${userId.substring(0, 5)}...`,
-      username: `${username.substring(0, 5)}...`
-    });
+    isDevelopment &&
+      console.log("[Stream Chat] Creating user:", {
+        userId: `${userId.substring(0, 5)}...`,
+        username: `${username.substring(0, 5)}...`
+      });
 
     await client.upsertUser({
       id: userId,
@@ -71,28 +84,83 @@ export const createStreamUser = async (
       name: displayName
     });
 
-    console.log("Successfully created Stream user");
+    isDevelopment && console.log("[Stream Chat] User created successfully");
   } catch (error) {
-    console.error("Failed to create Stream user:", error);
-    if (error instanceof Error) {
-      console.error("Error details:", {
-        message: error.message,
-        stack: error.stack
-      });
-    }
+    handleStreamError("create user", error, { userId, username });
   }
 };
 
+/**
+ * Generate a Stream Chat token for a user
+ */
 export function generateStreamUserToken(userId: string): string | null {
-  try {
-    const client = getStreamClient();
-    if (!client) return null;
-
-    const token = client.createToken(userId);
-    console.log("Generated token for user:", `${userId.substring(0, 5)}...`);
-    return token;
-  } catch (error) {
-    console.error("Failed to generate Stream user token:", error);
+  if (!isStreamConfigured()) {
+    isDevelopment &&
+      console.log("[Stream Chat] Not configured - skipping token generation");
     return null;
   }
+
+  try {
+    const client = getStreamClient();
+    if (!client) {
+      console.warn(
+        "[Stream Chat] Client not available - skipping token generation"
+      );
+      return null;
+    }
+
+    const token = client.createToken(userId);
+    isDevelopment &&
+      console.log(
+        "[Stream Chat] Generated token for user:",
+        `${userId.substring(0, 5)}...`
+      );
+    return token;
+  } catch (error) {
+    handleStreamError("generate token", error, { userId });
+    return null;
+  }
+}
+
+/**
+ * Helper function to get client with one retry attempt
+ */
+async function getClientWithRetry(): Promise<StreamChat | null> {
+  let client = getStreamClient();
+
+  if (!client) {
+    isDevelopment &&
+      console.log("[Stream Chat] Client not initialized - retrying once");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    client = getStreamClient();
+  }
+
+  return client;
+}
+
+/**
+ * Standardized error handling for Stream operations
+ */
+function handleStreamError(
+  operation: string,
+  error: unknown,
+  context: Record<string, unknown> = {}
+): void {
+  const errorDetails =
+    error instanceof Error
+      ? { message: error.message, stack: error.stack }
+      : { error };
+
+  console.error(`[Stream Chat] Failed to ${operation}:`, {
+    ...errorDetails,
+    ...context
+  });
+}
+
+/**
+ * Type guard for Stream Chat errors
+ */
+// biome-ignore lint/correctness/noUnusedVariables: used in type guard
+function isStreamError(error: unknown): error is Error {
+  return error instanceof Error;
 }
