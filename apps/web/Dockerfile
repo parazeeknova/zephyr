@@ -1,6 +1,8 @@
 FROM node:latest AS base
 
 ARG UNSEND_API_KEY
+ARG NEXT_PUBLIC_STREAM_KEY
+ARG STREAM_SECRET
 
 FROM base AS builder
 RUN apt-get update && apt-get install -y git
@@ -8,6 +10,8 @@ WORKDIR /app
 RUN npm install -g pnpm@latest turbo@latest
 
 ENV UNSEND_API_KEY=$UNSEND_API_KEY
+ENV NEXT_PUBLIC_STREAM_KEY=$NEXT_PUBLIC_STREAM_KEY
+ENV STREAM_SECRET=$STREAM_SECRET
 
 COPY . .
 RUN turbo prune --scope=@zephyr/web --docker
@@ -18,6 +22,8 @@ RUN apt-get update && apt-get install -y
 WORKDIR /app
 
 ENV UNSEND_API_KEY=$UNSEND_API_KEY
+ENV NEXT_PUBLIC_STREAM_KEY=$NEXT_PUBLIC_STREAM_KEY
+ENV STREAM_SECRET=$STREAM_SECRET
 
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
@@ -53,6 +59,8 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
 ENV UNSEND_API_KEY=$UNSEND_API_KEY
+ENV NEXT_PUBLIC_STREAM_KEY=$NEXT_PUBLIC_STREAM_KEY
+ENV STREAM_SECRET=$STREAM_SECRET
 
 USER nextjs
 

@@ -20,7 +20,6 @@ const WelcomeScreen = ({ onNewChat }: { onNewChat: () => void }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      // @ts-expect-error
       className="flex h-full flex-col items-center justify-center px-4 text-center"
     >
       <div className="mb-8 rounded-full bg-primary/10 p-6">
