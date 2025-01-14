@@ -3,6 +3,16 @@ FROM node:latest AS base
 ARG UNSEND_API_KEY
 ARG NEXT_PUBLIC_STREAM_KEY
 ARG STREAM_SECRET
+ARG NODE_ENV=production
+ARG NEXT_PHASE=phase-production-build
+ARG NEXT_PUBLIC_SKIP_VALIDATION=true
+
+ENV NODE_ENV=$NODE_ENV
+ENV NEXT_PHASE=$NEXT_PHASE
+ENV NEXT_PUBLIC_SKIP_VALIDATION=$NEXT_PUBLIC_SKIP_VALIDATION
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV TURBO_TELEMETRY_DISABLED=1
+ENV NEXT_SHARP_PATH=/tmp/node_modules/sharp
 
 FROM base AS builder
 RUN apt-get update && apt-get install -y git
@@ -12,6 +22,7 @@ RUN npm install -g pnpm@latest turbo@latest
 ENV UNSEND_API_KEY=$UNSEND_API_KEY
 ENV NEXT_PUBLIC_STREAM_KEY=$NEXT_PUBLIC_STREAM_KEY
 ENV STREAM_SECRET=$STREAM_SECRET
+ENV CI=true
 
 COPY . .
 RUN turbo prune --scope=@zephyr/web --docker
@@ -24,6 +35,8 @@ WORKDIR /app
 ENV UNSEND_API_KEY=$UNSEND_API_KEY
 ENV NEXT_PUBLIC_STREAM_KEY=$NEXT_PUBLIC_STREAM_KEY
 ENV STREAM_SECRET=$STREAM_SECRET
+ENV CI=true
+ENV SKIP_ENV_VALIDATION=true
 
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
@@ -38,7 +51,10 @@ RUN cd packages/db && pnpm dlx prisma generate
 
 COPY --from=builder /app/out/full/ .
 
-RUN pnpm exec turbo build --filter=@zephyr/web... --force
+RUN NEXT_PUBLIC_SKIP_VALIDATION=true \
+  SKIP_ENV_VALIDATION=true \
+  CI=true \
+  pnpm exec turbo build --filter=@zephyr/web... --force
 
 FROM base AS runner
 WORKDIR /app
@@ -58,8 +74,9 @@ ENV PATH="/app/node_modules/.bin:${PATH}"
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
+ENV NEXT_SHARP_PATH=/tmp/node_modules/sharp
+ENV CI=true
 
-# Set all environment variables for runtime
 ENV UNSEND_API_KEY=$UNSEND_API_KEY
 ENV NEXT_PUBLIC_STREAM_KEY=$NEXT_PUBLIC_STREAM_KEY
 ENV STREAM_SECRET=$STREAM_SECRET

@@ -17,7 +17,12 @@ const REQUIRED_STREAM_VARS = {
 const isProduction = process.env.NODE_ENV === "production";
 const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
 const isTestEnvironment = process.env.NODE_ENV === "test";
-const skipValidation = process.env.NEXT_PUBLIC_SKIP_VALIDATION === "true";
+
+const skipValidation =
+  process.env.NEXT_PUBLIC_SKIP_VALIDATION === "true" ||
+  process.env.SKIP_ENV_VALIDATION === "true" ||
+  process.env.CI === "true";
+
 const isDevelopment = !isProduction && !isBuildPhase && !isTestEnvironment;
 
 let hasLoggedStreamStatus = false;
@@ -74,6 +79,13 @@ export function validateStreamEnv(): void {
  */
 export function getStreamConfig(): StreamConfig {
   const { isConfigured, isDevelopment } = checkStreamEnvStatus();
+
+  if (skipValidation || process.env.NEXT_PHASE === "phase-production-build") {
+    return {
+      apiKey: process.env.NEXT_PUBLIC_STREAM_KEY ?? null,
+      secret: process.env.STREAM_SECRET ?? null
+    };
+  }
 
   if (!isConfigured && !isDevelopment) {
     throw new Error(
