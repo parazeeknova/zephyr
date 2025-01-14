@@ -44,8 +44,7 @@ function checkStreamEnvStatus(): EnvStatus {
 export function validateStreamEnv(): void {
   const { isConfigured, missingVars, isDevelopment } = checkStreamEnvStatus();
 
-  // Skip validation if explicitly requested or during build
-  if (skipValidation || isBuildPhase) {
+  if (skipValidation || isBuildPhase || isTestEnvironment) {
     return;
   }
 
@@ -53,10 +52,6 @@ export function validateStreamEnv(): void {
     const message = `Stream Chat environment variables are not configured. Missing: ${missingVars.join(
       ", "
     )}`;
-
-    if (isProduction) {
-      throw new Error(message);
-    }
     if (isDevelopment) {
       console.warn("⚠️ [Stream Chat]:", message);
       console.info(
