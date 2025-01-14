@@ -52,6 +52,7 @@ export function validateStreamEnv(): void {
     const message = `Stream Chat environment variables are not configured. Missing: ${missingVars.join(
       ", "
     )}`;
+
     if (isDevelopment) {
       console.warn("⚠️ [Stream Chat]:", message);
       console.info(
@@ -69,12 +70,6 @@ export function validateStreamEnv(): void {
  */
 export function getStreamConfig(): StreamConfig {
   const { isConfigured, isDevelopment } = checkStreamEnvStatus();
-
-  if (!isConfigured && !isDevelopment) {
-    throw new Error(
-      "Stream configuration is required in production but values are missing"
-    );
-  }
 
   if (!isConfigured) {
     if (isDevelopment && !hasLoggedStreamStatus) {
