@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "biome:check": "biome check .",
+    "biome:fix": "biome check --write ."
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.726.1",
@@ -43,6 +45,7 @@
     "@tsparticles/slim": "^3.7.1",
     "@zephyr/aggregator": "workspace:*",
     "@zephyr/auth": "workspace:*",
+    "@zephyr/config": "workspace:*",
     "@zephyr/db": "workspace:*",
     "@zephyr/ui": "workspace:*",
     "arctic": "^3.1.1",
@@ -100,7 +103,6 @@
     "@types/react": "19.0.6",
     "@types/react-dom": "19.0.1",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "@zephyr/config": "workspace:*",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",

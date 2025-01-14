@@ -140,6 +140,9 @@ importers:
       '@zephyr/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@zephyr/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@zephyr/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -306,9 +309,6 @@ importers:
       '@types/react-syntax-highlighter':
         specifier: ^15.5.13
         version: 15.5.13
-      '@zephyr/config':
-        specifier: workspace:*
-        version: link:../../packages/config
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.49)
@@ -324,6 +324,9 @@ importers:
 
   packages/aggregator:
     dependencies:
+      '@zephyr/config':
+        specifier: workspace:*
+        version: link:../config
       '@zephyr/db':
         specifier: workspace:*
         version: link:../db
@@ -346,9 +349,6 @@ importers:
       '@types/react':
         specifier: 19.0.6
         version: 19.0.6
-      '@zephyr/config':
-        specifier: workspace:*
-        version: link:../config
       typescript:
         specifier: ^5.7.3
         version: 5.7.3
@@ -361,6 +361,9 @@ importers:
       '@node-rs/argon2':
         specifier: ^2.0.2
         version: 2.0.2
+      '@zephyr/config':
+        specifier: workspace:*
+        version: link:../config
       '@zephyr/db':
         specifier: workspace:*
         version: link:../db
@@ -373,9 +376,6 @@ importers:
       email-validator:
         specifier: ^2.0.4
         version: 2.0.4
-      i:
-        specifier: ^0.3.7
-        version: 0.3.7
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -407,9 +407,6 @@ importers:
       '@types/react':
         specifier: 19.0.6
         version: 19.0.6
-      '@zephyr/config':
-        specifier: workspace:*
-        version: link:../config
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@22.10.5)(typescript@5.7.3)
@@ -421,6 +418,12 @@ importers:
 
   packages/db:
     dependencies:
+      '@prisma/client':
+        specifier: ^6.2.1
+        version: 6.2.1(prisma@6.2.1)
+      '@zephyr/config':
+        specifier: workspace:*
+        version: link:../config
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -431,15 +434,9 @@ importers:
         specifier: ^8.49.0
         version: 8.49.0
     devDependencies:
-      '@prisma/client':
-        specifier: ^6.2.1
-        version: 6.2.1(prisma@6.2.1)
       '@types/node':
         specifier: ^22.10.5
         version: 22.10.5
-      '@zephyr/config':
-        specifier: workspace:*
-        version: link:../config
       prisma:
         specifier: ^6.2.1
         version: 6.2.1
@@ -500,6 +497,9 @@ importers:
       '@zephyr/aggregator':
         specifier: workspace:*
         version: link:../aggregator
+      '@zephyr/config':
+        specifier: workspace:*
+        version: link:../config
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -549,9 +549,6 @@ importers:
       '@types/react-dom':
         specifier: 19.0.1
         version: 19.0.1
-      '@zephyr/config':
-        specifier: workspace:*
-        version: link:../config
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.49)
@@ -3622,10 +3619,6 @@ packages:
 
   i18next@21.10.0:
     resolution: {integrity: sha512-YeuIBmFsGjUfO3qBmMOc0rQaun4mIpGKET5WDwvu8lU7gvwpcariZLNtL0Fzj+zazcHUrlXHiptcFhBMFaxzfg==}
-
-  i@0.3.7:
-    resolution: {integrity: sha512-FYz4wlXgkQwIPqhzC5TdNMLSE5+GS1IIDJZY/1ZiEPCT2S3COUVZeT5OW4BmW4r5LHLQuOosSwsvnroG9GR59Q==}
-    engines: {node: '>=0.4'}
 
   ical-expander@3.1.0:
     resolution: {integrity: sha512-O8svRo6diKUVL7NOplE/M2p5/N69FnGmBJ4KnS+2Bu3VLjda0GR6JgH1QybjSXL8DzX3GYkk4opQ2H5Qt/vl4w==}
@@ -9486,8 +9479,6 @@ snapshots:
   i18next@21.10.0:
     dependencies:
       '@babel/runtime': 7.26.0
-
-  i@0.3.7: {}
 
   ical-expander@3.1.0:
     dependencies:

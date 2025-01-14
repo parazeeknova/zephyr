@@ -5,55 +5,44 @@ ARG NEXT_PUBLIC_STREAM_KEY
 ARG STREAM_SECRET
 ARG NODE_ENV=production
 ARG NEXT_PHASE=phase-production-build
-ARG NEXT_PUBLIC_SKIP_VALIDATION=true
 
 ENV NODE_ENV=$NODE_ENV
 ENV NEXT_PHASE=$NEXT_PHASE
-ENV NEXT_PUBLIC_SKIP_VALIDATION=$NEXT_PUBLIC_SKIP_VALIDATION
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
-ENV NEXT_SHARP_PATH=/tmp/node_modules/sharp
+ENV HUSKY=0
+ENV CI=true
+ENV SKIP_ENV_VALIDATION=true
+ENV NEXT_PUBLIC_SKIP_VALIDATION=true
 
 FROM base AS builder
 RUN apt-get update && apt-get install -y git
 WORKDIR /app
+
 RUN npm install -g pnpm@latest turbo@latest
 
 ENV UNSEND_API_KEY=$UNSEND_API_KEY
 ENV NEXT_PUBLIC_STREAM_KEY=$NEXT_PUBLIC_STREAM_KEY
 ENV STREAM_SECRET=$STREAM_SECRET
-ENV CI=true
 
 COPY . .
 RUN turbo prune --scope=@zephyr/web --docker
 
 FROM base AS installer
-RUN apt-get update && apt-get install -y
-
 WORKDIR /app
-
-ENV UNSEND_API_KEY=$UNSEND_API_KEY
-ENV NEXT_PUBLIC_STREAM_KEY=$NEXT_PUBLIC_STREAM_KEY
-ENV STREAM_SECRET=$STREAM_SECRET
-ENV CI=true
-ENV SKIP_ENV_VALIDATION=true
 
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=builder /app/turbo.json ./turbo.json
-
-COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
+COPY --from=builder /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 
 RUN npm install -g pnpm@latest turbo@latest && \
-  pnpm install --frozen-lockfile --ignore-scripts
-
-RUN cd packages/db && pnpm dlx prisma generate
+  pnpm install --frozen-lockfile
 
 COPY --from=builder /app/out/full/ .
 
-RUN NEXT_PUBLIC_SKIP_VALIDATION=true \
-  SKIP_ENV_VALIDATION=true \
-  CI=true \
+RUN cd packages/db && pnpm dlx prisma generate
+
+RUN pnpm install -D autoprefixer postcss tailwindcss && \
   pnpm exec turbo build --filter=@zephyr/web... --force
 
 FROM base AS runner
@@ -74,9 +63,7 @@ ENV PATH="/app/node_modules/.bin:${PATH}"
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
-ENV NEXT_SHARP_PATH=/tmp/node_modules/sharp
-ENV CI=true
-
+ENV HUSKY=0
 ENV UNSEND_API_KEY=$UNSEND_API_KEY
 ENV NEXT_PUBLIC_STREAM_KEY=$NEXT_PUBLIC_STREAM_KEY
 ENV STREAM_SECRET=$STREAM_SECRET

@@ -7,6 +7,8 @@
     ".": "./index.ts"
   },
   "dependencies": {
+    "@prisma/client": "^6.2.1",
+    "@zephyr/config": "workspace:*",
     "date-fns": "^4.1.0",
     "ioredis": "^5.4.2",
     "stream-chat": "^8.49.0"
@@ -25,9 +27,7 @@
     "post:viewtest": "ts-node test/test-view-count.ts"
   },
   "devDependencies": {
-    "@prisma/client": "^6.2.1",
     "@types/node": "^22.10.5",
-    "@zephyr/config": "workspace:*",
     "prisma": "^6.2.1",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
