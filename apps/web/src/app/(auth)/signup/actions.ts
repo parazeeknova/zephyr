@@ -10,6 +10,7 @@ import {
 import { EMAIL_ERRORS, isEmailValid } from "@zephyr/auth/src/email/validation";
 import { resendVerificationEmail } from "@zephyr/auth/src/verification/resend";
 import { type SignUpValues, signUpSchema } from "@zephyr/auth/validation";
+import { getEnvironmentMode, isStreamConfigured } from "@zephyr/config/src/env";
 import { prisma } from "@zephyr/db";
 import jwt from "jsonwebtoken";
 import { generateIdFromEntropySize } from "lucia";
@@ -38,12 +39,15 @@ const SYSTEM_ERRORS = {
   SESSION_CREATION: "Failed to create user session"
 };
 
+// biome-ignore lint/correctness/noUnusedVariables: this is a shared utility
+const { isDevelopment, isProduction } = getEnvironmentMode();
+
 async function createDevUser(
   userId: string,
   username: string,
   email: string,
   passwordHash: string
-): Promise<void> {
+): Promise<{ streamChatEnabled: boolean }> {
   try {
     const newUser = await prisma.user.create({
       data: {
@@ -56,7 +60,19 @@ async function createDevUser(
       }
     });
 
-    await createStreamUser(newUser.id, newUser.username, newUser.displayName);
+    let streamChatEnabled = false;
+    if (isStreamConfigured()) {
+      try {
+        await createStreamUser(
+          newUser.id,
+          newUser.username,
+          newUser.displayName
+        );
+        streamChatEnabled = true;
+      } catch (streamError) {
+        console.error("[Stream Chat] User creation failed:", streamError);
+      }
+    }
 
     // @ts-expect-error
     const session = await lucia.createSession(userId, {});
@@ -67,6 +83,8 @@ async function createDevUser(
       sessionCookie.value,
       sessionCookie.attributes
     );
+
+    return { streamChatEnabled };
   } catch (error) {
     console.error("Development user creation error:", error);
     try {
@@ -85,6 +103,10 @@ async function createProdUser(
   passwordHash: string,
   verificationToken: string
 ): Promise<void> {
+  if (!isStreamConfigured() && isProduction) {
+    throw new Error("Stream Chat is required in production but not configured");
+  }
+
   await prisma.$transaction(async (tx) => {
     const newUser = await tx.user.create({
       data: {
@@ -105,7 +127,18 @@ async function createProdUser(
       }
     });
 
-    await createStreamUser(newUser.id, newUser.username, newUser.displayName);
+    if (isStreamConfigured()) {
+      try {
+        await createStreamUser(
+          newUser.id,
+          newUser.username,
+          newUser.displayName
+        );
+      } catch (streamError) {
+        console.error("[Stream Chat] User creation failed:", streamError);
+        throw streamError;
+      }
+    }
   });
 }
 
@@ -170,11 +203,21 @@ export async function signUp(
 
     if (skipEmailVerification) {
       try {
-        await createDevUser(userId, username, email, passwordHash);
+        const { streamChatEnabled } = await createDevUser(
+          userId,
+          username,
+          email,
+          passwordHash
+        );
+
         return {
           success: true,
           skipVerification: true,
-          message: "Development mode: Email verification skipped"
+          message: `Development mode: Email verification skipped. ${
+            streamChatEnabled
+              ? "Stream Chat enabled successfully."
+              : "Stream Chat is not configured - messaging features will be disabled."
+          }`
         };
       } catch (error) {
         console.error("Development signup error:", error);
@@ -220,7 +263,10 @@ export async function signUp(
 
       return {
         success: true,
-        skipVerification: false
+        skipVerification: false,
+        message: isStreamConfigured()
+          ? undefined
+          : "Stream Chat is not configured - messaging features will be disabled."
       };
     } catch (error) {
       console.error("Production signup error:", error);

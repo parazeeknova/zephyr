@@ -124,6 +124,7 @@ export async function GET(req: NextRequest) {
     });
 
     if (existingGoogleUser) {
+      // @ts-expect-error
       const session = await lucia.createSession(existingGoogleUser.id, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
       (await cookies()).set(
@@ -165,6 +166,7 @@ export async function GET(req: NextRequest) {
         console.error("Failed to create Stream user:", streamError);
       }
 
+      // @ts-expect-error
       const session = await lucia.createSession(userId, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
       (await cookies()).set(

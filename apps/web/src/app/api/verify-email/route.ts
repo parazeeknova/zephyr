@@ -131,6 +131,7 @@ export async function GET(req: NextRequest) {
         console.error("Stream user creation failed:", streamError);
       }
 
+      // @ts-expect-error
       const session = await lucia.createSession(decoded.userId, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
       const cookieStore = await cookies();
