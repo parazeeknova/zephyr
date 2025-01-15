@@ -69,7 +69,6 @@ export default function NotFound() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          // @ts-expect-error
           className="space-y-10"
         >
           <motion.div
@@ -80,7 +79,6 @@ export default function NotFound() {
               stiffness: 200,
               damping: 15
             }}
-            // @ts-expect-error
             className="relative"
           >
             <div className="relative">
@@ -97,7 +95,6 @@ export default function NotFound() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            // @ts-expect-error
             className="space-y-4"
           >
             <h2 className="font-bold text-3xl text-foreground">
@@ -112,7 +109,6 @@ export default function NotFound() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            // @ts-expect-error
             className="relative"
           >
             <Link href="/">
