@@ -1,12 +1,16 @@
 "use client";
 
+import { HelpLink } from "@/components/Animations/ImageLinkPreview";
 import { Button } from "@/components/ui/button";
+import { GitHub } from "@mui/icons-material";
+import HOME from "@zephyr-assets/previews/home.png";
 import { motion } from "framer-motion";
-import { AlertOctagon, RotateCcw } from "lucide-react";
+import { AlertOctagon, Copy, RotateCcw } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
+import { usePathname } from "next/navigation";
+import { useMemo, useState } from "react";
 
-// biome-ignore lint/suspicious/noShadowRestrictedNames: This is a custom error component
+// biome-ignore lint/suspicious/noShadowRestrictedNames: This is a custom error boundary component
 export default function Error({
   error,
   reset
@@ -14,6 +18,35 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const pathname = usePathname();
+  const [copied, setCopied] = useState(false);
+
+  const errorDetails = {
+    title: `[BUG]: Error report from ${pathname}`,
+    body: `## Error Details
+- **Page:** ${pathname}
+- **Error Message:** ${error.message}
+- **Error Stack:** \`\`\`\n${error.stack}\n\`\`\`
+- **Time:** ${new Date().toISOString()}
+- **Browser:** ${navigator.userAgent}
+`
+  };
+
+  const handleCopyError = async () => {
+    await navigator.clipboard.writeText(
+      `${errorDetails.title}\n\n${errorDetails.body}`
+    );
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCreateIssue = () => {
+    const githubIssueURL = `https://github.com/parazeeknova/zephyr/issues/new?title=${encodeURIComponent(
+      errorDetails.title
+    )}&body=${encodeURIComponent(errorDetails.body)}`;
+    window.open(githubIssueURL, "_blank");
+  };
+
   const auroras = useMemo(() => {
     return Array(6)
       .fill(0)
@@ -113,7 +146,7 @@ export default function Error({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="flex flex-col items-center justify-center gap-4 sm:flex-row"
+            className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:flex-wrap"
           >
             <Button
               onClick={reset}
@@ -127,15 +160,60 @@ export default function Error({
               <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-destructive/50 to-destructive opacity-50 blur-lg transition-all group-hover:opacity-75" />
             </Button>
 
-            <Link href="/" className="w-full sm:w-auto">
-              <Button
-                variant="outline"
-                size="lg"
-                className="group w-full transition-colors hover:border-destructive/50"
+            <Button
+              onClick={handleCopyError}
+              size="lg"
+              variant="outline"
+              className="group relative w-full sm:w-auto"
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                <Copy className="h-4 w-4" />
+                {copied ? "Copied!" : "Copy Error"}
+              </span>
+            </Button>
+
+            <Button
+              onClick={handleCreateIssue}
+              size="lg"
+              variant="outline"
+              className="group relative w-full border-destructive/50 sm:w-auto"
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                <GitHub className="h-4 w-4" />
+                Report on GitHub
+              </span>
+            </Button>
+
+            <HelpLink href="/" text="Return Home ↗" previewImage={HOME.src} />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="mt-8 text-muted-foreground text-sm"
+          >
+            <p className="space-x-2">
+              <span>Need help? You can:</span>
+              <Link
+                href="https://github.com/parazeeknova/zephyr/issues"
+                target="_blank"
+                className="text-primary hover:underline"
               >
-                Return Home
-              </Button>
-            </Link>
+                Open a GitHub issue
+              </Link>
+              <span>or</span>
+              <Link
+                href="mailto:zephyyrrnyx@gmail.com"
+                className="text-primary hover:underline"
+              >
+                contact support
+              </Link>
+            </p>
+            <p className="mt-2 text-xs">
+              If this error persists, please report it to help us improve the
+              platform.
+            </p>
           </motion.div>
         </motion.div>
       </div>
