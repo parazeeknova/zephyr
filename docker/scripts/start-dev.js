@@ -28,6 +28,9 @@ const SETUP_STEPS = [
   }
 ];
 
+const MAX_RETRIES = 2;
+const RETRY_DELAY = 2000;
+
 const colors = {
   reset: "\x1b[0m",
   red: "\x1b[31m",
@@ -107,36 +110,79 @@ const cleanupDocker = () => {
 
 const runScript = async (step, currentStep, totalSteps) => {
   const progress = Math.floor((currentStep / totalSteps) * 100);
-  clearScreen();
+  let attempts = 0;
 
-  console.log(
-    centerText(
-      `${colors.blue}Step ${currentStep} of ${totalSteps}${colors.reset}`
-    )
-  );
-  console.log(`${centerText(createProgressBar(progress))}\n`);
-  console.log(
-    centerText(`${colors.yellow}🚀 Running ${step.name}...${colors.reset}\n`)
-  );
+  while (attempts <= MAX_RETRIES) {
+    attempts++;
+    clearScreen();
 
-  try {
-    execSync(step.command, {
-      stdio: "inherit",
-      cwd: PROJECT_ROOT
-    });
     console.log(
       centerText(
-        `${colors.green}✅ ${step.name} completed successfully${colors.reset}`
+        `${colors.blue}Step ${currentStep} of ${totalSteps}${colors.reset}`
       )
     );
-    return true;
-  } catch (error) {
-    console.error(
-      centerText(`${colors.red}❌ ${step.name} failed:${colors.reset}`)
+    console.log(`${centerText(createProgressBar(progress))}\n`);
+
+    if (attempts > 1) {
+      console.log(
+        centerText(
+          `${colors.yellow}Retry attempt ${attempts - 1} of ${MAX_RETRIES}${colors.reset}`
+        )
+      );
+      console.log(
+        centerText(`${colors.gray}Waiting before retry...${colors.reset}\n`)
+      );
+    }
+
+    console.log(
+      centerText(`${colors.yellow}🚀 Running ${step.name}...${colors.reset}\n`)
     );
-    console.error(centerText(error.message));
-    return false;
+
+    try {
+      execSync(step.command, {
+        stdio: "inherit",
+        cwd: PROJECT_ROOT
+      });
+
+      if (attempts > 1) {
+        console.log(
+          centerText(
+            `${colors.green}✅ ${step.name} succeeded on retry ${attempts - 1}!${colors.reset}`
+          )
+        );
+      } else {
+        console.log(
+          centerText(
+            `${colors.green}✅ ${step.name} completed successfully${colors.reset}`
+          )
+        );
+      }
+
+      return true;
+    } catch (error) {
+      if (attempts > MAX_RETRIES) {
+        console.error(
+          centerText(
+            `${colors.red}❌ ${step.name} failed after ${MAX_RETRIES} retries:${colors.reset}`
+          )
+        );
+        console.error(centerText(error.message));
+        return false;
+      }
+
+      console.log(
+        centerText(
+          `${colors.yellow}⚠️ ${step.name} failed, retrying in ${RETRY_DELAY / 1000}s...${colors.reset}`
+        )
+      );
+      console.log(
+        centerText(`${colors.dim}Error: ${error.message}${colors.reset}\n`)
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+    }
   }
+  return false;
 };
 
 async function setupDevelopmentEnvironment() {
@@ -164,7 +210,7 @@ async function setupDevelopmentEnvironment() {
 
     const success = await runScript(step, i + 1, totalSteps);
     if (!success) {
-      throw new Error(step.errorMessage);
+      throw new Error(`${step.errorMessage} after ${MAX_RETRIES} retries`);
     }
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
