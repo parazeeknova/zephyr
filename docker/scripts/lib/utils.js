@@ -68,8 +68,13 @@ async function waitForContainer(
   return false;
 }
 
+function clearScreen() {
+  process.stdout.write("\x1Bc");
+}
+
 module.exports = {
   PROJECT_ROOT,
   execAsync,
-  waitForContainer
+  waitForContainer,
+  clearScreen
 };
