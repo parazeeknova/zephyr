@@ -42,7 +42,6 @@ export async function POST(
   props: { params: Promise<{ postId: string }> }
 ) {
   const params = await props.params;
-
   const { postId } = params;
 
   try {
@@ -52,18 +51,57 @@ export async function POST(
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await prisma.bookmark.upsert({
-      where: {
-        userId_postId: {
+    await prisma.$transaction(async (tx) => {
+      await tx.bookmark.upsert({
+        where: {
+          userId_postId: {
+            userId: loggedInUser.id,
+            postId
+          }
+        },
+        create: {
           userId: loggedInUser.id,
           postId
+        },
+        update: {}
+      });
+
+      const post = await tx.post.findUnique({
+        where: { id: postId },
+        select: { userId: true }
+      });
+
+      if (!post) throw new Error("Post not found");
+
+      await tx.user.update({
+        where: { id: loggedInUser.id },
+        data: { aura: { increment: 2 } }
+      });
+
+      await tx.auraLog.create({
+        data: {
+          userId: loggedInUser.id,
+          issuerId: loggedInUser.id,
+          amount: 2,
+          type: "POST_BOOKMARKED",
+          postId
         }
-      },
-      create: {
-        userId: loggedInUser.id,
-        postId
-      },
-      update: {}
+      });
+
+      await tx.user.update({
+        where: { id: post.userId },
+        data: { aura: { increment: 10 } }
+      });
+
+      await tx.auraLog.create({
+        data: {
+          userId: post.userId,
+          issuerId: loggedInUser.id,
+          amount: 10,
+          type: "POST_BOOKMARK_RECEIVED",
+          postId
+        }
+      });
     });
 
     return new Response();
@@ -78,7 +116,6 @@ export async function DELETE(
   props: { params: Promise<{ postId: string }> }
 ) {
   const params = await props.params;
-
   const { postId } = params;
 
   try {
@@ -88,11 +125,30 @@ export async function DELETE(
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await prisma.bookmark.deleteMany({
-      where: {
-        userId: loggedInUser.id,
-        postId
-      }
+    await prisma.$transaction(async (tx) => {
+      await tx.bookmark.deleteMany({
+        where: {
+          userId: loggedInUser.id,
+          postId
+        }
+      });
+
+      const post = await tx.post.findUnique({
+        where: { id: postId },
+        select: { userId: true }
+      });
+
+      if (!post) throw new Error("Post not found");
+
+      await tx.user.update({
+        where: { id: loggedInUser.id },
+        data: { aura: { decrement: 2 } }
+      });
+
+      await tx.user.update({
+        where: { id: post.userId },
+        data: { aura: { decrement: 10 } }
+      });
     });
 
     return new Response();
