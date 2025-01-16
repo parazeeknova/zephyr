@@ -11,7 +11,6 @@ export async function GET(
   props: { params: Promise<{ postId: string }> }
 ) {
   const params = await props.params;
-
   const { postId } = params;
 
   try {
@@ -51,7 +50,6 @@ export async function POST(
   props: { params: Promise<{ postId: string }> }
 ) {
   const params = await props.params;
-
   const { postId } = params;
 
   try {
@@ -66,8 +64,25 @@ export async function POST(
       return Response.json({ error: "Invalid vote value" }, { status: 400 });
     }
 
-    // @ts-ignore
     const updatedPost = await prisma.$transaction(async (tx) => {
+      const post = await tx.post.findUnique({
+        where: { id: postId },
+        select: {
+          id: true,
+          userId: true,
+          user: {
+            select: {
+              id: true,
+              aura: true
+            }
+          }
+        }
+      });
+
+      if (!post) {
+        throw new Error("Post not found");
+      }
+
       const existingVote = await tx.vote.findUnique({
         where: {
           userId_postId: {
@@ -79,10 +94,10 @@ export async function POST(
 
       let voteChange = vote;
       let shouldNotify = false;
+      let auraChange = vote;
 
       if (existingVote) {
         if (existingVote.value === vote) {
-          // Remove vote if it's the same
           await tx.vote.delete({
             where: {
               userId_postId: {
@@ -92,8 +107,13 @@ export async function POST(
             }
           });
           voteChange = -vote;
+          auraChange = -vote;
+
+          await tx.user.update({
+            where: { id: post.userId },
+            data: { aura: { decrement: Math.abs(auraChange) } }
+          });
         } else {
-          // Change vote
           await tx.vote.update({
             where: {
               userId_postId: {
@@ -104,7 +124,13 @@ export async function POST(
             data: { value: vote }
           });
           voteChange = vote * 2;
+          auraChange = vote * 2;
           shouldNotify = vote === 1;
+
+          await tx.user.update({
+            where: { id: post.userId },
+            data: { aura: { increment: vote * 2 } }
+          });
         }
       } else {
         await tx.vote.create({
@@ -115,6 +141,11 @@ export async function POST(
           }
         });
         shouldNotify = vote === 1;
+
+        await tx.user.update({
+          where: { id: post.userId },
+          data: { aura: { increment: vote } }
+        });
       }
 
       const updatedPost = await tx.post.update({
@@ -135,9 +166,17 @@ export async function POST(
             type: "AMPLIFY"
           }
         });
-      } else {
-        [] as any;
       }
+
+      await tx.auraLog.create({
+        data: {
+          userId: post.userId,
+          amount: auraChange,
+          type: "POST_VOTE",
+          postId: post.id,
+          issuerId: loggedInUser.id
+        }
+      });
 
       return updatedPost;
     });
@@ -148,7 +187,7 @@ export async function POST(
         updatedPost.vote?.length > 0 ? (updatedPost.vote[0]?.value ?? 0) : 0
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     const postData: PostData & VoteInfo = {
       ...updatedPost,
       ...voteInfo
@@ -166,7 +205,6 @@ export async function DELETE(
   props: { params: Promise<{ postId: string }> }
 ) {
   const params = await props.params;
-
   const { postId } = params;
 
   try {
@@ -175,7 +213,6 @@ export async function DELETE(
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // @ts-ignore
     const updatedPost = await prisma.$transaction(async (tx) => {
       const existingVote = await tx.vote.findUnique({
         where: {
@@ -188,10 +225,18 @@ export async function DELETE(
       });
 
       if (!existingVote) {
-        return null; // No vote to delete
+        return null;
       }
 
-      // Delete the vote
+      const post = await tx.post.findUnique({
+        where: { id: postId },
+        select: { userId: true }
+      });
+
+      if (!post) {
+        throw new Error("Post not found");
+      }
+
       await tx.vote.delete({
         where: {
           userId_postId: {
@@ -201,7 +246,11 @@ export async function DELETE(
         }
       });
 
-      // Delete the associated notification if it was an upvote
+      await tx.user.update({
+        where: { id: post.userId },
+        data: { aura: { decrement: existingVote.value } }
+      });
+
       if (existingVote.value === 1) {
         await tx.notification.deleteMany({
           where: {
@@ -212,36 +261,20 @@ export async function DELETE(
         });
       }
 
-      // Update the post's aura
+      await tx.auraLog.create({
+        data: {
+          userId: post.userId,
+          amount: -existingVote.value,
+          type: "POST_VOTE_REMOVED",
+          postId,
+          issuerId: loggedInUser.id
+        }
+      });
+
       return tx.post.update({
         where: { id: postId },
         data: { aura: { decrement: existingVote.value } },
-        include: {
-          ...getPostDataInclude(loggedInUser.id),
-          user: {
-            include: {
-              followers: {
-                where: { followerId: loggedInUser.id },
-                select: { followerId: true }
-              },
-              _count: {
-                select: { posts: true, followers: true }
-              }
-            }
-          },
-          bookmarks: {
-            where: { userId: loggedInUser.id },
-            select: { id: true }
-          },
-          vote: {
-            where: { userId: loggedInUser.id },
-            select: { value: true }
-          },
-          _count: {
-            select: { bookmarks: true, comments: true }
-          },
-          attachments: true
-        }
+        include: getPostDataInclude(loggedInUser.id)
       });
     });
 
@@ -251,10 +284,9 @@ export async function DELETE(
 
     const voteInfo: VoteInfo = {
       aura: updatedPost.aura,
-      userVote: 0 // Since we've just deleted the vote
+      userVote: 0
     };
 
-    // @ts-ignore
     const postData: PostData & VoteInfo = {
       ...updatedPost,
       ...voteInfo

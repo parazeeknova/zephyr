@@ -158,11 +158,19 @@ const UserDetails: React.FC<UserDetailsProps> = ({
                 <div className="space-y-2">
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
-                        <div className="flex items-center justify-end font-semibold text-foreground text-lg">
-                          <Flame className="mr-1 h-6 w-6 text-orange-500" />0
-                        </div>
-                      </TooltipTrigger>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <div className="flex items-center justify-end font-semibold text-foreground text-lg">
+                              <Flame className="mr-1 h-6 w-6 text-orange-500" />
+                              {formatNumber(userData?.aura ?? 0)}{" "}
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Total Aura Points</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                       <TooltipContent>
                         <p>Aura</p>
                       </TooltipContent>
