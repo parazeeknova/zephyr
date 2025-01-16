@@ -41,7 +41,12 @@ RUN cd packages/db && pnpm dlx prisma generate
 
 COPY --from=builder /app/out/full/ .
 
-RUN echo "Building with Stream key prefix: ${NEXT_PUBLIC_STREAM_KEY:0:5}..."
+RUN if [ -n "$NEXT_PUBLIC_STREAM_KEY" ]; then \
+  echo "Building with Stream key configured"; \
+  else \
+  echo "Building without Stream key"; \
+  fi
+
 RUN NEXT_TELEMETRY_DISABLED=1 TURBO_TELEMETRY_DISABLED=1 pnpm exec turbo build --filter=@zephyr/web... --force
 
 FROM base AS runner
