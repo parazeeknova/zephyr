@@ -1,43 +1,84 @@
 import { validateRequest } from "@zephyr/auth/auth";
-import { type CommentsPage, getCommentDataInclude, prisma } from "@zephyr/db";
+import { getCommentDataInclude, prisma } from "@zephyr/db";
 import type { NextRequest } from "next/server";
 
-export async function GET(
+export async function POST(
   req: NextRequest,
   props: { params: Promise<{ postId: string }> }
 ) {
   const params = await props.params;
-
   const { postId } = params;
 
   try {
-    const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
-
-    const pageSize = 5;
-
     const { user } = await validateRequest();
 
     if (!user) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const comments = await prisma.comment.findMany({
-      where: { postId },
-      include: getCommentDataInclude(user.id),
-      orderBy: { createdAt: "asc" },
-      take: -pageSize - 1,
-      cursor: cursor ? { id: cursor } : undefined
+    const body = await req.json();
+    const { content } = body;
+
+    if (!content?.trim()) {
+      return Response.json(
+        { error: "Comment content is required" },
+        { status: 400 }
+      );
+    }
+
+    const comment = await prisma.$transaction(async (tx) => {
+      const newComment = await tx.comment.create({
+        data: {
+          content,
+          userId: user.id,
+          postId
+        },
+        include: getCommentDataInclude(user.id)
+      });
+
+      const post = await tx.post.findUnique({
+        where: { id: postId },
+        select: { userId: true }
+      });
+
+      if (!post) throw new Error("Post not found");
+
+      await tx.user.update({
+        where: { id: user.id },
+        data: { aura: { increment: 1 } }
+      });
+
+      await tx.auraLog.create({
+        data: {
+          userId: user.id,
+          issuerId: user.id,
+          amount: 1,
+          type: "COMMENT_CREATION",
+          postId,
+          commentId: newComment.id
+        }
+      });
+
+      await tx.user.update({
+        where: { id: post.userId },
+        data: { aura: { increment: 5 } }
+      });
+
+      await tx.auraLog.create({
+        data: {
+          userId: post.userId,
+          issuerId: user.id,
+          amount: 5,
+          type: "COMMENT_RECEIVED",
+          postId,
+          commentId: newComment.id
+        }
+      });
+
+      return newComment;
     });
 
-    const previousCursor =
-      comments.length > pageSize ? (comments[0]?.id ?? null) : null;
-
-    const data: CommentsPage = {
-      comments: comments.length > pageSize ? comments.slice(1) : comments,
-      previousCursor
-    };
-
-    return Response.json(data);
+    return Response.json(comment);
   } catch (error) {
     console.error(error);
     return Response.json({ error: "Internal server error" }, { status: 500 });

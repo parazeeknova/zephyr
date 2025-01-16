@@ -71,9 +71,13 @@ enum AuraType {
   POST_CREATION
   POST_VOTE
   POST_VOTE_REMOVED
+  POST_VIEWS_MILESTONE
   COMMENT_CREATION
+  COMMENT_RECEIVED
   FOLLOW_GAINED
   FOLLOW_GIVEN
+  POST_BOOKMARKED
+  POST_BOOKMARK_RECEIVED
 }
 
 // Email verification token model using JWT web tokens
@@ -125,19 +129,20 @@ model Follow {
 
 // Post model
 model Post {
-  id                  String         @id @default(cuid())
-  content             String
-  userId              String
-  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  aura                Int            @default(0)
-  viewCount           Int            @default(0)
-  attachments         Media[]
-  bookmarks           Bookmark[]
-  comments            Comment[]
-  linkedNotifications Notification[]
-  vote                Vote[]
-  shareStats          ShareStats[]
-  auraLogs            AuraLog[]
+  id                   String         @id @default(cuid())
+  content              String
+  userId               String
+  user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aura                 Int            @default(0)
+  viewCount            Int            @default(0)
+  lastAwardedViewCount Int            @default(0)
+  attachments          Media[]
+  bookmarks            Bookmark[]
+  comments             Comment[]
+  linkedNotifications  Notification[]
+  vote                 Vote[]
+  shareStats           ShareStats[]
+  auraLogs             AuraLog[]
 
   createdAt DateTime @default(now())
 
