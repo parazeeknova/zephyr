@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
-    const postId = formData.get("postId") as string | null; // Add this line to get postId if needed
+    const postId = formData.get("postId") as string | null;
 
     if (!file) {
       return new NextResponse("No file provided", { status: 400 });
@@ -23,20 +23,19 @@ export async function POST(request: Request) {
       name: file.name,
       type: file.type,
       size: file.size,
-      postId: postId // Log postId
+      postId: postId
     });
 
     const upload = await uploadToMinio(file, user.id);
 
-    // Create media record matching your schema
     const media = await prisma.media.create({
       data: {
         url: upload.url,
-        type: upload.type as MediaType, // Use the enum from your schema
+        type: upload.type as MediaType,
         key: upload.key,
         mimeType: upload.mimeType,
         size: upload.size,
-        postId: postId // Include postId if provided
+        postId: postId
       }
     });
 
