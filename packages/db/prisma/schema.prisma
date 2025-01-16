@@ -144,10 +144,21 @@ model Post {
   vote                 Vote[]
   shareStats           ShareStats[]
   auraLogs             AuraLog[]
+  tags                 Tag[]
 
   createdAt DateTime @default(now())
 
   @@map("posts")
+}
+
+// Tag model for post categorization
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  useCount  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     Post[]
 }
 
 // Media model for post attachments

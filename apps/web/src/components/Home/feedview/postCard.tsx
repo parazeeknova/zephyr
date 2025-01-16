@@ -3,6 +3,7 @@
 import { useSession } from "@/app/(main)/SessionProvider";
 import UserTooltip from "@/components/Layouts/UserTooltip";
 import ViewTracker from "@/components/Posts/ViewCounter";
+import { Tags } from "@/components/Tags/Tags";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -86,6 +87,16 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
           />
         </div>
       </div>
+
+      {post.tags && post.tags.length > 0 && (
+        <div className="mt-3 mb-2">
+          <Tags
+            tags={post.tags}
+            isOwner={post.user.id === user.id}
+            postId={post.id}
+          />
+        </div>
+      )}
 
       <AuraCount postId={post.id} initialAura={post.aura} />
 

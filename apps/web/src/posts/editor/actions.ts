@@ -1,9 +1,6 @@
 "use server";
 
-"use server";
-
-import { validateRequest } from "@zephyr/auth/auth";
-import { createPostSchema } from "@zephyr/auth/validation";
+import { createPostSchema, validateRequest } from "@zephyr/auth/src";
 import { getPostDataInclude, postViewsCache, prisma } from "@zephyr/db";
 
 const AURA_REWARDS = {
@@ -77,13 +74,12 @@ async function calculateAuraReward(mediaIds: string[]) {
 export async function submitPost(input: {
   content: string;
   mediaIds: string[];
+  tags: string[];
 }) {
   const { user } = await validateRequest();
-
   if (!user) throw Error("Unauthorized");
 
-  const { content, mediaIds } = createPostSchema.parse(input);
-
+  const { content, mediaIds, tags } = createPostSchema.parse(input);
   const auraReward = await calculateAuraReward(mediaIds);
 
   const newPost = await prisma.$transaction(async (tx) => {
@@ -94,10 +90,31 @@ export async function submitPost(input: {
         aura: 0,
         attachments: {
           connect: mediaIds.map((id: string) => ({ id }))
+        },
+        tags: {
+          connectOrCreate: tags.map((tagName) => ({
+            where: { name: tagName },
+            create: { name: tagName }
+          }))
         }
       },
       include: getPostDataInclude(user.id)
     });
+
+    if (tags.length > 0) {
+      await Promise.all(
+        tags.map((tagName) =>
+          tx.tag.update({
+            where: { name: tagName },
+            data: {
+              useCount: {
+                increment: 1
+              }
+            }
+          })
+        )
+      );
+    }
 
     await tx.user.update({
       where: { id: user.id },
@@ -138,4 +155,54 @@ export async function incrementPostView(postId: string) {
 
 export async function getPostViews(postId: string) {
   return await postViewsCache.getViews(postId);
+}
+
+export async function updatePostTags(postId: string, tags: string[]) {
+  const { user } = await validateRequest();
+  if (!user) throw Error("Unauthorized");
+
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+    include: { tags: true }
+  });
+
+  if (!post) throw Error("Post not found");
+  if (post.userId !== user.id) throw Error("Unauthorized");
+
+  const oldTags = post.tags.map((t) => t.name);
+  const tagsToAdd = tags.filter((t) => !oldTags.includes(t));
+  const tagsToRemove = oldTags.filter((t) => !tags.includes(t));
+
+  return await prisma.$transaction(async (tx) => {
+    const updatedPost = await tx.post.update({
+      where: { id: postId },
+      data: {
+        tags: {
+          connectOrCreate: tagsToAdd.map((tagName) => ({
+            where: { name: tagName },
+            create: { name: tagName }
+          })),
+          disconnect: tagsToRemove.map((tagName) => ({ name: tagName }))
+        }
+      },
+      include: getPostDataInclude(user.id)
+    });
+
+    await Promise.all([
+      ...tagsToAdd.map((tagName) =>
+        tx.tag.update({
+          where: { name: tagName },
+          data: { useCount: { increment: 1 } }
+        })
+      ),
+      ...tagsToRemove.map((tagName) =>
+        tx.tag.update({
+          where: { name: tagName },
+          data: { useCount: { decrement: 1 } }
+        })
+      )
+    ]);
+
+    return updatedPost;
+  });
 }
