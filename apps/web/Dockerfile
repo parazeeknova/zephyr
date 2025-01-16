@@ -1,17 +1,23 @@
 FROM node:latest AS base
 
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV TURBO_TELEMETRY_DISABLED=1
+
 ARG UNSEND_API_KEY
 ARG NEXT_PUBLIC_STREAM_KEY
 ARG STREAM_SECRET
 
-FROM base AS builder
-RUN apt-get update && apt-get install -y git
-WORKDIR /app
-RUN npm install -g pnpm@latest turbo@latest
-
 ENV UNSEND_API_KEY=$UNSEND_API_KEY
 ENV NEXT_PUBLIC_STREAM_KEY=$NEXT_PUBLIC_STREAM_KEY
 ENV STREAM_SECRET=$STREAM_SECRET
+
+FROM base AS builder
+RUN apt-get update && apt-get install -y git
+WORKDIR /app
+
+RUN npm install -g pnpm@latest turbo@latest && \
+  pnpm config set enable-pre-post-scripts true && \
+  turbo telemetry disable
 
 COPY . .
 RUN turbo prune --scope=@zephyr/web --docker
@@ -21,24 +27,27 @@ RUN apt-get update && apt-get install -y
 
 WORKDIR /app
 
-ENV UNSEND_API_KEY=$UNSEND_API_KEY
-ENV NEXT_PUBLIC_STREAM_KEY=$NEXT_PUBLIC_STREAM_KEY
-ENV STREAM_SECRET=$STREAM_SECRET
-
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/turbo.json ./turbo.json
-
 COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
 
 RUN npm install -g pnpm@latest turbo@latest && \
+  pnpm config set enable-pre-post-scripts true && \
+  turbo telemetry disable && \
   pnpm install --frozen-lockfile --ignore-scripts
 
 RUN cd packages/db && pnpm dlx prisma generate
 
 COPY --from=builder /app/out/full/ .
 
-RUN pnpm exec turbo build --filter=@zephyr/web... --force
+RUN if [ -n "$NEXT_PUBLIC_STREAM_KEY" ]; then \
+  echo "Building with Stream key configured"; \
+  else \
+  echo "Building without Stream key"; \
+  fi
+
+RUN NEXT_TELEMETRY_DISABLED=1 TURBO_TELEMETRY_DISABLED=1 pnpm exec turbo build --filter=@zephyr/web... --force
 
 FROM base AS runner
 WORKDIR /app
