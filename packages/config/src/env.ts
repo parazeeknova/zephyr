@@ -76,28 +76,36 @@ export function getStreamConfig(): StreamConfig {
   };
 }
 
+let cachedConfig: { key: string | null; secret: string | null } | null = null;
+
 export function isStreamConfigured(): boolean {
-  // Add debug logging
-  const isServer = typeof window === "undefined";
-  const streamKey = process.env.NEXT_PUBLIC_STREAM_KEY;
-  const streamSecret = process.env.STREAM_SECRET;
-
-  console.debug("[Stream Config Debug]", {
-    isServer,
-    hasStreamKey: !!streamKey,
-    hasStreamSecret: !!streamSecret,
-    streamKeyPrefix: streamKey ? streamKey.substring(0, 5) : null,
-    NODE_ENV: process.env.NODE_ENV
-  });
-
-  if (isServer) {
-    return false;
+  if (!cachedConfig) {
+    cachedConfig = {
+      key: process.env.NEXT_PUBLIC_STREAM_KEY || null,
+      secret: process.env.STREAM_SECRET || null
+    };
   }
 
-  // Only check configuration on the client side
-  const isConfigured = Boolean(streamKey && streamSecret);
+  if (
+    process.env.NEXT_PUBLIC_STREAM_KEY !== cachedConfig.key ||
+    process.env.STREAM_SECRET !== cachedConfig.secret
+  ) {
+    cachedConfig = {
+      key: process.env.NEXT_PUBLIC_STREAM_KEY || null,
+      secret: process.env.STREAM_SECRET || null
+    };
+  }
 
-  console.debug("[Stream Config Result]", { isConfigured });
+  const isConfigured = Boolean(cachedConfig.key && cachedConfig.secret);
+
+  if (!hasLoggedStreamStatus) {
+    console.debug("[Stream Config]", {
+      hasKey: !!cachedConfig.key,
+      hasSecret: !!cachedConfig.secret,
+      isConfigured
+    });
+    hasLoggedStreamStatus = true;
+  }
 
   return isConfigured;
 }

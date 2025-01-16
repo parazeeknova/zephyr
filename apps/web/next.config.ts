@@ -65,7 +65,6 @@ const nextConfig: NextConfig = {
         hostname: "minio-objectstorage.zephyyrr.in",
         pathname: "/**"
       },
-      // Development patterns - simplified and more permissive
       {
         protocol: "http",
         hostname: "localhost",
@@ -97,10 +96,41 @@ const nextConfig: NextConfig = {
       process.env.NEXT_PUBLIC_MINIO_ENDPOINT || "http://localhost:9001",
     NEXT_PUBLIC_MINIO_BUCKET_NAME: process.env.MINIO_BUCKET_NAME || "uploads",
     NEXT_PUBLIC_STREAM_KEY: process.env.NEXT_PUBLIC_STREAM_KEY,
-    STREAM_SECRET: process.env.STREAM_SECRET
+    STREAM_SECRET: process.env.STREAM_SECRET,
+    NEXT_PUBLIC_STREAM_CONFIGURED:
+      process.env.NEXT_PUBLIC_STREAM_KEY && process.env.STREAM_SECRET
+        ? "true"
+        : "false"
   },
 
   webpack: (config, { dev, isServer }) => {
+    if (isServer) {
+      const streamKey = process.env.NEXT_PUBLIC_STREAM_KEY;
+      const streamSecret = process.env.STREAM_SECRET;
+
+      if (!streamKey || !streamSecret) {
+        console.warn(
+          "\x1b[33m%s\x1b[0m",
+          `
+⚠️  Warning: Stream Chat environment variables are missing
+This may cause chat features to be disabled in production.
+Required variables:
+- NEXT_PUBLIC_STREAM_KEY
+- STREAM_SECRET
+        `
+        );
+      } else {
+        console.log(
+          "\x1b[32m%s\x1b[0m",
+          `
+✅ Stream Chat configuration detected:
+- NEXT_PUBLIC_STREAM_KEY: ${streamKey.substring(0, 5)}...
+- STREAM_SECRET: ${streamSecret ? "[Set]" : "[Missing]"}
+        `
+        );
+      }
+    }
+
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
