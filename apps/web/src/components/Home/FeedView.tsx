@@ -55,7 +55,6 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        // @ts-expect-error
         className="w-full max-w-full overflow-hidden"
       >
         <Card className="mb-8 bg-card shadow-lg">
