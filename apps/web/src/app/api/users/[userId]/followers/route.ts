@@ -3,6 +3,8 @@ import { debugLog } from "@zephyr/config/debug";
 import { type FollowerInfo, followerInfoCache, prisma } from "@zephyr/db";
 import { suggestedUsersCache } from "../../suggested/route";
 
+const FOLLOW_AURA_REWARD = 5;
+
 export async function POST(
   _req: Request,
   props: { params: Promise<{ userId: string }> }
@@ -40,6 +42,20 @@ export async function POST(
           issuerId: loggedInUser.id,
           recipientId: userId,
           type: "FOLLOW"
+        }
+      });
+
+      await tx.user.update({
+        where: { id: userId },
+        data: { aura: { increment: FOLLOW_AURA_REWARD } }
+      });
+
+      await tx.auraLog.create({
+        data: {
+          userId: userId,
+          issuerId: loggedInUser.id,
+          amount: FOLLOW_AURA_REWARD,
+          type: "FOLLOW_GAINED"
         }
       });
 
@@ -150,32 +166,49 @@ export async function DELETE(
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await prisma.$transaction([
-      prisma.follow.deleteMany({
+    const result = await prisma.$transaction(async (tx) => {
+      await tx.follow.deleteMany({
         where: {
           followerId: loggedInUser.id,
           followingId: userId
         }
-      }),
-      prisma.notification.deleteMany({
+      });
+
+      await tx.notification.deleteMany({
         where: {
           issuerId: loggedInUser.id,
           recipientId: userId,
           type: "FOLLOW"
         }
-      })
-    ]);
+      });
 
-    const userData = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        displayName: true,
-        username: true,
-        _count: { select: { followers: true } }
-      }
+      await tx.user.update({
+        where: { id: userId },
+        data: { aura: { decrement: FOLLOW_AURA_REWARD } }
+      });
+
+      await tx.auraLog.create({
+        data: {
+          userId: userId,
+          issuerId: loggedInUser.id,
+          amount: -FOLLOW_AURA_REWARD,
+          type: "FOLLOW_GAINED"
+        }
+      });
+
+      const userData = await tx.user.findUnique({
+        where: { id: userId },
+        select: {
+          displayName: true,
+          username: true,
+          _count: { select: { followers: true } }
+        }
+      });
+
+      return userData;
     });
 
-    if (!userData) {
+    if (!result) {
       return Response.json({ error: "User not found" }, { status: 404 });
     }
 
@@ -183,13 +216,12 @@ export async function DELETE(
       displayName: string;
       username: string;
     } = {
-      followers: userData._count.followers,
+      followers: result._count.followers,
       isFollowedByUser: false,
-      displayName: userData.displayName,
-      username: userData.username
+      displayName: result.displayName,
+      username: result.username
     };
 
-    // Invalidate caches
     await Promise.all([
       followerInfoCache.invalidate(userId),
       suggestedUsersCache.invalidateForUser(userId)

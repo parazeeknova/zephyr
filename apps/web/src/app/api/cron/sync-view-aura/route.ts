@@ -49,7 +49,6 @@ async function awardViewAura() {
 
         if (currentViews <= lastAwardedCount) continue;
 
-        // Calculate new milestones reached
         const previousFifties = Math.floor(
           lastAwardedCount / VIEWS_AURA_CONFIG.FIFTY_VIEWS.threshold
         );
@@ -63,7 +62,6 @@ async function awardViewAura() {
           currentViews / VIEWS_AURA_CONFIG.THOUSAND_VIEWS.threshold
         );
 
-        // Calculate aura to award
         const fiftyMilestonesReached = currentFifties - previousFifties;
         const thousandMilestonesReached = currentThousands - previousThousands;
 
@@ -73,12 +71,18 @@ async function awardViewAura() {
 
         if (auraToAward > 0) {
           await prisma.$transaction(async (tx) => {
-            // Update post's aura
             await tx.post.update({
               where: { id: post.id },
               data: {
                 aura: { increment: auraToAward },
                 lastAwardedViewCount: currentViews
+              }
+            });
+
+            await tx.user.update({
+              where: { id: post.userId },
+              data: {
+                aura: { increment: auraToAward }
               }
             });
 
@@ -91,14 +95,14 @@ async function awardViewAura() {
                 postId: post.id
               }
             });
+
+            log(
+              `✨ Awarded ${auraToAward} aura to post ${post.id} and user ${post.userId} (${currentViews} views)`
+            );
           });
 
           results.auraAwarded += auraToAward;
           results.processedPosts++;
-
-          log(
-            `✨ Awarded ${auraToAward} aura to post ${post.id} (${currentViews} views)`
-          );
         }
       } catch (error) {
         const errorMessage = `Error processing post ${post.id}: ${error instanceof Error ? error.message : String(error)}`;
@@ -144,7 +148,6 @@ async function awardViewAura() {
 
 export async function POST(request: Request) {
   try {
-    // Verify cron secret
     if (!process.env.CRON_SECRET_KEY) {
       return NextResponse.json(
         { error: "Server configuration error" },

@@ -54,7 +54,9 @@ export function useSubmitPostMutation() {
       });
 
       toast({
-        description: "Post created"
+        title: "Post created successfully!",
+        description: "Your post is now live ✨",
+        duration: 5000
       });
     },
 
