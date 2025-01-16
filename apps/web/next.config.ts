@@ -95,7 +95,9 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV || "development",
     NEXT_PUBLIC_MINIO_ENDPOINT:
       process.env.NEXT_PUBLIC_MINIO_ENDPOINT || "http://localhost:9001",
-    NEXT_PUBLIC_MINIO_BUCKET_NAME: process.env.MINIO_BUCKET_NAME || "uploads"
+    NEXT_PUBLIC_MINIO_BUCKET_NAME: process.env.MINIO_BUCKET_NAME || "uploads",
+    NEXT_PUBLIC_STREAM_KEY: process.env.NEXT_PUBLIC_STREAM_KEY,
+    STREAM_SECRET: process.env.STREAM_SECRET
   },
 
   webpack: (config, { dev, isServer }) => {

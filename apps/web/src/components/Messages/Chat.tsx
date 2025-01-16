@@ -9,7 +9,8 @@ import ChatSkeleton from "@zephyr-ui/Layouts/skeletons/ChatSkeleton";
 import { motion } from "framer-motion";
 import { MessageSquarePlus } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Channel, Chat as StreamChat } from "stream-chat-react";
 import ChatChannel from "./ChatChannel";
 import ChatSidebar from "./ChatSidebar";
@@ -56,10 +57,17 @@ const WelcomeScreen = ({ onNewChat }: { onNewChat: () => void }) => {
 };
 
 export default function Chat() {
-  const chatClient = useInitializeChatClient();
   const { resolvedTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState(null);
+  const router = useRouter();
+  const { chatClient, isLoading, isConfigured } = useInitializeChatClient();
+
+  useEffect(() => {
+    if (!isLoading && !isConfigured) {
+      router.replace("/messages/not-configured");
+    }
+  }, [isLoading, isConfigured, router]);
 
   if (!chatClient) {
     return <ChatSkeleton />;

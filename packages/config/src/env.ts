@@ -22,25 +22,6 @@ const isDevelopment = !isProduction && !isBuildPhase && !isTestEnvironment;
 
 let hasLoggedStreamStatus = false;
 
-/**
- * Check Stream environment configuration status
- */
-function checkStreamEnvStatus(): EnvStatus {
-  const missingVars = Object.entries(REQUIRED_STREAM_VARS)
-    .filter(([_, value]) => !value)
-    .map(([key]) => key);
-
-  return {
-    isConfigured: missingVars.length === 0,
-    missingVars,
-    isDevelopment
-  };
-}
-
-/**
- * Validate Stream environment variables
- * Throws in production, logs warning in development
- */
 export function validateStreamEnv(): void {
   const { isConfigured, missingVars, isDevelopment } = checkStreamEnvStatus();
 
@@ -62,14 +43,19 @@ export function validateStreamEnv(): void {
   }
 }
 
-/**
- * Get Stream configuration
- * Returns null values if not configured in development
- * Throws if not configured in production
- * Development can proceed with null values
- */
 export function getStreamConfig(): StreamConfig {
   const { isConfigured, isDevelopment } = checkStreamEnvStatus();
+
+  if (!process.env.NEXT_PUBLIC_STREAM_KEY && !process.env.STREAM_SECRET) {
+    if (isDevelopment && !hasLoggedStreamStatus) {
+      console.warn("[Stream Chat] Environment variables are not defined");
+      hasLoggedStreamStatus = true;
+    }
+    return {
+      apiKey: null,
+      secret: null
+    };
+  }
 
   if (!isConfigured) {
     if (isDevelopment && !hasLoggedStreamStatus) {
@@ -85,44 +71,63 @@ export function getStreamConfig(): StreamConfig {
   }
 
   return {
-    apiKey: process.env.NEXT_PUBLIC_STREAM_KEY ?? null,
-    secret: process.env.STREAM_SECRET ?? null
+    apiKey: process.env.NEXT_PUBLIC_STREAM_KEY || null,
+    secret: process.env.STREAM_SECRET || null
   };
 }
 
-/**
- * Check if Stream is properly configured
- * Always return true for production build phase
- * Only log if there's an issue with the configuration
- */
 export function isStreamConfigured(): boolean {
-  const { isConfigured, isDevelopment } = checkStreamEnvStatus();
+  // Add debug logging
+  const isServer = typeof window === "undefined";
+  const streamKey = process.env.NEXT_PUBLIC_STREAM_KEY;
+  const streamSecret = process.env.STREAM_SECRET;
 
-  if (isBuildPhase) return true;
+  console.debug("[Stream Config Debug]", {
+    isServer,
+    hasStreamKey: !!streamKey,
+    hasStreamSecret: !!streamSecret,
+    streamKeyPrefix: streamKey ? streamKey.substring(0, 5) : null,
+    NODE_ENV: process.env.NODE_ENV
+  });
 
-  if (isDevelopment && !hasLoggedStreamStatus) {
-    const status = {
-      hasApiKey: !!process.env.NEXT_PUBLIC_STREAM_KEY,
-      hasSecret: !!process.env.STREAM_SECRET,
-      isConfigured,
-      environment: process.env.NODE_ENV
-    };
-
-    if (isConfigured) {
-      console.debug("[Stream Chat] Initialized successfully");
-    } else {
-      console.warn("[Stream Chat] Configuration status:", status);
-    }
-
-    hasLoggedStreamStatus = true;
+  if (isServer) {
+    return false;
   }
+
+  // Only check configuration on the client side
+  const isConfigured = Boolean(streamKey && streamSecret);
+
+  console.debug("[Stream Config Result]", { isConfigured });
 
   return isConfigured;
 }
 
-/**
- * Get environment mode
- */
+function checkStreamEnvStatus(): EnvStatus {
+  // Always consider not configured during SSR
+  if (typeof window === "undefined") {
+    return {
+      isConfigured: false,
+      missingVars: [],
+      isDevelopment
+    };
+  }
+
+  const vars = {
+    NEXT_PUBLIC_STREAM_KEY: process.env.NEXT_PUBLIC_STREAM_KEY,
+    STREAM_SECRET: process.env.STREAM_SECRET
+  };
+
+  const missingVars = Object.entries(vars)
+    .filter(([_, value]) => !value)
+    .map(([key]) => key);
+
+  return {
+    isConfigured: missingVars.length === 0,
+    missingVars,
+    isDevelopment
+  };
+}
+
 export function getEnvironmentMode() {
   return {
     isProduction,
@@ -132,11 +137,6 @@ export function getEnvironmentMode() {
   };
 }
 
-/**
- * Safely get an environment variable
- * @param key - The environment variable key
- * @param required - Whether the variable is required (throws if missing in production)
- */
 export function getEnvVar(
   key: keyof typeof REQUIRED_STREAM_VARS,
   required = false
