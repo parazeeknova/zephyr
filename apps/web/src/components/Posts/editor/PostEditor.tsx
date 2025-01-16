@@ -9,12 +9,14 @@ import StarterKit from "@tiptap/starter-kit";
 import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import { AnimatePresence, motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
-import { type ClipboardEvent, useCallback } from "react";
+import { Loader2, Wind } from "lucide-react";
+import { type ClipboardEvent, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { AttachmentPreview } from "./AttachmentPreview";
 import { FileInput } from "./FileInput";
 import "./styles.css";
+import { Tags } from "@/components/Tags/Tags";
+import type { Tag } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import useMediaUpload, { type Attachment } from "./useMediaUpload";
 
@@ -33,6 +35,18 @@ const containerVariants = {
 const itemVariants = {
   hidden: { opacity: 0, y: 10 },
   visible: { opacity: 1, y: 0 }
+};
+
+const textVariants = {
+  animate: {
+    opacity: [0.5, 0.8, 0.5],
+    x: [0, 2, 0, -2, 0],
+    transition: {
+      duration: 3,
+      ease: "easeInOut",
+      repeat: Number.POSITIVE_INFINITY
+    }
+  }
 };
 
 export default function PostEditor() {
@@ -85,27 +99,38 @@ export default function PostEditor() {
     editorProps: {
       attributes: {
         class: "focus:outline-none"
+      },
+      handleDOMEvents: {
+        focus: () => {
+          setIsEditorFocused(true);
+          return false;
+        }
       }
     },
     immediatelyRender: false
   });
 
   const input = editor?.getText({ blockSeparator: "\n" }) || "";
+  const [isEditorFocused, setIsEditorFocused] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   const onSubmit = useCallback(() => {
     mutation.mutate(
       {
         content: input,
-        mediaIds: attachments.map((a) => a.mediaId).filter(Boolean) as string[]
+        mediaIds: attachments.map((a) => a.mediaId).filter(Boolean) as string[],
+        tags: selectedTags.map((tag) => tag.name)
       },
       {
         onSuccess: () => {
           editor?.commands.clearContent();
           resetMediaUploads();
+          setSelectedTags([]);
+          setIsEditorFocused(false);
         }
       }
     );
-  }, [input, attachments, mutation, editor, resetMediaUploads]);
+  }, [input, attachments, selectedTags, mutation, editor, resetMediaUploads]);
 
   const onPaste = useCallback(
     (e: ClipboardEvent<HTMLInputElement>) => {
@@ -135,6 +160,24 @@ export default function PostEditor() {
           </motion.div>
         </div>
         <div {...rootProps} className="w-full">
+          <AnimatePresence>
+            {isEditorFocused && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-3"
+              >
+                <Tags
+                  tags={selectedTags}
+                  isOwner={true}
+                  className="px-1"
+                  onTagsChange={setSelectedTags}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <motion.div
             variants={itemVariants}
             className={cn(
@@ -188,39 +231,57 @@ export default function PostEditor() {
 
       <motion.div
         variants={itemVariants}
-        className="flex items-center justify-end gap-3"
+        className="flex items-center justify-between gap-3"
       >
-        <AnimatePresence>
-          {isUploading && (
+        <motion.div
+          variants={itemVariants}
+          className="flex items-center justify-between gap-3"
+        >
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Wind className="h-4 w-4 hover:text-primary" />
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="flex items-center gap-2"
+              variants={textVariants}
+              animate="animate"
+              className="pointer-events-none font-medium text-xs hover:text-primary"
             >
-              <span className="font-medium text-sm tabular-nums">
-                {(uploadProgress ?? 0).toFixed(1)}%
-              </span>
-              <Loader2 className="size-5 animate-spin text-primary" />
+              Zephyr
             </motion.div>
-          )}
-        </AnimatePresence>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <FileInput
-            onFilesSelected={startUpload}
-            disabled={isUploading || attachments.length >= 5}
-          />
+          </div>
         </motion.div>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <LoadingButton
-            onClick={onSubmit}
-            loading={mutation.isPending}
-            disabled={!input.trim() || isUploading}
-            className="min-w-20 bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            Post
-          </LoadingButton>
-        </motion.div>
+
+        <div className="flex items-center gap-3">
+          <AnimatePresence>
+            {isUploading && (
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="flex items-center gap-2"
+              >
+                <span className="font-medium text-sm tabular-nums">
+                  {(uploadProgress ?? 0).toFixed(1)}%
+                </span>
+                <Loader2 className="size-5 animate-spin text-primary" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <FileInput
+              onFilesSelected={startUpload}
+              disabled={isUploading || attachments.length >= 5}
+            />
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <LoadingButton
+              onClick={onSubmit}
+              loading={mutation.isPending}
+              disabled={!input.trim() || isUploading}
+              className="min-w-20 bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              Post
+            </LoadingButton>
+          </motion.div>
+        </div>
       </motion.div>
     </motion.div>
   );

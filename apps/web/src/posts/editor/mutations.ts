@@ -9,13 +9,18 @@ import {
 import type { PostsPage } from "@zephyr/db";
 import { submitPost } from "./actions";
 
+interface PostInput {
+  content: string;
+  mediaIds: string[];
+  tags: string[];
+}
+
 export function useSubmitPostMutation() {
   const { toast } = useToast();
-
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: submitPost,
+    mutationFn: (input: PostInput) => submitPost(input),
     onSuccess: async (newPost) => {
       const queryFilter: QueryFilters<
         InfiniteData<PostsPage, string | null>,
@@ -46,6 +51,8 @@ export function useSubmitPostMutation() {
         }
       );
 
+      queryClient.invalidateQueries({ queryKey: ["popularTags"] });
+
       queryClient.invalidateQueries({
         queryKey: queryFilter.queryKey,
         predicate(query) {
@@ -59,7 +66,6 @@ export function useSubmitPostMutation() {
         duration: 5000
       });
     },
-
     onError(error) {
       console.log(error);
       toast({

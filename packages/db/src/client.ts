@@ -41,6 +41,7 @@ export function getPostDataInclude(loggedInUserId: string) {
       select: getUserDataSelect(loggedInUserId)
     },
     attachments: true,
+    tags: true,
     bookmarks: {
       where: {
         userId: loggedInUserId
