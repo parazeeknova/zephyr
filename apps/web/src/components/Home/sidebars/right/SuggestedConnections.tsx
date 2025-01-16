@@ -37,6 +37,7 @@ interface SerializableUserData {
   _count: {
     followers: number;
   };
+  aura: number;
 }
 
 const SuggestedConnections: React.FC = () => {
@@ -168,7 +169,7 @@ const SuggestedConnections: React.FC = () => {
                       <Link href={`/users/${connection.username}`}>
                         <UserAvatar
                           avatarUrl={connection.avatarUrl}
-                          size={28} // Smaller avatar
+                          size={28}
                           className="transition-transform duration-200 hover:scale-105"
                         />
                       </Link>
@@ -178,9 +179,16 @@ const SuggestedConnections: React.FC = () => {
                             <p className="max-w-[120px] truncate font-medium text-foreground text-sm transition-colors hover:text-primary">
                               {connection.displayName}
                             </p>
-                            <p className="max-w-[120px] truncate text-[11px] text-muted-foreground hover:text-muted-foreground/80">
-                              @{connection.username}
-                            </p>
+                            <div className="flex items-center gap-1">
+                              <p className="max-w-[120px] truncate text-[11px] text-muted-foreground hover:text-muted-foreground/80">
+                                @{connection.username}
+                              </p>
+                              {connection.aura > 0 && (
+                                <span className="flex items-center text-[10px] text-orange-500">
+                                  • {connection.aura} 🔥
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </Link>
                       </div>

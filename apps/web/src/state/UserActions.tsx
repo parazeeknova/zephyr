@@ -1,5 +1,6 @@
 "use server";
 
+import { Prisma } from "@prisma/client";
 import { validateRequest } from "@zephyr/auth/auth";
 import { prisma } from "@zephyr/db";
 
@@ -31,16 +32,30 @@ export async function getSuggestedConnections() {
         username: true,
         displayName: true,
         avatarUrl: true,
+        aura: true,
         _count: {
           select: {
             followers: true
           }
         }
       },
-      take: 5
+      orderBy: [
+        ...(Math.random() > 0.3
+          ? [{ aura: Prisma.SortOrder.desc }]
+          : [
+              {
+                followers: {
+                  _count: Prisma.SortOrder.desc
+                }
+              }
+            ])
+      ],
+      take: 10
     });
 
-    return JSON.parse(JSON.stringify(suggestedUsers));
+    const shuffled = suggestedUsers.sort(() => Math.random() - 0.5).slice(0, 5);
+
+    return JSON.parse(JSON.stringify(shuffled));
   } catch (error) {
     console.error("Error in getSuggestedConnections:", error);
     throw new Error("Failed to fetch suggested connections");
