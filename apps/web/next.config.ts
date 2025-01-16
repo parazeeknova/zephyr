@@ -112,20 +112,16 @@ const nextConfig: NextConfig = {
         console.warn(
           "\x1b[33m%s\x1b[0m",
           `
-⚠️  Warning: Stream Chat environment variables are missing
-This may cause chat features to be disabled in production.
-Required variables:
-- NEXT_PUBLIC_STREAM_KEY
-- STREAM_SECRET
+⚠️  Missing Stream configuration:
+NEXT_PUBLIC_STREAM_KEY: ${streamKey ? "✓" : "✗"}
+STREAM_SECRET: ${streamSecret ? "✓" : "✗"}
         `
         );
       } else {
         console.log(
           "\x1b[32m%s\x1b[0m",
           `
-✅ Stream Chat configuration detected:
-- NEXT_PUBLIC_STREAM_KEY: ${streamKey.substring(0, 5)}...
-- STREAM_SECRET: ${streamSecret ? "[Set]" : "[Missing]"}
+✓ Stream configuration detected
         `
         );
       }

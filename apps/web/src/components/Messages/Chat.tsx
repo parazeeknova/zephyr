@@ -64,10 +64,23 @@ export default function Chat() {
   const { chatClient, isLoading, isConfigured } = useInitializeChatClient();
 
   useEffect(() => {
+    console.debug("[Chat] Configuration status:", {
+      isLoading,
+      isConfigured,
+      hasClient: !!chatClient,
+      streamKey: process.env.NEXT_PUBLIC_STREAM_KEY ? "Set" : "Not Set"
+    });
+
     if (!isLoading && !isConfigured) {
+      console.warn("[Chat] Stream not configured, redirecting...");
       router.replace("/messages/not-configured");
+      return;
     }
-  }, [isLoading, isConfigured, router]);
+  }, [isLoading, isConfigured, chatClient, router]);
+
+  if (isLoading) {
+    return <ChatSkeleton />;
+  }
 
   if (!chatClient) {
     return <ChatSkeleton />;
