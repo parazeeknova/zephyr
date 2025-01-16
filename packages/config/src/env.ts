@@ -77,13 +77,15 @@ export function getStreamConfig(): StreamConfig {
 }
 
 export function isStreamConfigured(): boolean {
-  if (typeof window !== "undefined") {
+  if (typeof window !== "undefined" && process.env.NODE_ENV === "production") {
     return Boolean(process.env.NEXT_PUBLIC_STREAM_KEY);
   }
 
   const key = process.env.NEXT_PUBLIC_STREAM_KEY;
   const secret = process.env.STREAM_SECRET;
-  const isConfigured = Boolean(key && secret);
+  const isConfigured = Boolean(
+    key && (typeof window !== "undefined" || secret)
+  );
 
   if (!hasLoggedStreamStatus) {
     console.debug("[Stream Config]", {
@@ -91,7 +93,8 @@ export function isStreamConfigured(): boolean {
       hasSecret: !!secret,
       isConfigured,
       env: process.env.NODE_ENV,
-      isServer: typeof window === "undefined"
+      isServer: typeof window === "undefined",
+      isProd: process.env.NODE_ENV === "production"
     });
     hasLoggedStreamStatus = true;
   }
@@ -105,17 +108,22 @@ export function isStreamConfiguredClient(): boolean {
 }
 
 function checkStreamEnvStatus(): EnvStatus {
-  if (typeof window === "undefined") {
+  if (typeof window !== "undefined" && process.env.NODE_ENV === "production") {
+    const missingKey = process.env.NEXT_PUBLIC_STREAM_KEY
+      ? []
+      : ["NEXT_PUBLIC_STREAM_KEY"];
     return {
-      isConfigured: false,
-      missingVars: [],
+      isConfigured: missingKey.length === 0,
+      missingVars: missingKey,
       isDevelopment
     };
   }
 
   const vars = {
     NEXT_PUBLIC_STREAM_KEY: process.env.NEXT_PUBLIC_STREAM_KEY,
-    STREAM_SECRET: process.env.STREAM_SECRET
+    ...(typeof window === "undefined"
+      ? { STREAM_SECRET: process.env.STREAM_SECRET }
+      : {})
   };
 
   const missingVars = Object.entries(vars)
