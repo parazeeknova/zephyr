@@ -74,7 +74,6 @@ export default function Chat() {
       timestamp: new Date().toISOString()
     });
 
-    // Only redirect in development environment
     if (!isProd && !isLoading && !isConfigured) {
       console.warn("[Chat] Stream not configured, redirecting... (dev only)");
       router.replace("/messages/not-configured");
@@ -82,11 +81,11 @@ export default function Chat() {
     }
   }, [isLoading, isConfigured, chatClient, router, isProd]);
 
-  if (isLoading) {
+  if (isLoading && !isProd) {
     return <ChatSkeleton />;
   }
 
-  if (!chatClient) {
+  if (!chatClient && !isProd) {
     return <ChatSkeleton />;
   }
 

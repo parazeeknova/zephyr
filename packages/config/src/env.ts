@@ -77,9 +77,12 @@ export function getStreamConfig(): StreamConfig {
 }
 
 export function isStreamConfigured(): boolean {
+  if (typeof window !== "undefined") {
+    return Boolean(process.env.NEXT_PUBLIC_STREAM_KEY);
+  }
+
   const key = process.env.NEXT_PUBLIC_STREAM_KEY;
   const secret = process.env.STREAM_SECRET;
-
   const isConfigured = Boolean(key && secret);
 
   if (!hasLoggedStreamStatus) {
@@ -87,7 +90,8 @@ export function isStreamConfigured(): boolean {
       hasKey: !!key,
       hasSecret: !!secret,
       isConfigured,
-      env: process.env.NODE_ENV
+      env: process.env.NODE_ENV,
+      isServer: typeof window === "undefined"
     });
     hasLoggedStreamStatus = true;
   }
