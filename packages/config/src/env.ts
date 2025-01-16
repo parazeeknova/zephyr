@@ -76,33 +76,18 @@ export function getStreamConfig(): StreamConfig {
   };
 }
 
-let cachedConfig: { key: string | null; secret: string | null } | null = null;
-
 export function isStreamConfigured(): boolean {
-  if (!cachedConfig) {
-    cachedConfig = {
-      key: process.env.NEXT_PUBLIC_STREAM_KEY || null,
-      secret: process.env.STREAM_SECRET || null
-    };
-  }
+  const key = process.env.NEXT_PUBLIC_STREAM_KEY;
+  const secret = process.env.STREAM_SECRET;
 
-  if (
-    process.env.NEXT_PUBLIC_STREAM_KEY !== cachedConfig.key ||
-    process.env.STREAM_SECRET !== cachedConfig.secret
-  ) {
-    cachedConfig = {
-      key: process.env.NEXT_PUBLIC_STREAM_KEY || null,
-      secret: process.env.STREAM_SECRET || null
-    };
-  }
-
-  const isConfigured = Boolean(cachedConfig.key && cachedConfig.secret);
+  const isConfigured = Boolean(key && secret);
 
   if (!hasLoggedStreamStatus) {
     console.debug("[Stream Config]", {
-      hasKey: !!cachedConfig.key,
-      hasSecret: !!cachedConfig.secret,
-      isConfigured
+      hasKey: !!key,
+      hasSecret: !!secret,
+      isConfigured,
+      env: process.env.NODE_ENV
     });
     hasLoggedStreamStatus = true;
   }
@@ -110,8 +95,12 @@ export function isStreamConfigured(): boolean {
   return isConfigured;
 }
 
+export function isStreamConfiguredClient(): boolean {
+  if (typeof window === "undefined") return false;
+  return Boolean(process.env.NEXT_PUBLIC_STREAM_KEY);
+}
+
 function checkStreamEnvStatus(): EnvStatus {
-  // Always consider not configured during SSR
   if (typeof window === "undefined") {
     return {
       isConfigured: false,

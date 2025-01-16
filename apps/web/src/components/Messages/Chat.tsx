@@ -62,12 +62,29 @@ export default function Chat() {
   const [selectedChannel, setSelectedChannel] = useState(null);
   const router = useRouter();
   const { chatClient, isLoading, isConfigured } = useInitializeChatClient();
+  const isProd = process.env.NODE_ENV === "production";
 
   useEffect(() => {
-    if (!isLoading && !isConfigured) {
+    console.debug("[Chat] Configuration status:", {
+      isLoading,
+      isConfigured,
+      hasClient: !!chatClient,
+      streamKey: process.env.NEXT_PUBLIC_STREAM_KEY ? "Set" : "Not Set",
+      env: process.env.NODE_ENV,
+      timestamp: new Date().toISOString()
+    });
+
+    // Only redirect in development environment
+    if (!isProd && !isLoading && !isConfigured) {
+      console.warn("[Chat] Stream not configured, redirecting... (dev only)");
       router.replace("/messages/not-configured");
+      return;
     }
-  }, [isLoading, isConfigured, router]);
+  }, [isLoading, isConfigured, chatClient, router, isProd]);
+
+  if (isLoading) {
+    return <ChatSkeleton />;
+  }
 
   if (!chatClient) {
     return <ChatSkeleton />;

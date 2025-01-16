@@ -15,11 +15,15 @@ export function getStreamClient(): StreamChat | null {
 
   console.debug("[Stream Client Init]", {
     hasApiKey: !!apiKey,
-    hasSecret: !!apiSecret
+    hasSecret: !!apiSecret,
+    env: process.env.NODE_ENV
   });
 
   if (!apiKey || !apiSecret) {
-    console.error("[Stream Client] Missing credentials");
+    console.error("[Stream Client] Missing credentials", {
+      hasApiKey: !!apiKey,
+      hasSecret: !!apiSecret
+    });
     return null;
   }
 
