@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Linkify from "@/helpers/global/Linkify";
-import { formatRelativeDate } from "@/lib/utils";
+import { formatNumber, formatRelativeDate } from "@/lib/utils";
 import Comments from "@zephyr-ui/Comments/Comments";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import AuraCount from "@zephyr-ui/Posts/AuraCount";
@@ -16,7 +16,7 @@ import BookmarkButton from "@zephyr-ui/Posts/BookmarkButton";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
 import type { PostData } from "@zephyr/db";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Eye, MessageSquare } from "lucide-react";
+import { ArrowUpRight, Eye, Flame, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
@@ -47,6 +47,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
                 <h3 className="truncate font-semibold text-foreground">
                   {post.user.displayName}
                 </h3>
+                <div className="flex items-center text-muted-foreground text-sm">
+                  <Flame className="mr-1 h-4 w-4 text-orange-500" />
+                  {formatNumber(post.user.aura)} aura
+                </div>
               </Link>
             </UserTooltip>
             <Link href={`/posts/${post.id}`} suppressHydrationWarning>

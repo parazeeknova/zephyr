@@ -69,7 +69,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ userData }) => {
             {!isHovered && (
               <div className="flex items-center gap-1 text-orange-500">
                 <Flame className="h-5 w-5" />
-                <span className="font-semibold">{formatNumber(0)}</span>
+                <span className="font-semibold">
+                  {formatNumber(userData.aura)}
+                </span>
               </div>
             )}
           </div>
@@ -104,7 +106,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ userData }) => {
                     <Flame size={14} />
                     <span className="text-xs">Aura</span>
                   </div>
-                  <p className="font-bold">{formatNumber(0)}</p>
+                  <p className="font-bold">{formatNumber(userData.aura)}</p>
                 </div>
               </div>
               <Linkify>

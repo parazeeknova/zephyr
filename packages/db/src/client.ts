@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 export function getUserDataSelect(loggedInUserId: string) {
   return {
     id: true,
+    aura: true,
     username: true,
     email: true,
     displayName: true,
