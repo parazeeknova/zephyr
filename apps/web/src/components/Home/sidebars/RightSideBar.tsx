@@ -5,7 +5,7 @@ import type { UserData } from "@zephyr/db";
 import type React from "react";
 import ProfileCard from "./right/ProfileCard";
 import SuggestedConnections from "./right/SuggestedConnections";
-import TrendingTopics from "./right/TrendingTopics";
+import { TrendingTabs } from "./right/TrendingTabs";
 
 interface RightSidebarProps {
   userData: UserData;
@@ -21,7 +21,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ userData }) => {
       <div className="space-y-4">
         <ProfileCard userData={userData} />
         <SuggestedConnections />
-        <TrendingTopics />
+        <TrendingTabs />
       </div>
     </aside>
   );

@@ -1,11 +1,24 @@
+import type { Tag } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface TagResponse {
   tags: string[];
 }
 
+interface PopularTagsResponse {
+  tags: Tag[];
+}
+
 export function useTags(postId?: string) {
   const queryClient = useQueryClient();
+
+  const { data: popularTags } = useQuery<PopularTagsResponse>({
+    queryKey: ["popularTags"],
+    queryFn: async () => {
+      const res = await fetch("/api/tags/popular");
+      return res.json();
+    }
+  });
 
   const { data: suggestions } = useQuery<TagResponse>({
     queryKey: ["tagSuggestions"],
@@ -78,7 +91,7 @@ export function useTags(postId?: string) {
   });
 
   return {
-    popularTags: [],
+    popularTags: popularTags?.tags ?? [],
     suggestions: suggestions?.tags ?? [],
     searchTags,
     updateTags
