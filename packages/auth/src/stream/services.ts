@@ -1,53 +1,60 @@
-import {
-  getEnvironmentMode,
-  getStreamConfig,
-  isStreamConfigured
-} from "@zephyr/config/src/env";
+import { getEnvironmentMode, isStreamConfigured } from "@zephyr/config/src/env";
 import { StreamChat } from "stream-chat";
 
 const { isDevelopment } = getEnvironmentMode();
 
 let streamClient: StreamChat | null = null;
-let hasLoggedClientStatus = false;
 
 export function getStreamClient(): StreamChat | null {
-  if (!isStreamConfigured()) {
-    if (isDevelopment && !hasLoggedClientStatus) {
-      console.log(
-        "[Stream Chat] Not configured - skipping client initialization"
-      );
-      hasLoggedClientStatus = true;
-    }
-    return null;
-  }
-
   if (streamClient) {
     return streamClient;
   }
 
-  const config = getStreamConfig();
-  if (!config.apiKey || !config.secret) {
-    if (isDevelopment && !hasLoggedClientStatus) {
-      console.log(
-        "[Stream Chat] Missing credentials - skipping client initialization"
-      );
-      hasLoggedClientStatus = true;
+  const apiKey = process.env.NEXT_PUBLIC_STREAM_KEY;
+  const apiSecret =
+    typeof window === "undefined" ? process.env.STREAM_SECRET : undefined;
+  const isProd = process.env.NODE_ENV === "production";
+
+  console.debug("[Stream Client Init]", {
+    hasApiKey: !!apiKey,
+    hasSecret: !!apiSecret,
+    env: process.env.NODE_ENV,
+    isServer: typeof window === "undefined",
+    isProd
+  });
+
+  if (typeof window !== "undefined") {
+    if (!apiKey) {
+      isProd
+        ? console.error("[Stream Client] Missing API key in production")
+        : console.warn("[Stream Client] Missing API key in development");
+      return null;
     }
+
+    try {
+      streamClient = StreamChat.getInstance(apiKey);
+      console.debug("[Stream Client] Successfully initialized (client-side)");
+      return streamClient;
+    } catch (error) {
+      console.error("[Stream Client] Initialization error:", error);
+      return null;
+    }
+  }
+
+  if (!apiKey || !apiSecret) {
+    console.error("[Stream Client] Missing server credentials", {
+      hasApiKey: !!apiKey,
+      hasSecret: !!apiSecret
+    });
     return null;
   }
 
   try {
-    streamClient = StreamChat.getInstance(config.apiKey, config.secret);
-    if (isDevelopment && !hasLoggedClientStatus) {
-      console.log(
-        "[Stream Chat] Client initialized with API key:",
-        `${config.apiKey.substring(0, 5)}...`
-      );
-      hasLoggedClientStatus = true;
-    }
+    streamClient = StreamChat.getInstance(apiKey, apiSecret);
+    console.debug("[Stream Client] Successfully initialized (server-side)");
     return streamClient;
   } catch (error) {
-    console.error("[Stream Chat] Failed to initialize client:", error);
+    console.error("[Stream Client] Initialization error:", error);
     return null;
   }
 }
@@ -55,7 +62,9 @@ export function getStreamClient(): StreamChat | null {
 export const createStreamUser = async (
   userId: string,
   username: string,
-  displayName: string
+  displayName: string,
+  avatarUrl?: string | null,
+  bio?: string | null
 ): Promise<void> => {
   if (!isStreamConfigured()) {
     isDevelopment &&
@@ -75,13 +84,16 @@ export const createStreamUser = async (
     isDevelopment &&
       console.log("[Stream Chat] Creating user:", {
         userId: `${userId.substring(0, 5)}...`,
-        username: `${username.substring(0, 5)}...`
+        username: `${username.substring(0, 5)}...`,
+        displayName
       });
 
     await client.upsertUser({
       id: userId,
       username,
-      name: displayName
+      name: displayName,
+      image: avatarUrl || undefined,
+      bio: bio || undefined
     });
 
     isDevelopment && console.log("[Stream Chat] User created successfully");
@@ -90,9 +102,6 @@ export const createStreamUser = async (
   }
 };
 
-/**
- * Generate a Stream Chat token for a user
- */
 export function generateStreamUserToken(userId: string): string | null {
   if (!isStreamConfigured()) {
     isDevelopment &&
@@ -122,9 +131,6 @@ export function generateStreamUserToken(userId: string): string | null {
   }
 }
 
-/**
- * Helper function to get client with one retry attempt
- */
 async function getClientWithRetry(): Promise<StreamChat | null> {
   let client = getStreamClient();
 
@@ -138,9 +144,6 @@ async function getClientWithRetry(): Promise<StreamChat | null> {
   return client;
 }
 
-/**
- * Standardized error handling for Stream operations
- */
 function handleStreamError(
   operation: string,
   error: unknown,
@@ -157,9 +160,6 @@ function handleStreamError(
   });
 }
 
-/**
- * Type guard for Stream Chat errors
- */
 // biome-ignore lint/correctness/noUnusedVariables: used in type guard
 function isStreamError(error: unknown): error is Error {
   return error instanceof Error;

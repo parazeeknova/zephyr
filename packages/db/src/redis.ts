@@ -13,6 +13,7 @@ const createRedisConfig = (): RedisOptions => {
       const delay = Math.min(times * 50, 1000);
       return delay;
     },
+    lazyConnect: true,
     enableReadyCheck: true,
     showFriendlyErrorStack: true,
     keepAlive: 10000, // 10 seconds

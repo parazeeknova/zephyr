@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "@/app/(main)/SessionProvider";
 import { Button } from "@/components/ui/button";
 import useInitializeChatClient from "@/hooks/useInitializeChatClient";
 import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
@@ -9,7 +10,8 @@ import ChatSkeleton from "@zephyr-ui/Layouts/skeletons/ChatSkeleton";
 import { motion } from "framer-motion";
 import { MessageSquarePlus } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Channel, Chat as StreamChat } from "stream-chat-react";
 import ChatChannel from "./ChatChannel";
 import ChatSidebar from "./ChatSidebar";
@@ -56,12 +58,43 @@ const WelcomeScreen = ({ onNewChat }: { onNewChat: () => void }) => {
 };
 
 export default function Chat() {
-  const chatClient = useInitializeChatClient();
   const { resolvedTheme } = useTheme();
+  const session = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState(null);
+  const router = useRouter();
+  const { chatClient, isLoading, isConfigured, error } =
+    useInitializeChatClient();
+  const isProd = process.env.NODE_ENV === "production";
 
-  if (!chatClient) {
+  useEffect(() => {
+    console.debug("[Chat] Status:", {
+      isLoading,
+      isConfigured,
+      hasClient: !!chatClient,
+      hasError: !!error,
+      streamKey: process.env.NEXT_PUBLIC_STREAM_KEY ? "Set" : "Not Set",
+      env: process.env.NODE_ENV,
+      userId: session.user?.id,
+      timestamp: new Date().toISOString()
+    });
+
+    if (!isProd && !isLoading && !isConfigured) {
+      console.warn("[Chat] Stream not configured, redirecting... (dev only)");
+      router.replace("/messages/not-configured");
+      return;
+    }
+  }, [isLoading, isConfigured, chatClient, router, isProd, session, error]);
+
+  if (isLoading) {
+    return <ChatSkeleton />;
+  }
+
+  if (error && isProd) {
+    console.error("[Chat] Error:", error);
+  }
+
+  if (!chatClient && !isProd) {
     return <ChatSkeleton />;
   }
 
@@ -84,37 +117,58 @@ export default function Chat() {
           </div>
         </aside>
         <div className="mt-5 mr-2 mb-24 ml-2 w-full min-w-0 space-y-5 overflow-hidden rounded-2xl border border-border shadow-md md:mb-4 md:ml-0">
-          <StreamChat
-            client={chatClient}
-            theme={
-              resolvedTheme === "dark"
-                ? "str-chat__theme-dark"
-                : "str-chat__theme-light"
-            }
-          >
-            <div className="flex h-full w-full">
-              <ChatSidebar
-                open={sidebarOpen}
-                onClose={() => setSidebarOpen(false)}
-                onChannelSelect={(channel) => {
-                  setSelectedChannel(channel);
-                  setSidebarOpen(false);
-                }}
-              />
-              <div className="flex-1 overflow-hidden">
-                {selectedChannel ? (
-                  <Channel channel={selectedChannel}>
-                    <ChatChannel
-                      open={!sidebarOpen}
-                      openSidebar={() => setSidebarOpen(true)}
-                    />
-                  </Channel>
-                ) : (
-                  <WelcomeScreen onNewChat={() => setSidebarOpen(true)} />
-                )}
+          {chatClient ? (
+            <StreamChat
+              client={chatClient}
+              theme={
+                resolvedTheme === "dark"
+                  ? "str-chat__theme-dark"
+                  : "str-chat__theme-light"
+              }
+            >
+              <div className="flex h-full w-full">
+                <ChatSidebar
+                  open={sidebarOpen}
+                  onClose={() => setSidebarOpen(false)}
+                  onChannelSelect={(channel) => {
+                    setSelectedChannel(channel);
+                    setSidebarOpen(false);
+                  }}
+                />
+                <div className="flex-1 overflow-hidden">
+                  {selectedChannel ? (
+                    <Channel channel={selectedChannel}>
+                      <ChatChannel
+                        open={!sidebarOpen}
+                        openSidebar={() => setSidebarOpen(true)}
+                      />
+                    </Channel>
+                  ) : (
+                    <WelcomeScreen onNewChat={() => setSidebarOpen(true)} />
+                  )}
+                </div>
+              </div>
+            </StreamChat>
+          ) : (
+            <div className="flex h-full items-center justify-center p-8 text-center">
+              <div className="max-w-md space-y-4">
+                <h2 className="font-semibold text-lg">
+                  Chat Temporarily Unavailable
+                </h2>
+                <p className="text-muted-foreground">
+                  We're having trouble connecting to the chat service. Please
+                  try again later.
+                </p>
+                <Button
+                  onClick={() => window.location.reload()}
+                  variant="outline"
+                  size="sm"
+                >
+                  Retry Connection
+                </Button>
               </div>
             </div>
-          </StreamChat>
+          )}
         </div>
       </main>
     </ChatThemeProvider>

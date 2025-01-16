@@ -65,7 +65,6 @@ const nextConfig: NextConfig = {
         hostname: "minio-objectstorage.zephyyrr.in",
         pathname: "/**"
       },
-      // Development patterns - simplified and more permissive
       {
         protocol: "http",
         hostname: "localhost",
@@ -95,10 +94,39 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV || "development",
     NEXT_PUBLIC_MINIO_ENDPOINT:
       process.env.NEXT_PUBLIC_MINIO_ENDPOINT || "http://localhost:9001",
-    NEXT_PUBLIC_MINIO_BUCKET_NAME: process.env.MINIO_BUCKET_NAME || "uploads"
+    NEXT_PUBLIC_MINIO_BUCKET_NAME: process.env.MINIO_BUCKET_NAME || "uploads",
+    NEXT_PUBLIC_STREAM_KEY: process.env.NEXT_PUBLIC_STREAM_KEY,
+    STREAM_SECRET: process.env.STREAM_SECRET,
+    NEXT_PUBLIC_STREAM_CONFIGURED:
+      process.env.NEXT_PUBLIC_STREAM_KEY && process.env.STREAM_SECRET
+        ? "true"
+        : "false"
   },
 
   webpack: (config, { dev, isServer }) => {
+    if (isServer) {
+      const streamKey = process.env.NEXT_PUBLIC_STREAM_KEY;
+      const streamSecret = process.env.STREAM_SECRET;
+
+      if (!streamKey || !streamSecret) {
+        console.warn(
+          "\x1b[33m%s\x1b[0m",
+          `
+⚠️  Missing Stream configuration:
+NEXT_PUBLIC_STREAM_KEY: ${streamKey ? "✓" : "✗"}
+STREAM_SECRET: ${streamSecret ? "✓" : "✗"}
+        `
+        );
+      } else {
+        console.log(
+          "\x1b[32m%s\x1b[0m",
+          `
+✓ Stream configuration detected
+        `
+        );
+      }
+    }
+
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
