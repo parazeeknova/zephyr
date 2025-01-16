@@ -8,13 +8,14 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 // User model
 model User {
   id                      String                   @id
+  aura                    Int                      @default(0)
   username                String                   @unique
   displayName             String
   email                   String?                  @unique
@@ -39,10 +40,40 @@ model User {
   receivedNotifications   Notification[]           @relation("Recipient")
   issuedNotifications     Notification[]           @relation("Issuer")
   hnbookmark              HNBookmark[]
+  auraReceived            AuraLog[]                @relation("AuraReceived")
+  auraIssued              AuraLog[]                @relation("AuraIssued")
 
   createdAt DateTime @default(now())
 
   @@map("users")
+}
+
+// Aura log model for tracking user's aura
+model AuraLog {
+  id        String   @id @default(cuid())
+  userId    String
+  issuerId  String
+  amount    Int
+  type      AuraType
+  postId    String?
+  commentId String?
+  createdAt DateTime @default(now())
+
+  user    User     @relation("AuraReceived", fields: [userId], references: [id])
+  issuer  User     @relation("AuraIssued", fields: [issuerId], references: [id])
+  post    Post?    @relation(fields: [postId], references: [id])
+  comment Comment? @relation(fields: [commentId], references: [id])
+
+  @@map("aura_logs")
+}
+
+enum AuraType {
+  POST_CREATION
+  POST_VOTE
+  POST_VOTE_REMOVED
+  COMMENT_CREATION
+  FOLLOW_GAINED
+  FOLLOW_GIVEN
 }
 
 // Email verification token model using JWT web tokens
@@ -106,6 +137,7 @@ model Post {
   linkedNotifications Notification[]
   vote                Vote[]
   shareStats          ShareStats[]
+  auraLogs            AuraLog[]
 
   createdAt DateTime @default(now())
 
@@ -175,13 +207,14 @@ model HNBookmark {
 
 // Comment model
 model Comment {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   content   String
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   postId    String
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  auraLogs  AuraLog[]
 
   @@map("comments")
 }
