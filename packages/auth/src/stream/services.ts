@@ -13,19 +13,24 @@ export function getStreamClient(): StreamChat | null {
   const apiKey = process.env.NEXT_PUBLIC_STREAM_KEY;
   const apiSecret =
     typeof window === "undefined" ? process.env.STREAM_SECRET : undefined;
+  const isProd = process.env.NODE_ENV === "production";
 
   console.debug("[Stream Client Init]", {
     hasApiKey: !!apiKey,
     hasSecret: !!apiSecret,
     env: process.env.NODE_ENV,
-    isServer: typeof window === "undefined"
+    isServer: typeof window === "undefined",
+    isProd
   });
 
-  if (typeof window !== "undefined" && process.env.NODE_ENV === "production") {
+  if (typeof window !== "undefined") {
     if (!apiKey) {
-      console.error("[Stream Client] Missing API key");
+      isProd
+        ? console.error("[Stream Client] Missing API key in production")
+        : console.warn("[Stream Client] Missing API key in development");
       return null;
     }
+
     try {
       streamClient = StreamChat.getInstance(apiKey);
       console.debug("[Stream Client] Successfully initialized (client-side)");
@@ -37,7 +42,7 @@ export function getStreamClient(): StreamChat | null {
   }
 
   if (!apiKey || !apiSecret) {
-    console.error("[Stream Client] Missing credentials", {
+    console.error("[Stream Client] Missing server credentials", {
       hasApiKey: !!apiKey,
       hasSecret: !!apiSecret
     });
@@ -57,7 +62,9 @@ export function getStreamClient(): StreamChat | null {
 export const createStreamUser = async (
   userId: string,
   username: string,
-  displayName: string
+  displayName: string,
+  avatarUrl?: string | null,
+  bio?: string | null
 ): Promise<void> => {
   if (!isStreamConfigured()) {
     isDevelopment &&
@@ -77,13 +84,16 @@ export const createStreamUser = async (
     isDevelopment &&
       console.log("[Stream Chat] Creating user:", {
         userId: `${userId.substring(0, 5)}...`,
-        username: `${username.substring(0, 5)}...`
+        username: `${username.substring(0, 5)}...`,
+        displayName
       });
 
     await client.upsertUser({
       id: userId,
       username,
-      name: displayName
+      name: displayName,
+      image: avatarUrl || undefined,
+      bio: bio || undefined
     });
 
     isDevelopment && console.log("[Stream Chat] User created successfully");
