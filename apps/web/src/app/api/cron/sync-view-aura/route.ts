@@ -36,7 +36,7 @@ async function awardViewAura() {
         userId: true,
         viewCount: true,
         lastAwardedViewCount: true,
-        aura: true // Add this to track post's aura
+        aura: true
       }
     });
 
@@ -47,7 +47,6 @@ async function awardViewAura() {
         const lastAwardedCount = post.lastAwardedViewCount || 0;
         const currentViews = post.viewCount;
 
-        // Skip if no new views since last award
         if (currentViews <= lastAwardedCount) continue;
 
         // Calculate new milestones reached
@@ -83,11 +82,10 @@ async function awardViewAura() {
               }
             });
 
-            // Create aura log for tracking
             await tx.auraLog.create({
               data: {
                 userId: post.userId,
-                issuerId: "system",
+                issuerId: post.userId,
                 amount: auraToAward,
                 type: "POST_VIEWS_MILESTONE",
                 postId: post.id
