@@ -11,13 +11,30 @@ export function getStreamClient(): StreamChat | null {
   }
 
   const apiKey = process.env.NEXT_PUBLIC_STREAM_KEY;
-  const apiSecret = process.env.STREAM_SECRET;
+  const apiSecret =
+    typeof window === "undefined" ? process.env.STREAM_SECRET : undefined;
 
   console.debug("[Stream Client Init]", {
     hasApiKey: !!apiKey,
     hasSecret: !!apiSecret,
-    env: process.env.NODE_ENV
+    env: process.env.NODE_ENV,
+    isServer: typeof window === "undefined"
   });
+
+  if (typeof window !== "undefined" && process.env.NODE_ENV === "production") {
+    if (!apiKey) {
+      console.error("[Stream Client] Missing API key");
+      return null;
+    }
+    try {
+      streamClient = StreamChat.getInstance(apiKey);
+      console.debug("[Stream Client] Successfully initialized (client-side)");
+      return streamClient;
+    } catch (error) {
+      console.error("[Stream Client] Initialization error:", error);
+      return null;
+    }
+  }
 
   if (!apiKey || !apiSecret) {
     console.error("[Stream Client] Missing credentials", {
@@ -29,7 +46,7 @@ export function getStreamClient(): StreamChat | null {
 
   try {
     streamClient = StreamChat.getInstance(apiKey, apiSecret);
-    console.debug("[Stream Client] Successfully initialized");
+    console.debug("[Stream Client] Successfully initialized (server-side)");
     return streamClient;
   } catch (error) {
     console.error("[Stream Client] Initialization error:", error);
