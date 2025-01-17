@@ -7,12 +7,13 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import type { PostsPage } from "@zephyr/db";
-import { submitPost } from "./actions";
+import { submitPost, updatePostMentions } from "./actions";
 
 interface PostInput {
   content: string;
   mediaIds: string[];
   tags: string[];
+  mentions: string[];
 }
 
 export function useSubmitPostMutation() {
@@ -21,7 +22,14 @@ export function useSubmitPostMutation() {
 
   const mutation = useMutation({
     mutationFn: async (input: PostInput) => {
-      const response = await submitPost(input);
+      const payload = {
+        content: input.content,
+        mediaIds: input.mediaIds || [],
+        tags: input.tags || [],
+        mentions: input.mentions || []
+      };
+
+      const response = await submitPost(payload);
       if (!response) {
         throw new Error("Failed to create post");
       }
@@ -67,10 +75,48 @@ export function useSubmitPostMutation() {
       console.error("Post creation error:", error);
       toast({
         variant: "destructive",
-        description: "Failed to create post. Please try again."
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to create post. Please try again."
       });
     }
   });
 
   return mutation;
+}
+
+export function useUpdateMentionsMutation(postId?: string) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (mentions: string[]) => {
+      if (!postId) {
+        throw new Error("Post ID is required to update mentions");
+      }
+      const response = await updatePostMentions(postId, mentions);
+      if (!response) {
+        throw new Error("Failed to update mentions");
+      }
+      return response;
+    },
+    onSuccess: (updatedPost) => {
+      if (postId) {
+        queryClient.setQueryData(["post", postId], updatedPost);
+      }
+      toast({
+        title: "Mentions updated",
+        description: "The mentioned users have been notified",
+        duration: 3000
+      });
+    },
+    onError: (error) => {
+      console.error("Failed to update mentions:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to update mentions. Please try again."
+      });
+    }
+  });
 }

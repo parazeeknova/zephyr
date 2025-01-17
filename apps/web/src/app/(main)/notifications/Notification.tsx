@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import type { NotificationData, NotificationType } from "@zephyr/db";
-import { Heart, MessageCircle, User2 } from "lucide-react";
+import { AtSign, Heart, MessageCircle, User2 } from "lucide-react";
 import Link from "next/link";
 import type { JSX } from "react";
 
@@ -29,6 +29,11 @@ export default function Notification({ notification }: NotificationProps) {
     AMPLIFY: {
       message: `${notification.issuer.displayName} amplified your post`,
       icon: <Heart className="size-7 fill-red-500 text-red-500" />,
+      href: `/posts/${notification.postId}`
+    },
+    MENTION: {
+      message: `${notification.issuer.displayName} mentioned you in a post`,
+      icon: <AtSign className="size-7 text-blue-500" />,
       href: `/posts/${notification.postId}`
     }
   };
