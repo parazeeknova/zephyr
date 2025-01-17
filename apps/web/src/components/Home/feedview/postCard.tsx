@@ -21,7 +21,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, Eye, Flame, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MediaPreviews } from "./MediaPreviews";
 import ShareButton from "./ShareButton";
 
@@ -30,18 +30,43 @@ interface PostCardProps {
   isJoined?: boolean;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
+const PostCard: React.FC<PostCardProps> = ({
+  post: initialPost,
+  isJoined = false
+}) => {
   const { user } = useSession();
+  const [post, setPost] = useState(initialPost);
   const [showComments, setShowComments] = useState(false);
+
+  useEffect(() => {
+    setPost(initialPost);
+  }, [initialPost]);
+
+  const handlePostUpdate = useCallback((updatedPost: PostData) => {
+    setPost(updatedPost);
+  }, []);
 
   const PostContent = () => (
     <>
       {post.mentions && post.mentions.length > 0 && (
         <div className="mt-2 mb-3">
           <MentionTags
-            mentions={post.mentions?.map((m) => m.user) ?? []}
+            // @ts-expect-error
+            mentions={post.mentions.map((m) => m.user)}
             isOwner={post.user.id === user.id}
             postId={post.id}
+            onMentionsChange={(newMentions) => {
+              handlePostUpdate({
+                ...post,
+                mentions: newMentions.map((user) => ({
+                  id: `${post.id}-${user.id}`,
+                  postId: post.id,
+                  userId: user.id,
+                  user,
+                  createdAt: new Date()
+                }))
+              });
+            }}
           />
         </div>
       )}
@@ -78,6 +103,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
             <PostMoreButton
               post={post}
               className="opacity-0 transition-opacity group-hover/post:opacity-100"
+              onUpdate={handlePostUpdate}
             />
           )}
           <Button
@@ -107,6 +133,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
             tags={post.tags as TagWithCount[]}
             isOwner={post.user.id === user.id}
             postId={post.id}
+            onTagsChange={(newTags) => {
+              handlePostUpdate({
+                ...post,
+                tags: newTags
+              });
+            }}
           />
         </div>
       )}

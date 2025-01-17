@@ -11,6 +11,7 @@ import { Command } from "cmdk";
 import { AnimatePresence, motion } from "framer-motion";
 import { Hash, Loader2, Plus, Search, X } from "lucide-react";
 import { useState } from "react";
+import { useUpdateTagsMutation } from "./mutations/tag-mention-mutation";
 
 const tagVariants = {
   initial: { opacity: 0, scale: 0.9, y: -10 },
@@ -49,27 +50,18 @@ interface TagEditorProps {
   onTagsUpdate: (tags: Tag[]) => void;
 }
 
-type OptimisticTag = {
-  id: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  _count?: {
-    posts: number;
-  };
-};
-
 export function TagEditor({
   postId,
   initialTags,
   onClose,
   onTagsUpdate
 }: TagEditorProps) {
-  const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
   const [search, setSearch] = useState("");
-  const { suggestions, searchTags, updateTags } = useTags(postId);
+  const { suggestions, searchTags } = useTags(postId);
   const { toast } = useToast();
   const [isFocused, setIsFocused] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
+  const updateTags = useUpdateTagsMutation(postId);
 
   const handleSelect = (tagName: string) => {
     if (selectedTags.length >= 5) {
@@ -119,36 +111,22 @@ export function TagEditor({
 
   const handleSave = async () => {
     try {
-      const optimisticTags: OptimisticTag[] = selectedTags.map((name) => ({
+      const optimisticTags: TagWithCount[] = selectedTags.map((name) => ({
         id: name,
         name,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        _count: { posts: 1 }
       }));
-      onTagsUpdate(optimisticTags as Tag[]);
 
-      await updateTags.mutateAsync(selectedTags, {
-        onError: () => {
-          const fallbackTags: OptimisticTag[] = initialTags.map((name) => ({
-            id: name,
-            name,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          }));
-          setSelectedTags(initialTags);
-          onTagsUpdate(fallbackTags as Tag[]);
-        }
-      });
-
-      toast({
-        title: "Tags updated",
-        description: "Your tags have been updated successfully"
-      });
+      onTagsUpdate(optimisticTags);
       onClose();
+
+      await updateTags.mutateAsync(selectedTags);
       // biome-ignore lint/correctness/noUnusedVariables: ignore
     } catch (error) {
       toast({
-        title: "Error updating tags",
+        title: "Error",
         description: "Failed to update tags. Please try again.",
         variant: "destructive"
       });
