@@ -26,7 +26,9 @@ export function useSubmitPostMutation() {
         content: input.content,
         mediaIds: input.mediaIds || [],
         tags: input.tags || [],
-        mentions: input.mentions || []
+        mentions: Array.isArray(input.mentions) 
+          ? input.mentions.filter(Boolean)
+          : []
       };
 
       const response = await submitPost(payload);
