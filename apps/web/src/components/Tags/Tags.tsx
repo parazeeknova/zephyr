@@ -1,13 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn, formatNumber } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
 import type { TagWithCount } from "@zephyr/db";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TagEditor } from "./TagEditor";
+import { useUpdateTagsMutation } from "./mutations/tag-mention-mutation";
 
 interface TagsProps {
   tags: TagWithCount[];
@@ -71,22 +73,48 @@ const glowVariants = {
 };
 
 export function Tags({
-  tags,
+  tags: initialTags,
   isOwner,
   className,
   postId,
   onTagsChange
 }: TagsProps) {
+  const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
+  const [localTags, setLocalTags] = useState<TagWithCount[]>(initialTags);
   const [hoveredTag, setHoveredTag] = useState<string | null>(null);
+  const updateTags = useUpdateTagsMutation(postId);
 
-  const handleOpenEditor = () => {
+  useEffect(() => {
+    if (JSON.stringify(localTags) !== JSON.stringify(initialTags)) {
+      setLocalTags(initialTags);
+    }
+  }, [initialTags]);
+
+  const handleOpenEditor = useCallback(() => {
     setIsEditing(true);
-  };
+  }, []);
 
-  const handleTagsUpdate = (updatedTags: TagWithCount[]) => {
-    onTagsChange?.(updatedTags);
-  };
+  const handleTagsUpdate = useCallback(
+    async (updatedTags: TagWithCount[]) => {
+      try {
+        // Optimistic update
+        setLocalTags(updatedTags);
+        setIsEditing(false);
+        onTagsChange?.(updatedTags);
+
+        if (postId) {
+          await updateTags.mutateAsync(updatedTags.map((t) => t.name));
+          queryClient.invalidateQueries({ queryKey: ["popularTags"] });
+          queryClient.invalidateQueries({ queryKey: ["post", postId] });
+        }
+      } catch (error) {
+        setLocalTags(initialTags);
+        console.error("Failed to update tags:", error);
+      }
+    },
+    [postId, updateTags, queryClient, initialTags, onTagsChange]
+  );
 
   const baseTagClass =
     "h-7 flex items-center gap-1 rounded-full border border-primary/20 px-3 py-1 text-sm backdrop-blur-[2px] transition-all duration-300";
@@ -100,7 +128,7 @@ export function Tags({
         className={cn("flex flex-wrap gap-2", className)}
       >
         <AnimatePresence mode="sync">
-          {tags.map((tag) => (
+          {localTags.map((tag) => (
             <motion.div
               key={tag.id}
               variants={tagVariants}
@@ -123,7 +151,9 @@ export function Tags({
                   "bg-primary/5 text-primary hover:border-primary/30 hover:bg-primary/10"
                 )}
               >
-                <span className="font-medium">#{tag.name}</span>
+                <span className="pointer-events-none font-medium">
+                  #{tag.name}
+                </span>
                 <span className="ml-1.5 text-primary/70 text-xs">
                   {formatNumber(tag._count?.posts ?? 0)}
                 </span>
@@ -158,9 +188,10 @@ export function Tags({
 
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="sm:max-w-[425px]">
+          <DialogTitle>Edit Tags</DialogTitle>
           <TagEditor
             postId={postId}
-            initialTags={tags.map((t) => t.name)}
+            initialTags={localTags.map((t) => t.name)}
             onClose={() => setIsEditing(false)}
             onTagsUpdate={handleTagsUpdate}
           />

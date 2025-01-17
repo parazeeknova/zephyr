@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useUpdateMentionsMutation } from "@/posts/editor/mutations";
 import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
 import type { UserData } from "@zephyr/db";
 import { AnimatePresence, motion } from "framer-motion";
 import { AtSign } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MentionTagEditor } from "./MentionTagEditor";
 
 const containerVariants = {
@@ -38,33 +38,42 @@ interface MentionTagsProps {
 }
 
 export function MentionTags({
-  mentions,
+  mentions: initialMentions,
   isOwner,
   className,
   postId,
   onMentionsChange
 }: MentionTagsProps) {
   const [isEditing, setIsEditing] = useState(false);
-
-  // biome-ignore lint/correctness/noUnusedVariables: ignore
-  const [hoveredTag, setHoveredTag] = useState<string | null>(null);
+  const [localMentions, setLocalMentions] =
+    useState<UserData[]>(initialMentions);
+  const [_hoveredTag, setHoveredTag] = useState<string | null>(null);
   const updateMentions = useUpdateMentionsMutation(postId);
+
+  useEffect(() => {
+    if (JSON.stringify(localMentions) !== JSON.stringify(initialMentions)) {
+      setLocalMentions(initialMentions);
+    }
+  }, [initialMentions]);
 
   const handleMentionsUpdate = async (newMentions: UserData[]) => {
     try {
+      setLocalMentions(newMentions);
+      setIsEditing(false);
+
       if (postId) {
         await updateMentions.mutateAsync(newMentions.map((m) => m.id));
       }
       onMentionsChange?.(newMentions);
-      setIsEditing(false);
     } catch (error) {
+      setLocalMentions(initialMentions);
       console.error("Failed to update mentions:", error);
     }
   };
 
   return (
     <>
-      {mentions.length > 0 || isOwner ? (
+      {localMentions.length > 0 || isOwner ? (
         <div className="space-y-2">
           <h3 className="text-muted-foreground text-sm">
             People mentioned in this post:
@@ -76,7 +85,7 @@ export function MentionTags({
             className={cn("flex flex-wrap gap-2", className)}
           >
             <AnimatePresence mode="sync">
-              {mentions.map((user) => (
+              {localMentions.map((user) => (
                 <motion.div
                   key={user.id}
                   variants={tagVariants}
@@ -93,7 +102,9 @@ export function MentionTags({
                     )}
                   >
                     <UserAvatar user={user} size={20} />
-                    <span className="font-medium">@{user.username}</span>
+                    <span className="pointer-events-none font-medium">
+                      @{user.username}
+                    </span>
                   </div>
                 </motion.div>
               ))}
@@ -127,8 +138,9 @@ export function MentionTags({
 
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="sm:max-w-[425px]">
+          <DialogTitle>Edit Mentions</DialogTitle>
           <MentionTagEditor
-            initialMentions={mentions}
+            initialMentions={localMentions}
             onClose={() => setIsEditing(false)}
             onMentionsUpdate={handleMentionsUpdate}
             postId={postId}

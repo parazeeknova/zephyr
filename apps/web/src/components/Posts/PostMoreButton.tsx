@@ -1,12 +1,7 @@
 import { MentionTags } from "@/components/Tags/MentionTags";
 import { Tags as TagsComponent } from "@/components/Tags/Tags";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,23 +9,64 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import type { PostData } from "@zephyr/db";
+import type { PostData, TagWithCount, UserData } from "@zephyr/db";
 import { AtSign, MoreHorizontal, Tags, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import DeletePostDialog from "./DeletePostDialog";
 
 interface PostMoreButtonProps {
   post: PostData;
   className?: string;
+  onUpdate?: (updatedPost: PostData) => void;
 }
 
 export default function PostMoreButton({
   post,
-  className
+  className,
+  onUpdate
 }: PostMoreButtonProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showMentionsDialog, setShowMentionsDialog] = useState(false);
   const [showTagsDialog, setShowTagsDialog] = useState(false);
+
+  const mentions = useMemo(
+    () => post.mentions?.map((m) => m.user) || [],
+    [post.mentions]
+  );
+
+  const handleMentionsUpdate = useCallback(
+    (newMentions: UserData[]) => {
+      if (JSON.stringify(mentions) !== JSON.stringify(newMentions)) {
+        const updatedPost: PostData = {
+          ...post,
+          mentions: newMentions.map((user) => ({
+            id: `${post.id}-${user.id}`,
+            postId: post.id,
+            userId: user.id,
+            user,
+            createdAt: new Date()
+          }))
+        };
+        onUpdate?.(updatedPost);
+        setShowMentionsDialog(false);
+      }
+    },
+    [post, onUpdate, mentions]
+  );
+
+  const handleTagsUpdate = useCallback(
+    (newTags: TagWithCount[]) => {
+      if (JSON.stringify(post.tags) !== JSON.stringify(newTags)) {
+        const updatedPost: PostData = {
+          ...post,
+          tags: newTags
+        };
+        onUpdate?.(updatedPost);
+        setShowTagsDialog(false);
+      }
+    },
+    [post, onUpdate]
+  );
 
   return (
     <>
@@ -64,37 +100,26 @@ export default function PostMoreButton({
       </DropdownMenu>
 
       <Dialog open={showMentionsDialog} onOpenChange={setShowMentionsDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <AtSign className="size-4" />
-              Edit Mentions
-            </DialogTitle>
-          </DialogHeader>
+        <DialogContent>
+          <DialogTitle>Edit Mentions</DialogTitle>
           <MentionTags
             // @ts-expect-error
-            mentions={post.mentions.map((m) => m.user)}
+            mentions={mentions}
             isOwner={true}
             postId={post.id}
-            onClose={() => setShowMentionsDialog(false)}
+            onMentionsChange={handleMentionsUpdate}
           />
         </DialogContent>
       </Dialog>
 
       <Dialog open={showTagsDialog} onOpenChange={setShowTagsDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Tags className="size-4" />
-              Edit Tags
-            </DialogTitle>
-          </DialogHeader>
+        <DialogContent>
+          <DialogTitle>Edit Tags</DialogTitle>
           <TagsComponent
             tags={post.tags}
             isOwner={true}
             postId={post.id}
-            // @ts-expect-error
-            onClose={() => setShowTagsDialog(false)}
+            onTagsChange={handleTagsUpdate}
           />
         </DialogContent>
       </Dialog>

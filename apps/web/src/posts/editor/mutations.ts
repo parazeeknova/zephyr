@@ -26,7 +26,7 @@ export function useSubmitPostMutation() {
         content: input.content,
         mediaIds: input.mediaIds || [],
         tags: input.tags || [],
-        mentions: Array.isArray(input.mentions) 
+        mentions: Array.isArray(input.mentions)
           ? input.mentions.filter(Boolean)
           : []
       };

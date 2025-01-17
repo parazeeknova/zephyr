@@ -54,13 +54,13 @@ export function MentionTagEditor({
   onClose,
   onMentionsUpdate
 }: MentionTagEditorProps) {
-  const [selectedMentions, setSelectedMentions] =
-    useState<UserData[]>(initialMentions);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<UserData[]>([]);
   const { toast } = useToast();
-  const updateMentions = useUpdateMentionsMutation(postId || "");
+  const [selectedMentions, setSelectedMentions] =
+    useState<UserData[]>(initialMentions);
+  const updateMentions = useUpdateMentionsMutation(postId);
 
   const searchUsers = async (query: string) => {
     if (!query.trim()) {
@@ -114,11 +114,17 @@ export function MentionTagEditor({
 
   const handleSave = async () => {
     try {
-      await updateMentions.mutateAsync(selectedMentions.map((m) => m.id));
-      onMentionsUpdate?.(selectedMentions);
+      onMentionsUpdate(selectedMentions);
       onClose();
+
+      await updateMentions.mutateAsync(selectedMentions.map((m) => m.id));
+      // biome-ignore lint/correctness/noUnusedVariables: ignore
     } catch (error) {
-      console.error("Failed to update mentions:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update mentions. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 

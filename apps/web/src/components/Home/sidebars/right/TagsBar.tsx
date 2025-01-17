@@ -9,7 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { Hash, RefreshCw } from "lucide-react";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 
 interface TagWithCount extends Tag {
   _count: {
@@ -21,15 +21,16 @@ const TagsBar = () => {
   const [hoveredTag, setHoveredTag] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const queryClient = useQueryClient();
-  const { popularTags } = useTags();
+  // @ts-expect-error
+  const { popularTags, isLoading } = useTags();
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     startTransition(() => {
       queryClient.invalidateQueries({ queryKey: ["popularTags"] });
     });
-  };
+  }, [queryClient]);
 
-  if (!popularTags.length) return null;
+  if (!popularTags.length && !isLoading) return null;
 
   return (
     <Card className="relative overflow-hidden border border-border/50 bg-card/50 shadow-sm backdrop-blur-sm">
@@ -51,12 +52,12 @@ const TagsBar = () => {
             variant="ghost"
             size="icon"
             onClick={handleRefresh}
-            disabled={isPending}
+            disabled={isPending || isLoading}
             className="h-6 w-6 hover:bg-background/50"
           >
             <RefreshCw
               className={`h-3.5 w-3.5 transition-all duration-300 ${
-                isPending
+                isPending || isLoading
                   ? "animate-spin text-primary"
                   : "text-muted-foreground"
               }`}
@@ -130,7 +131,7 @@ const TagsBar = () => {
       </CardContent>
 
       <AnimatePresence>
-        {isPending && (
+        {(isPending || isLoading) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

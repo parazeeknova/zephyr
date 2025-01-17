@@ -2,9 +2,10 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQueryClient } from "@tanstack/react-query";
 import type { PostData } from "@zephyr/db";
 import { motion } from "framer-motion";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Separator } from "../ui/separator";
 import PostCard from "./feedview/postCard";
 
@@ -12,8 +13,39 @@ interface FeedViewProps {
   posts: PostData[];
 }
 
-export const FeedView: React.FC<FeedViewProps> = ({ posts }) => {
+export const FeedView: React.FC<FeedViewProps> = ({ posts: initialPosts }) => {
   const MemoizedPostCard = useMemo(() => React.memo(PostCard), []);
+  const queryClient = useQueryClient();
+  // Fix: Initialize state with initialPosts
+  const [posts, setPosts] = useState<PostData[]>(initialPosts);
+
+  // Update local state when cache changes
+  useEffect(() => {
+    const unsubscribe = queryClient.getQueryCache().subscribe(() => {
+      const feedQueries = queryClient.getQueriesData<{
+        pages: { posts: PostData[] }[];
+      }>({
+        queryKey: ["post-feed"]
+      });
+
+      const updatedPosts = feedQueries.flatMap(
+        ([, data]) => data?.pages?.flatMap((page) => page.posts) || []
+      );
+
+      if (updatedPosts.length) {
+        setPosts(updatedPosts);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [queryClient]);
+
+  // Update posts when initialPosts changes
+  useEffect(() => {
+    setPosts(initialPosts);
+  }, [initialPosts]);
 
   const sortedPosts = useMemo(() => {
     const sorted = [...posts].sort(
