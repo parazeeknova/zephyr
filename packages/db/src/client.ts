@@ -42,6 +42,18 @@ export function getPostDataInclude(loggedInUserId: string) {
     },
     attachments: true,
     tags: true,
+    mentions: {
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            displayName: true,
+            avatarUrl: true
+          }
+        }
+      }
+    },
     bookmarks: {
       where: {
         userId: loggedInUserId
@@ -62,7 +74,8 @@ export function getPostDataInclude(loggedInUserId: string) {
     _count: {
       select: {
         vote: true,
-        comments: true
+        comments: true,
+        mentions: true
       }
     }
   } satisfies Prisma.PostInclude;
@@ -97,6 +110,7 @@ export interface CommentsPage {
 export const notificationsInclude = {
   issuer: {
     select: {
+      id: true,
       username: true,
       displayName: true,
       avatarUrl: true
@@ -104,6 +118,7 @@ export const notificationsInclude = {
   },
   post: {
     select: {
+      id: true,
       content: true
     }
   }
@@ -130,6 +145,18 @@ export type PostData = Prisma.PostGetPayload<{
     };
     attachments: true;
     tags: true;
+    mentions: {
+      include: {
+        user: {
+          select: {
+            id: true;
+            username: true;
+            displayName: true;
+            avatarUrl: true;
+          };
+        };
+      };
+    };
     bookmarks: {
       where: {
         userId: string;
@@ -151,6 +178,7 @@ export type PostData = Prisma.PostGetPayload<{
       select: {
         vote: true;
         comments: true;
+        mentions: true;
       };
     };
   };
@@ -210,3 +238,27 @@ export interface SignUpFormProps {
   onSuccess?: () => void;
   onError?: (error: Error) => void;
 }
+
+export interface MentionData {
+  id: string;
+  postId: string;
+  userId: string;
+  createdAt: Date;
+  user: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatarUrl: string | null;
+  };
+}
+
+export const mentionsInclude = {
+  user: {
+    select: {
+      id: true,
+      username: true,
+      displayName: true,
+      avatarUrl: true
+    }
+  }
+} satisfies Prisma.MentionInclude;

@@ -3,6 +3,7 @@
 import { useSession } from "@/app/(main)/SessionProvider";
 import UserTooltip from "@/components/Layouts/UserTooltip";
 import ViewTracker from "@/components/Posts/ViewCounter";
+import { MentionTags } from "@/components/Tags/MentionTags";
 import { Tags } from "@/components/Tags/Tags";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -35,6 +36,16 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
 
   const PostContent = () => (
     <>
+      {post.mentions && post.mentions.length > 0 && (
+        <div className="mt-2 mb-3">
+          <MentionTags
+            mentions={post.mentions?.map((m) => m.user) ?? []}
+            isOwner={post.user.id === user.id}
+            postId={post.id}
+          />
+        </div>
+      )}
+
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div className="flex min-w-0 items-center space-x-2">
           <UserTooltip user={post.user}>
@@ -88,8 +99,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
         </div>
       </div>
 
+      <AuraCount postId={post.id} initialAura={post.aura} />
+
       {post.tags && post.tags.length > 0 && (
-        <div className="mt-3 mb-2">
+        <div className="mt-2 mb-2">
           <Tags
             tags={post.tags as TagWithCount[]}
             isOwner={post.user.id === user.id}
@@ -98,10 +111,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
         </div>
       )}
 
-      <AuraCount postId={post.id} initialAura={post.aura} />
-
       <Linkify>
-        <p className="overflow-wrap-anywhere mb-4 max-w-full whitespace-pre-wrap break-words text-foreground">
+        <p className="overflow-wrap-anywhere mt-4 mb-4 max-w-full whitespace-pre-wrap break-words text-foreground">
           {post.content}
         </p>
       </Linkify>

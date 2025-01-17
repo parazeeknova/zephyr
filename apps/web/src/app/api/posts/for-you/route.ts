@@ -30,6 +30,18 @@ export async function GET(req: NextRequest) {
               }
             }
           }
+        },
+        mentions: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                displayName: true,
+                avatarUrl: true
+              }
+            }
+          }
         }
       },
       orderBy: { createdAt: "desc" },
@@ -85,7 +97,9 @@ export async function GET(req: NextRequest) {
         tags: post.tags.map((tag) => ({
           ...tag,
           _count: tag._count || { posts: 0 }
-        }))
+        })),
+        // @ts-expect-error
+        mentions: post.mentions || []
       })),
       nextCursor
     };

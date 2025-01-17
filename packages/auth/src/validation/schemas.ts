@@ -82,7 +82,8 @@ export const loginSchema = z.object({
 export const createPostSchema = z.object({
   content: requiredString,
   mediaIds: z.array(z.string()).max(5, "Cannot have more than 5 attachments"),
-  tags: z.array(z.string())
+  tags: z.array(z.string()),
+  mentions: z.array(z.string()).default([])
 });
 
 export const updateUserProfileSchema = z.object({
@@ -104,3 +105,4 @@ export type SignUpValues = z.infer<typeof signUpSchema>;
 export type LoginValues = z.infer<typeof loginSchema>;
 export type UpdateUserProfileValues = z.infer<typeof updateUserProfileSchema>;
 export type CreateCommentValues = z.infer<typeof createCommentSchema>;
+export type CreatePostInput = z.infer<typeof createPostSchema>;

@@ -15,9 +15,10 @@ import { useDropzone } from "react-dropzone";
 import { AttachmentPreview } from "./AttachmentPreview";
 import { FileInput } from "./FileInput";
 import "./styles.css";
+import { MentionTags } from "@/components/Tags/MentionTags";
 import { Tags } from "@/components/Tags/Tags";
 import { useQuery } from "@tanstack/react-query";
-import type { TagWithCount } from "@zephyr/db";
+import type { TagWithCount, UserData } from "@zephyr/db";
 import useMediaUpload, { type Attachment } from "./useMediaUpload";
 
 const containerVariants = {
@@ -113,6 +114,11 @@ export default function PostEditor() {
   const input = editor?.getText({ blockSeparator: "\n" }) || "";
   const [isEditorFocused, setIsEditorFocused] = useState(false);
   const [selectedTags, setSelectedTags] = useState<TagWithCount[]>([]);
+  const [selectedMentions, setSelectedMentions] = useState<UserData[]>([]);
+
+  const handleMentionsChange = useCallback((newMentions: UserData[]) => {
+    setSelectedMentions(newMentions);
+  }, []);
 
   const handleTagsChange = useCallback((newTags: TagWithCount[]) => {
     const tagsWithCount = newTags.map((tag) => ({
@@ -123,22 +129,39 @@ export default function PostEditor() {
   }, []);
 
   const onSubmit = useCallback(() => {
-    mutation.mutate(
-      {
-        content: input,
-        mediaIds: attachments.map((a) => a.mediaId).filter(Boolean) as string[],
-        tags: selectedTags.map((tag) => tag.name.toLowerCase()) // Ensure lowercase
-      },
-      {
-        onSuccess: () => {
-          editor?.commands.clearContent();
-          resetMediaUploads();
-          setSelectedTags([]);
-          setIsEditorFocused(false);
-        }
+    if (!input.trim()) return;
+
+    const payload = {
+      content: input.trim(),
+      mediaIds: attachments
+        .map((a) => a.mediaId)
+        .filter((id): id is string => Boolean(id)),
+      tags: selectedTags.map((tag) => tag.name.toLowerCase()),
+      mentions: selectedMentions.map((user) => user.id)
+    };
+
+    if (!payload.content) {
+      return;
+    }
+
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        editor?.commands.clearContent();
+        resetMediaUploads();
+        setSelectedTags([]);
+        setSelectedMentions([]);
+        setIsEditorFocused(false);
       }
-    );
-  }, [input, attachments, selectedTags, mutation, editor, resetMediaUploads]);
+    });
+  }, [
+    input,
+    attachments,
+    selectedTags,
+    selectedMentions,
+    mutation,
+    editor,
+    resetMediaUploads
+  ]);
 
   const onPaste = useCallback(
     (e: ClipboardEvent<HTMLInputElement>) => {
@@ -174,7 +197,7 @@ export default function PostEditor() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mb-3"
+                className="mb-3 space-y-3"
               >
                 <Tags
                   tags={selectedTags}
@@ -182,6 +205,12 @@ export default function PostEditor() {
                   className="px-1"
                   onTagsChange={handleTagsChange}
                   postId={undefined}
+                />
+                <MentionTags
+                  mentions={selectedMentions}
+                  isOwner={true}
+                  className="px-1"
+                  onMentionsChange={handleMentionsChange}
                 />
               </motion.div>
             )}

@@ -18,6 +18,7 @@ model User {
   aura                    Int                      @default(0)
   username                String                   @unique
   displayName             String
+  mentions                Mention[]
   email                   String?                  @unique
   passwordHash            String?
   googleId                String?                  @unique
@@ -145,6 +146,7 @@ model Post {
   shareStats           ShareStats[]
   auraLogs             AuraLog[]
   tags                 Tag[]
+  mentions             Mention[]
 
   createdAt DateTime @default(now())
 
@@ -184,7 +186,6 @@ enum MediaType {
 }
 
 // Upvotes & Downvotes model
-
 model Vote {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -256,6 +257,20 @@ enum NotificationType {
   AMPLIFY
   FOLLOW
   COMMENT
+  MENTION
+}
+
+// Mention user-post model
+model Mention {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+  @@map("mentions")
 }
 
 // ShareStats model
