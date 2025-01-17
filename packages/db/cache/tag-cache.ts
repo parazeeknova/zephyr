@@ -54,8 +54,8 @@ export const tagCache = {
       
       await prisma.tag.upsert({
         where: { name: tagName },
-        create: { name: tagName, useCount: 1 },
-        update: { useCount: { increment: 1 } }
+        create: { name: tagName },
+        update: {}
       });
       
       const results = await pipeline.exec();
@@ -70,11 +70,6 @@ export const tagCache = {
     try {
       const pipeline = redis.pipeline();
       const count = await redis.hincrby(TAG_COUNTS_KEY, tagName, -1);
-      
-      await prisma.tag.update({
-        where: { name: tagName },
-        data: { useCount: { decrement: 1 } }
-      });
 
       if (count <= 0) {
         pipeline.hdel(TAG_COUNTS_KEY, tagName);
@@ -85,7 +80,6 @@ export const tagCache = {
         await prisma.tag.deleteMany({
           where: {
             name: tagName,
-            useCount: 0,
             posts: { none: {} }
           }
         });
@@ -122,44 +116,48 @@ export const tagCache = {
   },
 
   async searchTags(query: string, limit = 10): Promise<string[]> {
-    try {
-      let tags = await redis.smembers(TAG_LIST_KEY);
+  try {
+    let tags = await redis.smembers(TAG_LIST_KEY);
+    
+    if (!tags || tags.length === 0) {
+      await this.syncTagCounts();
+      tags = await redis.smembers(TAG_LIST_KEY);
       
       if (!tags || tags.length === 0) {
-        await this.syncTagCounts();
-        tags = await redis.smembers(TAG_LIST_KEY);
-        
-        if (!tags || tags.length === 0) {
-          const dbTags = await prisma.tag.findMany({
-            where: {
-              name: {
-                contains: query.toLowerCase(),
-                mode: 'insensitive'
-              },
-              useCount: { gt: 0 }
+        const dbTags = await prisma.tag.findMany({
+          where: {
+            name: {
+              contains: query.toLowerCase(),
+              mode: 'insensitive'
             },
-            take: limit,
-            orderBy: {
-              useCount: 'desc'
+            posts: {
+              some: {} 
             }
-          });
-          
-          tags = dbTags.map(t => t.name);
-          
-          if (tags.length > 0) {
-            await redis.sadd(TAG_LIST_KEY, ...tags);
-            await redis.expire(TAG_LIST_KEY, TAG_TTL);
+          },
+          take: limit,
+          orderBy: {
+            posts: {
+              _count: 'desc'
+            }
           }
+        });
+        
+        tags = dbTags.map(t => t.name);
+        
+        if (tags.length > 0) {
+          await redis.sadd(TAG_LIST_KEY, ...tags);
+          await redis.expire(TAG_LIST_KEY, TAG_TTL);
         }
       }
-      
-      return tags
-        .filter(tag => tag.toLowerCase().includes(query.toLowerCase()))
-        .slice(0, limit);
-    } catch (error) {
-      console.error("Error searching tags:", error);
-      return [];
     }
+    
+    return tags
+      .filter(tag => tag.toLowerCase().includes(query.toLowerCase()))
+      .slice(0, limit);
+  } catch (error) {
+    console.error("Error searching tags:", error);
+    return [];
+  }
   },
 
   async refreshCache(): Promise<void> {

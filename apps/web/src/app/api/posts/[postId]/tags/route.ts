@@ -52,25 +52,34 @@ export async function POST(
       }
     });
 
+    const normalizedTags = tags.map((tag: string) => tag.toLowerCase());
+
     const updatedPost = await prisma.post.update({
       where: { id: postId },
       data: {
         tags: {
-          connectOrCreate: tags.map((tag: string) => ({
-            where: { name: tag.toLowerCase() },
-            create: { name: tag.toLowerCase() }
+          connectOrCreate: normalizedTags.map((tag: string) => ({
+            where: { name: tag },
+            create: { name: tag }
           }))
         }
       },
-      include: { tags: true }
+      include: {
+        tags: {
+          include: {
+            _count: {
+              select: {
+                posts: true
+              }
+            }
+          }
+        }
+      }
     });
 
-    await Promise.all([
-      ...post.tags.map((tag) => tagCache.decrementTagCount(tag.name)),
-      ...tags.map((tag: string) =>
-        tagCache.incrementTagCount(tag.toLowerCase())
-      )
-    ]);
+    await Promise.all(
+      normalizedTags.map((tag: string) => tagCache.incrementTagCount(tag))
+    );
 
     return NextResponse.json({ tags: updatedPost.tags });
   } catch (error) {

@@ -4,11 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTags } from "@/hooks/useTags";
 import { formatNumber } from "@/lib/utils";
+import type { Tag } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { Hash, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
+
+interface TagWithCount extends Tag {
+  _count: {
+    posts: number;
+  };
+}
 
 const TagsBar = () => {
   const [hoveredTag, setHoveredTag] = useState<string | null>(null);
@@ -59,7 +66,7 @@ const TagsBar = () => {
 
         <ul className="space-y-1.5">
           <AnimatePresence mode="popLayout">
-            {popularTags.map((tag, index) => (
+            {(popularTags as TagWithCount[]).map((tag, index) => (
               <motion.li
                 key={tag.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -99,8 +106,8 @@ const TagsBar = () => {
                           #{tag.name}
                         </p>
                         <p className="text-muted-foreground text-xs">
-                          {formatNumber(tag.useCount)}{" "}
-                          {tag.useCount === 1 ? "post" : "posts"}
+                          {formatNumber(tag._count?.posts ?? 0)}{" "}
+                          {tag._count?.posts === 1 ? "post" : "posts"}
                         </p>
                       </div>
                     </div>

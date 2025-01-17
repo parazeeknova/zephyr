@@ -16,8 +16,8 @@ import { AttachmentPreview } from "./AttachmentPreview";
 import { FileInput } from "./FileInput";
 import "./styles.css";
 import { Tags } from "@/components/Tags/Tags";
-import type { Tag } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
+import type { TagWithCount } from "@zephyr/db";
 import useMediaUpload, { type Attachment } from "./useMediaUpload";
 
 const containerVariants = {
@@ -112,14 +112,22 @@ export default function PostEditor() {
 
   const input = editor?.getText({ blockSeparator: "\n" }) || "";
   const [isEditorFocused, setIsEditorFocused] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<TagWithCount[]>([]);
+
+  const handleTagsChange = useCallback((newTags: TagWithCount[]) => {
+    const tagsWithCount = newTags.map((tag) => ({
+      ...tag,
+      _count: tag._count || { posts: 0 }
+    }));
+    setSelectedTags(tagsWithCount);
+  }, []);
 
   const onSubmit = useCallback(() => {
     mutation.mutate(
       {
         content: input,
         mediaIds: attachments.map((a) => a.mediaId).filter(Boolean) as string[],
-        tags: selectedTags.map((tag) => tag.name)
+        tags: selectedTags.map((tag) => tag.name.toLowerCase()) // Ensure lowercase
       },
       {
         onSuccess: () => {
@@ -172,7 +180,8 @@ export default function PostEditor() {
                   tags={selectedTags}
                   isOwner={true}
                   className="px-1"
-                  onTagsChange={setSelectedTags}
+                  onTagsChange={handleTagsChange}
+                  postId={undefined}
                 />
               </motion.div>
             )}

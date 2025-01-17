@@ -15,7 +15,7 @@ import AuraCount from "@zephyr-ui/Posts/AuraCount";
 import AuraVoteButton from "@zephyr-ui/Posts/AuraVoteButton";
 import BookmarkButton from "@zephyr-ui/Posts/BookmarkButton";
 import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
-import type { PostData } from "@zephyr/db";
+import type { PostData, TagWithCount } from "@zephyr/db";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Eye, Flame, MessageSquare } from "lucide-react";
 import Link from "next/link";
@@ -91,7 +91,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
       {post.tags && post.tags.length > 0 && (
         <div className="mt-3 mb-2">
           <Tags
-            tags={post.tags}
+            tags={post.tags as TagWithCount[]}
             isOwner={post.user.id === user.id}
             postId={post.id}
           />

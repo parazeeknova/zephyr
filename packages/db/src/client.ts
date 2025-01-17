@@ -124,10 +124,49 @@ export interface FollowerInfo {
 }
 
 export type PostData = Prisma.PostGetPayload<{
-  include: ReturnType<typeof getPostDataInclude>;
+  include: {
+    user: {
+      select: ReturnType<typeof getUserDataSelect>;
+    };
+    attachments: true;
+    tags: true;
+    bookmarks: {
+      where: {
+        userId: string;
+      };
+      select: {
+        userId: true;
+      };
+    };
+    vote: {
+      where: {
+        userId: string;
+      };
+      select: {
+        userId: true;
+        value: true;
+      };
+    };
+    _count: {
+      select: {
+        vote: true;
+        comments: true;
+      };
+    };
+  };
 }> & {
   aura: number;
 };
+
+export interface TagWithCount {
+  id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  _count?: {
+    posts: number;
+  };
+}
 
 export interface VoteInfo {
   aura: number;

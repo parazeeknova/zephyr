@@ -1,37 +1,32 @@
-import { tagCache } from "@zephyr/db";
 import { prisma } from "@zephyr/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const popularTags = await tagCache.getPopularTags(10);
-
-    const tagsWithDetails = await Promise.all(
-      popularTags.map(async (tag) => {
-        const dbTag = await prisma.tag.findUnique({
-          where: { name: tag.name },
+    const tags = await prisma.tag.findMany({
+      where: {
+        posts: {
+          some: {} // Only get tags that have posts
+        }
+      },
+      select: {
+        id: true,
+        name: true,
+        _count: {
           select: {
-            id: true,
-            name: true,
-            createdAt: true,
-            updatedAt: true,
-            _count: {
-              select: { posts: true }
-            }
+            posts: true
           }
-        });
+        }
+      },
+      orderBy: {
+        posts: {
+          _count: "desc"
+        }
+      },
+      take: 10
+    });
 
-        return {
-          id: dbTag?.id || tag.name,
-          name: tag.name,
-          useCount: dbTag?._count.posts || tag.count,
-          createdAt: dbTag?.createdAt || new Date(),
-          updatedAt: dbTag?.updatedAt || new Date()
-        };
-      })
-    );
-
-    return NextResponse.json({ tags: tagsWithDetails });
+    return NextResponse.json({ tags });
   } catch (error) {
     console.error("Error fetching popular tags:", error);
     return NextResponse.json({ tags: [] }, { status: 500 });
