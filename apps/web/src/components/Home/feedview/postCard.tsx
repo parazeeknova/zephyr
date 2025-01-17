@@ -39,8 +39,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isJoined = false }) => {
       {post.mentions && post.mentions.length > 0 && (
         <div className="mt-2 mb-3">
           <MentionTags
-            // @ts-expect-error
-            mentions={post.mentions.map((m) => m.user)}
+            mentions={post.mentions?.map((m) => m.user) ?? []}
             isOwner={post.user.id === user.id}
             postId={post.id}
           />
