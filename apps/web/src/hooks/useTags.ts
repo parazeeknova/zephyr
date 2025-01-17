@@ -16,6 +16,7 @@ export function useTags(postId?: string) {
     queryKey: ["popularTags"],
     queryFn: async () => {
       const res = await fetch("/api/tags/popular");
+      if (!res.ok) return { tags: [] };
       return res.json();
     }
   });
@@ -24,20 +25,27 @@ export function useTags(postId?: string) {
     queryKey: ["tagSuggestions"],
     queryFn: async () => {
       const res = await fetch("/api/tags");
+      if (!res.ok) return { tags: [] };
       return res.json();
     },
     enabled: false
   });
 
   const searchTags = async (query: string) => {
-    if (!query.trim()) {
-      queryClient.setQueryData(["tagSuggestions"], { tags: [] });
-      return;
+    try {
+      if (!query.trim()) {
+        queryClient.setQueryData(["tagSuggestions"], { tags: [] });
+        return;
+      }
+      const res = await fetch(`/api/tags?q=${encodeURIComponent(query)}`);
+      if (!res.ok) throw new Error("Failed to fetch tags");
+      const data = await res.json();
+      queryClient.setQueryData(["tagSuggestions"], data);
+      return data;
+    } catch (error) {
+      console.error("Error searching tags:", error);
+      return { tags: [] };
     }
-    const res = await fetch(`/api/tags?q=${encodeURIComponent(query)}`);
-    const data = await res.json();
-    queryClient.setQueryData(["tagSuggestions"], data);
-    return data;
   };
 
   const updateTags = useMutation({
@@ -57,15 +65,13 @@ export function useTags(postId?: string) {
       }
       return res.json();
     },
+
     onMutate: async (newTags) => {
-      // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ["post", postId] });
       await queryClient.cancelQueries({ queryKey: ["popularTags"] });
 
-      // Snapshot the previous value
       const previousTags = queryClient.getQueryData(["post", postId]);
 
-      // Optimistically update
       if (postId) {
         queryClient.setQueryData(["post", postId], (old: any) => ({
           ...old,
@@ -78,13 +84,11 @@ export function useTags(postId?: string) {
 
     // biome-ignore lint/correctness/noUnusedVariables: ignore
     onError: (err, newTags, context) => {
-      // Rollback on error
       if (postId && context?.previousTags) {
         queryClient.setQueryData(["post", postId], context.previousTags);
       }
     },
     onSettled: () => {
-      // Refetch after error or success
       queryClient.invalidateQueries({ queryKey: ["post", postId] });
       queryClient.invalidateQueries({ queryKey: ["popularTags"] });
     }

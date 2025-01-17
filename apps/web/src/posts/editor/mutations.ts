@@ -20,7 +20,13 @@ export function useSubmitPostMutation() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (input: PostInput) => submitPost(input),
+    mutationFn: async (input: PostInput) => {
+      const response = await submitPost(input);
+      if (!response) {
+        throw new Error("Failed to create post");
+      }
+      return response;
+    },
     onSuccess: async (newPost) => {
       const queryFilter: QueryFilters<
         InfiniteData<PostsPage, string | null>,
@@ -34,31 +40,22 @@ export function useSubmitPostMutation() {
       queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
         queryFilter,
         (oldData) => {
-          const firstPage = oldData?.pages[0];
+          if (!oldData?.pages[0]) return oldData;
 
-          if (firstPage) {
-            return {
-              pageParams: oldData.pageParams,
-              pages: [
-                {
-                  posts: [newPost, ...firstPage.posts],
-                  nextCursor: firstPage.nextCursor
-                },
-                ...oldData.pages.slice(1)
-              ]
-            };
-          }
+          return {
+            pageParams: oldData.pageParams,
+            pages: [
+              {
+                posts: [newPost, ...oldData.pages[0].posts],
+                nextCursor: oldData.pages[0].nextCursor
+              },
+              ...oldData.pages.slice(1)
+            ]
+          };
         }
       );
 
       queryClient.invalidateQueries({ queryKey: ["popularTags"] });
-
-      queryClient.invalidateQueries({
-        queryKey: queryFilter.queryKey,
-        predicate(query) {
-          return !query.state.data;
-        }
-      });
 
       toast({
         title: "Post created successfully!",
@@ -67,10 +64,10 @@ export function useSubmitPostMutation() {
       });
     },
     onError(error) {
-      console.log(error);
+      console.error("Post creation error:", error);
       toast({
         variant: "destructive",
-        description: "Failed to post. Please try again."
+        description: "Failed to create post. Please try again."
       });
     }
   });

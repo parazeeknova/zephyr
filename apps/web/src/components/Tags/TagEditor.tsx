@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useTags } from "@/hooks/useTags";
 import { cn } from "@/lib/utils";
 import type { Tag } from "@prisma/client";
+import type { TagWithCount } from "@zephyr/db";
 import { Command } from "cmdk";
 import { AnimatePresence, motion } from "framer-motion";
 import { Hash, Loader2, Plus, Search, X } from "lucide-react";
@@ -48,9 +49,14 @@ interface TagEditorProps {
   onTagsUpdate: (tags: Tag[]) => void;
 }
 
-type OptimisticTag = Pick<Tag, "id" | "name" | "useCount"> & {
-  createdAt?: Date;
-  updatedAt?: Date;
+type OptimisticTag = {
+  id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  _count?: {
+    posts: number;
+  };
 };
 
 export function TagEditor({
@@ -76,17 +82,20 @@ export function TagEditor({
     }
 
     if (!selectedTags.includes(tagName)) {
-      const newTags = [...selectedTags, tagName];
+      const newTags = [...selectedTags, tagName.toLowerCase()];
       setSelectedTags(newTags);
-      // Create optimistic tags with required fields
-      const optimisticTags: OptimisticTag[] = newTags.map((name) => ({
+
+      const formattedTags: TagWithCount[] = newTags.map((name) => ({
         id: name,
-        name,
-        useCount: 0,
+        name: name.toLowerCase(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        _count: {
+          posts: 1
+        }
       }));
-      onTagsUpdate(optimisticTags as Tag[]);
+
+      onTagsUpdate(formattedTags);
     }
     setSearch("");
   };
@@ -94,14 +103,18 @@ export function TagEditor({
   const handleRemove = (tagName: string) => {
     const newTags = selectedTags.filter((t) => t !== tagName);
     setSelectedTags(newTags);
-    const optimisticTags: OptimisticTag[] = newTags.map((name) => ({
+
+    const formattedTags: TagWithCount[] = newTags.map((name) => ({
       id: name,
-      name,
-      useCount: 0,
+      name: name.toLowerCase(),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      _count: {
+        posts: 1
+      }
     }));
-    onTagsUpdate(optimisticTags as Tag[]);
+
+    onTagsUpdate(formattedTags);
   };
 
   const handleSave = async () => {
@@ -109,7 +122,6 @@ export function TagEditor({
       const optimisticTags: OptimisticTag[] = selectedTags.map((name) => ({
         id: name,
         name,
-        useCount: 0,
         createdAt: new Date(),
         updatedAt: new Date()
       }));
@@ -117,11 +129,9 @@ export function TagEditor({
 
       await updateTags.mutateAsync(selectedTags, {
         onError: () => {
-          // Rollback on error
           const fallbackTags: OptimisticTag[] = initialTags.map((name) => ({
             id: name,
             name,
-            useCount: 0,
             createdAt: new Date(),
             updatedAt: new Date()
           }));

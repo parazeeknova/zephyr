@@ -2,19 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
-import type { Tag } from "@prisma/client";
+import { cn, formatNumber } from "@/lib/utils";
+import type { TagWithCount } from "@zephyr/db";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TagEditor } from "./TagEditor";
 
 interface TagsProps {
-  tags: Tag[];
+  tags: TagWithCount[];
   isOwner?: boolean;
   className?: string;
   postId?: string;
-  onTagsChange?: (tags: Tag[]) => void;
+  onTagsChange?: (tags: TagWithCount[]) => void;
 }
 
 const tagVariants = {
@@ -79,18 +79,12 @@ export function Tags({
 }: TagsProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [hoveredTag, setHoveredTag] = useState<string | null>(null);
-  const [optimisticTags, setOptimisticTags] = useState<Tag[]>(tags);
-
-  useEffect(() => {
-    setOptimisticTags(tags);
-  }, [tags]);
 
   const handleOpenEditor = () => {
     setIsEditing(true);
   };
 
-  const handleTagsUpdate = (updatedTags: Tag[]) => {
-    setOptimisticTags(updatedTags);
+  const handleTagsUpdate = (updatedTags: TagWithCount[]) => {
     onTagsChange?.(updatedTags);
   };
 
@@ -106,7 +100,7 @@ export function Tags({
         className={cn("flex flex-wrap gap-2", className)}
       >
         <AnimatePresence mode="sync">
-          {optimisticTags.map((tag) => (
+          {tags.map((tag) => (
             <motion.div
               key={tag.id}
               variants={tagVariants}
@@ -130,11 +124,9 @@ export function Tags({
                 )}
               >
                 <span className="font-medium">#{tag.name}</span>
-                {tag.useCount && (
-                  <span className="text-primary/70 text-xs">
-                    {tag.useCount}
-                  </span>
-                )}
+                <span className="ml-1.5 text-primary/70 text-xs">
+                  {formatNumber(tag._count?.posts ?? 0)}
+                </span>
               </div>
             </motion.div>
           ))}

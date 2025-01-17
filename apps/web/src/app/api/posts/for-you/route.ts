@@ -22,7 +22,15 @@ export async function GET(req: NextRequest) {
     const query: Prisma.PostFindManyArgs = {
       include: {
         ...getPostDataInclude(user.id),
-        tags: true
+        tags: {
+          include: {
+            _count: {
+              select: {
+                posts: true
+              }
+            }
+          }
+        }
       },
       orderBy: { createdAt: "desc" },
       take: pageSize + 1,
@@ -51,12 +59,16 @@ export async function GET(req: NextRequest) {
 
     if (posts.length > 0) {
       const allTags = posts.flatMap(
-        // @ts-expect-error
-        (post) => post.tags?.map((tag: { name: string }) => tag.name) ?? []
+        (post) =>
+          // @ts-expect-error
+          post.tags?.map((tag) => ({
+            name: tag.name,
+            count: tag._count?.posts
+          })) ?? []
       );
 
       await Promise.all(
-        [...new Set(allTags)].map((tagName: string) =>
+        [...new Set(allTags.map((t) => t.name))].map((tagName: string) =>
           tagCache.incrementTagCount(tagName)
         )
       );
@@ -67,7 +79,14 @@ export async function GET(req: NextRequest) {
 
     const responseData: PostsPage = {
       // @ts-expect-error
-      posts: posts.slice(0, pageSize),
+      posts: posts.slice(0, pageSize).map((post) => ({
+        ...post,
+        // @ts-expect-error
+        tags: post.tags.map((tag) => ({
+          ...tag,
+          _count: tag._count || { posts: 0 }
+        }))
+      })),
       nextCursor
     };
 

@@ -1,7 +1,12 @@
 "use server";
 
 import { createPostSchema, validateRequest } from "@zephyr/auth/src";
-import { getPostDataInclude, postViewsCache, prisma } from "@zephyr/db";
+import {
+  getPostDataInclude,
+  postViewsCache,
+  prisma,
+  tagCache
+} from "@zephyr/db";
 
 const AURA_REWARDS = {
   BASE_POST: 10,
@@ -48,7 +53,6 @@ async function calculateAuraReward(mediaIds: string[]) {
     CODE: 0
   };
 
-  // Count items by type
   // biome-ignore lint/complexity/noForEach: This is a simple loop
   mediaItems.forEach((item) => {
     const type = item.type as AttachmentType;
@@ -57,7 +61,6 @@ async function calculateAuraReward(mediaIds: string[]) {
     }
   });
 
-  // Calculate rewards for each type
   // biome-ignore lint/complexity/noForEach: This is a simple loop
   Object.entries(typeCount).forEach(([type, count]) => {
     if (count > 0) {
@@ -89,30 +92,24 @@ export async function submitPost(input: {
         userId: user.id,
         aura: 0,
         attachments: {
-          connect: mediaIds.map((id: string) => ({ id }))
+          connect: mediaIds.map((id) => ({ id }))
         },
         tags: {
           connectOrCreate: tags.map((tagName) => ({
-            where: { name: tagName },
-            create: { name: tagName }
+            where: { name: tagName.toLowerCase() },
+            create: { name: tagName.toLowerCase() }
           }))
         }
       },
-      include: getPostDataInclude(user.id)
+      include: {
+        ...getPostDataInclude(user.id),
+        tags: true
+      }
     });
 
     if (tags.length > 0) {
       await Promise.all(
-        tags.map((tagName) =>
-          tx.tag.update({
-            where: { name: tagName },
-            data: {
-              useCount: {
-                increment: 1
-              }
-            }
-          })
-        )
+        tags.map((tagName) => tagCache.incrementTagCount(tagName.toLowerCase()))
       );
     }
 
@@ -143,10 +140,10 @@ export async function submitPost(input: {
       });
     }
 
-    return { post, auraReward };
+    return post;
   });
 
-  return newPost.post;
+  return newPost;
 }
 
 export async function incrementPostView(postId: string) {
@@ -189,18 +186,8 @@ export async function updatePostTags(postId: string, tags: string[]) {
     });
 
     await Promise.all([
-      ...tagsToAdd.map((tagName) =>
-        tx.tag.update({
-          where: { name: tagName },
-          data: { useCount: { increment: 1 } }
-        })
-      ),
-      ...tagsToRemove.map((tagName) =>
-        tx.tag.update({
-          where: { name: tagName },
-          data: { useCount: { decrement: 1 } }
-        })
-      )
+      ...tagsToAdd.map((tagName) => tagCache.incrementTagCount(tagName)),
+      ...tagsToRemove.map((tagName) => tagCache.decrementTagCount(tagName))
     ]);
 
     return updatedPost;
