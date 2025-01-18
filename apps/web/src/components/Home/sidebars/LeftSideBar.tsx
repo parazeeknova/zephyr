@@ -60,7 +60,6 @@ const LeftSideBar: React.FC = () => {
     >
       {screenSize !== "small" && (
         <div className="flex h-full flex-col">
-          {/* Sticky Navigation with Scroll Animation */}
           <div
             className="sticky top-[80px] z-30"
             style={{
@@ -103,6 +102,8 @@ const LeftSideBar: React.FC = () => {
               <NavigationCard
                 isCollapsed={screenSize === "medium" || isCollapsed}
               />
+              <div className="mt-4" />
+              <Friends isCollapsed={screenSize === "medium" || isCollapsed} />
             </div>
           </div>
 
@@ -118,7 +119,6 @@ const LeftSideBar: React.FC = () => {
                 transition: "transform 0.2s ease-out, opacity 0.3s ease-out"
               }}
             >
-              <Friends isCollapsed={screenSize === "medium" || isCollapsed} />
               <ContributeCard
                 isCollapsed={screenSize === "medium" || isCollapsed}
               />

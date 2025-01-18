@@ -1,5 +1,4 @@
 import { getUserData } from "@/hooks/useUserData";
-import CreatePostCard from "@zephyr-ui/Home/sidebars/left/CreatePostCard";
 import Friends from "@zephyr-ui/Home/sidebars/left/Friends";
 import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
 import ProfileCard from "@zephyr-ui/Home/sidebars/right/ProfileCard";
@@ -38,9 +37,6 @@ export default async function Page(props: PageProps) {
           />
           <div className="mt-2 flex-none">
             <Friends isCollapsed={false} />
-          </div>
-          <div className="mt-2 mb-4 flex-none">
-            <CreatePostCard isCollapsed={false} />
           </div>
           {userData && (
             <div className="mt-auto mb-4">

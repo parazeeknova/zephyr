@@ -105,7 +105,7 @@ export function TrendingTabs() {
         </div>
 
         {isAutoSwitching && (
-          <div className="-bottom-2 absolute left-0 h-[2px] w-full overflow-hidden rounded-full bg-muted/30">
+          <div className="-bottom-2 absolute left-0 mt-1 mb-1 h-[2px] w-full overflow-hidden rounded-full bg-muted/30">
             <motion.div
               className="h-full bg-primary/50"
               animate={{
