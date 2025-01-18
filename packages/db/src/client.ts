@@ -262,3 +262,10 @@ export const mentionsInclude = {
     }
   }
 } satisfies Prisma.MentionInclude;
+
+export interface UnfollowUserDialogProps {
+  user: UserData;
+  open: boolean;
+  onClose: () => void;
+  handleUnfollow: (userId: string) => void;
+}
