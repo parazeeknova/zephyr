@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import MentionedUsersBar from "./MentionedUsersBar";
 import TagsBar from "./TagsBar";
 import TrendingTopics from "./TrendingTopics";
 
@@ -10,7 +11,8 @@ const SWITCH_INTERVAL = 10000; // 10 seconds
 
 const tabs = [
   { id: "topics", label: "Trending", icon: "📈" },
-  { id: "tags", label: "Tags", icon: "#️⃣" }
+  { id: "tags", label: "Tags", icon: "#️⃣" },
+  { id: "mentions", label: "Mentions", icon: "@️" }
 ] as const;
 
 type TabId = (typeof tabs)[number]["id"];
@@ -24,7 +26,13 @@ const TabContent = ({ activeTab }: { activeTab: TabId }) => (
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.2 }}
     >
-      {activeTab === "topics" ? <TrendingTopics /> : <TagsBar />}
+      {activeTab === "topics" ? (
+        <TrendingTopics />
+      ) : activeTab === "tags" ? (
+        <TagsBar />
+      ) : (
+        <MentionedUsersBar />
+      )}
     </motion.div>
   </AnimatePresence>
 );
