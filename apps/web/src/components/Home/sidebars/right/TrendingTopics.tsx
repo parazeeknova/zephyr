@@ -87,7 +87,7 @@ const TrendingTopics: React.FC = () => {
   if (!topics.length) return null;
 
   return (
-    <Card className="relative overflow-hidden border border-border/50 bg-card/50 shadow-sm backdrop-blur-sm">
+    <Card className="relative overflow-hidden border-rose-500/20 bg-gradient-to-br from-rose-500/[0.02] to-orange-500/[0.02] shadow-sm backdrop-blur-sm">
       <CardContent className="p-3">
         {/* Header */}
         <div className="mb-3 flex items-center justify-between">
@@ -96,8 +96,9 @@ const TrendingTopics: React.FC = () => {
               initial={{ rotate: -20, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
               transition={{ duration: 0.5 }}
+              className="rounded-lg bg-gradient-to-br from-rose-500/10 to-orange-500/10 p-1"
             >
-              <LucideTrendingUp className="h-4 w-4 text-primary" />
+              <LucideTrendingUp className="h-3.5 w-3.5 text-rose-500" />
             </motion.div>
             <h2 className="font-semibold text-foreground text-sm">
               Trending Topics
@@ -108,12 +109,12 @@ const TrendingTopics: React.FC = () => {
             size="icon"
             onClick={handleRefresh}
             disabled={isPending}
-            className="h-6 w-6 hover:bg-background/50"
+            className="h-6 w-6 hover:bg-rose-500/10"
           >
             <RefreshCw
               className={`h-3.5 w-3.5 transition-all duration-300 ${
                 isPending
-                  ? "animate-spin text-primary"
+                  ? "animate-spin text-rose-500"
                   : "text-muted-foreground"
               }`}
             />
@@ -136,32 +137,41 @@ const TrendingTopics: React.FC = () => {
               >
                 <Link
                   href={`/hashtag/${hashtag.slice(1)}`}
-                  className="relative block rounded-md p-2 transition-all duration-300 hover:bg-background/50"
+                  className="relative block rounded-md p-2 transition-all duration-300 hover:bg-gradient-to-br hover:from-rose-500/5 hover:to-orange-500/5"
                 >
-                  {/* Background Hashtag - Now contained within each list item */}
+                  {/* Background Hashtag */}
                   <AnimatePresence>
                     {hoveredTopic === hashtag && (
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 0.04, scale: 1 }}
                         exit={{ opacity: 0, scale: 1.1 }}
-                        className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden"
+                        className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden rounded-md"
                       >
-                        <span className="truncate font-bold text-2xl text-primary">
-                          {hashtag}
-                        </span>
+                        <div className="relative">
+                          <span className="absolute inset-0 blur-xl">
+                            <span className="bg-gradient-to-br from-rose-500 to-orange-500 bg-clip-text font-bold text-2xl text-transparent">
+                              {hashtag}
+                            </span>
+                          </span>
+                          <span className="bg-gradient-to-br from-rose-500 to-orange-500 bg-clip-text font-bold text-2xl text-transparent">
+                            {hashtag}
+                          </span>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
 
                   <div className="relative z-10 flex items-center justify-between">
                     <div className="flex min-w-0 items-center">
-                      <span className="w-5 font-medium text-primary/50 text-xs">
-                        #{index + 1}
-                      </span>
-                      <div className="min-w-0 flex-1">
+                      <div className="flex h-5 w-5 items-center justify-center rounded bg-gradient-to-br from-rose-500/10 to-orange-500/10">
+                        <span className="font-medium text-rose-500 text-xs">
+                          {index + 1}
+                        </span>
+                      </div>
+                      <div className="min-w-0 flex-1 px-2">
                         <p
-                          className="truncate font-medium text-foreground text-sm transition-colors group-hover:text-primary"
+                          className="truncate font-medium text-foreground text-sm transition-colors group-hover:text-rose-500"
                           title={hashtag}
                         >
                           {hashtag}
@@ -177,7 +187,7 @@ const TrendingTopics: React.FC = () => {
                         opacity: hoveredTopic === hashtag ? 1 : 0,
                         x: hoveredTopic === hashtag ? 0 : -4
                       }}
-                      className="text-primary text-sm"
+                      className="bg-gradient-to-br from-rose-500 to-orange-500 bg-clip-text font-bold text-sm text-transparent"
                     >
                       →
                     </motion.div>
@@ -207,7 +217,7 @@ const TrendingTopics: React.FC = () => {
             exit={{ opacity: 0 }}
             className="absolute inset-0 z-20 flex items-center justify-center bg-background/50 backdrop-blur-sm"
           >
-            <RefreshCw className="h-5 w-5 animate-spin text-primary" />
+            <RefreshCw className="h-5 w-5 animate-spin text-rose-500" />
           </motion.div>
         )}
       </AnimatePresence>
