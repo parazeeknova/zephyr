@@ -84,3 +84,44 @@ export async function POST(
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export async function GET(
+  req: NextRequest,
+  props: { params: Promise<{ postId: string }> }
+) {
+  const params = await props.params;
+  const { postId } = params;
+  const { searchParams } = new URL(req.url);
+  const cursor = searchParams.get("cursor");
+
+  try {
+    const { user } = await validateRequest();
+
+    if (!user) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const take = 10;
+    const comments = await prisma.comment.findMany({
+      where: { postId },
+      take,
+      skip: cursor ? 1 : 0,
+      cursor: cursor ? { id: cursor } : undefined,
+      orderBy: { createdAt: "desc" },
+      include: getCommentDataInclude(user.id)
+    });
+
+    const nextCursor =
+      comments.length === take && comments[take - 1]
+        ? comments[take - 1].id
+        : null;
+
+    return Response.json({
+      comments,
+      previousCursor: nextCursor
+    });
+  } catch (error) {
+    console.error(error);
+    return Response.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
