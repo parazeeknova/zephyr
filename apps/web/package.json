@@ -13,7 +13,7 @@
     "@aws-sdk/s3-request-presigner": "^3.726.1",
     "@emotion/styled": "^11.14.0",
     "@hookform/resolvers": "^3.10.0",
-    "@mui/icons-material": "^6.3.1",
+    "@mui/icons-material": "^6.4.0",
     "@node-rs/argon2": "^2.0.2",
     "@prisma/client": "^6.2.1",
     "@radix-ui/react-avatar": "^1.1.2",
