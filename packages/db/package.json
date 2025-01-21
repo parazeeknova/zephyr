@@ -9,7 +9,7 @@
   "dependencies": {
     "date-fns": "^4.1.0",
     "ioredis": "^5.4.2",
-    "stream-chat": "^8.49.0"
+    "stream-chat": "^8.52.0"
   },
   "scripts": {
     "db:generate": "prisma generate --schema=./prisma/schema.prisma",
