@@ -8,11 +8,11 @@
     "@zephyr/db": "workspace:*",
     "date-fns": "^4.1.0",
     "ky": "^1.7.4",
-    "next": "15.1.4",
+    "next": "15.1.5",
     "react": "19.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22.10.5",
+    "@types/node": "^22.10.7",
     "@types/react": "19.0.6",
     "@zephyr/config": "workspace:*",
     "typescript": "^5.7.3"
