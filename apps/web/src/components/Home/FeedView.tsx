@@ -16,10 +16,8 @@ interface FeedViewProps {
 export const FeedView: React.FC<FeedViewProps> = ({ posts: initialPosts }) => {
   const MemoizedPostCard = useMemo(() => React.memo(PostCard), []);
   const queryClient = useQueryClient();
-  // Fix: Initialize state with initialPosts
   const [posts, setPosts] = useState<PostData[]>(initialPosts);
 
-  // Update local state when cache changes
   useEffect(() => {
     const unsubscribe = queryClient.getQueryCache().subscribe(() => {
       const feedQueries = queryClient.getQueriesData<{
@@ -42,7 +40,6 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts: initialPosts }) => {
     };
   }, [queryClient]);
 
-  // Update posts when initialPosts changes
   useEffect(() => {
     setPosts(initialPosts);
   }, [initialPosts]);

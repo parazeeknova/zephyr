@@ -1,13 +1,11 @@
 "use client";
 
-import { useInfiniteQuery } from "@tanstack/react-query";
-
 import kyInstance from "@/lib/ky";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
 import FeedViewSkeleton from "@zephyr-ui/Layouts/skeletons/FeedViewSkeleton";
 import LoadMoreSkeleton from "@zephyr-ui/Layouts/skeletons/LoadMoreSkeleton";
 import type { PostsPage } from "@zephyr/db";
-
 import FeedView from "./FeedView";
 
 export default function ForYouFeed() {
