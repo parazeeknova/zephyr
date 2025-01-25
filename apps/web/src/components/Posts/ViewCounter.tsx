@@ -32,14 +32,18 @@ export default function ViewTracker({ postId }: ViewTrackerProps) {
       debugLog.views(`Setting up IntersectionObserver for post: ${postId}`);
       observer = new IntersectionObserver(
         (entries) => {
-          // biome-ignore lint/complexity/noForEach: view tracking is simple
+          // biome-ignore lint/complexity/noForEach: This is a batch operation
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               debugLog.views(
                 `Post ${postId} is intersecting, triggering view increment`
               );
               incrementView();
-              observer?.disconnect();
+              // A small delay before disconnecting to ensure the view is counted
+              setTimeout(() => {
+                observer?.disconnect();
+                debugLog.views(`Disconnected observer for post ${postId}`);
+              }, 1000);
             }
           });
         },
