@@ -151,7 +151,11 @@ export const postViewsCache = {
       pipeline.sadd(POST_VIEWS_SET, postId);
       pipeline.incr(`${POST_VIEWS_KEY_PREFIX}${postId}`);
       const results = await pipeline.exec();
-      return (results?.[1]?.[1] as number) || 0;
+
+      const newCount = (results?.[1]?.[1] as number) || 0;
+      console.log(`Redis: Incremented view for post ${postId} to ${newCount}`);
+
+      return newCount;
     } catch (error) {
       console.error("Error incrementing post view:", error);
       return 0;
@@ -161,6 +165,7 @@ export const postViewsCache = {
   async getViews(postId: string): Promise<number> {
     try {
       const views = await redis.get(`${POST_VIEWS_KEY_PREFIX}${postId}`);
+      console.log(`Redis: Got views for post ${postId}: ${views}`);
       return Number.parseInt(views || "0");
     } catch (error) {
       console.error("Error getting post views:", error);

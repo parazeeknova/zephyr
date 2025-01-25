@@ -98,11 +98,13 @@ async function syncViewCounts() {
         const redisViews = Number(value) || 0;
         const dbViews = existingPostMap.get(postId) || 0;
 
-        // Only update if Redis views are higher than DB views
-        if (redisViews > dbViews) {
+        // Update if Redis views are different from DB views
+        if (redisViews !== dbViews) {
           updates.push({ postId, views: redisViews });
+          log(`Post ${postId}: Redis views ${redisViews}, DB views ${dbViews}`);
         } else {
           results.skippedPosts++;
+          log(`Post ${postId}: Skipped (Redis: ${redisViews}, DB: ${dbViews})`);
         }
       });
     }
