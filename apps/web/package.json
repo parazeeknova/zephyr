@@ -59,7 +59,7 @@
     "date-fns": "^4.1.0",
     "deep-email-validator": "^0.1.21",
     "email-validator": "^2.0.4",
-    "file-type": "^19.6.0",
+    "file-type": "^20.0.0",
     "framer-motion": "^12.0.0",
     "ioredis": "^5.4.2",
     "jotai": "^2.11.1",
