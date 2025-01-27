@@ -40,7 +40,7 @@
     "usehooks-ts": "^3.1.0"
   },
   "devDependencies": {
-    "@turbo/gen": "^2.3.3",
+    "@turbo/gen": "^2.3.4",
     "@types/node": "^22.10.7",
     "@types/react": "19.0.6",
     "@types/react-dom": "19.0.1",
