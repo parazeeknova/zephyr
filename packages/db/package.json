@@ -9,7 +9,7 @@
   "dependencies": {
     "date-fns": "^4.1.0",
     "ioredis": "^5.4.2",
-    "stream-chat": "^8.52.0"
+    "stream-chat": "^8.54.0"
   },
   "scripts": {
     "db:generate": "prisma generate --schema=./prisma/schema.prisma",
@@ -25,10 +25,10 @@
     "post:viewtest": "ts-node test/test-view-count.ts"
   },
   "devDependencies": {
-    "@prisma/client": "^6.2.1",
-    "@types/node": "^22.10.7",
+    "@prisma/client": "^6.3.0",
+    "@types/node": "^22.12.0",
     "@zephyr/config": "workspace:*",
-    "prisma": "^6.2.1",
+    "prisma": "^6.3.0",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
