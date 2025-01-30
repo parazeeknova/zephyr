@@ -97,12 +97,17 @@ async function syncViewCounts() {
 
         const redisViews = Number(value) || 0;
         const dbViews = existingPostMap.get(postId) || 0;
+        const totalViews = dbViews + redisViews;
 
-        // Only update if Redis views are higher than DB views
-        if (redisViews > dbViews) {
-          updates.push({ postId, views: redisViews });
+        // Only update if we have new views to add
+        if (redisViews > 0) {
+          updates.push({ postId, views: totalViews });
+          log(
+            `Post ${postId}: Adding Redis views ${redisViews} to DB views ${dbViews} = ${totalViews}`
+          );
         } else {
           results.skippedPosts++;
+          log(`Post ${postId}: Skipped (No new Redis views)`);
         }
       });
     }
@@ -140,6 +145,16 @@ async function syncViewCounts() {
         log(`❌ ${errorMessage}`);
         results.errors.push(errorMessage);
       }
+    }
+
+    if (updates.length > 0) {
+      const clearPipeline = redis.pipeline();
+      // biome-ignore lint/complexity/noForEach: This is a batch operation
+      updates.forEach(({ postId }) => {
+        clearPipeline.del(`${POST_VIEWS_KEY_PREFIX}${postId}`);
+      });
+      await clearPipeline.exec();
+      log(`Cleared Redis views for ${updates.length} updated posts`);
     }
 
     // 6. Clean up non-existent posts

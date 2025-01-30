@@ -5,6 +5,10 @@ export const debugLog = {
     if (DEBUG)
       console.log(`[Cache ${new Date().toISOString()}]`, message, ...args);
   },
+  views: (message: string, ...args: any[]) => {
+    if (DEBUG)
+      console.log(`[Views ${new Date().toISOString()}]`, message, ...args);
+  },
   mutation: (message: string, ...args: any[]) => {
     if (DEBUG)
       console.log(`[Mutation ${new Date().toISOString()}]`, message, ...args);
