@@ -267,11 +267,11 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       stream-chat:
-        specifier: ^8.54.0
-        version: 8.54.0
+        specifier: ^8.55.0
+        version: 8.55.0
       stream-chat-react:
         specifier: ^12.10.0
-        version: 12.10.0(@types/react@19.0.6)(jquery@3.7.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(stream-chat@8.54.0)
+        version: 12.10.0(@types/react@19.0.6)(jquery@3.7.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(stream-chat@8.55.0)
       tailwind-merge:
         specifier: ^2.6.0
         version: 2.6.0
@@ -398,8 +398,8 @@ importers:
         specifier: 19.0.0
         version: 19.0.0
       stream-chat:
-        specifier: ^8.54.0
-        version: 8.54.0
+        specifier: ^8.55.0
+        version: 8.55.0
       unsend:
         specifier: ^1.3.0
         version: 1.3.0
@@ -437,8 +437,8 @@ importers:
         specifier: ^5.4.2
         version: 5.4.2
       stream-chat:
-        specifier: ^8.54.0
-        version: 8.54.0
+        specifier: ^8.55.0
+        version: 8.55.0
     devDependencies:
       '@prisma/client':
         specifier: ^6.3.0
@@ -5145,8 +5145,8 @@ packages:
       emoji-mart:
         optional: true
 
-  stream-chat@8.54.0:
-    resolution: {integrity: sha512-RR+PtLHS1W1pZavl5LhzkzaZzrxxc//DzkkgZ9fcjQl2e29CepxhsYWCyqzlXGBd7X4025pMO+03KauPI2kDsw==}
+  stream-chat@8.55.0:
+    resolution: {integrity: sha512-mdgB6LrDwCojf2xuHME2pnZIoIzAgd++CSsGlk9a+AUhmZMLnFFuMfg18uav3h9dKdRcRfFIgXe+raJgV6uIgA==}
     engines: {node: '>=16'}
 
   streamsearch@1.1.0:
@@ -11407,7 +11407,7 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  stream-chat-react@12.10.0(@types/react@19.0.6)(jquery@3.7.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(stream-chat@8.54.0):
+  stream-chat-react@12.10.0(@types/react@19.0.6)(jquery@3.7.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(stream-chat@8.55.0):
     dependencies:
       '@braintree/sanitize-url': 6.0.4
       '@popperjs/core': 2.11.8
@@ -11437,7 +11437,7 @@ snapshots:
       react-textarea-autosize: 8.5.7(@types/react@19.0.6)(react@19.0.0)
       react-virtuoso: 2.19.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       remark-gfm: 3.0.1
-      stream-chat: 8.54.0
+      stream-chat: 8.55.0
       textarea-caret: 3.1.0
       tslib: 2.8.1
       unist-builder: 3.0.1
@@ -11451,7 +11451,7 @@ snapshots:
       - jquery
       - supports-color
 
-  stream-chat@8.54.0:
+  stream-chat@8.55.0:
     dependencies:
       '@babel/runtime': 7.26.7
       '@types/jsonwebtoken': 9.0.8

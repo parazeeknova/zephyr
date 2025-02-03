@@ -85,7 +85,7 @@
     "react-syntax-highlighter": "^15.6.1",
     "sonner": "^1.7.3",
     "stream-browserify": "^3.0.0",
-    "stream-chat": "^8.54.0",
+    "stream-chat": "^8.55.0",
     "stream-chat-react": "^12.10.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
