@@ -189,8 +189,8 @@ importers:
         specifier: ^2.0.4
         version: 2.0.4
       file-type:
-        specifier: ^20.0.0
-        version: 20.0.0
+        specifier: ^20.0.1
+        version: 20.0.1
       framer-motion:
         specifier: ^12.0.6
         version: 12.0.6(@emotion/is-prop-valid@1.3.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -3339,8 +3339,8 @@ packages:
     resolution: {integrity: sha512-QgXo+mXTe8ljeqUFaX3QVHc5osSItJ/Km+xpocx0aSqWGMSCf6qYs/VnzZgS864Pjn5iceMRFigeAV7AfTlaig==}
     engines: {node: '>= 12'}
 
-  file-type@20.0.0:
-    resolution: {integrity: sha512-w8Z+QqWtEPIfyoPx9lDhzR52UjY5PfZunJ6lmH48oCR2gVbV52Aaw2bVtbi7P4EAlSpjn8xmNDiRAieYaabEIQ==}
+  file-type@20.0.1:
+    resolution: {integrity: sha512-R80W+NZ+s1M8PsC8L7xn+J0N72vEyxstMH+4vwIyt5B7ojfG80h/nKu2Qw/NYJTIYyGUeaPNLnzfJd78SWnG3A==}
     engines: {node: '>=18'}
 
   fill-range@7.1.1:
@@ -4506,9 +4506,9 @@ packages:
   peberminta@0.9.0:
     resolution: {integrity: sha512-XIxfHpEuSJbITd1H3EeQwpcZbTLHc+VVr8ANI9t5sit565tsI4/xK3KWTUFE2e6QiangUkh3B0jihzmGnNrRsQ==}
 
-  peek-readable@6.0.1:
-    resolution: {integrity: sha512-xNq5beoWbsasOnKIcagBMYcmUjZrAoEtjbet3hbSwDbefZAWTHn/MVgPdJ0vlOBnwq5Kt0RYcrPN+3ORZnBtLA==}
-    engines: {node: '>=14.16'}
+  peek-readable@6.1.0:
+    resolution: {integrity: sha512-1H5ECS+rPH35Foh4JD/XohQKWsx6Jzn37ESOVTFuCSoI8wMB9r2e2aDSLgHSiyucVrPfoc0DRiipBEP1gr9wLw==}
+    engines: {node: '>=18'}
 
   picocolors@1.0.1:
     resolution: {integrity: sha512-anP1Z8qwhkbmu7MFP5iTt+wQKXgwzf7zTyGlcdzabySa9vd0Xt392U0rVmz9poOaBj0uHJKyyo9/upk0HrEQew==}
@@ -5192,9 +5192,9 @@ packages:
   strnum@1.0.5:
     resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
 
-  strtok3@10.1.1:
-    resolution: {integrity: sha512-1cG9J+Y6UtQi+zNkQQA+zeGm4EFgBBgEj17ztlHg7YgfxWWlCowukkvhnfEEJrfTfwVhzX/kwEo4fOL3ayxwPQ==}
-    engines: {node: '>=16'}
+  strtok3@10.2.0:
+    resolution: {integrity: sha512-S884oIGzokq3LkL/6jXw5c5oJXRiGt4jB42cuWdaooJdxFMSn99snaShh3cQmJx3jALV2eoyW3rV/TJxwOaBPA==}
+    engines: {node: '>=18'}
 
   style-to-object@0.4.4:
     resolution: {integrity: sha512-HYNoHZa2GorYNyqiCaBgsxvcJIn7OHq6inEga+E6Ke3m5JkoqpQbnFssk4jwe+K7AhGa2fcha4wSOf1Kn01dMg==}
@@ -9066,10 +9066,10 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  file-type@20.0.0:
+  file-type@20.0.1:
     dependencies:
       '@tokenizer/inflate': 0.2.6
-      strtok3: 10.1.1
+      strtok3: 10.2.0
       token-types: 6.0.0
       uint8array-extras: 1.4.0
     transitivePeerDependencies:
@@ -10641,7 +10641,7 @@ snapshots:
 
   peberminta@0.9.0: {}
 
-  peek-readable@6.0.1: {}
+  peek-readable@6.1.0: {}
 
   picocolors@1.0.1: {}
 
@@ -11510,10 +11510,10 @@ snapshots:
 
   strnum@1.0.5: {}
 
-  strtok3@10.1.1:
+  strtok3@10.2.0:
     dependencies:
       '@tokenizer/token': 0.3.0
-      peek-readable: 6.0.1
+      peek-readable: 6.1.0
 
   style-to-object@0.4.4:
     dependencies:
