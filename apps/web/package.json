@@ -68,7 +68,7 @@
     "lucia": "^3.2.2",
     "lucide-react": "^0.474.0",
     "mime-types": "^2.1.35",
-    "next": "15.1.5",
+    "next": "15.1.6",
     "next-themes": "^0.4.4",
     "prism-react-renderer": "^2.4.1",
     "process": "^0.11.10",
