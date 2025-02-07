@@ -43,7 +43,7 @@
     "@turbo/gen": "^2.4.0",
     "@types/node": "^22.13.1",
     "@types/react": "19.0.8",
-    "@types/react-dom": "19.0.1",
+    "@types/react-dom": "19.0.3",
     "@zephyr/config": "workspace:*",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.1",
