@@ -270,8 +270,8 @@ importers:
         specifier: ^8.55.0
         version: 8.55.0
       stream-chat-react:
-        specifier: ^12.10.0
-        version: 12.10.0(@types/react@19.0.8)(jquery@3.7.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(stream-chat@8.55.0)
+        specifier: ^12.11.0
+        version: 12.11.0(@types/react@19.0.8)(jquery@3.7.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(stream-chat@8.55.0)
       tailwind-merge:
         specifier: ^3.0.1
         version: 3.0.1
@@ -5010,8 +5010,8 @@ packages:
   stream-browserify@3.0.0:
     resolution: {integrity: sha512-H73RAHsVBapbim0tU2JwwOiXUj+fikfiaoYAKHF3VJfA0pe2BCzkhAHBlLG6REzE+2WNZcxOXjK7lkso+9euLA==}
 
-  stream-chat-react@12.10.0:
-    resolution: {integrity: sha512-eFCt2PqYl7BZ8HcHVzL1E/8OlrgPk96vv4LVL1z5CzOZ0dQhjGOYmchXIV1JEJJIj3octfRnHrN4N9aMwSZqUQ==}
+  stream-chat-react@12.11.0:
+    resolution: {integrity: sha512-eOElALxLYAhkCx7YEksl5SJWeoXxzEM6PijdgGBUU0+8m6RWXIVb2WAEsq7DBTtGLcsPP/8XztNtIrOugJyUGg==}
     peerDependencies:
       '@breezystack/lamejs': ^1.2.7
       '@emoji-mart/data': ^1.1.0
@@ -11171,7 +11171,7 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  stream-chat-react@12.10.0(@types/react@19.0.8)(jquery@3.7.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(stream-chat@8.55.0):
+  stream-chat-react@12.11.0(@types/react@19.0.8)(jquery@3.7.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(stream-chat@8.55.0):
     dependencies:
       '@braintree/sanitize-url': 6.0.4
       '@popperjs/core': 2.11.8
