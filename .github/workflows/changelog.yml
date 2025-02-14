@@ -26,7 +26,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           ref: development
 
       - name: Get current date
@@ -36,24 +36,12 @@ jobs:
       - name: Extract commit information
         id: commit-info
         run: |
-          # Get the first line of commit message
           COMMIT_MSG=$(echo "${{ github.event.head_commit.message }}" | head -n 1)
-          
-          # Remove merge commit prefix if present
-          COMMIT_MSG=$(echo "$COMMIT_MSG" | sed -E 's/^Merge pull request #[0-9]+ from [^[:space:]]+[[:space:]]+//')
-          
-          # Initialize variables with defaults
-          TYPE="Other Changes"
-          MESSAGE="$COMMIT_MSG"
-          SCOPE=""
-          
-          # Try to match conventional commit format
           if [[ $COMMIT_MSG =~ ^([a-z]+)\[([^\]]+)\]:[[:space:]]*(.*)$ ]]; then
             TYPE=${BASH_REMATCH[1]}
             SCOPE=${BASH_REMATCH[2]}
             MESSAGE=${BASH_REMATCH[3]}
             
-            # Convert type to readable format
             case $TYPE in
               feat) TYPE="Features" ;;
               fix) TYPE="Bug Fixes" ;;
@@ -68,20 +56,21 @@ jobs:
               revert) TYPE="Reverts" ;;
               *) TYPE="Other Changes" ;;
             esac
+            
+            {
+              echo "type=$TYPE"
+              echo "message=$MESSAGE"
+              echo "scope=$SCOPE"
+            } >> $GITHUB_OUTPUT
+          else
+            echo "type=Other Changes" >> $GITHUB_OUTPUT
+            echo "message=$COMMIT_MSG" >> $GITHUB_OUTPUT
+            echo "scope=" >> $GITHUB_OUTPUT
           fi
-          
-          # Escape special characters in MESSAGE
-          MESSAGE=$(echo "$MESSAGE" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
-          
-          {
-            echo "type=$TYPE"
-            echo "message=$MESSAGE"
-            echo "scope=$SCOPE"
-          } >> $GITHUB_OUTPUT
 
       - name: Update CHANGELOG.md
         run: |
-          # Create CHANGELOG.md if it doesn't exist
+          # Initialize CHANGELOG.md if it doesn't exist
           if [ ! -f CHANGELOG.md ]; then
             echo "# Changelog" > CHANGELOG.md
             echo "" >> CHANGELOG.md
@@ -89,36 +78,44 @@ jobs:
             echo "" >> CHANGELOG.md
           fi
           
-          # Prepare the new entry
-          ENTRY="## [${{ steps.date.outputs.date }}]"
-          ENTRY="$ENTRY\n### ${{ steps.commit-info.outputs.type }}"
+          DATE="${{ steps.date.outputs.date }}"
+          TYPE="${{ steps.commit-info.outputs.type }}"
+          MESSAGE="${{ steps.commit-info.outputs.message }}"
+          SCOPE="${{ steps.commit-info.outputs.scope }}"
           
-          if [ ! -z "${{ steps.commit-info.outputs.scope }}" ]; then
-            ENTRY="$ENTRY\n- ${{ steps.commit-info.outputs.message }} [${{ steps.commit-info.outputs.scope }}]"
+          # Create the new entry
+          NEW_ENTRY="## [$DATE]\n### $TYPE\n"
+          if [ ! -z "$SCOPE" ]; then
+            NEW_ENTRY+="- $MESSAGE [$SCOPE]"
           else
-            ENTRY="$ENTRY\n- ${{ steps.commit-info.outputs.message }}"
+            NEW_ENTRY+="- $MESSAGE"
           fi
           
-          # Add new entry after the header
-          if grep -q "# Changelog" CHANGELOG.md; then
-            sed -i "/# Changelog/a\\
-          \\
-          $ENTRY\\
-          " CHANGELOG.md
+          # Create a temporary file
+          TEMP_FILE=$(mktemp)
+          
+          # Add header if file is empty
+          if [ ! -s CHANGELOG.md ]; then
+            echo -e "# Changelog\n\nAll notable changes to this project will be documented in this file.\n" > "$TEMP_FILE"
           else
-            echo -e "# Changelog\n\n$ENTRY" > CHANGELOG.md
+            head -n 3 CHANGELOG.md > "$TEMP_FILE"
           fi
+          
+          # Add new entry
+          echo -e "\n$NEW_ENTRY\n" >> "$TEMP_FILE"
+          
+          # Add the rest of the existing changelog
+          if [ -s CHANGELOG.md ]; then
+            tail -n +4 CHANGELOG.md >> "$TEMP_FILE"
+          fi
+          
+          # Replace the original file
+          mv "$TEMP_FILE" CHANGELOG.md
 
       - name: Commit and push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          
-          # Check if there are changes to commit
-          if git diff --quiet CHANGELOG.md; then
-            echo "No changes to CHANGELOG.md"
-            exit 0
-          fi
           
           git add CHANGELOG.md
           git commit -m "docs: update changelog [skip ci] [skip changelog]"
