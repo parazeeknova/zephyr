@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 export default function DiscordSignInButton() {
   return (
@@ -35,8 +35,8 @@ function DiscordIcon() {
           x2="100%"
           y2="100%"
         >
-          <stop offset="0%" style={{ stopColor: "#5865F2" }} />
-          <stop offset="100%" style={{ stopColor: "#7289DA" }} />
+          <stop offset="0%" style={{ stopColor: '#5865F2' }} />
+          <stop offset="100%" style={{ stopColor: '#7289DA' }} />
         </linearGradient>
       </defs>
       <path

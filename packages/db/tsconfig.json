@@ -1,14 +1,8 @@
 {
-  "extends": "@zephyr/config/base.tsconfig.json",
+  "extends": "@zephyr/config/nextjs.config.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "paths": {
-      "ROOT": ["../../apps/web/src/*"]
-    },
-    "noEmit": false,
-    "outDir": "dist",
     "baseUrl": "."
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "tsup.config.ts"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

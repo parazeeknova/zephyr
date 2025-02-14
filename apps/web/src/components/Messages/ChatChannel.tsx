@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Menu } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Menu } from 'lucide-react';
 import {
   ChannelHeader,
   type ChannelHeaderProps,
   MessageInput,
   MessageList,
-  Window
-} from "stream-chat-react";
+  Window,
+} from 'stream-chat-react';
 
 interface ChatChannelProps {
   open: boolean;
@@ -16,7 +16,7 @@ interface ChatChannelProps {
 
 export default function ChatChannel({ open, openSidebar }: ChatChannelProps) {
   return (
-    <div className={cn("w-full md:block", !open && "hidden")}>
+    <div className={cn('w-full md:block', !open && 'hidden')}>
       <Window>
         <CustomChannelHeader openSidebar={openSidebar} />
         <MessageList />

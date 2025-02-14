@@ -1,10 +1,10 @@
-import { prisma, tagCache } from "@zephyr/db";
-import { NextResponse } from "next/server";
+import { prisma, tagCache } from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
-    const query = url.searchParams.get("q")?.toLowerCase();
+    const query = url.searchParams.get('q')?.toLowerCase();
 
     let tags: string[] = [];
 
@@ -18,13 +18,13 @@ export async function GET(req: Request) {
           where: {
             name: {
               contains: query,
-              mode: "insensitive"
-            }
+              mode: 'insensitive',
+            },
           },
           take: 10,
           orderBy: {
-            name: "asc"
-          }
+            name: 'asc',
+          },
         });
         tags = dbTags.map((t) => t.name);
       }
@@ -41,7 +41,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ tags });
   } catch (error) {
-    console.error("Error fetching tags:", error);
+    console.error('Error fetching tags:', error);
     return NextResponse.json({ tags: [] });
   }
 }

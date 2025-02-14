@@ -1,6 +1,6 @@
-import { rateLimitMiddleware } from "@/lib/rate-limiter";
-import { NextResponse } from "next/server";
-import { Unsend } from "unsend";
+import { rateLimitMiddleware } from '@/lib/rate-limiter';
+import { NextResponse } from 'next/server';
+import { Unsend } from 'unsend';
 
 let unsend: Unsend;
 
@@ -8,27 +8,27 @@ const initializeUnsend = () => {
   if (!unsend && process.env.UNSEND_API_KEY) {
     unsend = new Unsend(
       process.env.UNSEND_API_KEY,
-      "https://mails.zephyyrr.in"
+      'https://mails.zephyyrr.in'
     );
   } else if (!process.env.UNSEND_API_KEY) {
-    console.error("Missing UNSEND_API_KEY environment variable");
+    console.error('Missing UNSEND_API_KEY environment variable');
   }
 };
 
-const SENDER = "zephyyrr.in";
+const SENDER = 'zephyyrr.in';
 
 export async function POST(request: Request) {
   try {
     initializeUnsend();
     if (!unsend) {
       return NextResponse.json(
-        { error: "Email service not initialized" },
+        { error: 'Email service not initialized' },
         { status: 500 }
       );
     }
 
-    const forwardedFor = request.headers.get("x-forwarded-for");
-    const identifier = (forwardedFor?.split(",")[0] || "unknown").trim();
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const identifier = (forwardedFor?.split(',')[0] || 'unknown').trim();
 
     const rateLimitResponse = await rateLimitMiddleware(
       request,
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       attachments,
       category,
       os,
-      browser
+      browser,
     } = await request.json();
 
     const attachmentsList = attachments?.length
@@ -62,13 +62,13 @@ export async function POST(request: Request) {
              </li>
            `
              )
-             .join("")}
+             .join('')}
          </ul>`
-      : "";
+      : '';
 
     if (!process.env.SUPPORT_EMAIL) {
       return NextResponse.json(
-        { error: "Support email not configured" },
+        { error: 'Support email not configured' },
         { status: 500 }
       );
     }
@@ -89,20 +89,20 @@ export async function POST(request: Request) {
           <li>Browser: ${browser}</li>
         </ul>
         <h3>Message:</h3>
-        <p>${message.replace(/\n/g, "<br>")}</p>
+        <p>${message.replace(/\n/g, '<br>')}</p>
         ${attachmentsList}
         <hr>
         <p style="color: #666; font-size: 12px;">
           This support request was sent via the Zephyr Support System
         </p>
-      `
+      `,
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Support form error:", error);
+    console.error('Support form error:', error);
     return NextResponse.json(
-      { error: "Failed to send message" },
+      { error: 'Failed to send message' },
       { status: 500 }
     );
   }

@@ -1,18 +1,18 @@
-import { slugify } from "@/lib/utils";
-import { github, lucia, validateRequest } from "@zephyr/auth/auth";
-import { createStreamUser } from "@zephyr/auth/src";
-import { prisma } from "@zephyr/db";
-import { OAuth2RequestError } from "arctic";
-import { generateIdFromEntropySize } from "lucia";
-import { cookies } from "next/headers";
-import type { NextRequest } from "next/server";
+import { slugify } from '@/lib/utils';
+import { github, lucia, validateRequest } from '@zephyr/auth/auth';
+import { createStreamUser } from '@zephyr/auth/src';
+import { prisma } from '@zephyr/db';
+import { OAuth2RequestError } from 'arctic';
+import { generateIdFromEntropySize } from 'lucia';
+import { cookies } from 'next/headers';
+import type { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
   try {
-    const code = req.nextUrl.searchParams.get("code");
-    const state = req.nextUrl.searchParams.get("state");
-    const storedState = (await cookies()).get("state")?.value;
-    const isLinking = (await cookies()).get("linking")?.value === "true";
+    const code = req.nextUrl.searchParams.get('code');
+    const state = req.nextUrl.searchParams.get('state');
+    const storedState = (await cookies()).get('state')?.value;
+    const isLinking = (await cookies()).get('linking')?.value === 'true';
 
     if (!code || !state || !storedState || state !== storedState) {
       return new Response(null, { status: 400 });
@@ -23,11 +23,11 @@ export async function GET(req: NextRequest) {
       // @ts-expect-error
       const accessToken = tokens.data.access_token;
 
-      const githubUserResponse = await fetch("https://api.github.com/user", {
+      const githubUserResponse = await fetch('https://api.github.com/user', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          Accept: "application/json"
-        }
+          Accept: 'application/json',
+        },
       });
 
       if (!githubUserResponse.ok) {
@@ -38,11 +38,11 @@ export async function GET(req: NextRequest) {
 
       const githubUser = await githubUserResponse.json();
 
-      const emailsResponse = await fetch("https://api.github.com/user/emails", {
+      const emailsResponse = await fetch('https://api.github.com/user/emails', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          Accept: "application/json"
-        }
+          Accept: 'application/json',
+        },
       });
 
       if (!emailsResponse.ok) {
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
       const primaryEmail = emails.find((email: any) => email.primary)?.email;
 
       if (!primaryEmail) {
-        throw new Error("No primary email found");
+        throw new Error('No primary email found');
       }
 
       if (isLinking) {
@@ -64,60 +64,60 @@ export async function GET(req: NextRequest) {
           return new Response(null, {
             status: 302,
             headers: {
-              Location: "/login"
-            }
+              Location: '/login',
+            },
           });
         }
 
         const existingGithubUser = await prisma.user.findUnique({
           where: {
-            githubId: githubUser.id.toString()
-          }
+            githubId: githubUser.id.toString(),
+          },
         });
 
         if (existingGithubUser && existingGithubUser.id !== user.id) {
           return new Response(null, {
             status: 302,
             headers: {
-              Location: "/settings?error=github_account_linked_other"
-            }
+              Location: '/settings?error=github_account_linked_other',
+            },
           });
         }
 
         await prisma.user.update({
           where: { id: user.id },
-          data: { githubId: githubUser.id.toString() }
+          data: { githubId: githubUser.id.toString() },
         });
 
-        (await cookies()).set("linking", "", { maxAge: 0 });
+        (await cookies()).set('linking', '', { maxAge: 0 });
 
         return new Response(null, {
           status: 302,
           headers: {
-            Location: "/settings?success=github_linked"
-          }
+            Location: '/settings?success=github_linked',
+          },
         });
       }
 
       const existingUserWithEmail = await prisma.user.findUnique({
         where: {
-          email: primaryEmail
-        }
+          email: primaryEmail,
+        },
       });
 
       if (existingUserWithEmail && !existingUserWithEmail.githubId) {
         return new Response(null, {
           status: 302,
           headers: {
-            Location: `/login/error?error=email_exists&email=${encodeURIComponent(githubUser.email)}`
-          }
+            Location: `/login/error?error=email_exists&email=${encodeURIComponent(githubUser.email)}`,
+          },
         });
       }
 
       const existingGithubUser = await prisma.user.findUnique({
         where: {
-          githubId: githubUser.id.toString()
-        }
+          githubId: githubUser.id.toString(),
+        },
       });
 
       if (existingGithubUser) {
@@ -132,8 +132,8 @@ export async function GET(req: NextRequest) {
         return new Response(null, {
           status: 302,
           headers: {
-            Location: "/"
-          }
+            Location: '/',
+          },
         });
       }
 
@@ -149,8 +149,8 @@ export async function GET(req: NextRequest) {
             githubId: githubUser.id.toString(),
             email: primaryEmail,
             avatarUrl: githubUser.avatar_url,
-            emailVerified: true
-          }
+            emailVerified: true,
+          },
         });
 
         try {
@@ -160,7 +160,7 @@ export async function GET(req: NextRequest) {
             newUser.displayName
           );
         } catch (streamError) {
-          console.error("Failed to create Stream user:", streamError);
+          console.error('Failed to create Stream user:', streamError);
         }
 
         // @ts-expect-error
@@ -175,27 +175,27 @@ export async function GET(req: NextRequest) {
         return new Response(null, {
           status: 302,
           headers: {
-            Location: "/"
-          }
+            Location: '/',
+          },
         });
       } catch (error) {
-        console.error("Transaction error:", error);
+        console.error('Transaction error:', error);
         throw error;
       }
     } catch (error) {
-      console.error("GitHub API error:", error);
+      console.error('GitHub API error:', error);
       throw error;
     }
   } catch (error) {
-    console.error("Final error catch:", error);
+    console.error('Final error catch:', error);
     if (error instanceof OAuth2RequestError) {
       return new Response(null, { status: 400 });
     }
     return new Response(JSON.stringify({ error: String(error) }), {
       status: 500,
       headers: {
-        "Content-Type": "application/json"
-      }
+        'Content-Type': 'application/json',
+      },
     });
   }
 }

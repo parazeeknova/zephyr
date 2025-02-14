@@ -1,40 +1,18 @@
 {
-  "extends": "@zephyr/config/react.tsconfig.json",
+  "extends": "@zephyr/config/nextjs.config.json",
   "compilerOptions": {
-    "types": ["react", "react-markdown"],
-    "skipLibCheck": true,
-    "typeRoots": ["./node_modules/@types", "./src/types"],
     "baseUrl": ".",
-    "jsxImportSource": "react",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "paths": {
       "@/*": ["./src/*"],
       "@zephyr-ui/*": ["./src/components/*"],
       "@zephyr-assets/*": ["./src/app/assets/*"]
-    },
-    "noEmit": true,
-    "allowJs": true,
-    "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
-    "strictNullChecks": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true
+    }
   },
   "include": [
     "next-env.d.ts",
     "next.config.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "src/types/**/*.d.ts"
-  ],
-  "exclude": ["node_modules", ".next", "dist", "**/node_modules/*", ".pnpm"]
+    ".next/types/**/*.ts"
+  ]
 }

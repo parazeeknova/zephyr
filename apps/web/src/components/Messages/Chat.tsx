@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { useSession } from "@/app/(main)/SessionProvider";
-import { Button } from "@/components/ui/button";
-import useInitializeChatClient from "@/hooks/useInitializeChatClient";
-import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
-import SuggestedConnections from "@zephyr-ui/Home/sidebars/right/SuggestedConnections";
-import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
-import ChatSkeleton from "@zephyr-ui/Layouts/skeletons/ChatSkeleton";
-import { motion } from "framer-motion";
-import { MessageSquarePlus } from "lucide-react";
-import { useTheme } from "next-themes";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Channel, Chat as StreamChat } from "stream-chat-react";
-import ChatChannel from "./ChatChannel";
-import ChatSidebar from "./ChatSidebar";
-import { ChatThemeProvider } from "./ChatThemeProvider";
+import { useSession } from '@/app/(main)/SessionProvider';
+import { Button } from '@/components/ui/button';
+import useInitializeChatClient from '@/hooks/useInitializeChatClient';
+import NavigationCard from '@zephyr-ui/Home/sidebars/left/NavigationCard';
+import SuggestedConnections from '@zephyr-ui/Home/sidebars/right/SuggestedConnections';
+import StickyFooter from '@zephyr-ui/Layouts/StinkyFooter';
+import ChatSkeleton from '@zephyr-ui/Layouts/skeletons/ChatSkeleton';
+import { motion } from 'framer-motion';
+import { MessageSquarePlus } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Channel, Chat as StreamChat } from 'stream-chat-react';
+import ChatChannel from './ChatChannel';
+import ChatSidebar from './ChatSidebar';
+import { ChatThemeProvider } from './ChatThemeProvider';
 
 const WelcomeScreen = ({ onNewChat }: { onNewChat: () => void }) => {
   return (
@@ -65,23 +65,23 @@ export default function Chat() {
   const router = useRouter();
   const { chatClient, isLoading, isConfigured, error } =
     useInitializeChatClient();
-  const isProd = process.env.NODE_ENV === "production";
+  const isProd = process.env.NODE_ENV === 'production';
 
   useEffect(() => {
-    console.debug("[Chat] Status:", {
+    console.debug('[Chat] Status:', {
       isLoading,
       isConfigured,
       hasClient: !!chatClient,
       hasError: !!error,
-      streamKey: process.env.NEXT_PUBLIC_STREAM_KEY ? "Set" : "Not Set",
+      streamKey: process.env.NEXT_PUBLIC_STREAM_KEY ? 'Set' : 'Not Set',
       env: process.env.NODE_ENV,
       userId: session.user?.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     if (!isProd && !isLoading && !isConfigured) {
-      console.warn("[Chat] Stream not configured, redirecting... (dev only)");
-      router.replace("/messages/not-configured");
+      console.warn('[Chat] Stream not configured, redirecting... (dev only)');
+      router.replace('/messages/not-configured');
       return;
     }
   }, [isLoading, isConfigured, chatClient, router, isProd, session, error]);
@@ -91,7 +91,7 @@ export default function Chat() {
   }
 
   if (error && isProd) {
-    console.error("[Chat] Error:", error);
+    console.error('[Chat] Error:', error);
   }
 
   if (!chatClient && !isProd) {
@@ -121,9 +121,9 @@ export default function Chat() {
             <StreamChat
               client={chatClient}
               theme={
-                resolvedTheme === "dark"
-                  ? "str-chat__theme-dark"
-                  : "str-chat__theme-light"
+                resolvedTheme === 'dark'
+                  ? 'str-chat__theme-dark'
+                  : 'str-chat__theme-light'
               }
             >
               <div className="flex h-full w-full">

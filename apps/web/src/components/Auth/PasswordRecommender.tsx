@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import type { SignUpValues } from "@zephyr/auth/validation";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Lightbulb, Wand2 } from "lucide-react";
-import { useState } from "react";
-import type { UseFormSetValue } from "react-hook-form";
+import type { SignUpValues } from '@zephyr/auth/validation';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, Lightbulb, Wand2 } from 'lucide-react';
+import { useState } from 'react';
+import type { UseFormSetValue } from 'react-hook-form';
 
 interface Requirement {
   text: string;
@@ -22,12 +22,12 @@ export function PasswordRecommender({
   password,
   requirements,
   setValue,
-  setPassword
+  setPassword,
 }: PasswordRecommenderProps) {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generateRecommendation = (password: string): string => {
-    if (!password) return "";
+    if (!password) return '';
 
     let recommendation = password;
     let failedRequirements = requirements.filter(
@@ -38,30 +38,30 @@ export function PasswordRecommender({
     // biome-ignore lint/complexity/noForEach: <explanation>
     failedRequirements.forEach((req) => {
       switch (req.text) {
-        case "At least 8 characters long": {
+        case 'At least 8 characters long': {
           while (recommendation.length < 8) {
             const missingRequirements = requirements.filter(
               (r) => !r.validator(recommendation)
             );
             // Add characters that help meet other requirements too - @parazeeknova
-            if (missingRequirements.some((r) => r.text.includes("uppercase"))) {
-              recommendation += "K";
+            if (missingRequirements.some((r) => r.text.includes('uppercase'))) {
+              recommendation += 'K';
             } else if (
-              missingRequirements.some((r) => r.text.includes("number"))
+              missingRequirements.some((r) => r.text.includes('number'))
             ) {
               recommendation += Math.floor(Math.random() * 9) + 1;
             } else if (
-              missingRequirements.some((r) => r.text.includes("special"))
+              missingRequirements.some((r) => r.text.includes('special'))
             ) {
-              recommendation += "@$!%*?&#"[Math.floor(Math.random() * 8)];
+              recommendation += '@$!%*?&#'[Math.floor(Math.random() * 8)];
             } else {
-              recommendation += "x";
+              recommendation += 'x';
             }
           }
           break;
         }
 
-        case "Contains at least one uppercase letter":
+        case 'Contains at least one uppercase letter':
           if (!/[A-Z]/.test(recommendation)) {
             const letterMatch = recommendation.match(/[a-z]/);
             if (letterMatch) {
@@ -71,37 +71,37 @@ export function PasswordRecommender({
                 recommendation.charAt(pos).toUpperCase() +
                 recommendation.slice(pos + 1);
             } else {
-              recommendation += "K";
+              recommendation += 'K';
             }
           }
           break;
 
-        case "Contains at least one lowercase letter":
+        case 'Contains at least one lowercase letter':
           if (!/[a-z]/.test(recommendation)) {
-            recommendation += "x";
+            recommendation += 'x';
           }
           break;
 
-        case "Contains at least one number": {
+        case 'Contains at least one number': {
           if (!/[0-9]/.test(recommendation)) {
             const numberMappings: Record<string, string> = {
-              o: "0",
-              i: "1",
-              z: "2",
-              e: "3",
-              a: "4",
-              s: "5",
-              g: "6",
-              t: "7",
-              b: "8",
-              q: "9"
+              o: '0',
+              i: '1',
+              z: '2',
+              e: '3',
+              a: '4',
+              s: '5',
+              g: '6',
+              t: '7',
+              b: '8',
+              q: '9',
             };
 
             let numberAdded = false;
             for (const [letter, num] of Object.entries(numberMappings)) {
               if (recommendation.toLowerCase().includes(letter)) {
                 recommendation = recommendation.replace(
-                  new RegExp(letter, "i"),
+                  new RegExp(letter, 'i'),
                   num
                 );
                 numberAdded = true;
@@ -116,23 +116,23 @@ export function PasswordRecommender({
           break;
         }
 
-        case "Contains at least one special character": {
+        case 'Contains at least one special character': {
           if (!/[@$!%*?&#]/.test(recommendation)) {
             const specialMappings: Record<string, string> = {
-              a: "@",
-              i: "!",
-              s: "$",
-              h: "#",
-              o: "*",
-              x: "%",
-              n: "&"
+              a: '@',
+              i: '!',
+              s: '$',
+              h: '#',
+              o: '*',
+              x: '%',
+              n: '&',
             };
 
             let specialAdded = false;
             for (const [letter, special] of Object.entries(specialMappings)) {
               if (recommendation.toLowerCase().includes(letter)) {
                 recommendation = recommendation.replace(
-                  new RegExp(letter, "i"),
+                  new RegExp(letter, 'i'),
                   special
                 );
                 specialAdded = true;
@@ -141,23 +141,23 @@ export function PasswordRecommender({
             }
 
             if (!specialAdded) {
-              recommendation += "@";
+              recommendation += '@';
             }
           }
           break;
         }
 
-        case "No repeated characters (3+ times)":
+        case 'No repeated characters (3+ times)':
           recommendation = recommendation.replace(/(.)\1{2,}/g, (match) => {
             const char = match[0];
             // @ts-expect-error - TS doesn't recognize the key exists
             const alternatives: Record<string, string[]> = {
-              a: ["@", "4"],
-              e: ["3"],
-              i: ["1", "!"],
-              o: ["0", "*"],
-              s: ["$", "5"],
-              t: ["7", "+"]
+              a: ['@', '4'],
+              e: ['3'],
+              i: ['1', '!'],
+              o: ['0', '*'],
+              s: ['$', '5'],
+              t: ['7', '+'],
             }[char?.toLowerCase() as keyof typeof alternatives] || [char];
 
             return (
@@ -169,16 +169,16 @@ export function PasswordRecommender({
           });
           break;
 
-        case "No common sequences (123, abc)":
+        case 'No common sequences (123, abc)':
           recommendation = recommendation
-            .replace(/123/g, "1#3")
-            .replace(/abc/gi, "@bc")
-            .replace(/xyz/gi, "x*z")
-            .replace(/qwe/gi, "q$e")
-            .replace(/password/gi, "p@$$w0rd")
-            .replace(/admin/gi, "@dm!n")
-            .replace(/user/gi, "u$er")
-            .replace(/login/gi, "l0g!n");
+            .replace(/123/g, '1#3')
+            .replace(/abc/gi, '@bc')
+            .replace(/xyz/gi, 'x*z')
+            .replace(/qwe/gi, 'q$e')
+            .replace(/password/gi, 'p@$$w0rd')
+            .replace(/admin/gi, '@dm!n')
+            .replace(/user/gi, 'u$er')
+            .replace(/login/gi, 'l0g!n');
           break;
       }
 
@@ -203,10 +203,10 @@ export function PasswordRecommender({
   const handleUseRecommendation = () => {
     setIsGenerating(true);
     if (setValue) {
-      setValue("password", recommendedPassword, {
+      setValue('password', recommendedPassword, {
         shouldValidate: true,
         shouldDirty: true,
-        shouldTouch: true
+        shouldTouch: true,
       });
       setPassword(recommendedPassword);
     }
@@ -250,7 +250,7 @@ export function PasswordRecommender({
                       transition={{
                         duration: 1,
                         repeat: Number.POSITIVE_INFINITY,
-                        ease: "linear"
+                        ease: 'linear',
                       }}
                     >
                       <Wand2 className="size-3" />

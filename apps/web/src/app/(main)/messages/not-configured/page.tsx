@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { HelpLink } from "@/components/Animations/ImageLinkPreview";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import messagesImage from "@zephyr-assets/fallback.png";
-import { getEnvironmentMode, getStreamConfig } from "@zephyr/config/src/env";
-import { motion } from "framer-motion";
-import { AlertCircle, ExternalLink } from "lucide-react";
-import Link from "next/link";
-import { useMemo } from "react";
+import { HelpLink } from '@/components/Animations/ImageLinkPreview';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import messagesImage from '@zephyr-assets/fallback.png';
+import { getEnvironmentMode, getStreamConfig } from '@zephyr/config/src/env';
+import { motion } from 'framer-motion';
+import { AlertCircle, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import { useMemo } from 'react';
 
 export default function StreamChatNotConfigured() {
   const config = getStreamConfig();
@@ -17,7 +17,7 @@ export default function StreamChatNotConfigured() {
 
   const missingEnvs = {
     NEXT_PUBLIC_STREAM_KEY: !config.apiKey,
-    STREAM_SECRET: !config.secret
+    STREAM_SECRET: !config.secret,
   };
 
   const auroras = useMemo(() => {
@@ -30,7 +30,7 @@ export default function StreamChatNotConfigured() {
         left: `${(i * 35) % 100}%`,
         delay: i * 0.8,
         duration: 8 + i * 3,
-        opacity: 0.2 + Math.random() * 0.1
+        opacity: 0.2 + Math.random() * 0.1,
       }));
   }, []);
 
@@ -43,19 +43,19 @@ export default function StreamChatNotConfigured() {
             key={i}
             initial={{
               opacity: 0,
-              scale: 0.8
+              scale: 0.8,
             }}
             animate={{
               opacity: [aurora.opacity, aurora.opacity * 1.2, aurora.opacity],
               scale: [1, 1.1, 1],
-              rotate: [0, 180, 0]
+              rotate: [0, 180, 0],
             }}
             transition={{
               duration: aurora.duration,
               repeat: Number.POSITIVE_INFINITY,
-              repeatType: "reverse",
-              ease: "easeInOut",
-              delay: aurora.delay
+              repeatType: 'reverse',
+              ease: 'easeInOut',
+              delay: aurora.delay,
             }}
             className="absolute rounded-full blur-[100px]"
             style={{
@@ -65,8 +65,8 @@ export default function StreamChatNotConfigured() {
               left: aurora.left,
               background:
                 i % 2 === 0
-                  ? "radial-gradient(circle at center, rgba(147,51,234,0.4), transparent 70%)"
-                  : "radial-gradient(circle at center, rgba(236,72,153,0.4), transparent 70%)"
+                  ? 'radial-gradient(circle at center, rgba(147,51,234,0.4), transparent 70%)'
+                  : 'radial-gradient(circle at center, rgba(236,72,153,0.4), transparent 70%)',
             }}
           />
         ))}
@@ -109,7 +109,7 @@ export default function StreamChatNotConfigured() {
                 </p>
                 <p className="text-muted-foreground text-sm">
                   If you're seeing this in production, please contact the system
-                  administrator immediately at{" "}
+                  administrator immediately at{' '}
                   <a
                     href={`mailto:${process.env.SUPPORT_EMAIL}`}
                     className="text-primary hover:underline"
@@ -156,10 +156,10 @@ export default function StreamChatNotConfigured() {
                 <li>Create or select your application</li>
                 <li>Copy the API key and secret</li>
                 <li>
-                  Add them to your{" "}
+                  Add them to your{' '}
                   <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
                     .env
-                  </code>{" "}
+                  </code>{' '}
                   file
                 </li>
               </ol>

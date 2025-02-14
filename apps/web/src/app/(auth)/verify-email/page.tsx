@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { AnimatePresence, motion } from "framer-motion";
-import { XCircle } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Button } from '@/components/ui/button';
+import { AnimatePresence, motion } from 'framer-motion';
+import { XCircle } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const ERROR_MESSAGES = {
-  "invalid-token": "The verification link is invalid.",
-  "token-expired": "The verification link has expired.",
-  "verification-failed": "Email verification failed.",
-  "server-error": "An error occurred. Please try again."
+  'invalid-token': 'The verification link is invalid.',
+  'token-expired': 'The verification link has expired.',
+  'verification-failed': 'Email verification failed.',
+  'server-error': 'An error occurred. Please try again.',
 };
 
 const VerificationAnimation = () => {
@@ -75,7 +75,7 @@ const VerificationAnimation = () => {
           transition={{
             duration: 2,
             repeat: Number.POSITIVE_INFINITY,
-            ease: "linear"
+            ease: 'linear',
           }}
         />
       </div>
@@ -112,7 +112,7 @@ const VerificationAnimation = () => {
               duration: 1,
               repeat: Number.POSITIVE_INFINITY,
               delay: i * 0.2,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
         ))}
@@ -122,7 +122,7 @@ const VerificationAnimation = () => {
 };
 
 const AnimatedZephyrText = () => {
-  const letters = "ZEPHYR.".split("");
+  const letters = 'ZEPHYR.'.split('');
 
   return (
     <motion.div
@@ -139,18 +139,18 @@ const AnimatedZephyrText = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{
               opacity: [0, 1, 1, 0.3, 1],
-              y: [20, 0, 0, 0, 0]
+              y: [20, 0, 0, 0, 0],
             }}
             transition={{
               duration: 4,
               repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: i * 0.1,
-              times: [0, 0.2, 0.5, 0.8, 1]
+              times: [0, 0.2, 0.5, 0.8, 1],
             }}
             style={{
-              textShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-              display: "inline-block"
+              textShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+              display: 'inline-block',
             }}
           >
             {letter}
@@ -162,15 +162,15 @@ const AnimatedZephyrText = () => {
         initial={{ scaleX: 0 }}
         animate={{
           scaleX: [0, 1, 1, 1, 0],
-          opacity: [0, 1, 1, 0.3, 0]
+          opacity: [0, 1, 1, 0.3, 0],
         }}
         transition={{
           duration: 4,
           repeat: Number.POSITIVE_INFINITY,
-          ease: "easeInOut",
-          times: [0, 0.2, 0.5, 0.8, 1]
+          ease: 'easeInOut',
+          times: [0, 0.2, 0.5, 0.8, 1],
         }}
-        style={{ transformOrigin: "left" }}
+        style={{ transformOrigin: 'left' }}
       />
     </motion.div>
   );
@@ -179,29 +179,29 @@ const AnimatedZephyrText = () => {
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [status, setStatus] = useState<"loading" | "success" | "error">(
-    "loading"
+  const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
+    'loading'
   );
-  const verificationChannel = new BroadcastChannel("email-verification");
+  const verificationChannel = new BroadcastChannel('email-verification');
 
   useEffect(() => {
-    const error = searchParams.get("error");
-    const token = searchParams.get("token");
-    const verified = searchParams.get("verified");
+    const error = searchParams.get('error');
+    const token = searchParams.get('token');
+    const verified = searchParams.get('verified');
 
     if (verified) {
-      verificationChannel.postMessage("verification-success");
+      verificationChannel.postMessage('verification-success');
       window.close();
-      router.push("/");
+      router.push('/');
       return;
     }
 
     if (error) {
-      setStatus("error");
+      setStatus('error');
     } else if (token) {
       router.push(`/api/verify-email?token=${token}`);
     } else {
-      setStatus("error");
+      setStatus('error');
     }
 
     return () => {
@@ -209,10 +209,10 @@ export default function VerifyEmailPage() {
     };
   }, [searchParams, router]);
 
-  const error = searchParams.get("error");
+  const error = searchParams.get('error');
   const errorMessage = error
     ? ERROR_MESSAGES[error as keyof typeof ERROR_MESSAGES]
-    : "Invalid verification link";
+    : 'Invalid verification link';
 
   return (
     <AnimatePresence>
@@ -235,9 +235,9 @@ export default function VerifyEmailPage() {
             transition={{ duration: 0.5 }}
             className="w-full max-w-md rounded-lg border border-border/50 bg-background/60 p-8 shadow-lg backdrop-blur-xl"
           >
-            {status === "loading" && <VerificationAnimation />}
+            {status === 'loading' && <VerificationAnimation />}
 
-            {status === "error" && (
+            {status === 'error' && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -251,7 +251,7 @@ export default function VerifyEmailPage() {
                   {errorMessage}
                 </p>
                 <Button
-                  onClick={() => router.push("/login")}
+                  onClick={() => router.push('/login')}
                   className="mt-4 w-full"
                 >
                   Back to Login

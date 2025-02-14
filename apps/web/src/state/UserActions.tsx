@@ -1,15 +1,15 @@
-"use server";
+'use server';
 
-import { Prisma } from "@prisma/client";
-import { validateRequest } from "@zephyr/auth/auth";
-import { prisma } from "@zephyr/db";
+import { Prisma } from '@prisma/client';
+import { validateRequest } from '@zephyr/auth/auth';
+import { prisma } from '@zephyr/db';
 
 export async function getSuggestedConnections() {
   try {
     const { user } = await validateRequest();
 
     if (!user) {
-      throw new Error("User not authenticated");
+      throw new Error('User not authenticated');
     }
 
     const suggestedUsers = await prisma.user.findMany({
@@ -20,12 +20,12 @@ export async function getSuggestedConnections() {
             {
               followers: {
                 some: {
-                  followerId: user.id
-                }
-              }
-            }
-          ]
-        }
+                  followerId: user.id,
+                },
+              },
+            },
+          ],
+        },
       },
       select: {
         id: true,
@@ -35,9 +35,9 @@ export async function getSuggestedConnections() {
         aura: true,
         _count: {
           select: {
-            followers: true
-          }
-        }
+            followers: true,
+          },
+        },
       },
       orderBy: [
         ...(Math.random() > 0.3
@@ -45,19 +45,19 @@ export async function getSuggestedConnections() {
           : [
               {
                 followers: {
-                  _count: Prisma.SortOrder.desc
-                }
-              }
-            ])
+                  _count: Prisma.SortOrder.desc,
+                },
+              },
+            ]),
       ],
-      take: 10
+      take: 10,
     });
 
     const shuffled = suggestedUsers.sort(() => Math.random() - 0.5).slice(0, 5);
 
     return JSON.parse(JSON.stringify(shuffled));
   } catch (error) {
-    console.error("Error in getSuggestedConnections:", error);
-    throw new Error("Failed to fetch suggested connections");
+    console.error('Error in getSuggestedConnections:', error);
+    throw new Error('Failed to fetch suggested connections');
   }
 }

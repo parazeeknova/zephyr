@@ -1,29 +1,29 @@
-"use client";
+'use client';
 
-import { requestPasswordReset } from "@/app/(auth)/reset-password/server-actions";
-import { useToast } from "@/hooks/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import resetImage from "@zephyr-assets/password-reset-image.jpg";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, KeyRound, Mail } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { requestPasswordReset } from '@/app/(auth)/reset-password/server-actions';
+import { useToast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import resetImage from '@zephyr-assets/password-reset-image.jpg';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowLeft, KeyRound, Mail } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { LoadingButton } from "./LoadingButton";
+  FormMessage,
+} from '../ui/form';
+import { Input } from '../ui/input';
+import { LoadingButton } from './LoadingButton';
 
 const schema = z.object({
-  email: z.string().email("Please enter a valid email address")
+  email: z.string().email('Please enter a valid email address'),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -35,9 +35,9 @@ const containerVariants = {
     opacity: 1,
     transition: {
       duration: 0.5,
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 const itemVariants = {
@@ -46,9 +46,9 @@ const itemVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5
-    }
-  }
+      duration: 0.5,
+    },
+  },
 };
 
 const floatAnimation = {
@@ -58,9 +58,9 @@ const floatAnimation = {
     transition: {
       duration: 6,
       repeat: Number.POSITIVE_INFINITY,
-      ease: "easeInOut"
-    }
-  }
+      ease: 'easeInOut',
+    },
+  },
 };
 
 export default function ResetPasswordForm() {
@@ -71,9 +71,9 @@ export default function ResetPasswordForm() {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      email: ""
+      email: '',
     },
-    mode: "onChange"
+    mode: 'onChange',
   });
 
   async function onSubmit(values: FormValues) {
@@ -83,24 +83,24 @@ export default function ResetPasswordForm() {
 
         if (result.error) {
           toast({
-            variant: "destructive",
-            title: "Error",
-            description: result.error
+            variant: 'destructive',
+            title: 'Error',
+            description: result.error,
           });
           return;
         }
 
         setIsEmailSent(true);
         toast({
-          title: "Check Your Email",
+          title: 'Check Your Email',
           description:
-            "If an account exists, you'll receive password reset instructions."
+            "If an account exists, you'll receive password reset instructions.",
         });
       } catch (_error) {
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to send reset email. Please try again."
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Failed to send reset email. Please try again.',
         });
       }
     });
@@ -115,12 +115,12 @@ export default function ResetPasswordForm() {
           // @ts-expect-error
           className="absolute inset-0 rounded-full border-4 border-blue-400/20"
           animate={{
-            rotate: 360
+            rotate: 360,
           }}
           transition={{
             duration: 8,
-            ease: "linear",
-            repeat: Number.POSITIVE_INFINITY
+            ease: 'linear',
+            repeat: Number.POSITIVE_INFINITY,
           }}
         />
 
@@ -129,12 +129,12 @@ export default function ResetPasswordForm() {
           // @ts-expect-error
           className="absolute inset-2 rounded-full border-4 border-blue-400/30"
           animate={{
-            rotate: -360
+            rotate: -360,
           }}
           transition={{
             duration: 4,
-            ease: "linear",
-            repeat: Number.POSITIVE_INFINITY
+            ease: 'linear',
+            repeat: Number.POSITIVE_INFINITY,
           }}
         />
 
@@ -144,12 +144,12 @@ export default function ResetPasswordForm() {
           className="absolute inset-0 flex items-center justify-center"
           animate={{
             scale: [1, 1.1, 1],
-            opacity: [0.5, 1, 0.5]
+            opacity: [0.5, 1, 0.5],
           }}
           transition={{
             duration: 2,
-            ease: "easeInOut",
-            repeat: Number.POSITIVE_INFINITY
+            ease: 'easeInOut',
+            repeat: Number.POSITIVE_INFINITY,
           }}
         >
           <div className="rounded-full bg-blue-400/10 p-4 backdrop-blur-sm">
@@ -168,13 +168,13 @@ export default function ResetPasswordForm() {
               scale: [0, 1, 0],
               x: [0, Math.cos((i * Math.PI * 2) / 3) * 50],
               y: [0, Math.sin((i * Math.PI * 2) / 3) * 50],
-              opacity: [0, 1, 0]
+              opacity: [0, 1, 0],
             }}
             transition={{
               duration: 2,
               delay: i * 0.6,
               repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
         ))}
@@ -204,9 +204,9 @@ export default function ResetPasswordForm() {
             <h1
               className="absolute origin-center rotate-90 transform select-none whitespace-nowrap font-bold text-6xl text-blue-400/20 tracking-wider xl:text-8xl 2xl:text-9xl"
               style={{
-                transformOrigin: "center",
-                right: "-50%",
-                transform: "translateX(50%) translateY(-50%) rotate(90deg)"
+                transformOrigin: 'center',
+                right: '-50%',
+                transform: 'translateX(50%) translateY(-50%) rotate(90deg)',
               }}
             >
               RESET
@@ -220,7 +220,7 @@ export default function ResetPasswordForm() {
             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-card/40 shadow-2xl backdrop-blur-xl lg:flex-row"
             variants={itemVariants}
             whileHover={{
-              boxShadow: "0 25px 50px -12px rgba(59, 130, 246, 0.25)"
+              boxShadow: '0 25px 50px -12px rgba(59, 130, 246, 0.25)',
             }}
           >
             <div className="relative z-10 flex w-full flex-col justify-center px-6 py-12 sm:px-8 lg:w-1/2">
@@ -302,7 +302,7 @@ export default function ResetPasswordForm() {
                                       type="email"
                                       placeholder="Enter your email"
                                       className="pr-10 focus-visible:ring-blue-400"
-                                      value={field.value ?? ""}
+                                      value={field.value ?? ''}
                                     />
                                     <Mail className="-translate-y-1/2 absolute top-1/2 right-3 h-4 w-4 text-muted-foreground" />
                                   </div>
@@ -332,7 +332,7 @@ export default function ResetPasswordForm() {
               className="relative min-h-[200px] w-full bg-blue-400/80 lg:min-h-[600px] lg:w-1/2"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
             >
               <motion.div
                 // @ts-expect-error
@@ -359,7 +359,7 @@ export default function ResetPasswordForm() {
           className="absolute top-0 left-0 h-full w-full bg-center bg-cover opacity-5 blur-md lg:w-1/2"
           style={{
             backgroundImage: `url(${resetImage.src})`,
-            backgroundColor: "rgba(96, 165, 250, 0.1)"
+            backgroundColor: 'rgba(96, 165, 250, 0.1)',
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.05 }}

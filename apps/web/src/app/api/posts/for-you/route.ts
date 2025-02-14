@@ -1,20 +1,20 @@
-import type { Prisma } from "@prisma/client";
-import { validateRequest } from "@zephyr/auth/auth";
-import { type PostsPage, getPostDataInclude, prisma } from "@zephyr/db";
-import { tagCache } from "@zephyr/db";
-import { type NextRequest, NextResponse } from "next/server";
+import type { Prisma } from '@prisma/client';
+import { validateRequest } from '@zephyr/auth/auth';
+import { type PostsPage, getPostDataInclude, prisma } from '@zephyr/db';
+import { tagCache } from '@zephyr/db';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   try {
-    const cursor = req.nextUrl.searchParams.get("cursor");
+    const cursor = req.nextUrl.searchParams.get('cursor');
     const tags = req.nextUrl.searchParams
-      .get("tags")
-      ?.split(",")
+      .get('tags')
+      ?.split(',')
       .filter((tag: string) => Boolean(tag));
 
     const { user } = await validateRequest();
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const pageSize = 8;
@@ -26,10 +26,10 @@ export async function GET(req: NextRequest) {
           include: {
             _count: {
               select: {
-                posts: true
-              }
-            }
-          }
+                posts: true,
+              },
+            },
+          },
         },
         mentions: {
           include: {
@@ -38,13 +38,13 @@ export async function GET(req: NextRequest) {
                 id: true,
                 username: true,
                 displayName: true,
-                avatarUrl: true
-              }
-            }
-          }
-        }
+                avatarUrl: true,
+              },
+            },
+          },
+        },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       take: pageSize + 1,
       cursor: cursor ? { id: cursor } : undefined,
       where: tags?.length
@@ -52,12 +52,12 @@ export async function GET(req: NextRequest) {
             tags: {
               some: {
                 name: {
-                  in: tags
-                }
-              }
-            }
+                  in: tags,
+                },
+              },
+            },
           }
-        : undefined
+        : undefined,
     };
 
     const posts = await prisma.post.findMany(query);
@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
     if (!posts) {
       return NextResponse.json({
         posts: [],
-        nextCursor: null as string | null
+        nextCursor: null as string | null,
       } satisfies PostsPage);
     }
 
@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
           // @ts-expect-error
           post.tags?.map((tag) => ({
             name: tag.name,
-            count: tag._count?.posts
+            count: tag._count?.posts,
           })) ?? []
       );
 
@@ -96,24 +96,24 @@ export async function GET(req: NextRequest) {
         // @ts-expect-error
         tags: post.tags.map((tag) => ({
           ...tag,
-          _count: tag._count || { posts: 0 }
+          _count: tag._count || { posts: 0 },
         })),
         // @ts-expect-error
-        mentions: post.mentions || []
+        mentions: post.mentions || [],
       })),
-      nextCursor
+      nextCursor,
     };
 
     return NextResponse.json(responseData);
   } catch (error) {
-    console.error("Error details:", {
-      message: error instanceof Error ? error.message : "Unknown error",
-      name: error instanceof Error ? error.name : "Unknown",
-      stack: error instanceof Error ? error.stack : undefined
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      name: error instanceof Error ? error.name : 'Unknown',
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

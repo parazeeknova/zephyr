@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { FossBanner } from "@/components/misc/foss-banner";
-import { motion } from "framer-motion";
+import { FossBanner } from '@/components/misc/foss-banner';
+import { motion } from 'framer-motion';
 import {
   Construction,
   MessageSquareMore,
   Rocket,
   Sparkles,
-  Wand
-} from "lucide-react";
+  Wand,
+} from 'lucide-react';
 
 const floatingAnimation = {
   initial: { y: 0 },
@@ -17,9 +17,9 @@ const floatingAnimation = {
     transition: {
       duration: 6,
       repeat: Number.POSITIVE_INFINITY,
-      ease: "easeInOut"
-    }
-  }
+      ease: 'easeInOut',
+    },
+  },
 };
 
 const iconAnimation = {
@@ -28,11 +28,11 @@ const iconAnimation = {
     scale: 1,
     rotate: 0,
     transition: {
-      type: "spring",
+      type: 'spring',
       stiffness: 260,
-      damping: 20
-    }
-  }
+      damping: 20,
+    },
+  },
 };
 
 const textAnimation = {
@@ -42,9 +42,9 @@ const textAnimation = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: "easeOut"
-    }
-  }
+      ease: 'easeOut',
+    },
+  },
 };
 
 const containerAnimation = {
@@ -52,9 +52,9 @@ const containerAnimation = {
   animate: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2
-    }
-  }
+      staggerChildren: 0.2,
+    },
+  },
 };
 
 export default function ComingSoon() {
@@ -157,7 +157,7 @@ export default function ComingSoon() {
 function FeatureCard({
   icon,
   title,
-  description
+  description,
 }: {
   icon: React.ReactNode;
   title: string;

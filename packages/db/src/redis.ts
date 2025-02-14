@@ -1,9 +1,9 @@
-import IORedis, { type RedisOptions } from "ioredis";
+import IORedis, { type RedisOptions } from 'ioredis';
 
 const createRedisConfig = (): RedisOptions => {
   const config: RedisOptions = {
     host: process.env.REDIS_HOST,
-    port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
+    port: Number.parseInt(process.env.REDIS_PORT || '6379', 10),
     password: process.env.REDIS_PASSWORD,
     db: 0,
     maxRetriesPerRequest: 2,
@@ -19,12 +19,12 @@ const createRedisConfig = (): RedisOptions => {
     keepAlive: 10000, // 10 seconds
     autoResendUnfulfilledCommands: true,
     reconnectOnError: (err) => {
-      const targetError = "READONLY";
+      const targetError = 'READONLY';
       if (err.message.includes(targetError)) {
         return true;
       }
       return false;
-    }
+    },
   };
 
   return config;
@@ -35,7 +35,7 @@ let redis: IORedis;
 try {
   redis = new IORedis(createRedisConfig());
 } catch (error) {
-  console.error("Failed to initialize Redis client:", error);
+  console.error('Failed to initialize Redis client:', error);
   throw error;
 }
 
@@ -46,8 +46,8 @@ export interface TrendingTopic {
   count: number;
 }
 
-const TRENDING_TOPICS_KEY = "trending:topics";
-const TRENDING_TOPICS_BACKUP_KEY = "trending:topics:backup";
+const TRENDING_TOPICS_KEY = 'trending:topics';
+const TRENDING_TOPICS_BACKUP_KEY = 'trending:topics:backup';
 const CACHE_TTL = 3600; // 1 hour in seconds
 const BACKUP_TTL = 86400; // 24 hours in seconds
 
@@ -57,7 +57,7 @@ export const trendingTopicsCache = {
       const topics = await redis.get(TRENDING_TOPICS_KEY);
       return topics ? JSON.parse(topics) : [];
     } catch (error) {
-      console.error("Error getting trending topics from cache:", error);
+      console.error('Error getting trending topics from cache:', error);
       return this.getBackup();
     }
   },
@@ -67,7 +67,7 @@ export const trendingTopicsCache = {
       const backupTopics = await redis.get(TRENDING_TOPICS_BACKUP_KEY);
       return backupTopics ? JSON.parse(backupTopics) : [];
     } catch (error) {
-      console.error("Error getting trending topics from backup cache:", error);
+      console.error('Error getting trending topics from backup cache:', error);
       return [];
     }
   },
@@ -79,27 +79,27 @@ export const trendingTopicsCache = {
       pipeline.set(
         TRENDING_TOPICS_KEY,
         JSON.stringify(topics),
-        "EX",
+        'EX',
         CACHE_TTL
       );
 
       pipeline.set(
         TRENDING_TOPICS_BACKUP_KEY,
         JSON.stringify(topics),
-        "EX",
+        'EX',
         BACKUP_TTL
       );
 
       pipeline.set(
         `${TRENDING_TOPICS_KEY}:last_updated`,
         Date.now(),
-        "EX",
+        'EX',
         CACHE_TTL
       );
 
       await pipeline.exec();
     } catch (error) {
-      console.error("Error setting trending topics cache:", error);
+      console.error('Error setting trending topics cache:', error);
     }
   },
 
@@ -109,9 +109,9 @@ export const trendingTopicsCache = {
       pipeline.del(TRENDING_TOPICS_KEY);
       pipeline.del(`${TRENDING_TOPICS_KEY}:last_updated`);
       await pipeline.exec();
-      console.log("Invalidated trending topics cache");
+      console.log('Invalidated trending topics cache');
     } catch (error) {
-      console.error("Error invalidating trending topics cache:", error);
+      console.error('Error invalidating trending topics cache:', error);
     }
   },
 
@@ -120,7 +120,9 @@ export const trendingTopicsCache = {
       const lastUpdated = await redis.get(
         `${TRENDING_TOPICS_KEY}:last_updated`
       );
-      if (!lastUpdated) return true;
+      if (!lastUpdated) {
+        return true;
+      }
       const timeSinceUpdate = Date.now() - Number.parseInt(lastUpdated);
       return timeSinceUpdate > (CACHE_TTL * 1000) / 2;
     } catch {
@@ -131,18 +133,20 @@ export const trendingTopicsCache = {
   async warmCache(): Promise<void> {
     try {
       const shouldWarm = await this.shouldRefresh();
-      if (!shouldWarm) return;
+      if (!shouldWarm) {
+        return;
+      }
       await this.refreshCache();
     } catch (error) {
-      console.error("Error warming trending topics cache:", error);
+      console.error('Error warming trending topics cache:', error);
     }
   },
 
-  refreshCache: null as unknown as () => Promise<TrendingTopic[]>
+  refreshCache: null as unknown as () => Promise<TrendingTopic[]>,
 };
 
-export const POST_VIEWS_KEY_PREFIX = "post:views:";
-export const POST_VIEWS_SET = "posts:with:views";
+export const POST_VIEWS_KEY_PREFIX = 'post:views:';
+export const POST_VIEWS_SET = 'posts:with:views';
 
 export const postViewsCache = {
   async incrementView(postId: string): Promise<number> {
@@ -157,7 +161,7 @@ export const postViewsCache = {
 
       return newCount;
     } catch (error) {
-      console.error("Error incrementing post view:", error);
+      console.error('Error incrementing post view:', error);
       return 0;
     }
   },
@@ -166,9 +170,9 @@ export const postViewsCache = {
     try {
       const views = await redis.get(`${POST_VIEWS_KEY_PREFIX}${postId}`);
       console.log(`Redis: Got views for post ${postId}: ${views}`);
-      return Number.parseInt(views || "0");
+      return Number.parseInt(views || '0');
     } catch (error) {
-      console.error("Error getting post views:", error);
+      console.error('Error getting post views:', error);
       return 0;
     }
   },
@@ -184,13 +188,13 @@ export const postViewsCache = {
 
       return postIds.reduce(
         (acc, id, index) => {
-          acc[id] = Number.parseInt((results?.[index]?.[1] as string) || "0");
+          acc[id] = Number.parseInt((results?.[index]?.[1] as string) || '0');
           return acc;
         },
         {} as Record<string, number>
       );
     } catch (error) {
-      console.error("Error getting multiple post views:", error);
+      console.error('Error getting multiple post views:', error);
       return {};
     }
   },
@@ -199,8 +203,8 @@ export const postViewsCache = {
     try {
       return (await redis.sismember(POST_VIEWS_SET, postId)) === 1;
     } catch (error) {
-      console.error("Error checking post in view set:", error);
+      console.error('Error checking post in view set:', error);
       return false;
     }
-  }
+  },
 };

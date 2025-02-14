@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import useDebounce from "@/hooks/useDebounce";
-import { formatNumber } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import FollowButton from "@zephyr-ui/Layouts/FollowButton";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import type { UserData as BaseUserData } from "@zephyr/db";
-import { motion } from "framer-motion";
-import { BadgeCheckIcon, Search, Users } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
+  SelectValue,
+} from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
+import useDebounce from '@/hooks/useDebounce';
+import { formatNumber } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import FollowButton from '@zephyr-ui/Layouts/FollowButton';
+import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
+import type { UserData as BaseUserData } from '@zephyr/db';
+import { motion } from 'framer-motion';
+import { BadgeCheckIcon, Search, Users } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 
 interface UserData extends BaseUserData {
   followState?: {
@@ -34,31 +34,31 @@ interface BrowseUsersProps {
 
 // biome-ignore lint/correctness/noUnusedVariables: template variable
 const BrowseUsers: React.FC<BrowseUsersProps> = ({ userId }) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("followers");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('followers');
   const debouncedSearch = useDebounce(searchTerm, 300);
 
   const { data: users, isLoading } = useQuery<UserData[]>({
-    queryKey: ["browse-users", debouncedSearch, sortBy],
+    queryKey: ['browse-users', debouncedSearch, sortBy],
     queryFn: async () => {
       const params = new URLSearchParams({
         search: debouncedSearch,
-        sortBy
+        sortBy,
       });
       const response = await fetch(`/api/users/browse?${params}`);
       const users = await response.json();
 
-      const followStates = await fetch("/api/users/follow-states", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userIds: users.map((u: UserData) => u.id) })
+      const followStates = await fetch('/api/users/follow-states', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userIds: users.map((u: UserData) => u.id) }),
       }).then((r) => r.json());
 
       return users.map((user: UserData) => ({
         ...user,
-        followState: followStates[user.id]
+        followState: followStates[user.id],
       }));
-    }
+    },
   });
 
   return (
@@ -146,7 +146,7 @@ const BrowseUsers: React.FC<BrowseUsersProps> = ({ userId }) => {
                   initialState={
                     user.followState || {
                       followers: user._count.followers,
-                      isFollowedByUser: false
+                      isFollowedByUser: false,
                     }
                   }
                   // @ts-expect-error

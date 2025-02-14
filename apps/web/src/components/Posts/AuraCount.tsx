@@ -2,11 +2,11 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from "@/components/ui/tooltip";
-import { useQuery } from "@tanstack/react-query";
-import type { VoteInfo } from "@zephyr/db";
-import { Flame } from "lucide-react";
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { useQuery } from '@tanstack/react-query';
+import type { VoteInfo } from '@zephyr/db';
+import { Flame } from 'lucide-react';
 
 interface AuraCountProps {
   postId: string;
@@ -14,13 +14,13 @@ interface AuraCountProps {
 }
 
 export default function AuraCount({ postId, initialAura }: AuraCountProps) {
-  const queryKey = ["vote-info", postId];
+  const queryKey = ['vote-info', postId];
 
   const { data } = useQuery<VoteInfo>({
     queryKey,
     initialData: { aura: initialAura, userVote: 0 },
     staleTime: Number.POSITIVE_INFINITY,
-    enabled: false
+    enabled: false,
   });
 
   return (

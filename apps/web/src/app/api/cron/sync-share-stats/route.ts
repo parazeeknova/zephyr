@@ -1,35 +1,35 @@
-import { prisma, redis } from "@zephyr/db";
-import { shareStatsCache } from "@zephyr/db";
-import { NextResponse } from "next/server";
+import { prisma, redis } from '@zephyr/db';
+import { shareStatsCache } from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
-const SHARE_STATS_PREFIX = "share:stats:";
-const SHARE_CLICKS_PREFIX = "share:clicks:";
+const SHARE_STATS_PREFIX = 'share:stats:';
+const SHARE_CLICKS_PREFIX = 'share:clicks:';
 
 type Platform =
-  | "twitter"
-  | "facebook"
-  | "linkedin"
-  | "instagram"
-  | "pinterest"
-  | "reddit"
-  | "whatsapp"
-  | "discord"
-  | "email"
-  | "copy"
-  | "qr";
+  | 'twitter'
+  | 'facebook'
+  | 'linkedin'
+  | 'instagram'
+  | 'pinterest'
+  | 'reddit'
+  | 'whatsapp'
+  | 'discord'
+  | 'email'
+  | 'copy'
+  | 'qr';
 
 const SUPPORTED_PLATFORMS: Platform[] = [
-  "twitter",
-  "facebook",
-  "linkedin",
-  "instagram",
-  "pinterest",
-  "reddit",
-  "whatsapp",
-  "discord",
-  "email",
-  "copy",
-  "qr"
+  'twitter',
+  'facebook',
+  'linkedin',
+  'instagram',
+  'pinterest',
+  'reddit',
+  'whatsapp',
+  'discord',
+  'email',
+  'copy',
+  'qr',
 ];
 
 async function syncShareStats() {
@@ -46,11 +46,11 @@ async function syncShareStats() {
     errorCount: 0,
     totalProcessed: 0,
     errors: [] as string[],
-    deletedKeys: 0
+    deletedKeys: 0,
   };
 
   try {
-    log("🚀 Starting share statistics sync process");
+    log('🚀 Starting share statistics sync process');
 
     // Get all posts that need stats synced
     const posts = await prisma.post.findMany({
@@ -58,9 +58,9 @@ async function syncShareStats() {
       where: {
         createdAt: {
           // Only sync posts from the last 30 days
-          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-        }
-      }
+          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        },
+      },
     });
 
     log(`📊 Found ${posts.length} posts to process`);
@@ -81,20 +81,20 @@ async function syncShareStats() {
               where: {
                 postId_platform: {
                   postId: post.id,
-                  platform
-                }
+                  platform,
+                },
               },
               update: {
                 shares: stats.shares,
                 clicks: stats.clicks,
-                updatedAt: new Date()
+                updatedAt: new Date(),
               },
               create: {
                 postId: post.id,
                 platform,
                 shares: stats.shares,
-                clicks: stats.clicks
-              }
+                clicks: stats.clicks,
+              },
             });
 
             results.syncedCount++;
@@ -109,7 +109,7 @@ async function syncShareStats() {
         }
       } catch (error) {
         const errorMessage = `Failed to sync stats for post ${post.id}: ${
-          error instanceof Error ? error.message : "Unknown error"
+          error instanceof Error ? error.message : 'Unknown error'
         }`;
         log(`❌ ${errorMessage}`);
         results.errors.push(errorMessage);
@@ -129,7 +129,7 @@ async function syncShareStats() {
     // Cleanup old keys that might be orphaned
     const [oldShareKeys, oldClickKeys] = await Promise.all([
       redis.keys(`${SHARE_STATS_PREFIX}*`),
-      redis.keys(`${SHARE_CLICKS_PREFIX}*`)
+      redis.keys(`${SHARE_CLICKS_PREFIX}*`),
     ]);
 
     const oldKeys = [...oldShareKeys, ...oldClickKeys];
@@ -144,7 +144,7 @@ async function syncShareStats() {
       duration: Date.now() - startTime,
       ...results,
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     log(`✨ Share stats sync completed successfully
@@ -157,11 +157,11 @@ async function syncShareStats() {
     return successSummary;
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+      error instanceof Error ? error.message : 'Unknown error';
     log(`❌ Fatal error during share stats sync: ${errorMessage}`);
     console.error(
-      "Share stats sync error stack:",
-      error instanceof Error ? error.stack : "No stack trace"
+      'Share stats sync error stack:',
+      error instanceof Error ? error.stack : 'No stack trace'
     );
 
     return {
@@ -170,55 +170,55 @@ async function syncShareStats() {
       ...results,
       logs,
       error: errorMessage,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } finally {
     try {
       await prisma.$disconnect();
-      log("👋 Database connection closed");
+      log('👋 Database connection closed');
     } catch (_error) {
-      log("❌ Error closing database connection");
+      log('❌ Error closing database connection');
     }
   }
 }
 
 export async function GET(request: Request) {
-  console.log("📥 Received share stats sync request");
+  console.log('📥 Received share stats sync request');
 
   try {
     if (!process.env.CRON_SECRET_KEY) {
-      console.error("❌ CRON_SECRET_KEY environment variable not set");
+      console.error('❌ CRON_SECRET_KEY environment variable not set');
       return NextResponse.json(
         {
-          error: "Server configuration error",
-          timestamp: new Date().toISOString()
+          error: 'Server configuration error',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 500,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
 
-    const authHeader = request.headers.get("authorization");
+    const authHeader = request.headers.get('authorization');
     const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
 
     if (!authHeader || authHeader !== expectedAuth) {
-      console.warn("⚠️ Unauthorized share stats sync attempt");
+      console.warn('⚠️ Unauthorized share stats sync attempt');
       return NextResponse.json(
         {
-          error: "Unauthorized",
-          timestamp: new Date().toISOString()
+          error: 'Unauthorized',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 401,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
@@ -228,32 +228,32 @@ export async function GET(request: Request) {
     return NextResponse.json(results, {
       status: results.success ? 200 : 500,
       headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      }
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
     });
   } catch (error) {
-    console.error("❌ Share stats sync route error:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined
+    console.error('❌ Share stats sync route error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString()
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
       },
       {
         status: 500,
         headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store"
-        }
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store',
+        },
       }
     );
   }
 }
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

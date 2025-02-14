@@ -1,6 +1,6 @@
-import { NotificationType } from "@prisma/client";
-import { validateRequest } from "@zephyr/auth/auth";
-import { prisma } from "@zephyr/db";
+import { NotificationType } from '@prisma/client';
+import { validateRequest } from '@zephyr/auth/auth';
+import { prisma } from '@zephyr/db';
 
 export async function GET(
   // biome-ignore lint/correctness/noUnusedVariables: ignore
@@ -10,12 +10,12 @@ export async function GET(
   try {
     const { user } = await validateRequest();
     if (!user) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const mentions = await prisma.mention.findMany({
       where: {
-        postId: params.postId
+        postId: params.postId,
       },
       include: {
         user: {
@@ -23,16 +23,16 @@ export async function GET(
             id: true,
             username: true,
             displayName: true,
-            avatarUrl: true
-          }
-        }
-      }
+            avatarUrl: true,
+          },
+        },
+      },
     });
 
     return Response.json({ mentions: mentions.map((m) => m.user) });
   } catch (error) {
-    console.error("Error fetching mentions:", error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    console.error('Error fetching mentions:', error);
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -43,29 +43,29 @@ export async function POST(
   try {
     const { user } = await validateRequest();
     if (!user) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { mentions } = await request.json();
 
     const post = await prisma.post.findUnique({
       where: { id: params.postId },
-      select: { userId: true }
+      select: { userId: true },
     });
 
     if (!post) {
-      return Response.json({ error: "Post not found" }, { status: 404 });
+      return Response.json({ error: 'Post not found' }, { status: 404 });
     }
 
     if (post.userId !== user.id) {
-      return Response.json({ error: "Unauthorized" }, { status: 403 });
+      return Response.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     // Start a transaction to handle mentions and notifications
     await prisma.$transaction(async (tx) => {
       // Remove existing mentions
       await tx.mention.deleteMany({
-        where: { postId: params.postId }
+        where: { postId: params.postId },
       });
 
       // Create new mentions
@@ -73,8 +73,8 @@ export async function POST(
         tx.mention.create({
           data: {
             postId: params.postId,
-            userId
-          }
+            userId,
+          },
         })
       );
 
@@ -85,8 +85,8 @@ export async function POST(
             type: NotificationType.MENTION,
             recipientId: userId,
             issuerId: user.id,
-            postId: params.postId
-          }
+            postId: params.postId,
+          },
         })
       );
 
@@ -95,7 +95,7 @@ export async function POST(
 
     const updatedMentions = await prisma.mention.findMany({
       where: {
-        postId: params.postId
+        postId: params.postId,
       },
       include: {
         user: {
@@ -103,15 +103,15 @@ export async function POST(
             id: true,
             username: true,
             displayName: true,
-            avatarUrl: true
-          }
-        }
-      }
+            avatarUrl: true,
+          },
+        },
+      },
     });
 
     return Response.json({ mentions: updatedMentions.map((m) => m.user) });
   } catch (error) {
-    console.error("Error updating mentions:", error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    console.error('Error updating mentions:', error);
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

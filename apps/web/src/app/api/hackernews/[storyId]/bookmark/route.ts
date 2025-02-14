@@ -1,5 +1,5 @@
-import { validateRequest } from "@zephyr/auth/auth";
-import { prisma } from "@zephyr/db";
+import { validateRequest } from '@zephyr/auth/auth';
+import { prisma } from '@zephyr/db';
 
 export async function GET(
   _req: Request,
@@ -12,22 +12,22 @@ export async function GET(
     const { user: loggedInUser } = await validateRequest();
 
     if (!loggedInUser) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const bookmark = await prisma.hNBookmark.findUnique({
       where: {
         userId_storyId: {
           userId: loggedInUser.id,
-          storyId: Number.parseInt(storyId)
-        }
-      }
+          storyId: Number.parseInt(storyId),
+        },
+      },
     });
 
     return Response.json({ isBookmarked: !!bookmark });
   } catch (error) {
     console.error(error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -42,27 +42,27 @@ export async function POST(
     const { user: loggedInUser } = await validateRequest();
 
     if (!loggedInUser) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     await prisma.hNBookmark.upsert({
       where: {
         userId_storyId: {
           userId: loggedInUser.id,
-          storyId: Number.parseInt(storyId)
-        }
+          storyId: Number.parseInt(storyId),
+        },
       },
       create: {
         userId: loggedInUser.id,
-        storyId: Number.parseInt(storyId)
+        storyId: Number.parseInt(storyId),
       },
-      update: {}
+      update: {},
     });
 
     return new Response();
   } catch (error) {
     console.error(error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -77,19 +77,19 @@ export async function DELETE(
     const { user: loggedInUser } = await validateRequest();
 
     if (!loggedInUser) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     await prisma.hNBookmark.deleteMany({
       where: {
         userId: loggedInUser.id,
-        storyId: Number.parseInt(storyId)
-      }
+        storyId: Number.parseInt(storyId),
+      },
     });
 
     return new Response();
   } catch (error) {
     console.error(error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

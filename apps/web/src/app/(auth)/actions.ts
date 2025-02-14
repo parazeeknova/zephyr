@@ -1,14 +1,14 @@
-"use server";
+'use server';
 
-import { lucia, validateRequest } from "@zephyr/auth/auth";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { lucia, validateRequest } from '@zephyr/auth/auth';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export async function logout() {
   const { session } = await validateRequest();
 
   if (!session) {
-    throw new Error("Unauthorized");
+    throw new Error('Unauthorized');
   }
 
   await lucia.invalidateSession(session.id);
@@ -21,5 +21,5 @@ export async function logout() {
     sessionCookie.attributes
   );
 
-  return redirect("/login");
+  return redirect('/login');
 }

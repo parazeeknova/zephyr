@@ -1,6 +1,6 @@
-import { redis } from "../src/redis";
+import { redis } from '../src/redis';
 
-const AVATAR_CACHE_PREFIX = "avatar:";
+const AVATAR_CACHE_PREFIX = 'avatar:';
 const AVATAR_CACHE_TTL = 3600;
 
 export interface CachedAvatarData {
@@ -12,8 +12,10 @@ export interface CachedAvatarData {
 export const avatarCache = {
   async get(userId: string): Promise<CachedAvatarData | null> {
     const cached = await redis.get(`${AVATAR_CACHE_PREFIX}${userId}`);
-    if (!cached) return null;
-    
+    if (!cached) {
+      return null;
+    }
+
     const data = JSON.parse(cached);
     if (process.env.NODE_ENV === 'production' && data.url) {
       data.url = data.url.replace('http://', 'https://');
@@ -24,15 +26,16 @@ export const avatarCache = {
   async set(userId: string, data: CachedAvatarData): Promise<void> {
     const cacheData = {
       ...data,
-      url: process.env.NODE_ENV === 'production' 
-        ? data.url.replace('http://', 'https://')
-        : data.url
+      url:
+        process.env.NODE_ENV === 'production'
+          ? data.url.replace('http://', 'https://')
+          : data.url,
     };
 
     await redis.set(
       `${AVATAR_CACHE_PREFIX}${userId}`,
       JSON.stringify(cacheData),
-      "EX",
+      'EX',
       AVATAR_CACHE_TTL
     );
   },
@@ -48,5 +51,5 @@ export const avatarCache = {
       const data = await response.json();
       await this.set(userId, data);
     }
-  }
+  },
 };

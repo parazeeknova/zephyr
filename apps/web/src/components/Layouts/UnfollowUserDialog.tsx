@@ -1,19 +1,19 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
-import { useUnfollowUserMutation } from "@/hooks/userMutations";
-import type { UserData } from "@zephyr/db";
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { useUnfollowUserMutation } from '@/hooks/userMutations';
+import type { UserData } from '@zephyr/db';
 
-import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
+import LoadingButton from '@zephyr-ui/Auth/LoadingButton';
 
 interface UnfollowUserDialogProps {
   user: UserData;
@@ -24,7 +24,7 @@ interface UnfollowUserDialogProps {
 export default function UnfollowUserDialog({
   user,
   open,
-  onClose
+  onClose,
 }: UnfollowUserDialogProps) {
   const queryClient = useQueryClient();
   const mutation = useUnfollowUserMutation();
@@ -40,7 +40,7 @@ export default function UnfollowUserDialog({
     setIsUnfollowing(true);
 
     // Optimistic update
-    queryClient.setQueryData<UserData[]>(["followed-users"], (old) =>
+    queryClient.setQueryData<UserData[]>(['followed-users'], (old) =>
       (old || []).filter((u) => u.id !== user.id)
     );
 
@@ -51,11 +51,11 @@ export default function UnfollowUserDialog({
       },
       onError: () => {
         // Revert the optimistic update if there's an error
-        queryClient.invalidateQueries({ queryKey: ["followed-users"] });
+        queryClient.invalidateQueries({ queryKey: ['followed-users'] });
       },
       onSettled: () => {
         setIsUnfollowing(false);
-      }
+      },
     });
 
     // Close the dialog immediately for a snappier feel

@@ -1,16 +1,16 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
-import { useDeletePostMutation } from "@/posts/mutations";
-import type { PostData } from "@zephyr/db";
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { useDeletePostMutation } from '@/posts/mutations';
+import type { PostData } from '@zephyr/db';
 
-import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
+import LoadingButton from '@zephyr-ui/Auth/LoadingButton';
 
 interface DeletePostDialogProps {
   post: PostData;
@@ -21,7 +21,7 @@ interface DeletePostDialogProps {
 export default function DeletePostDialog({
   post,
   open,
-  onClose
+  onClose,
 }: DeletePostDialogProps) {
   const mutation = useDeletePostMutation();
 

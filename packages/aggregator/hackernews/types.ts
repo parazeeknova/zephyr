@@ -27,10 +27,14 @@ export interface HNApiResponse {
 export class HackerNewsError extends Error {
   constructor(
     message: string,
+    // biome-ignore lint/style/noParameterProperties: ignore
+    // biome-ignore lint/nursery/useConsistentMemberAccessibility: ignore
     public statusCode = 500,
+    // biome-ignore lint/style/noParameterProperties: ignore
+    // biome-ignore lint/nursery/useConsistentMemberAccessibility: ignore
     public context?: unknown
   ) {
     super(message);
-    this.name = "HackerNewsError";
+    this.name = 'HackerNewsError';
   }
 }

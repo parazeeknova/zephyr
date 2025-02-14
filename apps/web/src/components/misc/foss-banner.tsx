@@ -1,5 +1,5 @@
-import { GitPullRequest } from "lucide-react";
-import Link from "next/link";
+import { GitPullRequest } from 'lucide-react';
+import Link from 'next/link';
 
 interface FossBannerProps {
   className?: string;
@@ -16,7 +16,7 @@ export function FossBanner({ className }: FossBannerProps) {
       </div>
       <p className="text-muted-foreground text-sm">
         Zephyr is a Free and Open Source Software (FOSS) project. We welcome
-        contributions and suggestions to improve our platform. Visit our{" "}
+        contributions and suggestions to improve our platform. Visit our{' '}
         <Link
           href="https://github.com/parazeeknova/zephyr"
           target="_blank"
@@ -24,7 +24,7 @@ export function FossBanner({ className }: FossBannerProps) {
           className="font-medium text-primary hover:underline"
         >
           GitHub repository
-        </Link>{" "}
+        </Link>{' '}
         to contribute or provide feedback on our policies and documentation.
       </p>
     </div>

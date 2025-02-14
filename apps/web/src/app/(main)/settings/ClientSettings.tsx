@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { AnimatedZephyrText } from "@/app/(auth)/client/ClientLoginPage";
-import { LegalLinksCard } from "@/components/misc/LegalLinksCard";
-import { FossBanner } from "@/components/misc/foss-banner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { UserData } from "@zephyr/db";
-import { motion } from "framer-motion";
-import AccountSettings from "./tabs/AccountSettings";
-import ProfileSettings from "./tabs/ProfileSettings";
-import SecuritySettings from "./tabs/SecuritySettings";
+import { AnimatedZephyrText } from '@/app/(auth)/client/ClientLoginPage';
+import { LegalLinksCard } from '@/components/misc/LegalLinksCard';
+import { FossBanner } from '@/components/misc/foss-banner';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import type { UserData } from '@zephyr/db';
+import { motion } from 'framer-motion';
+import AccountSettings from './tabs/AccountSettings';
+import ProfileSettings from './tabs/ProfileSettings';
+import SecuritySettings from './tabs/SecuritySettings';
 
 interface ClientSettingsProps {
   user: UserData;

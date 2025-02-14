@@ -1,107 +1,21 @@
 {
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "extends": ["ultracite"],
   "files": {
     "ignore": [
-      ".pnpm-store/*",
-      "**/.next/**",
-      "**/dist/**",
-      "**/artifacts/**",
-      "**/node_modules/**",
-      "**/.git/**",
-      "sw.js",
-      "**/cache/**",
-      ".openzeppelin",
-      "typechain-types",
-      "generated.ts",
-      "**/components/ui/**",
-      "Theme.css"
+      "packages/ui/shadui/**",
+      "packages/ui/hooks/use-toast.ts",
+      "packages/ui/hooks/use-mobile.tsx",
+      ".vscode/extensions.json",
+      ".vscode/settings.json"
     ]
   },
-  "javascript": {
-    "formatter": {
-      "enabled": true,
-      "quoteStyle": "double",
-      "jsxQuoteStyle": "double",
-      "trailingCommas": "none",
-      "semicolons": "always",
-      "arrowParentheses": "always",
-      "indentStyle": "space",
-      "indentWidth": 2,
-      "lineWidth": 80
-    },
-    "parser": {
-      "unsafeParameterDecoratorsEnabled": true
-    }
-  },
-  "json": {
-    "formatter": {
-      "enabled": true,
-      "indentStyle": "space",
-      "indentWidth": 2,
-      "lineWidth": 80
-    },
-    "parser": {
-      "allowComments": true
-    }
-  },
   "linter": {
-    "enabled": true,
     "rules": {
-      "recommended": true,
-      "correctness": {
-        "noUnusedVariables": "error",
-        "useExhaustiveDependencies": "off",
-        "noUnusedImports": {
-          "level": "error",
-          "fix": "safe"
-        }
-      },
       "suspicious": {
-        "noExplicitAny": "off",
-        "noArrayIndexKey": "off",
-        "noAssignInExpressions": "off"
-      },
-      "complexity": {
-        "noForEach": "warn",
-        "useLiteralKeys": "off"
-      },
-      "style": {
-        "noNegationElse": "error",
-        "useShorthandArrayType": "error",
-        "useTemplate": "error",
-        "useSingleVarDeclarator": "error"
-      },
-      "a11y": {
-        "useKeyWithClickEvents": "off",
-        "useMediaCaption": "off"
-      },
-      "security": {
-        "noDangerouslySetInnerHtml": "off"
-      },
-      "nursery": {
-        "noDuplicatedFields": "error",
-        "useSortedClasses": {
-          "level": "error",
-          "options": {}
-        }
+        "noConsole": "off",
+        "noConsoleLog": "off"
       }
     }
-  },
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
-  },
-  "formatter": {
-    "enabled": true,
-    "formatWithErrors": false,
-    "indentStyle": "space",
-    "indentWidth": 2,
-    "lineWidth": 80,
-    "lineEnding": "lf",
-    "ignore": []
   }
 }

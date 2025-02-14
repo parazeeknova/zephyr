@@ -1,5 +1,5 @@
-import type { Tag } from "@prisma/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Tag } from '@prisma/client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface TagResponse {
   tags: string[];
@@ -13,37 +13,37 @@ export function useTags(postId?: string) {
   const queryClient = useQueryClient();
 
   const { data: popularTags } = useQuery<PopularTagsResponse>({
-    queryKey: ["popularTags"],
+    queryKey: ['popularTags'],
     queryFn: async () => {
-      const res = await fetch("/api/tags/popular");
-      if (!res.ok) return { tags: [] };
-      return res.json();
-    }
-  });
-
-  const { data: suggestions } = useQuery<TagResponse>({
-    queryKey: ["tagSuggestions"],
-    queryFn: async () => {
-      const res = await fetch("/api/tags");
+      const res = await fetch('/api/tags/popular');
       if (!res.ok) return { tags: [] };
       return res.json();
     },
-    enabled: false
+  });
+
+  const { data: suggestions } = useQuery<TagResponse>({
+    queryKey: ['tagSuggestions'],
+    queryFn: async () => {
+      const res = await fetch('/api/tags');
+      if (!res.ok) return { tags: [] };
+      return res.json();
+    },
+    enabled: false,
   });
 
   const searchTags = async (query: string) => {
     try {
       if (!query.trim()) {
-        queryClient.setQueryData(["tagSuggestions"], { tags: [] });
+        queryClient.setQueryData(['tagSuggestions'], { tags: [] });
         return;
       }
       const res = await fetch(`/api/tags?q=${encodeURIComponent(query)}`);
-      if (!res.ok) throw new Error("Failed to fetch tags");
+      if (!res.ok) throw new Error('Failed to fetch tags');
       const data = await res.json();
-      queryClient.setQueryData(["tagSuggestions"], data);
+      queryClient.setQueryData(['tagSuggestions'], data);
       return data;
     } catch (error) {
-      console.error("Error searching tags:", error);
+      console.error('Error searching tags:', error);
       return { tags: [] };
     }
   };
@@ -55,27 +55,27 @@ export function useTags(postId?: string) {
       }
 
       const res = await fetch(`/api/posts/${postId}/tags`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tags })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tags }),
       });
 
       if (!res.ok) {
-        throw new Error("Failed to update tags");
+        throw new Error('Failed to update tags');
       }
       return res.json();
     },
 
     onMutate: async (newTags) => {
-      await queryClient.cancelQueries({ queryKey: ["post", postId] });
-      await queryClient.cancelQueries({ queryKey: ["popularTags"] });
+      await queryClient.cancelQueries({ queryKey: ['post', postId] });
+      await queryClient.cancelQueries({ queryKey: ['popularTags'] });
 
-      const previousTags = queryClient.getQueryData(["post", postId]);
+      const previousTags = queryClient.getQueryData(['post', postId]);
 
       if (postId) {
-        queryClient.setQueryData(["post", postId], (old: any) => ({
+        queryClient.setQueryData(['post', postId], (old: any) => ({
           ...old,
-          tags: newTags.map((tag) => ({ id: tag, name: tag }))
+          tags: newTags.map((tag) => ({ id: tag, name: tag })),
         }));
       }
 
@@ -85,19 +85,19 @@ export function useTags(postId?: string) {
     // biome-ignore lint/correctness/noUnusedVariables: ignore
     onError: (err, newTags, context) => {
       if (postId && context?.previousTags) {
-        queryClient.setQueryData(["post", postId], context.previousTags);
+        queryClient.setQueryData(['post', postId], context.previousTags);
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["post", postId] });
-      queryClient.invalidateQueries({ queryKey: ["popularTags"] });
-    }
+      queryClient.invalidateQueries({ queryKey: ['post', postId] });
+      queryClient.invalidateQueries({ queryKey: ['popularTags'] });
+    },
   });
 
   return {
     popularTags: popularTags?.tags ?? [],
     suggestions: suggestions?.tags ?? [],
     searchTags,
-    updateTags
+    updateTags,
   };
 }

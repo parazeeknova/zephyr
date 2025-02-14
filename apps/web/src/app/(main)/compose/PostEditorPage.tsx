@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import PostEditor from "@/components/Posts/editor/PostEditor";
-import { motion } from "framer-motion";
+import PostEditor from '@/components/Posts/editor/PostEditor';
+import { motion } from 'framer-motion';
 
 export default function PostEditorPage() {
   return (
@@ -17,9 +17,9 @@ export default function PostEditorPage() {
         initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
         transition={{
-          type: "spring",
+          type: 'spring',
           stiffness: 300,
-          damping: 30
+          damping: 30,
         }}
       >
         <PostEditor />

@@ -1,5 +1,5 @@
-import { redis } from "@zephyr/db";
-import { NextResponse } from "next/server";
+import { redis } from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
 export class RateLimiter {
   private prefix: string;
@@ -30,7 +30,7 @@ export class RateLimiter {
     const requestCount = await redis.zcard(key);
 
     if (requestCount >= this.maxRequests) {
-      const oldestTimestamp = await redis.zrange(key, 0, 0, "WITHSCORES");
+      const oldestTimestamp = await redis.zrange(key, 0, 0, 'WITHSCORES');
       const resetIn = oldestTimestamp[1]
         ? Number(oldestTimestamp[1]) + this.windowMs - now
         : this.windowMs;
@@ -38,7 +38,7 @@ export class RateLimiter {
       return {
         limited: true,
         remaining: 0,
-        resetIn: Math.ceil(resetIn / 1000) // Convert to seconds
+        resetIn: Math.ceil(resetIn / 1000), // Convert to seconds
       };
     }
 
@@ -49,7 +49,7 @@ export class RateLimiter {
     return {
       limited: false,
       remaining: this.maxRequests - requestCount - 1,
-      resetIn: this.windowMs / 1000
+      resetIn: this.windowMs / 1000,
     };
   }
 }
@@ -61,22 +61,22 @@ export async function rateLimitMiddleware(
   maxRequests = 5,
   windowMs = 60000
 ) {
-  const limiter = new RateLimiter("ratelimit:support", maxRequests, windowMs);
+  const limiter = new RateLimiter('ratelimit:support', maxRequests, windowMs);
   const { limited, remaining, resetIn } =
     await limiter.isRateLimited(identifier);
 
   if (limited) {
     return NextResponse.json(
       {
-        error: "Too many requests",
-        resetIn
+        error: 'Too many requests',
+        resetIn,
       },
       {
         status: 429,
         headers: {
-          "X-RateLimit-Remaining": remaining.toString(),
-          "X-RateLimit-Reset": resetIn.toString()
-        }
+          'X-RateLimit-Remaining': remaining.toString(),
+          'X-RateLimit-Reset': resetIn.toString(),
+        },
       }
     );
   }

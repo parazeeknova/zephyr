@@ -1,67 +1,67 @@
-"use client";
+'use client';
 
-import useDebounce from "@/hooks/useDebounce";
-import kyInstance from "@/lib/ky";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { SearchSuggestion } from "@zephyr/db";
-import { SearchIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { SearchCommandList } from "../Search/SearchCommandList";
-import { searchMutations } from "../Search/mutations";
-import { Input } from "../ui/input";
+import useDebounce from '@/hooks/useDebounce';
+import kyInstance from '@/lib/ky';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { SearchSuggestion } from '@zephyr/db';
+import { SearchIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { SearchCommandList } from '../Search/SearchCommandList';
+import { searchMutations } from '../Search/mutations';
+import { Input } from '../ui/input';
 
 export default function SearchField() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const commandRef = useRef<HTMLDivElement>(null);
   const debouncedInput = useDebounce(input, 300);
 
   const { data: suggestions } = useQuery({
-    queryKey: ["search-suggestions", debouncedInput],
+    queryKey: ['search-suggestions', debouncedInput],
     queryFn: async () => {
       if (!debouncedInput) return [];
       return kyInstance
-        .get("/api/search", {
-          searchParams: { q: debouncedInput, type: "suggestions" }
+        .get('/api/search', {
+          searchParams: { q: debouncedInput, type: 'suggestions' },
         })
         .json<SearchSuggestion[]>();
     },
-    enabled: Boolean(debouncedInput)
+    enabled: Boolean(debouncedInput),
   });
 
   const { data: history } = useQuery({
-    queryKey: ["search-history"],
+    queryKey: ['search-history'],
     queryFn: async () =>
       kyInstance
-        .get("/api/search", { searchParams: { type: "history" } })
+        .get('/api/search', { searchParams: { type: 'history' } })
         .json<string[]>(),
-    enabled: open
+    enabled: open,
   });
 
   const searchMutation = useMutation({
     mutationFn: searchMutations.addSearch,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["search-suggestions"] });
-      queryClient.invalidateQueries({ queryKey: ["search-history"] });
-    }
+      queryClient.invalidateQueries({ queryKey: ['search-suggestions'] });
+      queryClient.invalidateQueries({ queryKey: ['search-history'] });
+    },
   });
 
   const clearHistoryMutation = useMutation({
     mutationFn: searchMutations.clearHistory,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["search-history"] });
-    }
+      queryClient.invalidateQueries({ queryKey: ['search-history'] });
+    },
   });
 
   const removeHistoryItemMutation = useMutation({
     mutationFn: searchMutations.removeHistoryItem,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["search-history"] });
-    }
+      queryClient.invalidateQueries({ queryKey: ['search-history'] });
+    },
   });
 
   useEffect(() => {
@@ -75,8 +75,8 @@ export default function SearchField() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleSearch = (searchQuery: string) => {

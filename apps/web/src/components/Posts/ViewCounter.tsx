@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useIncrementViewMutation } from "@/posts/view/mutations";
-import { debugLog } from "@zephyr/config/debug";
-import { useCallback, useEffect, useRef } from "react";
+import { useIncrementViewMutation } from '@/posts/view/mutations';
+import { debugLog } from '@zephyr/config/debug';
+import { useCallback, useEffect, useRef } from 'react';
 
 interface ViewTrackerProps {
   postId: string;
@@ -23,7 +23,7 @@ export default function ViewTracker({ postId }: ViewTrackerProps) {
   }, [postId, incrementViewMutation]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
 
     let observer: IntersectionObserver;
     let timeout: NodeJS.Timeout;
@@ -49,7 +49,7 @@ export default function ViewTracker({ postId }: ViewTrackerProps) {
         },
         {
           threshold: 0.5,
-          rootMargin: "0px"
+          rootMargin: '0px',
         }
       );
 

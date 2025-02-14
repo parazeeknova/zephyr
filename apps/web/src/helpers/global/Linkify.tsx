@@ -1,6 +1,6 @@
-import UserLinkWithTooltip from "@zephyr-ui/Layouts/UserLinkWithTooltip";
-import Link from "next/link";
-import { LinkIt, LinkItUrl } from "react-linkify-it";
+import UserLinkWithTooltip from '@zephyr-ui/Layouts/UserLinkWithTooltip';
+import Link from 'next/link';
+import { LinkIt, LinkItUrl } from 'react-linkify-it';
 
 interface LinkifyProps {
   children: React.ReactNode;

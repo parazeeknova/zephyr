@@ -1,33 +1,29 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { useMemo } from "react";
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { useMemo } from 'react';
 
 export default function NotFound() {
   const nebulaElements = useMemo(() => {
-    return Array(5)
-      .fill(0)
-      .map((_, i) => ({
-        width: 200 + ((i * 127) % 400),
-        height: 200 + ((i * 127) % 400),
-        top: `${(i * 20) % 100}%`,
-        left: `${(i * 25) % 100}%`,
-        delay: i * 0.5,
-        color: i % 3
-      }));
+    return new Array(5).fill(0).map((_, i) => ({
+      width: 200 + ((i * 127) % 400),
+      height: 200 + ((i * 127) % 400),
+      top: `${(i * 20) % 100}%`,
+      left: `${(i * 25) % 100}%`,
+      delay: i * 0.5,
+      color: i % 3,
+    }));
   }, []);
 
   const starElements = useMemo(() => {
-    return Array(20)
-      .fill(0)
-      .map((_, i) => ({
-        top: `${(i * 5) % 100}%`,
-        left: `${(i * 7) % 100}%`,
-        duration: 5 + (i % 5) * 2,
-        delay: (i % 5) * 1
-      }));
+    return new Array(20).fill(0).map((_, i) => ({
+      top: `${(i * 5) % 100}%`,
+      left: `${(i * 7) % 100}%`,
+      duration: 5 + (i % 5) * 2,
+      delay: (i % 5) * 1,
+    }));
   }, []);
 
   return (
@@ -52,12 +48,12 @@ export default function NotFound() {
                 width: `${nebula.width}px`,
                 height: `${nebula.height}px`,
                 background: `radial-gradient(circle at center, 
-                  ${["rgba(147,51,234,0.15)", "rgba(79,70,229,0.15)", "rgba(236,72,153,0.15)"][nebula.color]},
+                  ${['rgba(147,51,234,0.15)', 'rgba(79,70,229,0.15)', 'rgba(236,72,153,0.15)'][nebula.color]},
                   transparent)`,
                 top: nebula.top,
                 left: nebula.left,
                 animationDelay: `${nebula.delay}s`,
-                animationDuration: "5s"
+                animationDuration: '5s',
               }}
             />
           ))}
@@ -75,9 +71,9 @@ export default function NotFound() {
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{
-              type: "spring",
+              type: 'spring',
               stiffness: 200,
-              damping: 15
+              damping: 15,
             }}
             className="relative"
           >
@@ -135,7 +131,7 @@ export default function NotFound() {
               animation: `shootingStars ${star.duration}s linear infinite`,
               animationDelay: `${star.delay}s`,
               opacity: 0.7,
-              transform: `rotate(${(i * 45) % 360}deg)`
+              transform: `rotate(${(i * 45) % 360}deg)`,
             }}
           />
         ))}

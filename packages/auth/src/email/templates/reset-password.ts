@@ -1,4 +1,4 @@
-import { emailConfig, getEmailStyles } from "../config";
+import { emailConfig, getEmailStyles } from '../config';
 
 export const getPasswordResetEmailTemplate = (resetUrl: string) => {
   const styles = getEmailStyles();

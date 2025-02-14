@@ -1,9 +1,9 @@
-declare module "stream-chat-react" {
+declare module 'stream-chat-react' {
   import type {
     Channel as StreamChannel,
-    ChannelSort as StreamChannelSort
-  } from "stream-chat";
-  import type { ReactNode } from "react";
+    ChannelSort as StreamChannelSort,
+  } from 'stream-chat';
+  import type { ReactNode } from 'react';
 
   export interface ChannelProps {
     channel: StreamChannel;
@@ -56,5 +56,5 @@ declare module "stream-chat-react" {
     [key: string]: any;
   };
 
-  export * from "stream-chat-react";
+  export * from 'stream-chat-react';
 }

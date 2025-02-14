@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useQuery } from "@tanstack/react-query";
-import FollowButton from "@zephyr-ui/Layouts/FollowButton";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import { AnimatePresence, motion } from "framer-motion";
-import { Ghost, SearchIcon, Users2 } from "lucide-react";
-import { useState } from "react";
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useQuery } from '@tanstack/react-query';
+import FollowButton from '@zephyr-ui/Layouts/FollowButton';
+import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Ghost, SearchIcon, Users2 } from 'lucide-react';
+import { useState } from 'react';
 
 interface FollowersListProps {
   userId: string;
@@ -35,33 +35,33 @@ interface Follower {
 }
 
 const emptyStateMessages = [
-  "No followers yet! Time to shine! ✨",
+  'No followers yet! Time to shine! ✨',
   "It's a bit quiet here... Too quiet! 🤫",
-  "Looking for your first follower? 👀",
-  "Your future followers are out there somewhere! 🌟",
-  "Empty follower list? Challenge accepted! 💪"
+  'Looking for your first follower? 👀',
+  'Your future followers are out there somewhere! 🌟',
+  'Empty follower list? Challenge accepted! 💪',
 ];
 
 export default function FollowersList({
   userId,
   isOpen,
   onClose,
-  loggedInUserId
+  loggedInUserId,
 }: FollowersListProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [randomMessage] = useState(
     () =>
       emptyStateMessages[Math.floor(Math.random() * emptyStateMessages.length)]
   );
 
   const { data, isLoading } = useQuery({
-    queryKey: ["followers-list", userId],
+    queryKey: ['followers-list', userId],
     queryFn: async () => {
       const response = await fetch(`/api/users/${userId}/followers-list`);
-      if (!response.ok) throw new Error("Failed to fetch followers");
+      if (!response.ok) throw new Error('Failed to fetch followers');
       return response.json() as Promise<Follower[]>;
     },
-    enabled: isOpen
+    enabled: isOpen,
   });
 
   const filteredFollowers = data?.filter(
@@ -170,7 +170,7 @@ export default function FollowersList({
                           userId={user.id}
                           initialState={{
                             isFollowedByUser: user.isFollowing,
-                            followers: user._count.followers
+                            followers: user._count.followers,
                           }}
                         />
                       </motion.div>

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import type { SearchSuggestion } from "@zephyr/db";
-import { History, TrendingUp, X } from "lucide-react";
-import { Button } from "../ui/button";
+import type { SearchSuggestion } from '@zephyr/db';
+import { History, TrendingUp, X } from 'lucide-react';
+import { Button } from '../ui/button';
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandItem,
-  CommandList
-} from "../ui/command";
+  CommandList,
+} from '../ui/command';
 
 interface SearchCommandListProps {
   input: string;
@@ -26,7 +26,7 @@ export function SearchCommandList({
   history,
   onSelect,
   onClearHistory,
-  onRemoveHistoryItem
+  onRemoveHistoryItem,
 }: SearchCommandListProps) {
   return (
     <Command className="rounded-lg border bg-popover shadow-md">

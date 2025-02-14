@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { motion } from "framer-motion";
-import { Loader2, Upload } from "lucide-react";
-import type { StepThreeProps } from "../../types";
-import { SupportMediaPreview } from "../SupportMediaPreview";
-import { stepVariants } from "./variants";
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { motion } from 'framer-motion';
+import { Loader2, Upload } from 'lucide-react';
+import type { StepThreeProps } from '../../types';
+import { SupportMediaPreview } from '../SupportMediaPreview';
+import { stepVariants } from './variants';
 
 export function StepThree({
   formData,
@@ -14,7 +14,7 @@ export function StepThree({
   attachments,
   fileInputRef,
   handleFileUpload,
-  setAttachments
+  setAttachments,
 }: StepThreeProps) {
   return (
     <motion.div
@@ -51,13 +51,13 @@ export function StepThree({
             onChange={(e) => {
               const files = e.target.files;
               if (files?.length) {
-                console.log("Files selected:", {
+                console.log('Files selected:', {
                   count: files.length,
                   details: Array.from(files).map((f) => ({
                     name: f.name,
                     type: f.type,
-                    size: f.size
-                  }))
+                    size: f.size,
+                  })),
                 });
                 handleFileUpload(files);
               }
@@ -105,7 +105,7 @@ export function StepThree({
                 Sending...
               </>
             ) : (
-              "Send Message"
+              'Send Message'
             )}
           </Button>
         </div>

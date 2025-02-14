@@ -1,28 +1,28 @@
-"use client";
-import { login } from "@/app/(auth)/login/actions";
-import { resendVerificationEmail } from "@/app/(auth)/signup/actions";
+'use client';
+import { login } from '@/app/(auth)/login/actions';
+import { resendVerificationEmail } from '@/app/(auth)/signup/actions';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import supportImage from "@zephyr-assets/previews/help.png";
-import ForgotPasswordLink from "@zephyr-ui/Auth/ForgotPasswordLink";
-import { LoadingButton } from "@zephyr-ui/Auth/LoadingButton";
-import { PasswordInput } from "@zephyr-ui/Auth/PasswordInput";
-import { type LoginValues, loginSchema } from "@zephyr/auth/validation";
-import { AnimatePresence, motion } from "framer-motion";
-import { AlertCircle, Mail, XCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { HelpLink } from "../Animations/ImageLinkPreview";
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import supportImage from '@zephyr-assets/previews/help.png';
+import ForgotPasswordLink from '@zephyr-ui/Auth/ForgotPasswordLink';
+import { LoadingButton } from '@zephyr-ui/Auth/LoadingButton';
+import { PasswordInput } from '@zephyr-ui/Auth/PasswordInput';
+import { type LoginValues, loginSchema } from '@zephyr/auth/validation';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle, Mail, XCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { HelpLink } from '../Animations/ImageLinkPreview';
 
 export default function LoginForm() {
   const { toast } = useToast();
@@ -40,9 +40,9 @@ export default function LoginForm() {
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
-      password: ""
-    }
+      username: '',
+      password: '',
+    },
   });
 
   useEffect(() => {
@@ -74,47 +74,47 @@ export default function LoginForm() {
         if (result.error) {
           setError(result.error);
           setShake(true);
-          if (result.error.includes("Incorrect username or password")) {
+          if (result.error.includes('Incorrect username or password')) {
             setErrorFields({ username: true, password: true });
           }
           toast({
-            variant: "destructive",
-            title: "Login Failed",
+            variant: 'destructive',
+            title: 'Login Failed',
             description: (
               <div className="flex items-center gap-2">
                 <XCircle className="h-4 w-4" />
                 {result.error}
               </div>
             ),
-            duration: 5000
+            duration: 5000,
           });
         } else if (result.emailVerification) {
           setUnverifiedEmail(result.emailVerification.email);
           if (result.emailVerification.isNewToken) {
             setIsVerificationEmailSent(true);
             toast({
-              title: "Verification Required",
+              title: 'Verification Required',
               description:
-                "Please check your inbox for the verification email.",
-              duration: 5000
+                'Please check your inbox for the verification email.',
+              duration: 5000,
             });
           }
         } else if (result.success) {
           toast({
-            title: "Welcome Back!",
-            description: "Successfully logged in to your account.",
-            duration: 3000
+            title: 'Welcome Back!',
+            description: 'Successfully logged in to your account.',
+            duration: 3000,
           });
           router.refresh();
-          router.push("/");
+          router.push('/');
         }
       } catch (error) {
-        console.error("Login error:", error);
+        console.error('Login error:', error);
         toast({
-          variant: "destructive",
-          title: "Login Failed",
-          description: "An unexpected error occurred. Please try again.",
-          duration: 5000
+          variant: 'destructive',
+          title: 'Login Failed',
+          description: 'An unexpected error occurred. Please try again.',
+          duration: 5000,
         });
       }
     });
@@ -127,25 +127,25 @@ export default function LoginForm() {
       const result = await resendVerificationEmail(unverifiedEmail);
       if (result.error) {
         toast({
-          variant: "destructive",
-          title: "Verification Failed",
+          variant: 'destructive',
+          title: 'Verification Failed',
           description: result.error,
-          duration: 5000
+          duration: 5000,
         });
       } else if (result.success) {
         toast({
-          title: "Verification Email Sent",
-          description: "Please check your inbox to verify your email address.",
-          duration: 5000
+          title: 'Verification Email Sent',
+          description: 'Please check your inbox to verify your email address.',
+          duration: 5000,
         });
       }
     } catch (error) {
-      console.error("Resend verification error:", error);
+      console.error('Resend verification error:', error);
       toast({
-        variant: "destructive",
-        title: "Verification Failed",
-        description: "An unexpected error occurred. Please try again.",
-        duration: 5000
+        variant: 'destructive',
+        title: 'Verification Failed',
+        description: 'An unexpected error occurred. Please try again.',
+        duration: 5000,
       });
     }
   };
@@ -153,13 +153,13 @@ export default function LoginForm() {
   return (
     <Form {...form}>
       <motion.div
-        animate={shake ? "shake" : "stable"}
+        animate={shake ? 'shake' : 'stable'}
         variants={{
           shake: {
             x: [0, -10, 10, -10, 10, 0],
-            transition: { duration: 0.5 }
+            transition: { duration: 0.5 },
           },
-          stable: { x: 0 }
+          stable: { x: 0 },
         }}
       >
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
@@ -200,7 +200,7 @@ export default function LoginForm() {
                   <p className="text-muted-foreground">
                     {isVerificationEmailSent
                       ? `We've sent a verification email to ${unverifiedEmail}`
-                      : "Your email address needs to be verified to continue."}
+                      : 'Your email address needs to be verified to continue.'}
                   </p>
                 </div>
 
@@ -214,8 +214,8 @@ export default function LoginForm() {
                     <Mail className="h-4 w-4" />
                     <span>
                       {isVerificationEmailSent
-                        ? "Resend verification email"
-                        : "Send verification email"}
+                        ? 'Resend verification email'
+                        : 'Send verification email'}
                     </span>
                   </div>
                 </button>
@@ -236,8 +236,8 @@ export default function LoginForm() {
                       {...field}
                       className={`transition-all duration-200 ${
                         errorFields.username
-                          ? "border-destructive/50 bg-destructive/10"
-                          : ""
+                          ? 'border-destructive/50 bg-destructive/10'
+                          : ''
                       }`}
                     />
                     {errorFields.username && (
@@ -269,8 +269,8 @@ export default function LoginForm() {
                       {...field}
                       className={`transition-all duration-200 ${
                         errorFields.password
-                          ? "border-destructive/50 bg-destructive/10"
-                          : ""
+                          ? 'border-destructive/50 bg-destructive/10'
+                          : ''
                       }`}
                     />
                   </div>

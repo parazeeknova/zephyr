@@ -1,4 +1,4 @@
-import { atomWithStorage } from "jotai/utils";
+import { atomWithStorage } from 'jotai/utils';
 
 interface FollowState {
   [userId: string]: {
@@ -8,4 +8,4 @@ interface FollowState {
   };
 }
 
-export const followStateAtom = atomWithStorage<FollowState>("follow-state", {});
+export const followStateAtom = atomWithStorage<FollowState>('follow-state', {});

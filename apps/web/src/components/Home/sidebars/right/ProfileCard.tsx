@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { Card, CardContent } from "@/components/ui/card";
-import Linkify from "@/helpers/global/Linkify";
-import { formatNumber } from "@/lib/utils";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import type { UserData } from "@zephyr/db";
-import { Flame, Users } from "lucide-react";
-import Link from "next/link";
-import type React from "react";
-import { useState } from "react";
+import { Card, CardContent } from '@/components/ui/card';
+import Linkify from '@/helpers/global/Linkify';
+import { formatNumber } from '@/lib/utils';
+import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
+import type { UserData } from '@zephyr/db';
+import { Flame, Users } from 'lucide-react';
+import Link from 'next/link';
+import type React from 'react';
+import { useState } from 'react';
 
 interface ProfileCardProps {
   userData: UserData;
@@ -34,9 +34,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ userData }) => {
           className="absolute inset-0 bg-center bg-cover transition-opacity duration-300"
           style={{
             backgroundImage: `url(${userData.avatarUrl})`,
-            filter: "blur(8px) brightness(0.7)",
-            transform: "scale(1.1)",
-            opacity: isHovered ? 0.15 : 0
+            filter: 'blur(8px) brightness(0.7)',
+            transform: 'scale(1.1)',
+            opacity: isHovered ? 0.15 : 0,
           }}
         />
 
@@ -78,7 +78,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ userData }) => {
 
           <div
             className={`mt-4 overflow-hidden transition-all duration-300 ${
-              isHovered ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+              isHovered ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
             }`}
           >
             <div className="border-border border-t pt-4 pb-2">

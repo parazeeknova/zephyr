@@ -1,6 +1,6 @@
-import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
-import SuggestedConnections from "@zephyr-ui/Home/sidebars/right/SuggestedConnections";
-import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
+import NavigationCard from '@zephyr-ui/Home/sidebars/left/NavigationCard';
+import SuggestedConnections from '@zephyr-ui/Home/sidebars/right/SuggestedConnections';
+import StickyFooter from '@zephyr-ui/Layouts/StinkyFooter';
 
 const ChatSkeleton = () => {
   return (
@@ -62,19 +62,19 @@ const ChatSkeleton = () => {
               {Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
-                  className={`flex items-end space-x-2 ${i % 2 === 0 ? "justify-end" : ""}`}
+                  className={`flex items-end space-x-2 ${i % 2 === 0 ? 'justify-end' : ''}`}
                 >
                   {i % 2 !== 0 && (
                     <div className="h-8 w-8 rounded-full bg-muted" />
                   )}
                   <div
-                    className={`space-y-2 ${i % 2 === 0 ? "items-end" : "items-start"}`}
+                    className={`space-y-2 ${i % 2 === 0 ? 'items-end' : 'items-start'}`}
                   >
                     <div
-                      className={`h-4 w-48 rounded bg-muted ${i % 2 === 0 ? "ml-auto" : ""}`}
+                      className={`h-4 w-48 rounded bg-muted ${i % 2 === 0 ? 'ml-auto' : ''}`}
                     />
                     <div
-                      className={`h-4 w-32 rounded bg-muted ${i % 2 === 0 ? "ml-auto" : ""}`}
+                      className={`h-4 w-32 rounded bg-muted ${i % 2 === 0 ? 'ml-auto' : ''}`}
                     />
                   </div>
                   {i % 2 === 0 && (

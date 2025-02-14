@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { FossBanner } from "@/components/misc/foss-banner";
-import {} from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-import { AnimatePresence, motion } from "framer-motion";
-import { AlertTriangle, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { AnimatedZephyrText } from "./components/AnimatedZephyrText";
-import { GithubIssueButton } from "./components/GithubIssueButton";
-import { StepIndicator } from "./components/StepIndicator";
-import { StepOne, StepThree, StepTwo } from "./components/steps";
-import type { Attachment } from "./types";
+import { FossBanner } from '@/components/misc/foss-banner';
+import {} from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertTriangle, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatedZephyrText } from './components/AnimatedZephyrText';
+import { GithubIssueButton } from './components/GithubIssueButton';
+import { StepIndicator } from './components/StepIndicator';
+import { StepOne, StepThree, StepTwo } from './components/steps';
+import type { Attachment } from './types';
 
 export default function SupportForm() {
   const { toast } = useToast();
@@ -21,14 +21,14 @@ export default function SupportForm() {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
 
   const [formData, setFormData] = useState({
-    email: "",
-    type: "",
-    category: "",
-    priority: "medium",
-    subject: "",
-    message: "",
+    email: '',
+    type: '',
+    category: '',
+    priority: 'medium',
+    subject: '',
+    message: '',
     os: navigator.platform,
-    browser: navigator.userAgent
+    browser: navigator.userAgent,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,15 +39,15 @@ export default function SupportForm() {
       const uploadedFiles = [];
       for (const file of attachments) {
         const formData = new FormData();
-        formData.append("file", file.file);
+        formData.append('file', file.file);
 
-        const response = await fetch("/api/support/upload", {
-          method: "POST",
-          body: formData
+        const response = await fetch('/api/support/upload', {
+          method: 'POST',
+          body: formData,
         });
 
         if (!response.ok) {
-          throw new Error("Failed to upload attachments");
+          throw new Error('Failed to upload attachments');
         }
 
         const data = await response.json();
@@ -55,46 +55,46 @@ export default function SupportForm() {
           url: data.url,
           key: data.key,
           name: file.name,
-          type: file.type
+          type: file.type,
         });
       }
 
-      const response = await fetch("/api/support", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/support', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          attachments: uploadedFiles
-        })
+          attachments: uploadedFiles,
+        }),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to send message");
+        throw new Error(data.error || 'Failed to send message');
       }
 
       toast({
-        title: "Message sent successfully",
-        description: "We'll get back to you as soon as possible."
+        title: 'Message sent successfully',
+        description: "We'll get back to you as soon as possible.",
       });
 
       setFormData({
-        email: "",
-        type: "",
-        category: "",
-        priority: "medium",
-        subject: "",
-        message: "",
+        email: '',
+        type: '',
+        category: '',
+        priority: 'medium',
+        subject: '',
+        message: '',
         os: navigator.platform,
-        browser: navigator.userAgent
+        browser: navigator.userAgent,
       });
       setAttachments([]);
       setStep(1);
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to send message",
-        variant: "destructive"
+        title: 'Error',
+        description: error.message || 'Failed to send message',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -104,18 +104,18 @@ export default function SupportForm() {
   const handleFileUpload = async (files: FileList) => {
     const maxFiles = 3;
     const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "application/pdf",
-      "text/plain"
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'application/pdf',
+      'text/plain',
     ];
     const maxSize = 5 * 1024 * 1024; // 5MB
 
     if (attachments.length + files.length > maxFiles) {
       toast({
-        title: "Too many files",
-        description: `Maximum ${maxFiles} files allowed`
+        title: 'Too many files',
+        description: `Maximum ${maxFiles} files allowed`,
       });
       return;
     }
@@ -124,34 +124,34 @@ export default function SupportForm() {
       try {
         if (!file.type || !allowedTypes.includes(file.type)) {
           toast({
-            title: "Invalid file type",
-            description: "Please upload images, PDFs, or text files only"
+            title: 'Invalid file type',
+            description: 'Please upload images, PDFs, or text files only',
           });
           continue;
         }
 
         if (file.size > maxSize) {
           toast({
-            title: "File too large",
-            description: "Files must be less than 5MB"
+            title: 'File too large',
+            description: 'Files must be less than 5MB',
           });
           continue;
         }
 
         // Create FormData
         const formData = new FormData();
-        formData.append("file", file); // Append the actual file
-        formData.append("fileName", file.name);
-        formData.append("fileType", file.type);
+        formData.append('file', file); // Append the actual file
+        formData.append('fileName', file.name);
+        formData.append('fileType', file.type);
 
-        const response = await fetch("/api/support/upload", {
-          method: "POST",
-          body: formData
+        const response = await fetch('/api/support/upload', {
+          method: 'POST',
+          body: formData,
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || "Upload failed");
+          throw new Error(errorData.error || 'Upload failed');
         }
 
         const data = await response.json();
@@ -166,20 +166,20 @@ export default function SupportForm() {
             originalName: data.originalName,
             size: data.size,
             type: data.type,
-            isUploading: false
-          }
+            isUploading: false,
+          },
         ]);
 
         toast({
-          title: "Success",
-          description: "File uploaded successfully"
+          title: 'Success',
+          description: 'File uploaded successfully',
         });
       } catch (error: any) {
-        console.error("Upload error:", error);
+        console.error('Upload error:', error);
         toast({
-          title: "Upload failed",
-          description: error.message || "Failed to upload file",
-          variant: "destructive"
+          title: 'Upload failed',
+          description: error.message || 'Failed to upload file',
+          variant: 'destructive',
         });
       }
     }
@@ -187,7 +187,7 @@ export default function SupportForm() {
 
   const formContainerVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
   useEffect(() => {
@@ -260,7 +260,7 @@ export default function SupportForm() {
             >
               <motion.div
                 className="h-full bg-primary"
-                initial={{ width: "33.33%" }}
+                initial={{ width: '33.33%' }}
                 animate={{ width: `${(step / 3) * 100}%` }}
                 transition={{ duration: 0.3 }}
               />

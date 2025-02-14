@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { ArrowUp } from "lucide-react";
-import type React from "react";
+import { motion } from 'framer-motion';
+import { ArrowUp } from 'lucide-react';
+import type React from 'react';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 interface ScrollUpButtonProps {
   isVisible: boolean;
@@ -12,7 +12,7 @@ interface ScrollUpButtonProps {
 
 const ScrollUpButton: React.FC<ScrollUpButtonProps> = ({ isVisible }) => {
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (!isVisible) return null;
@@ -38,7 +38,7 @@ const ScrollUpButton: React.FC<ScrollUpButtonProps> = ({ isVisible }) => {
               transition={{
                 duration: 10,
                 repeat: Number.POSITIVE_INFINITY,
-                ease: "linear"
+                ease: 'linear',
               }}
             >
               {/* biome-ignore lint/a11y/noSvgWithoutTitle: no need */}

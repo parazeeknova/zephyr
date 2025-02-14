@@ -1,15 +1,15 @@
-import { cn } from "@/lib/utils";
-import { FILE_CONFIGS, type FileTypeConfig } from "@/lib/utils/mime-utils";
-import { AnimatePresence, motion } from "framer-motion";
+import { cn } from '@/lib/utils';
+import { FILE_CONFIGS, type FileTypeConfig } from '@/lib/utils/mime-utils';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   AudioWaveform,
   CodeIcon,
   FileIcon,
   FileTextIcon,
   ImageIcon,
-  VideoIcon
-} from "lucide-react";
-import { useState } from "react";
+  VideoIcon,
+} from 'lucide-react';
+import { useState } from 'react';
 
 interface FileTypeWatermarkProps {
   type: string;
@@ -22,7 +22,7 @@ const iconMap = {
   AudioWaveform,
   FileTextIcon,
   CodeIcon,
-  FileIcon
+  FileIcon,
 } as const;
 
 // Add animations object
@@ -30,31 +30,31 @@ const animations = {
   container: {
     initial: { opacity: 0, y: 5 },
     animate: { opacity: 1, y: 0 },
-    hover: { scale: 1.05 }
+    hover: { scale: 1.05 },
   },
   text: {
     enter: { opacity: 0, x: -10 },
     animate: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: 10 }
-  }
+    exit: { opacity: 0, x: 10 },
+  },
 };
 
 export const FileTypeWatermark = ({
   type,
-  showCategory = true
+  showCategory = true,
 }: FileTypeWatermarkProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const extension = type.toLowerCase();
   const config = FILE_CONFIGS[extension];
 
   const fallbackConfig: FileTypeConfig = {
-    category: "DOCUMENT",
-    mime: "application/octet-stream",
+    category: 'DOCUMENT',
+    mime: 'application/octet-stream',
     tag: {
-      bg: "bg-gray-500/30",
-      text: "text-gray-100",
-      icon: "FileIcon"
-    }
+      bg: 'bg-gray-500/30',
+      text: 'text-gray-100',
+      icon: 'FileIcon',
+    },
   };
 
   const { category, tag } = config || fallbackConfig;
@@ -71,13 +71,13 @@ export const FileTypeWatermark = ({
         initial={animations.container.initial}
         animate={animations.container.animate}
         className={cn(
-          "rounded-lg px-3 py-1.5",
+          'rounded-lg px-3 py-1.5',
           tag.bg,
           tag.text,
-          "backdrop-blur-md backdrop-saturate-150",
-          "border border-white/10",
-          "shadow-lg",
-          "transition-all duration-300"
+          'backdrop-blur-md backdrop-saturate-150',
+          'border border-white/10',
+          'shadow-lg',
+          'transition-all duration-300'
         )}
       >
         <AnimatePresence mode="wait">
@@ -117,10 +117,10 @@ export const FileTypeWatermark = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: isHovered ? 1 : 0 }}
         className={cn(
-          "-z-10 absolute inset-0",
-          "blur-xl",
+          '-z-10 absolute inset-0',
+          'blur-xl',
           tag.bg,
-          "opacity-50"
+          'opacity-50'
         )}
       />
     </motion.div>

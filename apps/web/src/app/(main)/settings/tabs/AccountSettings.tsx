@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Form,
@@ -6,34 +6,34 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { LoadingButton } from "@zephyr-ui/Auth/LoadingButton";
-import LinkAccountAlert from "@zephyr-ui/Settings/LinkAccountAlert";
-import LinkedAccounts from "@zephyr-ui/Settings/LinkedAccounts";
-import type { UserData } from "@zephyr/db";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useUpdateEmail, useUpdateUsername } from "../mutations";
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoadingButton } from '@zephyr-ui/Auth/LoadingButton';
+import LinkAccountAlert from '@zephyr-ui/Settings/LinkAccountAlert';
+import LinkedAccounts from '@zephyr-ui/Settings/LinkedAccounts';
+import type { UserData } from '@zephyr/db';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { useUpdateEmail, useUpdateUsername } from '../mutations';
 
 const usernameSchema = z.object({
   username: z
     .string()
-    .min(3, "Username must be at least 3 characters")
-    .max(20, "Username must be at most 20 characters")
+    .min(3, 'Username must be at least 3 characters')
+    .max(20, 'Username must be at most 20 characters')
     .regex(
       /^[a-zA-Z0-9_]+$/,
-      "Username can only contain letters, numbers, and underscores"
-    )
+      'Username can only contain letters, numbers, and underscores'
+    ),
 });
 
 const emailSchema = z.object({
-  email: z.string().email("Please enter a valid email address")
+  email: z.string().email('Please enter a valid email address'),
 });
 
 type UsernameFormValues = z.infer<typeof usernameSchema>;
@@ -50,15 +50,15 @@ export default function AccountSettings({ user }: AccountSettingsProps) {
   const usernameForm = useForm<UsernameFormValues>({
     resolver: zodResolver(usernameSchema),
     defaultValues: {
-      username: user.username
-    }
+      username: user.username,
+    },
   });
 
   const emailForm = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema),
     defaultValues: {
-      email: user.email || ""
-    }
+      email: user.email || '',
+    },
   });
 
   const usernameMutation = useUpdateUsername();
@@ -67,8 +67,8 @@ export default function AccountSettings({ user }: AccountSettingsProps) {
   async function onUsernameSubmit(values: UsernameFormValues) {
     if (values.username === user.username) {
       toast({
-        title: "No changes made",
-        description: "Please enter a different username"
+        title: 'No changes made',
+        description: 'Please enter a different username',
       });
       return;
     }
@@ -76,18 +76,18 @@ export default function AccountSettings({ user }: AccountSettingsProps) {
     usernameMutation.mutate(values, {
       onSuccess: () => {
         toast({
-          title: "Username updated",
-          description: "Your username has been updated successfully"
+          title: 'Username updated',
+          description: 'Your username has been updated successfully',
         });
-      }
+      },
     });
   }
 
   async function onEmailSubmit(values: EmailFormValues) {
     if (values.email === user.email) {
       toast({
-        title: "No changes made",
-        description: "Please enter a different email"
+        title: 'No changes made',
+        description: 'Please enter a different email',
       });
       return;
     }
@@ -96,10 +96,10 @@ export default function AccountSettings({ user }: AccountSettingsProps) {
       onSuccess: () => {
         setVerificationEmailSent(true);
         toast({
-          title: "Verification email sent",
-          description: "Please check your email to verify your new address"
+          title: 'Verification email sent',
+          description: 'Please check your email to verify your new address',
         });
-      }
+      },
     });
   }
 
@@ -175,8 +175,8 @@ export default function AccountSettings({ user }: AccountSettingsProps) {
               disabled={verificationEmailSent}
             >
               {verificationEmailSent
-                ? "Verification Email Sent"
-                : "Update Email"}
+                ? 'Verification Email Sent'
+                : 'Update Email'}
             </LoadingButton>
           </form>
         </Form>

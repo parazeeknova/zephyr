@@ -1,44 +1,44 @@
 import {
   useUpdateAvatarMutation,
-  useUpdateProfileMutation
-} from "@/app/(main)/users/[username]/avatar-mutations";
-import avatarPlaceholder from "@/app/assets/avatar-placeholder.png";
+  useUpdateProfileMutation,
+} from '@/app/(main)/users/[username]/avatar-mutations';
+import avatarPlaceholder from '@/app/assets/avatar-placeholder.png';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
-import { getSecureImageUrl } from "@/utils/imageUrl";
-import { zodResolver } from "@hookform/resolvers/zod";
-import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
-import { AnimatedWordCounter } from "@zephyr-ui/misc/AnimatedWordCounter";
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+import { getSecureImageUrl } from '@/utils/imageUrl';
+import { zodResolver } from '@hookform/resolvers/zod';
+import LoadingButton from '@zephyr-ui/Auth/LoadingButton';
+import { AnimatedWordCounter } from '@zephyr-ui/misc/AnimatedWordCounter';
 import {
   type UpdateUserProfileValues,
-  updateUserProfileSchema
-} from "@zephyr/auth/validation";
-import type { UserData } from "@zephyr/db";
-import { Camera } from "lucide-react";
-import Image, { type StaticImageData } from "next/image";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { type UseFormReturn, useForm } from "react-hook-form";
-import Resizer from "react-image-file-resizer";
-import CropImageDialog from "./CropImageDialog";
-import GifCenteringDialog from "./GifCenteringDialog";
+  updateUserProfileSchema,
+} from '@zephyr/auth/validation';
+import type { UserData } from '@zephyr/db';
+import { Camera } from 'lucide-react';
+import Image, { type StaticImageData } from 'next/image';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type UseFormReturn, useForm } from 'react-hook-form';
+import Resizer from 'react-image-file-resizer';
+import CropImageDialog from './CropImageDialog';
+import GifCenteringDialog from './GifCenteringDialog';
 
 interface EditProfileDialogProps {
   user: UserData;
@@ -49,15 +49,15 @@ interface EditProfileDialogProps {
 export default function EditProfileDialog({
   user,
   open,
-  onOpenChange
+  onOpenChange,
 }: EditProfileDialogProps) {
   const { toast } = useToast();
   const form = useForm<UpdateUserProfileValues>({
     resolver: zodResolver(updateUserProfileSchema),
     defaultValues: {
       displayName: user.displayName,
-      bio: user.bio || ""
-    }
+      bio: user.bio || '',
+    },
   });
 
   const [croppedAvatar, setCroppedAvatar] = useState<Blob | null>(null);
@@ -72,7 +72,7 @@ export default function EditProfileDialog({
       setGifToCenter(null);
       form.reset({
         displayName: user.displayName,
-        bio: user.bio || ""
+        bio: user.bio || '',
       });
     }
   }, [open, user]);
@@ -85,8 +85,8 @@ export default function EditProfileDialog({
 
       if (!hasProfileChanges && !hasAvatarChanges) {
         toast({
-          title: "No changes",
-          description: "No changes were made to your profile"
+          title: 'No changes',
+          description: 'No changes were made to your profile',
         });
         return;
       }
@@ -94,14 +94,14 @@ export default function EditProfileDialog({
       if (hasProfileChanges) {
         await profileMutation.mutateAsync({
           values,
-          userId: user.id
+          userId: user.id,
         });
       }
 
       if (hasAvatarChanges) {
         const file = croppedAvatar
           ? new File([croppedAvatar], `avatar_${user.id}.webp`, {
-              type: "image/webp"
+              type: 'image/webp',
             })
           : gifToCenter;
 
@@ -109,23 +109,23 @@ export default function EditProfileDialog({
           await mutation.mutateAsync({
             file,
             userId: user.id,
-            oldAvatarKey: user.avatarKey || undefined
+            oldAvatarKey: user.avatarKey || undefined,
           });
         }
       }
 
       onOpenChange(false);
       toast({
-        title: "Success",
-        description: "Profile updated successfully"
+        title: 'Success',
+        description: 'Profile updated successfully',
       });
     } catch (error) {
-      console.error("Failed to update profile:", error);
+      console.error('Failed to update profile:', error);
       toast({
-        title: "Error",
+        title: 'Error',
         description:
-          error instanceof Error ? error.message : "An error occurred",
-        variant: "destructive"
+          error instanceof Error ? error.message : 'An error occurred',
+        variant: 'destructive',
       });
     }
   };
@@ -224,7 +224,7 @@ function AvatarInput({
   onGifSelected,
   form,
   isUploading,
-  user
+  user,
 }: AvatarInputProps) {
   const { toast } = useToast();
   const [imageToCrop, setImageToCrop] = useState<File>();
@@ -232,7 +232,7 @@ function AvatarInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const avatarSrc = useMemo(() => {
-    if (typeof src === "string") {
+    if (typeof src === 'string') {
       return getSecureImageUrl(src);
     }
     return avatarPlaceholder.src;
@@ -245,14 +245,14 @@ function AvatarInput({
       const maxSize = 10 * 1024 * 1024;
       if (file.size > maxSize) {
         toast({
-          title: "File too large",
-          description: "Image must be less than 10MB",
-          variant: "destructive"
+          title: 'File too large',
+          description: 'Image must be less than 10MB',
+          variant: 'destructive',
         });
         return;
       }
 
-      if (file.type === "image/gif") {
+      if (file.type === 'image/gif') {
         setGifToCenter(file);
         onGifSelected(file);
         return;
@@ -263,21 +263,21 @@ function AvatarInput({
           file,
           1024,
           1024,
-          "WEBP",
+          'WEBP',
           90,
           0,
           (uri) => setImageToCrop(uri as File),
-          "file",
+          'file',
           512,
           512
         );
       } catch (error) {
-        console.error("Error resizing image:", error);
+        console.error('Error resizing image:', error);
         toast({
-          title: "Error processing image",
+          title: 'Error processing image',
           description:
-            "Failed to resize the image. Please try again with a different image.",
-          variant: "destructive"
+            'Failed to resize the image. Please try again with a different image.',
+          variant: 'destructive',
         });
         resetInput();
       }
@@ -287,7 +287,7 @@ function AvatarInput({
 
   const resetInput = useCallback(() => {
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
   }, []);
 
@@ -313,12 +313,12 @@ function AvatarInput({
             width={150}
             height={150}
             className={cn(
-              "size-32 flex-none rounded-full object-cover",
-              isUploading && "opacity-50"
+              'size-32 flex-none rounded-full object-cover',
+              isUploading && 'opacity-50'
             )}
             unoptimized={
-              typeof avatarSrc === "string" &&
-              (avatarSrc.endsWith(".gif") || avatarSrc.includes("minio"))
+              typeof avatarSrc === 'string' &&
+              (avatarSrc.endsWith('.gif') || avatarSrc.includes('minio'))
             }
             onError={(e) => {
               (e.target as HTMLImageElement).src = avatarPlaceholder.src;
@@ -345,10 +345,10 @@ function AvatarInput({
             resetInput();
           }}
           currentValues={{
-            displayName: form.getValues("displayName"),
-            bio: form.getValues("bio"),
+            displayName: form.getValues('displayName'),
+            bio: form.getValues('bio'),
             userId: user.id,
-            oldAvatarKey: user.avatarKey || undefined
+            oldAvatarKey: user.avatarKey || undefined,
           }}
         />
       )}

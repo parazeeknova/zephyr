@@ -1,16 +1,9 @@
 {
   "name": "@zephyr/db",
+  "description": "Zephyr's database & cache package",
   "version": "1.2.3",
   "license": "AGPL-3.0",
   "private": true,
-  "exports": {
-    ".": "./index.ts"
-  },
-  "dependencies": {
-    "date-fns": "^4.1.0",
-    "ioredis": "^5.5.0",
-    "stream-chat": "^8.55.0"
-  },
   "scripts": {
     "db:generate": "prisma generate --schema=./prisma/schema.prisma",
     "db:migrate": "prisma migrate dev",
@@ -19,10 +12,12 @@
     "backup": "tsx scripts/backup.ts",
     "pre-migrate": "tsx scripts/pre-migration-check.ts",
     "migrate:safe": "pnpm run backup && pnpm run pre-migrate && pnpm prisma migrate dev --create-only",
-    "migrate:apply": "pnpm prisma migrate deploy",
-    "cleanup-streamchat": "ts-node scripts/cleanup-streamchat.ts",
-    "post:syncviews": "ts-node scripts/sync-view-counts.ts",
-    "post:viewtest": "ts-node test/test-view-count.ts"
+    "migrate:apply": "pnpm prisma migrate deploy"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "ioredis": "^5.5.0",
+    "stream-chat": "^8.55.0"
   },
   "devDependencies": {
     "@prisma/client": "^6.3.1",

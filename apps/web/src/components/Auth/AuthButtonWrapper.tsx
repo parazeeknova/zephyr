@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import type { ReactNode } from "react";
+import { motion } from 'framer-motion';
+import type { ReactNode } from 'react';
 
 interface AuthButtonWrapperProps {
   children: ReactNode;
@@ -8,7 +8,7 @@ interface AuthButtonWrapperProps {
 
 export default function AuthButtonWrapper({
   children,
-  className = ""
+  className = '',
 }: AuthButtonWrapperProps) {
   return (
     <motion.div
@@ -20,7 +20,7 @@ export default function AuthButtonWrapper({
       animate={{ opacity: 1, y: 0 }}
       transition={{
         duration: 0.3,
-        ease: "easeOut"
+        ease: 'easeOut',
       }}
     >
       <div

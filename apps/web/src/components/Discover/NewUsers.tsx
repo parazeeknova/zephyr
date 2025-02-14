@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { formatNumber } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import FollowButton from "@zephyr-ui/Layouts/FollowButton";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import type { UserData as BaseUserData } from "@zephyr/db";
-import { formatDistanceToNow } from "date-fns";
-import { motion } from "framer-motion";
-import { BadgeCheckIcon, Users } from "lucide-react";
-import Link from "next/link";
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { formatNumber } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import FollowButton from '@zephyr-ui/Layouts/FollowButton';
+import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
+import type { UserData as BaseUserData } from '@zephyr/db';
+import { formatDistanceToNow } from 'date-fns';
+import { motion } from 'framer-motion';
+import { BadgeCheckIcon, Users } from 'lucide-react';
+import Link from 'next/link';
 
 interface UserData extends BaseUserData {
   followState?: {
@@ -26,22 +26,22 @@ interface NewUsersProps {
 // biome-ignore lint/correctness/noUnusedVariables: template variable
 const NewUsers: React.FC<NewUsersProps> = ({ userId }) => {
   const { data: users, isLoading } = useQuery<UserData[]>({
-    queryKey: ["new-users"],
+    queryKey: ['new-users'],
     queryFn: async () => {
-      const response = await fetch("/api/users/new");
+      const response = await fetch('/api/users/new');
       const users = await response.json();
 
-      const followStates = await fetch("/api/users/follow-states", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userIds: users.map((u: UserData) => u.id) })
+      const followStates = await fetch('/api/users/follow-states', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userIds: users.map((u: UserData) => u.id) }),
       }).then((r) => r.json());
 
       return users.map((user: UserData) => ({
         ...user,
-        followState: followStates[user.id]
+        followState: followStates[user.id],
       }));
-    }
+    },
   });
 
   if (isLoading) {
@@ -109,7 +109,7 @@ const NewUsers: React.FC<NewUsersProps> = ({ userId }) => {
                 initialState={
                   user.followState || {
                     followers: user._count.followers,
-                    isFollowedByUser: false
+                    isFollowedByUser: false,
                   }
                 }
                 // @ts-expect-error

@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from "@/components/ui/tooltip";
-import { motion } from "framer-motion";
-import Link from "next/link";
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 interface HeaderIconButtonProps {
   href: string;
@@ -19,7 +19,7 @@ export function HeaderIconButton({
   href,
   icon,
   count,
-  title
+  title,
 }: HeaderIconButtonProps) {
   return (
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

@@ -1,15 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-import { motion } from "framer-motion";
-import { SUPPORT_TYPES } from "../../constants";
-import type { StepProps } from "../../types";
+  SelectValue,
+} from '@/components/ui/select';
+import { motion } from 'framer-motion';
+import { SUPPORT_TYPES } from '../../constants';
+import type { StepProps } from '../../types';
 
 export function StepOne({ formData, setFormData, onNext }: StepProps) {
   return (
@@ -71,5 +71,5 @@ export function StepOne({ formData, setFormData, onNext }: StepProps) {
 const stepVariants = {
   enter: { opacity: 0, x: 20 },
   center: { opacity: 1, x: 0, transition: { duration: 0.3 } },
-  exit: { opacity: 0, x: -20, transition: { duration: 0.3 } }
+  exit: { opacity: 0, x: -20, transition: { duration: 0.3 } },
 };

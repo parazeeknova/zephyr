@@ -1,7 +1,7 @@
-import { validateRequest } from "@zephyr/auth/src";
-import { debugLog } from "@zephyr/config/debug";
-import { type FollowerInfo, followerInfoCache, prisma } from "@zephyr/db";
-import { suggestedUsersCache } from "../../suggested/route";
+import { validateRequest } from '@zephyr/auth/src';
+import { debugLog } from '@zephyr/config/debug';
+import { type FollowerInfo, followerInfoCache, prisma } from '@zephyr/db';
+import { suggestedUsersCache } from '../../suggested/route';
 
 const FOLLOW_AURA_REWARD = 5;
 
@@ -12,14 +12,14 @@ export async function POST(
   const params = await props.params;
   const { userId } = params;
 
-  debugLog.api("Processing follow request:", userId);
+  debugLog.api('Processing follow request:', userId);
 
   try {
     const { user: loggedInUser } = await validateRequest();
 
     if (!loggedInUser) {
-      debugLog.api("Unauthorized follow attempt");
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      debugLog.api('Unauthorized follow attempt');
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const result = await prisma.$transaction(async (tx) => {
@@ -27,27 +27,27 @@ export async function POST(
         where: {
           followerId_followingId: {
             followerId: loggedInUser.id,
-            followingId: userId
-          }
+            followingId: userId,
+          },
         },
         create: {
           followerId: loggedInUser.id,
-          followingId: userId
+          followingId: userId,
         },
-        update: {}
+        update: {},
       });
 
       const notification = await tx.notification.create({
         data: {
           issuerId: loggedInUser.id,
           recipientId: userId,
-          type: "FOLLOW"
-        }
+          type: 'FOLLOW',
+        },
       });
 
       await tx.user.update({
         where: { id: userId },
-        data: { aura: { increment: FOLLOW_AURA_REWARD } }
+        data: { aura: { increment: FOLLOW_AURA_REWARD } },
       });
 
       await tx.auraLog.create({
@@ -55,8 +55,8 @@ export async function POST(
           userId: userId,
           issuerId: loggedInUser.id,
           amount: FOLLOW_AURA_REWARD,
-          type: "FOLLOW_GAINED"
-        }
+          type: 'FOLLOW_GAINED',
+        },
       });
 
       const userData = await tx.user.findUnique({
@@ -65,17 +65,17 @@ export async function POST(
           id: true,
           displayName: true,
           username: true,
-          _count: { select: { followers: true } }
-        }
+          _count: { select: { followers: true } },
+        },
       });
 
       return { follow, notification, userData };
     });
 
-    debugLog.api("Follow transaction completed:", result);
+    debugLog.api('Follow transaction completed:', result);
 
     if (!result.userData) {
-      return Response.json({ error: "User data not found" }, { status: 404 });
+      return Response.json({ error: 'User data not found' }, { status: 404 });
     }
 
     const followerInfo: FollowerInfo & {
@@ -85,15 +85,15 @@ export async function POST(
       followers: result.userData._count.followers,
       isFollowedByUser: true,
       displayName: result.userData.displayName,
-      username: result.userData.username
+      username: result.userData.username,
     };
 
     await followerInfoCache.invalidate(params.userId);
 
     return Response.json(followerInfo);
   } catch (error) {
-    debugLog.api("Follow request failed:", error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    debugLog.api('Follow request failed:', error);
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -107,7 +107,7 @@ export async function GET(
   try {
     const { user: loggedInUser } = await validateRequest();
     if (!loggedInUser) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const cachedData = await followerInfoCache.get(userId);
@@ -120,35 +120,35 @@ export async function GET(
         where: { id: userId },
         select: {
           _count: {
-            select: { followers: true }
-          }
-        }
+            select: { followers: true },
+          },
+        },
       }),
       prisma.follow.findUnique({
         where: {
           followerId_followingId: {
             followerId: loggedInUser.id,
-            followingId: userId
-          }
-        }
-      })
+            followingId: userId,
+          },
+        },
+      }),
     ]);
 
     if (!user) {
-      return Response.json({ error: "User not found" }, { status: 404 });
+      return Response.json({ error: 'User not found' }, { status: 404 });
     }
 
     const data: FollowerInfo = {
       followers: user._count.followers,
-      isFollowedByUser: !!isFollowing
+      isFollowedByUser: !!isFollowing,
     };
 
     await followerInfoCache.set(userId, data);
 
     return Response.json(data);
   } catch (error) {
-    console.error("GET follower info error:", error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    console.error('GET follower info error:', error);
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -163,28 +163,28 @@ export async function DELETE(
     const { user: loggedInUser } = await validateRequest();
 
     if (!loggedInUser) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const result = await prisma.$transaction(async (tx) => {
       await tx.follow.deleteMany({
         where: {
           followerId: loggedInUser.id,
-          followingId: userId
-        }
+          followingId: userId,
+        },
       });
 
       await tx.notification.deleteMany({
         where: {
           issuerId: loggedInUser.id,
           recipientId: userId,
-          type: "FOLLOW"
-        }
+          type: 'FOLLOW',
+        },
       });
 
       await tx.user.update({
         where: { id: userId },
-        data: { aura: { decrement: FOLLOW_AURA_REWARD } }
+        data: { aura: { decrement: FOLLOW_AURA_REWARD } },
       });
 
       await tx.auraLog.create({
@@ -192,8 +192,8 @@ export async function DELETE(
           userId: userId,
           issuerId: loggedInUser.id,
           amount: -FOLLOW_AURA_REWARD,
-          type: "FOLLOW_GAINED"
-        }
+          type: 'FOLLOW_GAINED',
+        },
       });
 
       const userData = await tx.user.findUnique({
@@ -201,15 +201,15 @@ export async function DELETE(
         select: {
           displayName: true,
           username: true,
-          _count: { select: { followers: true } }
-        }
+          _count: { select: { followers: true } },
+        },
       });
 
       return userData;
     });
 
     if (!result) {
-      return Response.json({ error: "User not found" }, { status: 404 });
+      return Response.json({ error: 'User not found' }, { status: 404 });
     }
 
     const followerInfo: FollowerInfo & {
@@ -219,17 +219,17 @@ export async function DELETE(
       followers: result._count.followers,
       isFollowedByUser: false,
       displayName: result.displayName,
-      username: result.username
+      username: result.username,
     };
 
     await Promise.all([
       followerInfoCache.invalidate(userId),
-      suggestedUsersCache.invalidateForUser(userId)
+      suggestedUsersCache.invalidateForUser(userId),
     ]);
 
     return Response.json(followerInfo);
   } catch (error) {
-    console.error("Unfollow error:", error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    console.error('Unfollow error:', error);
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
