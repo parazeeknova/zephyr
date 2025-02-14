@@ -28,13 +28,22 @@ jobs:
       - name: Extract commit information
         id: commit-info
         run: |
+          # Get the commit message
           COMMIT_MSG="${{ github.event.head_commit.message }}"
           
-          # Extract the type and message
-          if [[ $COMMIT_MSG =~ ^([a-z]+)(\(.*\))?!?:\s*(.*)$ ]]; then
+          # Remove merge commit prefix if present
+          COMMIT_MSG=$(echo "$COMMIT_MSG" | sed -E 's/^Merge pull request #[0-9]+ from [^[:space:]]+[[:space:]]+//')
+          
+          # Initialize variables with defaults
+          TYPE="Other Changes"
+          MESSAGE="$COMMIT_MSG"
+          SCOPE=""
+          
+          # Try to match conventional commit format
+          if [[ $COMMIT_MSG =~ ^([a-z]+)(\[([^\]]+)\])?!?:[[:space:]](.*)$ ]]; then
             TYPE=${BASH_REMATCH[1]}
-            SCOPE=${BASH_REMATCH[2]}
-            MESSAGE=${BASH_REMATCH[3]}
+            SCOPE=${BASH_REMATCH[3]}
+            MESSAGE=${BASH_REMATCH[4]}
             
             # Convert type to readable format
             case $TYPE in
@@ -51,15 +60,15 @@ jobs:
               revert) TYPE="Reverts" ;;
               *) TYPE="Other Changes" ;;
             esac
-            
-            echo "type=$TYPE" >> $GITHUB_OUTPUT
-            echo "message=$MESSAGE" >> $GITHUB_OUTPUT
-            echo "scope=$SCOPE" >> $GITHUB_OUTPUT
-          else
-            echo "type=Other Changes" >> $GITHUB_OUTPUT
-            echo "message=$COMMIT_MSG" >> $GITHUB_OUTPUT
-            echo "scope=" >> $GITHUB_OUTPUT
           fi
+          
+          # Escape special characters in MESSAGE
+          MESSAGE=$(echo "$MESSAGE" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+          
+          # Output the variables
+          echo "type=$TYPE" >> $GITHUB_OUTPUT
+          echo "message=$MESSAGE" >> $GITHUB_OUTPUT
+          echo "scope=$SCOPE" >> $GITHUB_OUTPUT
 
       - name: Update CHANGELOG.md
         run: |
@@ -74,8 +83,9 @@ jobs:
           # Prepare the new entry
           ENTRY="## [${{ steps.date.outputs.date }}]"
           ENTRY="$ENTRY\n### ${{ steps.commit-info.outputs.type }}"
+          
           if [ ! -z "${{ steps.commit-info.outputs.scope }}" ]; then
-            ENTRY="$ENTRY\n- ${{ steps.commit-info.outputs.message }} ${{ steps.commit-info.outputs.scope }}"
+            ENTRY="$ENTRY\n- ${{ steps.commit-info.outputs.message }} [${{ steps.commit-info.outputs.scope }}]"
           else
             ENTRY="$ENTRY\n- ${{ steps.commit-info.outputs.message }}"
           fi
