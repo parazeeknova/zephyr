@@ -1,5 +1,5 @@
-import { prisma } from "@zephyr/db";
-import { NextResponse } from "next/server";
+import { prisma } from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
 async function cleanupInactiveUsers() {
   const logs: string[] = [];
@@ -11,7 +11,7 @@ async function cleanupInactiveUsers() {
   };
 
   try {
-    log("🚀 Starting inactive users cleanup job");
+    log('🚀 Starting inactive users cleanup job');
 
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -21,8 +21,8 @@ async function cleanupInactiveUsers() {
 
     const inactiveCount = await prisma.user.count({
       where: {
-        AND: [{ emailVerified: false }, { createdAt: { lt: thirtyDaysAgo } }]
-      }
+        AND: [{ emailVerified: false }, { createdAt: { lt: thirtyDaysAgo } }],
+      },
     });
 
     log(
@@ -30,7 +30,7 @@ async function cleanupInactiveUsers() {
     );
 
     if (inactiveCount === 0) {
-      log("✨ No inactive users to clean up");
+      log('✨ No inactive users to clean up');
       return {
         success: true,
         deletedCount: 0,
@@ -39,9 +39,9 @@ async function cleanupInactiveUsers() {
         stats: {
           totalUsers,
           inactiveUsers: 0,
-          deletionPercentage: "0.00"
+          deletionPercentage: '0.00',
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
 
@@ -58,16 +58,16 @@ async function cleanupInactiveUsers() {
           where: {
             AND: [
               { emailVerified: false },
-              { createdAt: { lt: thirtyDaysAgo } }
-            ]
+              { createdAt: { lt: thirtyDaysAgo } },
+            ],
           },
           select: {
             id: true,
             username: true,
-            createdAt: true
+            createdAt: true,
           },
           take: batchSize,
-          skip: offset
+          skip: offset,
         });
 
         if (batch.length > 0) {
@@ -80,8 +80,8 @@ async function cleanupInactiveUsers() {
 
           const deleteResult = await prisma.user.deleteMany({
             where: {
-              id: { in: batch.map((user) => user.id) }
-            }
+              id: { in: batch.map((user) => user.id) },
+            },
           });
 
           totalDeleted += deleteResult.count;
@@ -93,7 +93,7 @@ async function cleanupInactiveUsers() {
         }
       } catch (error) {
         const errorMessage = `Error processing batch ${currentBatch}: ${
-          error instanceof Error ? error.message : "Unknown error"
+          error instanceof Error ? error.message : 'Unknown error'
         }`;
         log(`❌ ${errorMessage}`);
       }
@@ -111,9 +111,9 @@ async function cleanupInactiveUsers() {
         totalUsersBefore: totalUsers,
         totalUsersAfter: remainingUsers,
         deletedUsers: totalDeleted,
-        deletionPercentage
+        deletionPercentage,
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     log(`✨ Cleanup completed successfully:
@@ -126,11 +126,11 @@ async function cleanupInactiveUsers() {
     return summary;
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+      error instanceof Error ? error.message : 'Unknown error';
     log(`❌ Failed to cleanup inactive users: ${errorMessage}`);
     console.error(
-      "Cleanup error stack:",
-      error instanceof Error ? error.stack : "No stack trace"
+      'Cleanup error stack:',
+      error instanceof Error ? error.stack : 'No stack trace'
     );
 
     return {
@@ -138,55 +138,55 @@ async function cleanupInactiveUsers() {
       duration: Date.now() - startTime,
       error: errorMessage,
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } finally {
     try {
       await prisma.$disconnect();
-      log("👋 Database connection closed");
+      log('👋 Database connection closed');
     } catch (_error) {
-      log("❌ Error closing database connection");
+      log('❌ Error closing database connection');
     }
   }
 }
 
 export async function GET(request: Request) {
-  console.log("📥 Received cleanup inactive users request");
+  console.log('📥 Received cleanup inactive users request');
 
   try {
     if (!process.env.CRON_SECRET_KEY) {
-      console.error("❌ CRON_SECRET_KEY environment variable not set");
+      console.error('❌ CRON_SECRET_KEY environment variable not set');
       return NextResponse.json(
         {
-          error: "Server configuration error",
-          timestamp: new Date().toISOString()
+          error: 'Server configuration error',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 500,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
 
-    const authHeader = request.headers.get("authorization");
+    const authHeader = request.headers.get('authorization');
     const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
 
     if (!authHeader || authHeader !== expectedAuth) {
-      console.warn("⚠️ Unauthorized cleanup attempt");
+      console.warn('⚠️ Unauthorized cleanup attempt');
       return NextResponse.json(
         {
-          error: "Unauthorized",
-          timestamp: new Date().toISOString()
+          error: 'Unauthorized',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 401,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
@@ -196,32 +196,32 @@ export async function GET(request: Request) {
     return NextResponse.json(results, {
       status: results.success ? 200 : 500,
       headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      }
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
     });
   } catch (error) {
-    console.error("❌ Cleanup route error:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined
+    console.error('❌ Cleanup route error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString()
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
       },
       {
         status: 500,
         headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store"
-        }
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store',
+        },
       }
     );
   }
 }
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

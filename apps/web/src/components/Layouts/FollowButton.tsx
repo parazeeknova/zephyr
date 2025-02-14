@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { ErrorBoundary } from "@/components/misc/ErrorBoundary";
-import { debugLog } from "@zephyr/config/debug";
-import dynamic from "next/dynamic";
-import type React from "react";
-import { Button } from "../ui/button";
+import { ErrorBoundary } from '@/components/misc/ErrorBoundary';
+import { debugLog } from '@zephyr/config/debug';
+import dynamic from 'next/dynamic';
+import type React from 'react';
+import { Button } from '../ui/button';
 
 const ClientFollowButton = dynamic(
-  () => import("./client/ClientFollowButton"),
+  () => import('./client/ClientFollowButton'),
   {
     ssr: false,
     loading: () => (
       <Button className="h-8 w-20 animate-pulse rounded-md bg-secondary/50" />
-    )
+    ),
   }
 );
 
@@ -30,7 +30,7 @@ const WrappedClientFollowButton: React.FC<FollowButtonProps> = (props) => {
   return (
     <ErrorBoundary
       onReset={() => {
-        debugLog.component("Follow button error boundary reset:", props.userId);
+        debugLog.component('Follow button error boundary reset:', props.userId);
       }}
     >
       <ClientFollowButton {...props} />
@@ -42,12 +42,12 @@ const FollowButton: React.FC<FollowButtonProps> = ({
   userId,
   initialState,
   className,
-  onFollowed
+  onFollowed,
 }) => {
-  debugLog.component("Rendering FollowButton:", {
+  debugLog.component('Rendering FollowButton:', {
     userId,
     initialState,
-    className
+    className,
   });
 
   return (
@@ -60,10 +60,10 @@ const FollowButton: React.FC<FollowButtonProps> = ({
   );
 };
 
-FollowButton.displayName = "FollowButton";
+FollowButton.displayName = 'FollowButton';
 
 export default FollowButton;
 
 export function preloadFollowButton() {
-  void import("./client/ClientFollowButton");
+  void import('./client/ClientFollowButton');
 }

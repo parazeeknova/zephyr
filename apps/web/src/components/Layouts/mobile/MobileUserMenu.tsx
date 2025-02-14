@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { getSecureImageUrl } from "@/utils/imageUrl";
-import { useQuery } from "@tanstack/react-query";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import { AnimatePresence, type Variants, motion } from "framer-motion";
+import { getSecureImageUrl } from '@/utils/imageUrl';
+import { useQuery } from '@tanstack/react-query';
+import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
+import { AnimatePresence, type Variants, motion } from 'framer-motion';
 import {
   LogOutIcon,
   Monitor,
@@ -12,9 +12,9 @@ import {
   Settings2Icon,
   Sun,
   UserIcon,
-  X
-} from "lucide-react";
-import Link from "next/link";
+  X,
+} from 'lucide-react';
+import Link from 'next/link';
 
 interface MobileUserMenuProps {
   isOpen: boolean;
@@ -36,26 +36,26 @@ const menuVariants: Variants = {
   hidden: {
     opacity: 0,
     scale: 0.95,
-    y: 20
+    y: 20,
   },
   visible: {
     opacity: 1,
     scale: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: 'spring',
       stiffness: 300,
-      damping: 30
-    }
+      damping: 30,
+    },
   },
   exit: {
     opacity: 0,
     scale: 0.95,
     y: 20,
     transition: {
-      duration: 0.2
-    }
-  }
+      duration: 0.2,
+    },
+  },
 };
 
 export function MobileUserMenu({
@@ -64,31 +64,31 @@ export function MobileUserMenu({
   user,
   theme,
   setTheme,
-  onLogout
+  onLogout,
 }: MobileUserMenuProps) {
   const { data: avatarData } = useQuery({
-    queryKey: ["avatar", user.id],
+    queryKey: ['avatar', user.id],
     queryFn: async () => {
       try {
         const response = await fetch(`/api/users/avatar/${user.id}`);
-        if (!response.ok) throw new Error("Failed to fetch avatar");
+        if (!response.ok) throw new Error('Failed to fetch avatar');
         const data = await response.json();
         return {
           url: getSecureImageUrl(data.url),
-          key: data.key
+          key: data.key,
         };
       } catch (_error) {
         return {
           url: user.avatarUrl ? getSecureImageUrl(user.avatarUrl) : null,
-          key: user.avatarKey
+          key: user.avatarKey,
         };
       }
     },
     initialData: {
       url: user.avatarUrl ? getSecureImageUrl(user.avatarUrl) : null,
-      key: user.avatarKey
+      key: user.avatarKey,
     },
-    staleTime: 1000 * 60 * 5
+    staleTime: 1000 * 60 * 5,
   });
 
   return (
@@ -156,9 +156,9 @@ export function MobileUserMenu({
                     variants={{
                       visible: {
                         transition: {
-                          staggerChildren: 0.05
-                        }
-                      }
+                          staggerChildren: 0.05,
+                        },
+                      },
                     }}
                   >
                     <MobileMenuItem
@@ -182,9 +182,9 @@ export function MobileUserMenu({
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         {[
-                          { icon: Sun, label: "Light", value: "light" },
-                          { icon: Moon, label: "Dark", value: "dark" },
-                          { icon: Monitor, label: "System", value: "system" }
+                          { icon: Sun, label: 'Light', value: 'light' },
+                          { icon: Moon, label: 'Dark', value: 'dark' },
+                          { icon: Monitor, label: 'System', value: 'system' },
                         ].map(({ icon: Icon, label, value }) => (
                           <motion.button
                             key={value}
@@ -196,8 +196,8 @@ export function MobileUserMenu({
                             }}
                             className={`flex flex-col items-center gap-1 rounded-lg p-3 transition-colors ${
                               theme === value
-                                ? "bg-primary/20 text-primary"
-                                : "hover:bg-primary/10"
+                                ? 'bg-primary/20 text-primary'
+                                : 'hover:bg-primary/10'
                             }`}
                           >
                             <Icon className="size-5" />

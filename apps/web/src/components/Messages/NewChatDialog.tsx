@@ -1,23 +1,23 @@
-import { useSession } from "@/app/(main)/SessionProvider";
+import { useSession } from '@/app/(main)/SessionProvider';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import useDebounce from "@/hooks/useDebounce";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import { Check, Loader2, SearchIcon, X } from "lucide-react";
-import { type Key, useState } from "react";
-import type { UserResponse } from "stream-chat";
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import useDebounce from '@/hooks/useDebounce';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import LoadingButton from '@zephyr-ui/Auth/LoadingButton';
+import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
+import { Check, Loader2, SearchIcon, X } from 'lucide-react';
+import { type Key, useState } from 'react';
+import type { UserResponse } from 'stream-chat';
 import {
   type DefaultStreamChatGenerics,
-  useChatContext
-} from "stream-chat-react";
+  useChatContext,
+} from 'stream-chat-react';
 
 interface NewChatDialogProps {
   onOpenChange: (open: boolean) => void;
@@ -26,45 +26,45 @@ interface NewChatDialogProps {
 
 export default function NewChatDialog({
   onOpenChange,
-  onChatCreated
+  onChatCreated,
 }: NewChatDialogProps) {
   const { client, setActiveChannel } = useChatContext();
   const { toast } = useToast();
   const { user: loggedInUser } = useSession();
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState('');
   const searchInputDebounced = useDebounce(searchInput);
   const [selectedUsers, setSelectedUsers] = useState<
     UserResponse<DefaultStreamChatGenerics>[]
   >([]);
   const { data, isFetching, isError, isSuccess } = useQuery({
-    queryKey: ["stream-users", searchInputDebounced],
+    queryKey: ['stream-users', searchInputDebounced],
     queryFn: async () =>
       client.queryUsers(
         {
           id: { $ne: loggedInUser.id },
-          role: { $ne: "admin" },
+          role: { $ne: 'admin' },
           ...(searchInputDebounced
             ? {
                 $or: [
                   { name: { $autocomplete: searchInputDebounced } },
-                  { username: { $autocomplete: searchInputDebounced } }
-                ]
+                  { username: { $autocomplete: searchInputDebounced } },
+                ],
               }
-            : {})
+            : {}),
         },
         { name: 1, username: 1 },
         { limit: 15 }
-      )
+      ),
   });
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const channel = client.channel("messaging", {
+      const channel = client.channel('messaging', {
         members: [loggedInUser.id, ...selectedUsers.map((u) => u.id)],
         name:
           selectedUsers.length > 1
-            ? `${loggedInUser.displayName}, ${selectedUsers.map((u) => u.name).join(", ")}`
-            : undefined
+            ? `${loggedInUser.displayName}, ${selectedUsers.map((u) => u.name).join(', ')}`
+            : undefined,
       });
       await channel.create();
       return channel;
@@ -74,12 +74,12 @@ export default function NewChatDialog({
       onChatCreated(channel);
     },
     onError(error) {
-      console.error("Error starting chat", error);
+      console.error('Error starting chat', error);
       toast({
-        variant: "destructive",
-        description: "Error starting chat. Please try again."
+        variant: 'destructive',
+        description: 'Error starting chat. Please try again.',
       });
-    }
+    },
   });
 
   return (

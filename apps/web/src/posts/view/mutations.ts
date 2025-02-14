@@ -1,5 +1,5 @@
-import { useMutation } from "@tanstack/react-query";
-import { debugLog } from "@zephyr/config/debug";
+import { useMutation } from '@tanstack/react-query';
+import { debugLog } from '@zephyr/config/debug';
 
 export function useIncrementViewMutation() {
   return useMutation({
@@ -9,16 +9,16 @@ export function useIncrementViewMutation() {
           `Making API request to increment view for post: ${postId}`
         );
         const response = await fetch(`/api/posts/${postId}/views`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json"
-          }
+            'Content-Type': 'application/json',
+          },
         });
 
         if (!response.ok) {
           const error = await response.json();
           debugLog.views(`Failed to increment view for post: ${postId}`, error);
-          throw new Error(error.message || "Failed to increment view count");
+          throw new Error(error.message || 'Failed to increment view count');
         }
 
         const result = await response.json();
@@ -32,6 +32,6 @@ export function useIncrementViewMutation() {
         return null;
       }
     },
-    retry: false
+    retry: false,
   });
 }

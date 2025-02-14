@@ -1,16 +1,16 @@
-import { Button } from "@/components/ui/button";
-import { getLanguageFromFileName } from "@/lib/codefileExtensions";
-import { formatFileName } from "@/lib/formatFileName";
-import { cn } from "@/lib/utils";
-import { PlayArrowOutlined } from "@mui/icons-material";
-import type { Media } from "@prisma/client";
-import { AnimatePresence, motion } from "framer-motion";
-import { FileAudioIcon, FileCode, FileIcon } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
-import { useMediaQuery } from "usehooks-ts";
-import { FileTypeWatermark } from "./FileTypeWatermark";
-import MediaViewer from "./MediaViewer";
+import { Button } from '@/components/ui/button';
+import { getLanguageFromFileName } from '@/lib/codefileExtensions';
+import { formatFileName } from '@/lib/formatFileName';
+import { cn } from '@/lib/utils';
+import { PlayArrowOutlined } from '@mui/icons-material';
+import type { Media } from '@prisma/client';
+import { AnimatePresence, motion } from 'framer-motion';
+import { FileAudioIcon, FileCode, FileIcon } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+import { useMediaQuery } from 'usehooks-ts';
+import { FileTypeWatermark } from './FileTypeWatermark';
+import MediaViewer from './MediaViewer';
 
 interface MediaPreviewsProps {
   attachments: Media[];
@@ -19,7 +19,7 @@ interface MediaPreviewsProps {
 export function MediaPreviews({ attachments }: MediaPreviewsProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [showAll, setShowAll] = useState(false);
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const getMediaUrl = (mediaId: string) => `/api/media/${mediaId}`;
 
@@ -27,7 +27,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
     initial: { opacity: 0, scale: 0.8 },
     animate: { opacity: 1, scale: 1 },
     hover: { scale: 1.05 },
-    exit: { opacity: 0, scale: 0.8 }
+    exit: { opacity: 0, scale: 0.8 },
   };
 
   const initialCount = isMobile ? 2 : 3;
@@ -39,16 +39,16 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
 
   const renderPreview = (m: Media, _index: number, isSmall = false) => {
     const commonClasses = cn(
-      "mx-auto w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105",
-      isSmall ? "h-20" : "h-48"
+      'mx-auto w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105',
+      isSmall ? 'h-20' : 'h-48'
     );
 
     switch (m.type) {
-      case "IMAGE":
-        if (m.mimeType === "image/svg+xml") {
+      case 'IMAGE':
+        if (m.mimeType === 'image/svg+xml') {
           return (
             <div
-              className={cn("group relative w-full", isSmall ? "h-20" : "h-48")}
+              className={cn('group relative w-full', isSmall ? 'h-20' : 'h-48')}
             >
               <object
                 data={getMediaUrl(m.id)}
@@ -64,28 +64,28 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
         }
         return (
           <div
-            className={cn("group relative w-full", isSmall ? "h-20" : "h-48")}
+            className={cn('group relative w-full', isSmall ? 'h-20' : 'h-48')}
           >
             <Image
               src={getMediaUrl(m.id)}
               alt="Attachment"
               fill
               className={commonClasses}
-              style={{ objectFit: "cover" }}
+              style={{ objectFit: 'cover' }}
             />
             <FileTypeWatermark
-              type={m.key.split(".").pop()?.toUpperCase() || "FILE"}
+              type={m.key.split('.').pop()?.toUpperCase() || 'FILE'}
             />
             <div className="absolute inset-0 bg-black/5 transition-opacity group-hover:opacity-0" />
           </div>
         );
 
-      case "VIDEO":
+      case 'VIDEO':
         return (
           <div
             className={cn(
-              "group relative w-full overflow-hidden",
-              isSmall ? "h-20" : "h-48"
+              'group relative w-full overflow-hidden',
+              isSmall ? 'h-20' : 'h-48'
             )}
           >
             <video
@@ -110,38 +110,38 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
 
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 360 }}
-                  transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 20 }}
                   className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm transition-colors duration-300 group-hover:bg-white/20"
                 >
                   <PlayArrowOutlined
                     className={cn(
-                      "transition-all duration-300",
-                      isSmall ? "h-6 w-6" : "h-8 w-8",
-                      "text-white group-hover:text-white",
-                      "group-hover:scale-110"
+                      'transition-all duration-300',
+                      isSmall ? 'h-6 w-6' : 'h-8 w-8',
+                      'text-white group-hover:text-white',
+                      'group-hover:scale-110'
                     )}
                   />
                 </motion.div>
               </div>
 
-              <FileTypeWatermark type={m.key.split(".").pop() || "FILE"} />
+              <FileTypeWatermark type={m.key.split('.').pop() || 'FILE'} />
             </motion.div>
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-40 transition-all duration-300 group-hover:opacity-20" />
           </div>
         );
 
-      case "AUDIO":
+      case 'AUDIO':
         return (
           <div
-            className={cn("group relative w-full", isSmall ? "h-20" : "h-48")}
+            className={cn('group relative w-full', isSmall ? 'h-20' : 'h-48')}
           >
             <div className="h-full w-full rounded-lg bg-primary/5 p-4 transition-transform duration-300 group-hover:scale-105">
               <div className="flex h-full flex-col items-center justify-center gap-2">
                 <FileAudioIcon
                   className={cn(
-                    "text-primary",
-                    isSmall ? "h-6 w-6" : "h-12 w-12"
+                    'text-primary',
+                    isSmall ? 'h-6 w-6' : 'h-12 w-12'
                   )}
                 />
                 {!isSmall && (
@@ -152,22 +152,22 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
               </div>
             </div>
             <FileTypeWatermark
-              type={m.key.split(".").pop()?.toUpperCase() || "FILE"}
+              type={m.key.split('.').pop()?.toUpperCase() || 'FILE'}
             />
           </div>
         );
 
-      case "CODE":
+      case 'CODE':
         return (
           <div
-            className={cn("group relative w-full", isSmall ? "h-20" : "h-48")}
+            className={cn('group relative w-full', isSmall ? 'h-20' : 'h-48')}
           >
             <div className="h-full w-full rounded-lg bg-primary/5 p-4 transition-transform duration-300 group-hover:scale-105">
               <div className="flex h-full flex-col items-center justify-center gap-2">
                 <FileCode
                   className={cn(
-                    "text-primary",
-                    isSmall ? "h-6 w-6" : "h-12 w-12"
+                    'text-primary',
+                    isSmall ? 'h-6 w-6' : 'h-12 w-12'
                   )}
                 />
                 {!isSmall && (
@@ -183,22 +183,22 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
               </div>
             </div>
             <FileTypeWatermark
-              type={m.key.split(".").pop()?.toUpperCase() || "FILE"}
+              type={m.key.split('.').pop()?.toUpperCase() || 'FILE'}
             />
           </div>
         );
 
-      case "DOCUMENT":
+      case 'DOCUMENT':
         return (
           <div
-            className={cn("group relative w-full", isSmall ? "h-20" : "h-48")}
+            className={cn('group relative w-full', isSmall ? 'h-20' : 'h-48')}
           >
             <div className="h-full w-full rounded-lg bg-primary/5 p-4 transition-transform duration-300 group-hover:scale-105">
               <div className="flex h-full flex-col items-center justify-center gap-2">
                 <FileIcon
                   className={cn(
-                    "text-primary",
-                    isSmall ? "h-6 w-6" : "h-12 w-12"
+                    'text-primary',
+                    isSmall ? 'h-6 w-6' : 'h-12 w-12'
                   )}
                 />
                 {!isSmall && (
@@ -209,7 +209,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
               </div>
             </div>
             <FileTypeWatermark
-              type={m.key.split(".").pop()?.toUpperCase() || "FILE"}
+              type={m.key.split('.').pop()?.toUpperCase() || 'FILE'}
             />
           </div>
         );
@@ -222,13 +222,13 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
   const GridPreview = ({
     media,
     index,
-    size = "large"
+    size = 'large',
   }: {
     media: Media;
     index: number;
-    size?: "small" | "large";
+    size?: 'small' | 'large';
   }) => {
-    const isSmall = size === "small";
+    const isSmall = size === 'small';
     return (
       <motion.div
         layout
@@ -238,8 +238,8 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
         transition={{ duration: 0.2, delay: index * 0.05 }}
         onClick={() => setSelectedIndex(index)}
         className={cn(
-          "hover:-translate-y-0.5 relative cursor-pointer overflow-hidden rounded-lg shadow-sm transition-all duration-300 hover:shadow-md",
-          isSmall ? "h-20" : "h-48"
+          'hover:-translate-y-0.5 relative cursor-pointer overflow-hidden rounded-lg shadow-sm transition-all duration-300 hover:shadow-md',
+          isSmall ? 'h-20' : 'h-48'
         )}
       >
         {renderPreview(media, index, isSmall)}
@@ -334,14 +334,14 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
     <motion.div layout className="w-full">
       <div
         className={cn(
-          "grid gap-4 p-4",
+          'grid gap-4 p-4',
           visibleAttachments.length === 1
-            ? "grid-cols-1"
+            ? 'grid-cols-1'
             : isMobile
-              ? "grid-cols-2"
+              ? 'grid-cols-2'
               : visibleAttachments.length === 2
-                ? "grid-cols-2"
-                : "grid-cols-3"
+                ? 'grid-cols-2'
+                : 'grid-cols-3'
         )}
       >
         <AnimatePresence mode="wait">
@@ -364,7 +364,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
             <Button
               variant="ghost"
               onClick={() => setShowAll(false)}
-              size={isMobile ? "sm" : "default"}
+              size={isMobile ? 'sm' : 'default'}
             >
               Show Less
             </Button>

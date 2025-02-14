@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { AnimatePresence, motion } from "framer-motion";
-import { AlertCircle } from "lucide-react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { Button } from '@/components/ui/button';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle } from 'lucide-react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 const ERROR_MESSAGES = {
-  email_exists: "This email is already registered.",
-  invalid_credentials: "Invalid email or password.",
-  oauth_error: "Error connecting with social provider.",
-  server_error: "An unexpected error occurred.",
-  account_not_found: "Account not found.",
-  unauthorized: "You must be logged in to access this page."
+  email_exists: 'This email is already registered.',
+  invalid_credentials: 'Invalid email or password.',
+  oauth_error: 'Error connecting with social provider.',
+  server_error: 'An unexpected error occurred.',
+  account_not_found: 'Account not found.',
+  unauthorized: 'You must be logged in to access this page.',
 };
 
 const AnimatedZephyrText = () => {
-  const letters = "ZEPHYR.".split("");
+  const letters = 'ZEPHYR.'.split('');
 
   return (
     <motion.div
@@ -35,18 +35,18 @@ const AnimatedZephyrText = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{
               opacity: [0, 1, 1, 0.3, 1],
-              y: [20, 0, 0, 0, 0]
+              y: [20, 0, 0, 0, 0],
             }}
             transition={{
               duration: 4,
               repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: i * 0.1,
-              times: [0, 0.2, 0.5, 0.8, 1]
+              times: [0, 0.2, 0.5, 0.8, 1],
             }}
             style={{
-              textShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-              display: "inline-block"
+              textShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+              display: 'inline-block',
             }}
           >
             {letter}
@@ -59,15 +59,15 @@ const AnimatedZephyrText = () => {
         initial={{ scaleX: 0 }}
         animate={{
           scaleX: [0, 1, 1, 1, 0],
-          opacity: [0, 1, 1, 0.3, 0]
+          opacity: [0, 1, 1, 0.3, 0],
         }}
         transition={{
           duration: 4,
           repeat: Number.POSITIVE_INFINITY,
-          ease: "easeInOut",
-          times: [0, 0.2, 0.5, 0.8, 1]
+          ease: 'easeInOut',
+          times: [0, 0.2, 0.5, 0.8, 1],
         }}
-        style={{ transformOrigin: "left" }}
+        style={{ transformOrigin: 'left' }}
       />
     </motion.div>
   );
@@ -75,12 +75,12 @@ const AnimatedZephyrText = () => {
 
 export default function LoginErrorPage() {
   const searchParams = useSearchParams();
-  const error = searchParams.get("error");
-  const email = searchParams.get("email");
+  const error = searchParams.get('error');
+  const email = searchParams.get('email');
 
   const errorMessage = error
     ? ERROR_MESSAGES[error as keyof typeof ERROR_MESSAGES]
-    : "An error occurred";
+    : 'An error occurred';
 
   return (
     <AnimatePresence>
@@ -114,7 +114,7 @@ export default function LoginErrorPage() {
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ type: "spring", duration: 0.5 }}
+                transition={{ type: 'spring', duration: 0.5 }}
                 // @ts-expect-error
                 className="rounded-full bg-destructive/10 p-4"
               >
@@ -149,7 +149,7 @@ export default function LoginErrorPage() {
                 // @ts-expect-error
                 className="text-center text-muted-foreground text-sm"
               >
-                Need help?{" "}
+                Need help?{' '}
                 <Link
                   href="mailto:dev.hashcodes@gmail.com"
                   className="text-primary transition-colors hover:underline"

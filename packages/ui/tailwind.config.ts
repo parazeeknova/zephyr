@@ -1,13 +1,2 @@
-import type { Config } from "tailwindcss";
-import base from "./tailwind-preset";
-
-const config: Config = {
-  ...base,
-  content: [
-    "./src/**/*.{ts,tsx}",
-    "../../packages/ui/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}"
-  ]
-};
-
-export default config;
+/** @type {import('tailwindcss').Config} */
+export { tailwind as default } from '@zephyr/tailwind';

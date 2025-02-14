@@ -1,49 +1,49 @@
-import { validateRequest } from "@zephyr/auth/auth";
-import { getUserDataSelect, prisma } from "@zephyr/db";
+import { validateRequest } from '@zephyr/auth/auth';
+import { getUserDataSelect, prisma } from '@zephyr/db';
 
 export async function GET(request: Request) {
   try {
     const { user } = await validateRequest();
     if (!user) {
-      return Response.json({ error: "Not authenticated" }, { status: 401 });
+      return Response.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const search = searchParams.get("search") || "";
-    const sortBy = searchParams.get("sortBy") || "followers";
+    const search = searchParams.get('search') || '';
+    const sortBy = searchParams.get('sortBy') || 'followers';
 
     let orderBy: any = {};
 
     switch (sortBy) {
-      case "followers":
+      case 'followers':
         orderBy = {
           followers: {
-            _count: "desc"
-          }
+            _count: 'desc',
+          },
         };
         break;
-      case "posts":
+      case 'posts':
         orderBy = {
           posts: {
-            _count: "desc"
-          }
+            _count: 'desc',
+          },
         };
         break;
-      case "newest":
+      case 'newest':
         orderBy = {
-          createdAt: "desc"
+          createdAt: 'desc',
         };
         break;
-      case "oldest":
+      case 'oldest':
         orderBy = {
-          createdAt: "asc"
+          createdAt: 'asc',
         };
         break;
       default:
         orderBy = {
           followers: {
-            _count: "desc"
-          }
+            _count: 'desc',
+          },
         };
     }
 
@@ -53,33 +53,33 @@ export async function GET(request: Request) {
         AND: [
           {
             id: {
-              not: user.id
-            }
+              not: user.id,
+            },
           },
           {
             OR: [
               {
                 username: {
                   contains: search,
-                  mode: "insensitive"
-                }
+                  mode: 'insensitive',
+                },
               },
               {
                 displayName: {
                   contains: search,
-                  mode: "insensitive"
-                }
-              }
-            ]
-          }
-        ]
+                  mode: 'insensitive',
+                },
+              },
+            ],
+          },
+        ],
       },
       orderBy,
-      select: getUserDataSelect(user.id)
+      select: getUserDataSelect(user.id),
     });
 
     return Response.json(users);
   } catch (_error) {
-    return Response.json({ error: "Failed to fetch users" }, { status: 500 });
+    return Response.json({ error: 'Failed to fetch users' }, { status: 500 });
   }
 }

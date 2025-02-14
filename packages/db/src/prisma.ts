@@ -1,17 +1,17 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 import {
   getEnvironmentMode,
   getStreamConfig,
-  isStreamConfigured
-} from "@zephyr/config/src/env";
-import { StreamChat } from "stream-chat";
+  isStreamConfigured,
+} from '@zephyr/config/src/env';
+import { StreamChat } from 'stream-chat';
 
 const { isDevelopment } = getEnvironmentMode();
 
 function initializeStreamClient(): StreamChat | null {
   if (!isStreamConfigured()) {
     isDevelopment &&
-      console.log("Stream Chat is not configured - skipping initialization");
+      console.log('Stream Chat is not configured - skipping initialization');
     return null;
   }
 
@@ -20,51 +20,45 @@ function initializeStreamClient(): StreamChat | null {
   if (!apiKey || !secret) {
     isDevelopment &&
       console.log(
-        "Stream Chat credentials are missing - skipping initialization"
+        'Stream Chat credentials are missing - skipping initialization'
       );
     return null;
   }
 
   try {
     const client = StreamChat.getInstance(apiKey, secret);
-    isDevelopment && console.log("Stream Chat client initialized successfully");
+    isDevelopment && console.log('Stream Chat client initialized successfully');
     return client;
   } catch (error) {
-    console.error("[Stream Chat] Initialization failed:", error);
+    console.error('[Stream Chat] Initialization failed:', error);
     return null;
   }
 }
 
 const streamClient = initializeStreamClient();
 
-/**
- * Handle Stream user deletion with error handling
- */
 async function handleStreamUserDeletion(userId: string): Promise<void> {
   if (!streamClient) {
     isDevelopment &&
-      console.log("Stream Chat client not available - skipping user deletion");
+      console.log('Stream Chat client not available - skipping user deletion');
     return;
   }
 
   try {
     await streamClient.deleteUser(userId, {
       mark_messages_deleted: true,
-      hard_delete: true
+      hard_delete: true,
     });
     isDevelopment &&
       console.log(`Stream Chat user deleted successfully: ${userId}`);
   } catch (error) {
-    console.error("[Stream Chat] Failed to delete user:", {
+    console.error('[Stream Chat] Failed to delete user:', {
       userId,
-      error: error instanceof Error ? error.message : error
+      error: error instanceof Error ? error.message : error,
     });
   }
 }
 
-/**
- * Create Prisma client with extensions
- */
 const prismaClientSingleton = () => {
   return new PrismaClient().$extends({
     query: {
@@ -77,9 +71,9 @@ const prismaClientSingleton = () => {
           }
 
           return deletedUser;
-        }
-      }
-    }
+        },
+      },
+    },
   });
 };
 
@@ -87,13 +81,9 @@ declare global {
   var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>;
 }
 
-/**
- * Initialize or reuse Prisma client
- * Save reference to global object in development
- */
 const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== 'production') {
   globalThis.prismaGlobal = prisma;
 }
 

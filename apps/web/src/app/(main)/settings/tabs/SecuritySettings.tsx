@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { requestPasswordReset } from "@/app/(auth)/reset-password/server-actions";
+import { requestPasswordReset } from '@/app/(auth)/reset-password/server-actions';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { LoadingButton } from "@zephyr-ui/Auth/LoadingButton";
-import type { UserData } from "@zephyr/db";
-import { motion } from "framer-motion";
-import { KeyRound, Mail } from "lucide-react";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoadingButton } from '@zephyr-ui/Auth/LoadingButton';
+import type { UserData } from '@zephyr/db';
+import { motion } from 'framer-motion';
+import { KeyRound, Mail } from 'lucide-react';
+import { useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const emailSchema = z.object({
-  email: z.string().email("Please enter a valid email address")
+  email: z.string().email('Please enter a valid email address'),
 });
 
 type FormValues = z.infer<typeof emailSchema>;
@@ -38,8 +38,8 @@ export default function SecuritySettings({ user }: SecuritySettingsProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(emailSchema),
     defaultValues: {
-      email: user.email || ""
-    }
+      email: user.email || '',
+    },
   });
 
   async function onSubmit(values: FormValues) {
@@ -48,17 +48,17 @@ export default function SecuritySettings({ user }: SecuritySettingsProps) {
 
       if (result.error) {
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: result.error
+          variant: 'destructive',
+          title: 'Error',
+          description: result.error,
         });
         return;
       }
 
       setIsEmailSent(true);
       toast({
-        title: "Email Sent",
-        description: "Check your email for password reset instructions"
+        title: 'Email Sent',
+        description: 'Check your email for password reset instructions',
       });
     });
   }
@@ -130,7 +130,7 @@ export default function SecuritySettings({ user }: SecuritySettingsProps) {
                   disabled={isEmailSent}
                   className="w-full sm:w-auto"
                 >
-                  {isEmailSent ? "Email Sent" : "Send Reset Link"}
+                  {isEmailSent ? 'Email Sent' : 'Send Reset Link'}
                 </LoadingButton>
               </form>
             </Form>

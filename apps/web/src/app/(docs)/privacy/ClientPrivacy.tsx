@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import ScrollUpButton from "@/components/Layouts/ScrollUpButton";
-import { FossBanner } from "@/components/misc/foss-banner";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, LockKeyhole } from "lucide-react";
-import Link from "next/link";
-import React, { useEffect } from "react";
+import ScrollUpButton from '@/components/Layouts/ScrollUpButton';
+import { FossBanner } from '@/components/misc/foss-banner';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, LockKeyhole } from 'lucide-react';
+import Link from 'next/link';
+import React, { useEffect } from 'react';
 
 export default function PrivacyPolicyPage() {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -19,10 +19,10 @@ export default function PrivacyPolicyPage() {
       }
     };
 
-    window.addEventListener("scroll", toggleVisibility);
+    window.addEventListener('scroll', toggleVisibility);
 
     return () => {
-      window.removeEventListener("scroll", toggleVisibility);
+      window.removeEventListener('scroll', toggleVisibility);
     };
   }, []);
 
@@ -209,7 +209,7 @@ export default function PrivacyPolicyPage() {
                 intuitive and accessible, empowering users to make informed
                 decisions about their privacy. To exercise any of these rights
                 or discuss privacy concerns, our dedicated privacy team can be
-                reached at{" "}
+                reached at{' '}
                 <Link
                   href="mailto:zephyyrrnyx@gmail.com"
                   className="text-primary hover:underline"
@@ -355,7 +355,7 @@ export default function PrivacyPolicyPage() {
               <div className="rounded-lg bg-muted p-4">
                 <p>Zephyr FOSS</p>
                 <p>
-                  Email:{" "}
+                  Email:{' '}
                   <Link
                     href="mailto:zephyyrrnyx@gmail.com"
                     className="text-primary hover:underline"

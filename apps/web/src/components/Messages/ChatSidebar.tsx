@@ -1,18 +1,18 @@
-import { useSession } from "@/app/(main)/SessionProvider";
-import { cn } from "@/lib/utils";
-import { useQueryClient } from "@tanstack/react-query";
-import { MailPlus, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import type { ChannelSort } from "stream-chat";
+import { useSession } from '@/app/(main)/SessionProvider';
+import { cn } from '@/lib/utils';
+import { useQueryClient } from '@tanstack/react-query';
+import { MailPlus, X } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import type { ChannelSort } from 'stream-chat';
 import {
   ChannelList,
   ChannelPreviewMessenger,
   type ChannelPreviewUIComponentProps,
   type DefaultStreamChatGenerics,
-  useChatContext
-} from "stream-chat-react";
-import { Button } from "../ui/button";
-import NewChatDialog from "./NewChatDialog";
+  useChatContext,
+} from 'stream-chat-react';
+import { Button } from '../ui/button';
+import NewChatDialog from './NewChatDialog';
 
 interface ChatSidebarProps {
   open: boolean;
@@ -23,14 +23,14 @@ interface ChatSidebarProps {
 export default function ChatSidebar({
   open,
   onClose,
-  onChannelSelect
+  onChannelSelect,
 }: ChatSidebarProps) {
   const { user } = useSession();
   const queryClient = useQueryClient();
   const { setActiveChannel } = useChatContext();
 
   useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["unread-messages-count"] });
+    queryClient.invalidateQueries({ queryKey: ['unread-messages-count'] });
   }, [queryClient]);
 
   const ChannelPreviewCustom = useCallback(
@@ -50,25 +50,25 @@ export default function ChatSidebar({
   );
 
   const filters = {
-    type: "messaging",
-    members: { $in: [user.id] }
+    type: 'messaging',
+    members: { $in: [user.id] },
   };
 
   const options = {
     state: true,
     presence: true,
-    limit: 8
+    limit: 8,
   };
 
   const sort: ChannelSort<DefaultStreamChatGenerics> = {
-    last_message_at: -1 as const
+    last_message_at: -1 as const,
   };
 
   return (
     <div
       className={cn(
-        "size-full flex-col border-e md:flex md:w-72",
-        open ? "flex" : "hidden"
+        'size-full flex-col border-e md:flex md:w-72',
+        open ? 'flex' : 'hidden'
       )}
     >
       <MenuHeader
@@ -91,10 +91,10 @@ export default function ChatSidebar({
           searchQueryParams: {
             channelFilters: {
               filters: {
-                members: { $in: [user.id] }
-              }
-            }
-          }
+                members: { $in: [user.id] },
+              },
+            },
+          },
         }}
         Preview={ChannelPreviewCustom}
       />

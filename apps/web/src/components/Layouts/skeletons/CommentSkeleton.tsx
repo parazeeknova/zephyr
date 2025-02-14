@@ -1,11 +1,11 @@
-import type React from "react";
+import type React from 'react';
 
 interface CommentSkeletonProps {
   showActions?: boolean;
 }
 
 const CommentSkeleton: React.FC<CommentSkeletonProps> = ({
-  showActions = true
+  showActions = true,
 }) => {
   return (
     <div className="group/comment flex gap-3 py-3">

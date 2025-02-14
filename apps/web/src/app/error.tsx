@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { HelpLink } from "@/components/Animations/ImageLinkPreview";
-import { Button } from "@/components/ui/button";
-import { GitHub } from "@mui/icons-material";
-import HOME from "@zephyr-assets/previews/home.png";
-import { motion } from "framer-motion";
-import { AlertOctagon, Copy, RotateCcw } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
+import { HelpLink } from '@/components/Animations/ImageLinkPreview';
+import { Button } from '@/components/ui/button';
+import { GitHub } from '@mui/icons-material';
+import HOME from '@zephyr-assets/previews/home.png';
+import { motion } from 'framer-motion';
+import { AlertOctagon, Copy, RotateCcw } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useMemo, useState } from 'react';
 
 // biome-ignore lint/suspicious/noShadowRestrictedNames: This is a custom error boundary component
 export default function Error({
   error,
-  reset
+  reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
@@ -29,7 +29,7 @@ export default function Error({
 - **Error Stack:** \`\`\`\n${error.stack}\n\`\`\`
 - **Time:** ${new Date().toISOString()}
 - **Browser:** ${navigator.userAgent}
-`
+`,
   };
 
   const handleCopyError = async () => {
@@ -44,7 +44,7 @@ export default function Error({
     const githubIssueURL = `https://github.com/parazeeknova/zephyr/issues/new?title=${encodeURIComponent(
       errorDetails.title
     )}&body=${encodeURIComponent(errorDetails.body)}`;
-    window.open(githubIssueURL, "_blank");
+    window.open(githubIssueURL, '_blank');
   };
 
   const auroras = useMemo(() => {
@@ -57,7 +57,7 @@ export default function Error({
         left: `${(i * 35) % 100}%`,
         delay: i * 0.8,
         duration: 8 + i * 3,
-        opacity: 0.2 + Math.random() * 0.1
+        opacity: 0.2 + Math.random() * 0.1,
       }));
   }, []);
 
@@ -71,19 +71,19 @@ export default function Error({
             key={i}
             initial={{
               opacity: 0,
-              scale: 0.8
+              scale: 0.8,
             }}
             animate={{
               opacity: [aurora.opacity, aurora.opacity * 1.2, aurora.opacity],
               scale: [1, 1.1, 1],
-              rotate: [0, 180, 0]
+              rotate: [0, 180, 0],
             }}
             transition={{
               duration: aurora.duration,
               repeat: Number.POSITIVE_INFINITY,
-              repeatType: "reverse",
-              ease: "easeInOut",
-              delay: aurora.delay
+              repeatType: 'reverse',
+              ease: 'easeInOut',
+              delay: aurora.delay,
             }}
             className="absolute rounded-full blur-[100px]"
             style={{
@@ -93,8 +93,8 @@ export default function Error({
               left: aurora.left,
               background:
                 i % 2 === 0
-                  ? "radial-gradient(circle at center, rgba(239,68,68,0.4), transparent 70%)"
-                  : "radial-gradient(circle at center, rgba(236,72,153,0.4), transparent 70%)"
+                  ? 'radial-gradient(circle at center, rgba(239,68,68,0.4), transparent 70%)'
+                  : 'radial-gradient(circle at center, rgba(236,72,153,0.4), transparent 70%)',
             }}
           />
         ))}
@@ -111,9 +111,9 @@ export default function Error({
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{
-              type: "spring",
+              type: 'spring',
               stiffness: 200,
-              damping: 15
+              damping: 15,
             }}
             className="relative mx-auto w-fit"
           >
@@ -131,9 +131,9 @@ export default function Error({
               Something went wrong!
             </h1>
             <p className="text-lg text-muted-foreground">
-              {error.message || "An unexpected error occurred"}
+              {error.message || 'An unexpected error occurred'}
             </p>
-            {process.env.NODE_ENV === "development" && (
+            {process.env.NODE_ENV === 'development' && (
               <div className="mt-4 rounded-lg bg-muted/50 p-4">
                 <pre className="overflow-auto text-left text-muted-foreground text-sm">
                   {error.stack}
@@ -168,7 +168,7 @@ export default function Error({
             >
               <span className="relative z-10 flex items-center gap-2">
                 <Copy className="h-4 w-4" />
-                {copied ? "Copied!" : "Copy Error"}
+                {copied ? 'Copied!' : 'Copy Error'}
               </span>
             </Button>
 

@@ -1,12 +1,12 @@
-import { getUserData } from "@/hooks/useUserData";
-import Friends from "@zephyr-ui/Home/sidebars/left/Friends";
-import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
-import ProfileCard from "@zephyr-ui/Home/sidebars/right/ProfileCard";
-import TrendingTopics from "@zephyr-ui/Home/sidebars/right/TrendingTopics";
-import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
-import { validateRequest } from "@zephyr/auth/auth";
-import type { Metadata } from "next";
-import SearchResults from "./SearchResult";
+import { getUserData } from '@/hooks/useUserData';
+import Friends from '@zephyr-ui/Home/sidebars/left/Friends';
+import NavigationCard from '@zephyr-ui/Home/sidebars/left/NavigationCard';
+import ProfileCard from '@zephyr-ui/Home/sidebars/right/ProfileCard';
+import TrendingTopics from '@zephyr-ui/Home/sidebars/right/TrendingTopics';
+import StickyFooter from '@zephyr-ui/Layouts/StinkyFooter';
+import { validateRequest } from '@zephyr/auth/auth';
+import type { Metadata } from 'next';
+import SearchResults from './SearchResult';
 
 interface PageProps {
   searchParams: Promise<{ q: string }>;
@@ -16,7 +16,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const searchParams = await props.searchParams;
   return {
     title: `Search results for ${searchParams.q}`,
-    description: `Search results for ${searchParams.q}`
+    description: `Search results for ${searchParams.q}`,
   };
 }
 

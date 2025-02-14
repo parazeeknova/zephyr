@@ -1,5 +1,5 @@
-declare module "react-markdown" {
-  import type { ReactNode } from "react";
+declare module 'react-markdown' {
+  import type { ReactNode } from 'react';
 
   interface ReactMarkdownOptions {
     children: string;

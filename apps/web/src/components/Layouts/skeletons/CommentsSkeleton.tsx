@@ -1,4 +1,4 @@
-import CommentSkeleton from "./CommentSkeleton";
+import CommentSkeleton from './CommentSkeleton';
 
 const CommentsSkeleton = () => {
   return (

@@ -1,21 +1,21 @@
-import { avatarCache, prisma } from "@zephyr/db";
-import { followerInfoCache } from "@zephyr/db";
-import { shareStatsCache } from "@zephyr/db";
-import { tagCache } from "@zephyr/db";
-import { redis } from "@zephyr/db";
+import { avatarCache, prisma } from '@zephyr/db';
+import { followerInfoCache } from '@zephyr/db';
+import { shareStatsCache } from '@zephyr/db';
+import { tagCache } from '@zephyr/db';
+import { redis } from '@zephyr/db';
 import {
   POST_VIEWS_KEY_PREFIX,
   POST_VIEWS_SET,
-  trendingTopicsCache
-} from "@zephyr/db";
-import { NextResponse } from "next/server";
+  trendingTopicsCache,
+} from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
 const BATCH_SIZE = 100;
 
 async function validateRedisConnection(log: (message: string) => void) {
   try {
     await redis.ping();
-    log("✅ Redis connection successful");
+    log('✅ Redis connection successful');
     return true;
   } catch (error) {
     log(`❌ Redis connection failed: ${error}`);
@@ -24,13 +24,13 @@ async function validateRedisConnection(log: (message: string) => void) {
 }
 
 async function syncViewCounts(log: (message: string) => void, results: any) {
-  log("\n📊 Syncing view counts...");
+  log('\n📊 Syncing view counts...');
   try {
     const postsWithViews = await redis.smembers(POST_VIEWS_SET);
     log(`Found ${postsWithViews.length} posts with views in Redis`);
 
     if (postsWithViews.length === 0) {
-      log("No posts found with views to sync");
+      log('No posts found with views to sync');
       return;
     }
 
@@ -41,7 +41,7 @@ async function syncViewCounts(log: (message: string) => void, results: any) {
 
     const pipelineResults = await pipeline.exec();
     if (!pipelineResults) {
-      throw new Error("Pipeline execution returned null");
+      throw new Error('Pipeline execution returned null');
     }
 
     const updates = postsWithViews
@@ -64,7 +64,7 @@ async function syncViewCounts(log: (message: string) => void, results: any) {
         batch.map(({ postId, views }) =>
           prisma.post.update({
             where: { id: postId },
-            data: { viewCount: views }
+            data: { viewCount: views },
           })
         )
       );
@@ -85,13 +85,13 @@ async function syncViewCounts(log: (message: string) => void, results: any) {
 }
 
 async function syncShareStats(log: (message: string) => void, results: any) {
-  log("\n🔄 Syncing share stats...");
+  log('\n🔄 Syncing share stats...');
   try {
     const posts = await prisma.post.findMany({
-      select: { id: true }
+      select: { id: true },
     });
 
-    const platforms = ["twitter", "facebook", "linkedin"];
+    const platforms = ['twitter', 'facebook', 'linkedin'];
     let syncedCount = 0;
 
     for (const post of posts) {
@@ -102,19 +102,19 @@ async function syncShareStats(log: (message: string) => void, results: any) {
             where: {
               postId_platform: {
                 postId: post.id,
-                platform
-              }
+                platform,
+              },
             },
             create: {
               postId: post.id,
               platform,
               shares: stats.shares,
-              clicks: stats.clicks
+              clicks: stats.clicks,
             },
             update: {
               shares: stats.shares,
-              clicks: stats.clicks
-            }
+              clicks: stats.clicks,
+            },
           });
           syncedCount++;
         }
@@ -130,11 +130,11 @@ async function syncShareStats(log: (message: string) => void, results: any) {
 }
 
 async function syncTagCounts(log: (message: string) => void, results: any) {
-  log("\n🏷️ Syncing tag counts...");
+  log('\n🏷️ Syncing tag counts...');
   try {
     await tagCache.syncTagCounts();
     results.tagCountsSync = 1;
-    log("✅ Successfully synced tag counts");
+    log('✅ Successfully synced tag counts');
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     log(`❌ Error syncing tag counts: ${errorMessage}`);
@@ -143,10 +143,10 @@ async function syncTagCounts(log: (message: string) => void, results: any) {
 }
 
 async function syncAvatars(log: (message: string) => void, results: any) {
-  log("\n👤 Syncing avatar cache...");
+  log('\n👤 Syncing avatar cache...');
   try {
     const users = await prisma.user.findMany({
-      select: { id: true, avatarUrl: true, avatarKey: true }
+      select: { id: true, avatarUrl: true, avatarKey: true },
     });
 
     let syncedCount = 0;
@@ -154,8 +154,8 @@ async function syncAvatars(log: (message: string) => void, results: any) {
       if (user.avatarUrl) {
         await avatarCache.set(user.id, {
           url: user.avatarUrl,
-          key: user.avatarKey || "",
-          updatedAt: new Date().toISOString()
+          key: user.avatarKey || '',
+          updatedAt: new Date().toISOString(),
         });
         syncedCount++;
       }
@@ -170,7 +170,7 @@ async function syncAvatars(log: (message: string) => void, results: any) {
 }
 
 async function syncFollowerInfo(log: (message: string) => void, results: any) {
-  log("\n👥 Syncing follower info...");
+  log('\n👥 Syncing follower info...');
   try {
     const users = await prisma.user.findMany({
       select: {
@@ -178,10 +178,10 @@ async function syncFollowerInfo(log: (message: string) => void, results: any) {
         _count: {
           select: {
             followers: true,
-            following: true
-          }
-        }
-      }
+            following: true,
+          },
+        },
+      },
     });
 
     for (let i = 0; i < users.length; i += BATCH_SIZE) {
@@ -192,7 +192,7 @@ async function syncFollowerInfo(log: (message: string) => void, results: any) {
             // @ts-expect-error
             followersCount: user._count.followers,
             followingCount: user._count.following,
-            isFollowedByUser: false
+            isFollowedByUser: false,
           });
         })
       );
@@ -215,11 +215,11 @@ async function syncTrendingTopics(
   log: (message: string) => void,
   results: any
 ) {
-  log("\n📈 Syncing trending topics...");
+  log('\n📈 Syncing trending topics...');
   try {
     await trendingTopicsCache.warmCache();
     results.trendingTopicsSync = 1;
-    log("✅ Successfully warmed trending topics cache");
+    log('✅ Successfully warmed trending topics cache');
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     log(`❌ Error syncing trending topics: ${errorMessage}`);
@@ -243,20 +243,20 @@ async function syncAllCaches() {
     avatarsSync: 0,
     followerInfoSync: 0,
     trendingTopicsSync: 0,
-    errors: [] as string[]
+    errors: [] as string[],
   };
 
   if (!(await validateRedisConnection(log))) {
     return {
       success: false,
-      error: "Redis connection failed",
+      error: 'Redis connection failed',
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
   try {
-    log("🚀 Starting cache synchronization...");
+    log('🚀 Starting cache synchronization...');
 
     // Run syncs sequentially to avoid overwhelming the database
     await syncViewCounts(log, results);
@@ -280,22 +280,22 @@ async function syncAllCaches() {
         tagCountsSynced: results.tagCountsSync,
         avatarsSynced: results.avatarsSync,
         followerInfoSynced: results.followerInfoSync,
-        trendingTopicsSynced: results.trendingTopicsSync
+        trendingTopicsSynced: results.trendingTopicsSync,
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     return summary;
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+      error instanceof Error ? error.message : 'Unknown error';
     log(`❌ Fatal error during cache sync: ${errorMessage}`);
     return {
       success: false,
       duration: Date.now() - startTime,
       error: errorMessage,
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } finally {
     await prisma.$disconnect();
@@ -307,16 +307,16 @@ export async function POST(request: Request) {
   try {
     if (!process.env.CRON_SECRET_KEY) {
       return NextResponse.json(
-        { error: "Server configuration error" },
+        { error: 'Server configuration error' },
         { status: 500 }
       );
     }
 
-    const authHeader = request.headers.get("authorization");
+    const authHeader = request.headers.get('authorization');
     const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
 
     if (!authHeader || authHeader !== expectedAuth) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const results = await syncAllCaches();
@@ -324,21 +324,21 @@ export async function POST(request: Request) {
     return NextResponse.json(results, {
       status: results.success ? 200 : 500,
       headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      }
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
     });
   } catch (error) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString()
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
       },
       { status: 500 }
     );
   }
 }
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

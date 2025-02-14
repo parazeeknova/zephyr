@@ -1,10 +1,10 @@
-import kyInstance from "@/lib/ky";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import CommentsSkeleton from "@zephyr-ui/Layouts/skeletons/CommentsSkeleton";
-import type { CommentsPage, PostData } from "@zephyr/db";
-import { Button } from "../ui/button";
-import Comment from "./Comment";
-import CommentInput from "./CommentInput";
+import kyInstance from '@/lib/ky';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import CommentsSkeleton from '@zephyr-ui/Layouts/skeletons/CommentsSkeleton';
+import type { CommentsPage, PostData } from '@zephyr/db';
+import { Button } from '../ui/button';
+import Comment from './Comment';
+import CommentInput from './CommentInput';
 
 interface CommentsProps {
   post: PostData;
@@ -13,7 +13,7 @@ interface CommentsProps {
 export default function Comments({ post }: CommentsProps) {
   const { data, fetchNextPage, hasNextPage, isFetching, status } =
     useInfiniteQuery({
-      queryKey: ["comments", post.id],
+      queryKey: ['comments', post.id],
       queryFn: ({ pageParam }) =>
         kyInstance
           .get(
@@ -25,13 +25,13 @@ export default function Comments({ post }: CommentsProps) {
       getNextPageParam: (firstPage) => firstPage.previousCursor,
       select: (data) => ({
         pages: [...data.pages].reverse(),
-        pageParams: [...data.pageParams].reverse()
-      })
+        pageParams: [...data.pageParams].reverse(),
+      }),
     });
 
   const comments = data?.pages.flatMap((page) => page.comments) || [];
 
-  if (status === "pending") {
+  if (status === 'pending') {
     return <CommentsSkeleton />;
   }
 
@@ -48,10 +48,10 @@ export default function Comments({ post }: CommentsProps) {
           Load previous eddies
         </Button>
       )}
-      {status === "success" && !comments.length && (
+      {status === 'success' && !comments.length && (
         <p className="text-center text-muted-foreground">No eddy yet.</p>
       )}
-      {status === "error" && (
+      {status === 'error' && (
         <p className="text-center text-destructive">
           An error occurred while loading eddies.
         </p>

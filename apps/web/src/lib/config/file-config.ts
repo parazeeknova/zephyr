@@ -1,41 +1,41 @@
-import { FILE_CONFIGS } from "../utils/mime-utils";
+import { FILE_CONFIGS } from '../utils/mime-utils';
 
-export type FileCategory = "IMAGE" | "VIDEO" | "AUDIO" | "CODE" | "DOCUMENT";
+export type FileCategory = 'IMAGE' | 'VIDEO' | 'AUDIO' | 'CODE' | 'DOCUMENT';
 
 export const maxFileSizes = {
   IMAGE: 25 * 1024 * 1024,
   VIDEO: 250 * 1024 * 1024,
   AUDIO: 20 * 1024 * 1024,
   DOCUMENT: 200 * 1024 * 1024,
-  CODE: 10 * 1024 * 1024
+  CODE: 10 * 1024 * 1024,
 } as const;
 
 export const FILE_SIZE_UNITS = {
   KB: 1024,
   MB: 1024 * 1024,
-  GB: 1024 * 1024 * 1024
+  GB: 1024 * 1024 * 1024,
 } as const;
 
 export type AllowedAvatarExtension =
-  | "jpg"
-  | "jpeg"
-  | "png"
-  | "gif"
-  | "webp"
-  | "heic"
-  | "heif";
+  | 'jpg'
+  | 'jpeg'
+  | 'png'
+  | 'gif'
+  | 'webp'
+  | 'heic'
+  | 'heif';
 
 export const avatarConfig = {
   maxSize: 8 * 1024 * 1024,
   allowedExtensions: [
-    "jpg",
-    "jpeg",
-    "png",
-    "gif",
-    "webp",
-    "heic",
-    "heif"
-  ] as AllowedAvatarExtension[]
+    'jpg',
+    'jpeg',
+    'png',
+    'gif',
+    'webp',
+    'heic',
+    'heif',
+  ] as AllowedAvatarExtension[],
 } as const;
 
 export const getAllowedMimeTypes = () => {

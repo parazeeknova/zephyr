@@ -1,6 +1,6 @@
-"use server";
+'use server';
 
-import { type TrendingTopic, prisma, trendingTopicsCache } from "@zephyr/db";
+import { type TrendingTopic, prisma, trendingTopicsCache } from '@zephyr/db';
 
 async function getTrendingTopicsFromDB(): Promise<TrendingTopic[]> {
   try {
@@ -12,14 +12,14 @@ async function getTrendingTopicsFromDB(): Promise<TrendingTopic[]> {
       LIMIT 10
     `;
 
-    console.log("Database query result:", result);
+    console.log('Database query result:', result);
 
     return result.map((row) => ({
       hashtag: row.hashtag,
-      count: Number(row.count)
+      count: Number(row.count),
     }));
   } catch (error) {
-    console.error("Error executing database query:", error);
+    console.error('Error executing database query:', error);
     return [];
   }
 }
@@ -36,13 +36,13 @@ export async function invalidateTrendingTopicsCache(): Promise<
   try {
     const newTopics = await getTrendingTopicsFromDB();
     if (!newTopics || newTopics.length === 0) {
-      throw new Error("No new topics found");
+      throw new Error('No new topics found');
     }
 
     await trendingTopicsCache.set(newTopics);
     return newTopics;
   } catch (error) {
-    console.error("Error in invalidateTrendingTopicsCache:", error);
+    console.error('Error in invalidateTrendingTopicsCache:', error);
     return getTrendingTopics();
   }
 }
@@ -66,7 +66,7 @@ export async function getTrendingTopics(): Promise<TrendingTopic[]> {
 
     return [];
   } catch (error) {
-    console.error("Error in getTrendingTopics:", error);
+    console.error('Error in getTrendingTopics:', error);
     return getTrendingTopicsFromDB();
   }
 }
@@ -78,7 +78,7 @@ export async function backgroundRefreshTopics(): Promise<void> {
       await trendingTopicsCache.set(topics);
     }
   } catch (error) {
-    console.error("Error in background refresh:", error);
+    console.error('Error in background refresh:', error);
   }
 }
 

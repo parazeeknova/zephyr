@@ -1,9 +1,12 @@
 {
   "name": "@zephyr/aggregator",
+  "description": "Aggregator service for Zephyr",
   "version": "1.2.3",
   "private": true,
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
   "dependencies": {
     "@zephyr/db": "workspace:*",
     "date-fns": "^4.1.0",

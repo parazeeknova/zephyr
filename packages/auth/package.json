@@ -1,8 +1,13 @@
 {
   "name": "@zephyr/auth",
+  "description": "Zephyr's authentication & email service package",
   "version": "1.2.3",
   "license": "AGPL-3.0",
   "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
   "dependencies": {
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@node-rs/argon2": "^2.0.2",

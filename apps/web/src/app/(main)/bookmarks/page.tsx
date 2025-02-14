@@ -1,16 +1,16 @@
-import { getUserData } from "@/hooks/useUserData";
-import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
-import ProfileCard from "@zephyr-ui/Home/sidebars/right/ProfileCard";
-import SuggestedConnections from "@zephyr-ui/Home/sidebars/right/SuggestedConnections";
-import TrendingTopics from "@zephyr-ui/Home/sidebars/right/TrendingTopics";
-import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
-import { validateRequest } from "@zephyr/auth/auth";
-import { prisma } from "@zephyr/db";
-import type { Metadata } from "next";
-import Bookmarks from "./Bookmarks";
+import { getUserData } from '@/hooks/useUserData';
+import NavigationCard from '@zephyr-ui/Home/sidebars/left/NavigationCard';
+import ProfileCard from '@zephyr-ui/Home/sidebars/right/ProfileCard';
+import SuggestedConnections from '@zephyr-ui/Home/sidebars/right/SuggestedConnections';
+import TrendingTopics from '@zephyr-ui/Home/sidebars/right/TrendingTopics';
+import StickyFooter from '@zephyr-ui/Layouts/StinkyFooter';
+import { validateRequest } from '@zephyr/auth/auth';
+import { prisma } from '@zephyr/db';
+import type { Metadata } from 'next';
+import Bookmarks from './Bookmarks';
 
 export const metadata: Metadata = {
-  title: "Bookmarks"
+  title: 'Bookmarks',
 };
 
 export default async function Page() {
@@ -23,11 +23,11 @@ export default async function Page() {
   if (user) {
     const [postBookmarks, hnBookmarks] = await Promise.all([
       prisma.bookmark.count({
-        where: { userId: user.id }
+        where: { userId: user.id },
       }),
       prisma.hNBookmark.count({
-        where: { userId: user.id }
-      })
+        where: { userId: user.id },
+      }),
     ]);
 
     bookmarkCount = postBookmarks;

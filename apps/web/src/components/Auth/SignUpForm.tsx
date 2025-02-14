@@ -1,44 +1,44 @@
-"use client";
+'use client';
 
-import { resendVerificationEmail, signUp } from "@/app/(auth)/signup/actions";
-import { FlipWords } from "@/components/ui/flip-words";
+import { resendVerificationEmail, signUp } from '@/app/(auth)/signup/actions';
+import { FlipWords } from '@/components/ui/flip-words';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useVerification } from "@/context/VerificationContext";
-import { useToast } from "@/hooks/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { LoadingButton } from "@zephyr-ui/Auth/LoadingButton";
-import { PasswordInput } from "@zephyr-ui/Auth/PasswordInput";
-import { isDevelopmentMode } from "@zephyr/auth/src/email/service";
-import { type SignUpValues, signUpSchema } from "@zephyr/auth/validation";
-import { motion } from "framer-motion";
-import { AlertCircle, Mail, User } from "lucide-react";
-import Link from "next/link";
-import { useCallback, useEffect, useState, useTransition } from "react";
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useVerification } from '@/context/VerificationContext';
+import { useToast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoadingButton } from '@zephyr-ui/Auth/LoadingButton';
+import { PasswordInput } from '@zephyr-ui/Auth/PasswordInput';
+import { isDevelopmentMode } from '@zephyr/auth/src/email/service';
+import { type SignUpValues, signUpSchema } from '@zephyr/auth/validation';
+import { motion } from 'framer-motion';
+import { AlertCircle, Mail, User } from 'lucide-react';
+import Link from 'next/link';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import {
   type FieldValues,
   type SubmitErrorHandler,
-  useForm
-} from "react-hook-form";
-import { useCountdown } from "usehooks-ts";
-import { Button } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
-import { PasswordStrengthChecker } from "./PasswordStrengthChecker";
+  useForm,
+} from 'react-hook-form';
+import { useCountdown } from 'usehooks-ts';
+import { Button } from '../ui/button';
+import { Checkbox } from '../ui/checkbox';
+import { PasswordStrengthChecker } from './PasswordStrengthChecker';
 
 const texts = [
-  "Elevate your ideas, accelerate your impact.",
-  "Transform thoughts into action.",
-  "Your journey to greatness starts here.",
-  "Start Your Adventure",
-  "Let parazeeknova cook",
-  "Dive In!"
+  'Elevate your ideas, accelerate your impact.',
+  'Transform thoughts into action.',
+  'Your journey to greatness starts here.',
+  'Start Your Adventure',
+  'Let parazeeknova cook',
+  'Dive In!',
 ];
 
 interface ErrorWithMessage {
@@ -47,10 +47,10 @@ interface ErrorWithMessage {
 
 function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
   return (
-    typeof error === "object" &&
+    typeof error === 'object' &&
     error !== null &&
-    "message" in error &&
-    typeof (error as Record<string, unknown>).message === "string"
+    'message' in error &&
+    typeof (error as Record<string, unknown>).message === 'string'
   );
 }
 
@@ -67,29 +67,29 @@ export default function SignUpForm() {
   const { toast } = useToast();
   const { setIsVerifying } = useVerification();
   const [error, setError] = useState<string>();
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [isVerificationEmailSent, setIsVerificationEmailSent] = useState(false);
-  const verificationChannel = new BroadcastChannel("email-verification");
+  const verificationChannel = new BroadcastChannel('email-verification');
   const [isAgeVerified, setIsAgeVerified] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
     useCountdown({
       countStart: 60,
-      intervalMs: 1000
+      intervalMs: 1000,
     });
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      email: "",
-      username: "",
-      password: ""
+      email: '',
+      username: '',
+      password: '',
     },
-    mode: "onBlur"
+    mode: 'onBlur',
   });
 
   useEffect(() => {
@@ -105,8 +105,8 @@ export default function SignUpForm() {
       window.location.reload();
     };
 
-    verificationChannel.addEventListener("message", (event) => {
-      if (event.data === "verification-success") {
+    verificationChannel.addEventListener('message', (event) => {
+      if (event.data === 'verification-success') {
         handleVerificationSuccess();
       }
     });
@@ -120,13 +120,13 @@ export default function SignUpForm() {
     (errors) => {
       const firstError = Object.values(errors)[0];
       const errorMessage =
-        (firstError?.message as string) || "Please check your input";
+        (firstError?.message as string) || 'Please check your input';
 
       toast({
-        variant: "destructive",
-        title: "Invalid Input",
+        variant: 'destructive',
+        title: 'Invalid Input',
         description: errorMessage,
-        duration: 3000
+        duration: 3000,
       });
 
       const firstErrorField = Object.keys(errors)[0];
@@ -141,10 +141,10 @@ export default function SignUpForm() {
     setError(undefined);
     if (!isAgeVerified || !acceptedTerms) {
       toast({
-        variant: "destructive",
-        title: "Required Agreements",
-        description: "Please accept the age verification and terms of service.",
-        duration: 3000
+        variant: 'destructive',
+        title: 'Required Agreements',
+        description: 'Please accept the age verification and terms of service.',
+        duration: 3000,
       });
       return;
     }
@@ -156,11 +156,11 @@ export default function SignUpForm() {
         if (result.success) {
           if (result.skipVerification) {
             toast({
-              title: "Account Created",
+              title: 'Account Created',
               description: isDevelopmentMode()
-                ? "Development mode: Email verification skipped"
-                : "Account created successfully",
-              duration: 3000
+                ? 'Development mode: Email verification skipped'
+                : 'Account created successfully',
+              duration: 3000,
             });
 
             form.reset();
@@ -169,19 +169,19 @@ export default function SignUpForm() {
               await new Promise((resolve) => setTimeout(resolve, 1000));
             }
 
-            window.location.href = "/";
+            window.location.href = '/';
           } else {
             setIsVerifying(true);
             setIsVerificationEmailSent(true);
             startCountdown();
             toast({
-              title: "Verification Required",
-              description: "Please check your email to verify your account."
+              title: 'Verification Required',
+              description: 'Please check your email to verify your account.',
             });
 
             if (isDevelopmentMode() && result.verificationUrl) {
               console.info(
-                "Development Mode - Verification URL:",
+                'Development Mode - Verification URL:',
                 result.verificationUrl
               );
             }
@@ -189,21 +189,21 @@ export default function SignUpForm() {
         } else if (result.error) {
           setError(result.error);
           toast({
-            variant: "destructive",
-            title: "Signup Failed",
-            description: result.error
+            variant: 'destructive',
+            title: 'Signup Failed',
+            description: result.error,
           });
         }
       } catch (error) {
         const errorMessage = toErrorWithMessage(error).message;
-        console.error("Signup error:", error);
+        console.error('Signup error:', error);
         setError(errorMessage);
         toast({
-          variant: "destructive",
-          title: "Error",
+          variant: 'destructive',
+          title: 'Error',
           description: isDevelopmentMode()
             ? errorMessage
-            : "An unexpected error occurred"
+            : 'An unexpected error occurred',
         });
       } finally {
         setIsLoading(false);
@@ -216,30 +216,30 @@ export default function SignUpForm() {
 
     try {
       setIsResending(true);
-      const email = form.getValues("email");
+      const email = form.getValues('email');
       const result = await resendVerificationEmail(email);
 
       if (result.success) {
         startCountdown();
         toast({
-          title: "Email Sent",
-          description: "A new verification email has been sent.",
-          duration: 3000
+          title: 'Email Sent',
+          description: 'A new verification email has been sent.',
+          duration: 3000,
         });
       } else {
         toast({
-          variant: "destructive",
-          title: "Failed to Resend",
-          description: result.error || "Failed to resend verification email",
-          duration: 5000
+          variant: 'destructive',
+          title: 'Failed to Resend',
+          description: result.error || 'Failed to resend verification email',
+          duration: 5000,
         });
       }
     } catch (error) {
-      console.error("Error resending verification email:", error);
+      console.error('Error resending verification email:', error);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to resend verification email. Please try again."
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to resend verification email. Please try again.',
       });
     } finally {
       setIsResending(false);
@@ -259,8 +259,8 @@ export default function SignUpForm() {
         <div
           className={`transition-all duration-500 ease-in-out ${
             isVerificationEmailSent
-              ? "pointer-events-none translate-y-[-20px] transform opacity-0"
-              : "translate-y-0 transform opacity-100"
+              ? 'pointer-events-none translate-y-[-20px] transform opacity-0'
+              : 'translate-y-0 transform opacity-100'
           }`}
         >
           <Form {...form}>
@@ -377,14 +377,14 @@ export default function SignUpForm() {
                     htmlFor="terms"
                     className="text-muted-foreground text-sm leading-tight peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    I agree to the{" "}
+                    I agree to the{' '}
                     <Link
                       href="/toc"
                       className="font-medium text-primary underline-offset-4 hover:underline"
                     >
                       Terms of Service
-                    </Link>{" "}
-                    and{" "}
+                    </Link>{' '}
+                    and{' '}
                     <Link
                       href="/privacy"
                       className="font-medium text-primary underline-offset-4 hover:underline"
@@ -412,8 +412,8 @@ export default function SignUpForm() {
         <div
           className={`absolute top-0 left-0 w-full transition-all duration-500 ease-in-out ${
             isVerificationEmailSent
-              ? "translate-y-0 transform opacity-100"
-              : "pointer-events-none translate-y-[20px] transform opacity-0"
+              ? 'translate-y-0 transform opacity-100'
+              : 'pointer-events-none translate-y-[20px] transform opacity-0'
           }`}
         >
           <div className="relative overflow-hidden rounded-xl border border-border/50 bg-background/60 p-8 shadow-lg backdrop-blur-xl">
@@ -442,7 +442,7 @@ export default function SignUpForm() {
                   We've sent a verification link to
                 </p>
                 <p className="rounded-lg border border-border/50 bg-muted/50 px-4 py-2 font-medium text-foreground">
-                  {form.getValues("email")}
+                  {form.getValues('email')}
                 </p>
                 <p className="text-muted-foreground text-sm">
                   Please check your inbox to complete your registration
@@ -475,9 +475,9 @@ export default function SignUpForm() {
                     <>
                       <motion.div
                         className="absolute top-0 left-0 h-full bg-primary/10"
-                        initial={{ width: "100%" }}
-                        animate={{ width: "0%" }}
-                        transition={{ duration: count, ease: "linear" }}
+                        initial={{ width: '100%' }}
+                        animate={{ width: '0%' }}
+                        transition={{ duration: count, ease: 'linear' }}
                       />
                       <span className="relative text-muted-foreground">
                         Resend available in {count}s
@@ -507,8 +507,8 @@ function scrollToError(fieldName: string) {
   requestAnimationFrame(() => {
     const element = document.querySelector(`[name="${fieldName}"]`);
     element?.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
+      behavior: 'smooth',
+      block: 'center',
     });
   });
 }

@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useSession } from "@/app/(main)/SessionProvider";
+import { useSession } from '@/app/(main)/SessionProvider';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from "@/components/ui/tooltip";
-import Linkify from "@/helpers/global/Linkify";
-import type { FollowerInfo, UserData } from "@zephyr/db";
-import Link from "next/link";
-import type { PropsWithChildren } from "react";
-import FollowButton from "./FollowButton";
-import FollowerCount from "./FollowerCount";
-import UserAvatar from "./UserAvatar";
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import Linkify from '@/helpers/global/Linkify';
+import type { FollowerInfo, UserData } from '@zephyr/db';
+import Link from 'next/link';
+import type { PropsWithChildren } from 'react';
+import FollowButton from './FollowButton';
+import FollowerCount from './FollowerCount';
+import UserAvatar from './UserAvatar';
 
 interface UserTooltipProps extends PropsWithChildren {
   user: UserData;
@@ -28,7 +28,7 @@ export default function UserTooltip({ children, user }: UserTooltipProps) {
       ? !!user.followers.some(
           ({ followerId }) => followerId === loggedInUser?.id
         )
-      : false
+      : false,
   };
 
   return (

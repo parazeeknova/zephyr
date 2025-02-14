@@ -113,8 +113,6 @@ turbo dev
 
 # TIP ⚠️ : Check package.json for more scripts in the root directory
 ```
-> [!TIP]
-> **start** script uses docker-compose to start the required services & migrations. Check individual script in `docker/scripts` folder for more information.
 
 ###### _<div align="right"><sub>// Ports:</sub></div>_
 If everything goes well, you should be able to access the following services:
@@ -154,16 +152,13 @@ This is a high-level overview of the monorepo structure, check the individual pa
 
 #### _<div align="left"><sub>// Troubleshooting</sub></div>_
 
-> [!TIP]
-> Try `pnpm run docker:interactive`: Docker utility to clean and manage the docker services for Zephyr.
-
 ###### _<div align="left"><sub>// pre commit hooks</sub></div>_
 
 If you encounter any issues with the pre-commit hooks, try running the following commands:
 
 ```bash
 # Ensure that your code is formatted and linted
-pnpm run biome:fix
+pnpm run lint && pnpm run format
 ```
 
 If you encounter any issues with the development setup, try the following steps:

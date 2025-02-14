@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useQueryClient } from "@tanstack/react-query";
-import type { PostData } from "@zephyr/db";
-import { motion } from "framer-motion";
-import React, { useEffect, useMemo, useState } from "react";
-import { Separator } from "../ui/separator";
-import PostCard from "./feedview/postCard";
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useQueryClient } from '@tanstack/react-query';
+import type { PostData } from '@zephyr/db';
+import { motion } from 'framer-motion';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Separator } from '../ui/separator';
+import PostCard from './feedview/postCard';
 
 interface FeedViewProps {
   posts: PostData[];
@@ -23,7 +23,7 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts: initialPosts }) => {
       const feedQueries = queryClient.getQueriesData<{
         pages: { posts: PostData[] }[];
       }>({
-        queryKey: ["post-feed"]
+        queryKey: ['post-feed'],
       });
 
       const updatedPosts = feedQueries.flatMap(
@@ -54,27 +54,27 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts: initialPosts }) => {
       all: sorted,
       scribbles: sorted.filter((post) => post.attachments.length === 0),
       snapshots: sorted.filter((post) =>
-        post.attachments.some((att) => att.type === "IMAGE")
+        post.attachments.some((att) => att.type === 'IMAGE')
       ),
       media: sorted.filter((post) =>
         post.attachments.some(
-          (att) => att.type === "VIDEO" || att.type === "AUDIO"
+          (att) => att.type === 'VIDEO' || att.type === 'AUDIO'
         )
       ),
       files: sorted.filter((post) =>
         post.attachments.some(
-          (att) => att.type === "DOCUMENT" || att.type === "CODE"
+          (att) => att.type === 'DOCUMENT' || att.type === 'CODE'
         )
-      )
+      ),
     };
   }, [posts]);
 
   const tabConfig = [
-    { value: "all", label: "All" },
-    { value: "scribbles", label: "Fleets" },
-    { value: "snapshots", label: "Snapshots" },
-    { value: "media", label: "Reels" },
-    { value: "files", label: "Wisps" }
+    { value: 'all', label: 'All' },
+    { value: 'scribbles', label: 'Fleets' },
+    { value: 'snapshots', label: 'Snapshots' },
+    { value: 'media', label: 'Reels' },
+    { value: 'files', label: 'Wisps' },
   ];
 
   return (

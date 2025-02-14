@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { cn, formatNumber } from "@/lib/utils";
-import { useQueryClient } from "@tanstack/react-query";
-import type { TagWithCount } from "@zephyr/db";
-import { AnimatePresence, motion } from "framer-motion";
-import { Plus } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { TagEditor } from "./TagEditor";
-import { useUpdateTagsMutation } from "./mutations/tag-mention-mutation";
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { cn, formatNumber } from '@/lib/utils';
+import { useQueryClient } from '@tanstack/react-query';
+import type { TagWithCount } from '@zephyr/db';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Plus } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { TagEditor } from './TagEditor';
+import { useUpdateTagsMutation } from './mutations/tag-mention-mutation';
 
 interface TagsProps {
   tags: TagWithCount[];
@@ -23,41 +23,41 @@ const tagVariants = {
   initial: {
     opacity: 0,
     scale: 0.8,
-    filter: "blur(4px)"
+    filter: 'blur(4px)',
   },
   animate: {
     opacity: 1,
     scale: 1,
-    filter: "blur(0px)",
+    filter: 'blur(0px)',
     transition: {
       duration: 0.2,
-      ease: "easeOut"
-    }
+      ease: 'easeOut',
+    },
   },
   exit: {
     opacity: 0,
     scale: 0.8,
-    filter: "blur(4px)",
+    filter: 'blur(4px)',
     transition: {
       duration: 0.15,
-      ease: "easeIn"
-    }
+      ease: 'easeIn',
+    },
   },
   hover: {
     scale: 1.05,
     transition: {
       duration: 0.2,
-      ease: "easeInOut"
-    }
-  }
+      ease: 'easeInOut',
+    },
+  },
 };
 
 const containerVariants = {
   animate: {
     transition: {
-      staggerChildren: 0.05
-    }
-  }
+      staggerChildren: 0.05,
+    },
+  },
 };
 
 const glowVariants = {
@@ -67,9 +67,9 @@ const glowVariants = {
     transition: {
       duration: 2,
       repeat: Number.POSITIVE_INFINITY,
-      ease: "easeInOut"
-    }
-  }
+      ease: 'easeInOut',
+    },
+  },
 };
 
 export function Tags({
@@ -77,7 +77,7 @@ export function Tags({
   isOwner,
   className,
   postId,
-  onTagsChange
+  onTagsChange,
 }: TagsProps) {
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
@@ -105,19 +105,19 @@ export function Tags({
 
         if (postId) {
           await updateTags.mutateAsync(updatedTags.map((t) => t.name));
-          queryClient.invalidateQueries({ queryKey: ["popularTags"] });
-          queryClient.invalidateQueries({ queryKey: ["post", postId] });
+          queryClient.invalidateQueries({ queryKey: ['popularTags'] });
+          queryClient.invalidateQueries({ queryKey: ['post', postId] });
         }
       } catch (error) {
         setLocalTags(initialTags);
-        console.error("Failed to update tags:", error);
+        console.error('Failed to update tags:', error);
       }
     },
     [postId, updateTags, queryClient, initialTags, onTagsChange]
   );
 
   const baseTagClass =
-    "h-7 flex items-center gap-1 rounded-full border border-primary/20 px-3 py-1 text-sm backdrop-blur-[2px] transition-all duration-300";
+    'h-7 flex items-center gap-1 rounded-full border border-primary/20 px-3 py-1 text-sm backdrop-blur-[2px] transition-all duration-300';
 
   return (
     <>
@@ -125,7 +125,7 @@ export function Tags({
         variants={containerVariants}
         initial="initial"
         animate="animate"
-        className={cn("flex flex-wrap gap-2", className)}
+        className={cn('flex flex-wrap gap-2', className)}
       >
         <AnimatePresence mode="sync">
           {localTags.map((tag) => (
@@ -148,7 +148,7 @@ export function Tags({
               <div
                 className={cn(
                   baseTagClass,
-                  "bg-primary/5 text-primary hover:border-primary/30 hover:bg-primary/10"
+                  'bg-primary/5 text-primary hover:border-primary/30 hover:bg-primary/10'
                 )}
               >
                 <span className="pointer-events-none font-medium">
@@ -174,8 +174,8 @@ export function Tags({
                 onClick={handleOpenEditor}
                 className={cn(
                   baseTagClass,
-                  "bg-muted/50 hover:border-primary/30 hover:bg-muted/80",
-                  "font-normal"
+                  'bg-muted/50 hover:border-primary/30 hover:bg-muted/80',
+                  'font-normal'
                 )}
               >
                 <Plus className="mr-1 h-3.5 w-3.5" />

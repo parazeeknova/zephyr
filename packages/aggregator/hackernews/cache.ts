@@ -1,7 +1,7 @@
-import { redis } from "@zephyr/db";
-import type { HNStory } from "./types";
+import { redis } from '@zephyr/db';
+import type { HNStory } from './types';
 
-const HN_CACHE_PREFIX = "hn:";
+const HN_CACHE_PREFIX = 'hn:';
 const HN_STORIES_KEY = `${HN_CACHE_PREFIX}stories`;
 const HN_STORY_KEY_PREFIX = `${HN_CACHE_PREFIX}story:`;
 const CACHE_TTL = 900; // 15 minutes
@@ -20,7 +20,7 @@ export const hackerNewsCache = {
       const backupStories = await redis.get(`${HN_STORIES_KEY}:backup`);
       return backupStories ? JSON.parse(backupStories) : [];
     } catch (error) {
-      console.error("Error getting HN stories from cache:", error);
+      console.error('Error getting HN stories from cache:', error);
       return [];
     }
   },
@@ -30,13 +30,13 @@ export const hackerNewsCache = {
       const pipeline = redis.pipeline();
 
       // Set primary cache
-      pipeline.set(HN_STORIES_KEY, JSON.stringify(storyIds), "EX", CACHE_TTL);
+      pipeline.set(HN_STORIES_KEY, JSON.stringify(storyIds), 'EX', CACHE_TTL);
 
       // Set backup cache
       pipeline.set(
         `${HN_STORIES_KEY}:backup`,
         JSON.stringify(storyIds),
-        "EX",
+        'EX',
         BACKUP_TTL
       );
 
@@ -44,13 +44,13 @@ export const hackerNewsCache = {
       pipeline.set(
         `${HN_STORIES_KEY}:last_updated`,
         Date.now(),
-        "EX",
+        'EX',
         CACHE_TTL
       );
 
       await pipeline.exec();
     } catch (error) {
-      console.error("Error setting HN stories cache:", error);
+      console.error('Error setting HN stories cache:', error);
     }
   },
 
@@ -80,7 +80,7 @@ export const hackerNewsCache = {
       pipeline.set(
         `${HN_STORY_KEY_PREFIX}${story.id}`,
         storyStr,
-        "EX",
+        'EX',
         CACHE_TTL
       );
 
@@ -88,7 +88,7 @@ export const hackerNewsCache = {
       pipeline.set(
         `${HN_STORY_KEY_PREFIX}${story.id}:backup`,
         storyStr,
-        "EX",
+        'EX',
         BACKUP_TTL
       );
 
@@ -127,7 +127,7 @@ export const hackerNewsCache = {
 
       return stories;
     } catch (error) {
-      console.error("Error getting multiple HN stories from cache:", error);
+      console.error('Error getting multiple HN stories from cache:', error);
       return {};
     }
   },
@@ -135,7 +135,9 @@ export const hackerNewsCache = {
   async shouldRefresh(): Promise<boolean> {
     try {
       const lastUpdated = await redis.get(`${HN_STORIES_KEY}:last_updated`);
-      if (!lastUpdated) return true;
+      if (!lastUpdated) {
+        return true;
+      }
       const timeSinceUpdate = Date.now() - Number.parseInt(lastUpdated);
       return timeSinceUpdate > (CACHE_TTL * 1000) / 2;
     } catch {
@@ -156,9 +158,9 @@ export const hackerNewsCache = {
       }
 
       await pipeline.exec();
-      console.log("Invalidated HN cache");
+      console.log('Invalidated HN cache');
     } catch (error) {
-      console.error("Error invalidating HN cache:", error);
+      console.error('Error invalidating HN cache:', error);
     }
-  }
+  },
 };

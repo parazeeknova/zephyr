@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import ScrollUpButton from "@zephyr-ui/Layouts/ScrollUpButton";
-import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
-import ProfileFeedView from "@zephyr-ui/Profile/ProfileFeedView";
-import LeftSidebar from "@zephyr-ui/Profile/sidebars/ProfileLeftSideBar";
-import RightSidebar from "@zephyr-ui/Profile/sidebars/ProfileRightSideBar";
-import type { UserData } from "@zephyr/db";
-import type React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import ScrollUpButton from '@zephyr-ui/Layouts/ScrollUpButton';
+import StickyFooter from '@zephyr-ui/Layouts/StinkyFooter';
+import ProfileFeedView from '@zephyr-ui/Profile/ProfileFeedView';
+import LeftSidebar from '@zephyr-ui/Profile/sidebars/ProfileLeftSideBar';
+import RightSidebar from '@zephyr-ui/Profile/sidebars/ProfileRightSideBar';
+import type { UserData } from '@zephyr/db';
+import type React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface ProfilePageProps {
   username: string;
@@ -18,7 +18,7 @@ interface ProfilePageProps {
 const ClientProfile: React.FC<ProfilePageProps> = ({
   username,
   userData,
-  loggedInUserId
+  loggedInUserId,
 }) => {
   const [showLeftSidebar] = useState(true);
   const [showRightSidebar] = useState(true);
@@ -39,9 +39,9 @@ const ClientProfile: React.FC<ProfilePageProps> = ({
   }, []);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [handleScroll]);
 
@@ -52,7 +52,7 @@ const ClientProfile: React.FC<ProfilePageProps> = ({
         <main
           ref={mainRef}
           className={`flex-1 overflow-y-auto ${
-            !showLeftSidebar && !showRightSidebar ? "w-full" : ""
+            !showLeftSidebar && !showRightSidebar ? 'w-full' : ''
           }`}
         >
           <div className="mx-auto max-w-5xl p-0 md:p-4">
@@ -74,7 +74,7 @@ const ClientProfile: React.FC<ProfilePageProps> = ({
             </div>
             <div
               className={`transition-all duration-300 ${
-                isFooterSticky ? "fixed top-0 right-0 mt-20 w-96" : ""
+                isFooterSticky ? 'fixed top-0 right-0 mt-20 w-96' : ''
               }`}
             >
               <StickyFooter />

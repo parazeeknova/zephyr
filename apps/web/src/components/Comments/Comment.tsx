@@ -1,11 +1,11 @@
-import { useSession } from "@/app/(main)/SessionProvider";
-import Linkify from "@/helpers/global/Linkify";
-import { formatRelativeDate } from "@/lib/utils";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import UserTooltip from "@zephyr-ui/Layouts/UserTooltip";
-import type { CommentData } from "@zephyr/db";
-import Link from "next/link";
-import CommentMoreButton from "./CommentMoreButton";
+import { useSession } from '@/app/(main)/SessionProvider';
+import Linkify from '@/helpers/global/Linkify';
+import { formatRelativeDate } from '@/lib/utils';
+import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
+import UserTooltip from '@zephyr-ui/Layouts/UserTooltip';
+import type { CommentData } from '@zephyr/db';
+import Link from 'next/link';
+import CommentMoreButton from './CommentMoreButton';
 
 interface CommentProps {
   comment: CommentData;

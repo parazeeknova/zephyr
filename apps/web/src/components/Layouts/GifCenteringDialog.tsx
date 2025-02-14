@@ -1,24 +1,24 @@
-import { useUpdateAvatarMutation } from "@/app/(main)/users/[username]/avatar-mutations";
-import { Button } from "@/components/ui/button";
+import { useUpdateAvatarMutation } from '@/app/(main)/users/[username]/avatar-mutations';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
-import { motion } from "framer-motion";
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import LoadingButton from '@zephyr-ui/Auth/LoadingButton';
+import { motion } from 'framer-motion';
 import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
   ZoomIn,
-  ZoomOut
-} from "lucide-react";
-import { useRef, useState } from "react";
+  ZoomOut,
+} from 'lucide-react';
+import { useRef, useState } from 'react';
 
 interface GifCenteringDialogProps {
   gifFile: File;
@@ -34,7 +34,7 @@ interface GifCenteringDialogProps {
 export default function GifCenteringDialog({
   gifFile,
   onClose,
-  currentValues
+  currentValues,
 }: GifCenteringDialogProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const gifRef = useRef<HTMLImageElement>(null);
@@ -49,16 +49,16 @@ export default function GifCenteringDialog({
   const MIN_ZOOM = 0.5;
   const MAX_ZOOM = 2;
 
-  const handleMove = (direction: "up" | "down" | "left" | "right") => {
+  const handleMove = (direction: 'up' | 'down' | 'left' | 'right') => {
     setPosition((prev) => {
       switch (direction) {
-        case "up":
+        case 'up':
           return { ...prev, y: prev.y + MOVE_AMOUNT };
-        case "down":
+        case 'down':
           return { ...prev, y: prev.y - MOVE_AMOUNT };
-        case "left":
+        case 'left':
           return { ...prev, x: prev.x + MOVE_AMOUNT };
-        case "right":
+        case 'right':
           return { ...prev, x: prev.x - MOVE_AMOUNT };
       }
     });
@@ -77,28 +77,28 @@ export default function GifCenteringDialog({
       const safePosition = {
         x: Math.round(position.x * 100) / 100,
         y: Math.round(position.y * 100) / 100,
-        z: Math.round(zoom * 100) / 100
+        z: Math.round(zoom * 100) / 100,
       };
 
       const transformedFileName = `avatar_${timestamp}_x${safePosition.x}_y${safePosition.y}_z${safePosition.z}.gif`;
 
       const file = new File([gifFile], transformedFileName, {
-        type: "image/gif"
+        type: 'image/gif',
       });
 
       await mutation.mutateAsync({
         file,
         userId: currentValues.userId,
-        oldAvatarKey: currentValues.oldAvatarKey || undefined
+        oldAvatarKey: currentValues.oldAvatarKey || undefined,
       });
 
       onClose();
     } catch (error) {
-      console.error("Error processing GIF:", error);
+      console.error('Error processing GIF:', error);
       toast({
-        title: "Error",
-        description: "Failed to update avatar. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to update avatar. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -120,9 +120,9 @@ export default function GifCenteringDialog({
               animate={{
                 x: position.x,
                 y: position.y,
-                scale: zoom
+                scale: zoom,
               }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             >
               <img
                 ref={gifRef}
@@ -130,7 +130,7 @@ export default function GifCenteringDialog({
                 alt="GIF preview"
                 className="max-w-none"
                 style={{
-                  transformOrigin: "center"
+                  transformOrigin: 'center',
                 }}
                 draggable={false}
               />
@@ -143,7 +143,7 @@ export default function GifCenteringDialog({
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => handleMove("up")}
+                onClick={() => handleMove('up')}
                 disabled={mutation.isPending}
               >
                 <ChevronUp className="size-4" />
@@ -153,7 +153,7 @@ export default function GifCenteringDialog({
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => handleMove("left")}
+                onClick={() => handleMove('left')}
                 disabled={mutation.isPending}
               >
                 <ChevronLeft className="size-4" />
@@ -164,7 +164,7 @@ export default function GifCenteringDialog({
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => handleMove("right")}
+                onClick={() => handleMove('right')}
                 disabled={mutation.isPending}
               >
                 <ChevronRight className="size-4" />
@@ -174,7 +174,7 @@ export default function GifCenteringDialog({
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => handleMove("down")}
+                onClick={() => handleMove('down')}
                 disabled={mutation.isPending}
               >
                 <ChevronDown className="size-4" />

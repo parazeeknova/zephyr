@@ -1,12 +1,12 @@
-import DGIMAGE from "@zephyr-assets/signup-image.jpg";
-import type { Metadata } from "next";
-import Image from "next/image";
-import SupportForm from "./SupportForm";
+import DGIMAGE from '@zephyr-assets/signup-image.jpg';
+import type { Metadata } from 'next';
+import Image from 'next/image';
+import SupportForm from './SupportForm';
 
 export const metadata: Metadata = {
-  title: "Support",
+  title: 'Support',
   description:
-    "Get help, report bugs, or share your suggestions with the Zephyr team"
+    'Get help, report bugs, or share your suggestions with the Zephyr team',
 };
 
 export default function SupportPage() {

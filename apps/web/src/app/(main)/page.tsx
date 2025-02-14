@@ -1,6 +1,6 @@
-import { getUserData } from "@/hooks/useUserData";
-import { validateRequest } from "@zephyr/auth/auth";
-import ClientHome from "./ClientHome";
+import { getUserData } from '@/hooks/useUserData';
+import { validateRequest } from '@zephyr/auth/auth';
+import ClientHome from './ClientHome';
 
 export default async function Page() {
   const { user } = await validateRequest();

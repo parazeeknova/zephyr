@@ -1,1 +1,1 @@
-export type NotificationType = "AMPLIFY" | "FOLLOW" | "COMMENT" | "MENTION";
+export type NotificationType = 'AMPLIFY' | 'FOLLOW' | 'COMMENT' | 'MENTION';

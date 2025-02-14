@@ -1,13 +1,13 @@
-"use server";
+'use server';
 
-import { createPostSchema, validateRequest } from "@zephyr/auth/src";
-import type { CreatePostInput } from "@zephyr/auth/validation";
+import { createPostSchema, validateRequest } from '@zephyr/auth/src';
+import type { CreatePostInput } from '@zephyr/auth/validation';
 import {
   getPostDataInclude,
   postViewsCache,
   prisma,
-  tagCache
-} from "@zephyr/db";
+  tagCache,
+} from '@zephyr/db';
 
 const AURA_REWARDS = {
   BASE_POST: 10,
@@ -15,35 +15,35 @@ const AURA_REWARDS = {
     IMAGE: {
       BASE: 20,
       PER_ITEM: 5,
-      MAX_BONUS: 25 // Max bonus for multiple images (5 images)
+      MAX_BONUS: 25, // Max bonus for multiple images (5 images)
     },
     VIDEO: {
       BASE: 40,
       PER_ITEM: 10,
-      MAX_BONUS: 20 // Max bonus for multiple videos
+      MAX_BONUS: 20, // Max bonus for multiple videos
     },
     AUDIO: {
       BASE: 25,
       PER_ITEM: 8,
-      MAX_BONUS: 16 // Max bonus for multiple audio files
+      MAX_BONUS: 16, // Max bonus for multiple audio files
     },
     CODE: {
       BASE: 15,
       PER_ITEM: 15,
-      MAX_BONUS: 45 // Max bonus for multiple code files
-    }
+      MAX_BONUS: 45, // Max bonus for multiple code files
+    },
   },
-  MAX_TOTAL: 150 // Reasonable max total per post
+  MAX_TOTAL: 150, // Reasonable max total per post
 };
 
-type AttachmentType = "IMAGE" | "VIDEO" | "AUDIO" | "CODE";
+type AttachmentType = 'IMAGE' | 'VIDEO' | 'AUDIO' | 'CODE';
 
 async function calculateAuraReward(mediaIds: string[]) {
   if (!mediaIds.length) return AURA_REWARDS.BASE_POST;
 
   const mediaItems = await prisma.media.findMany({
     where: { id: { in: mediaIds } },
-    select: { id: true, type: true }
+    select: { id: true, type: true },
   });
 
   let totalAura = AURA_REWARDS.BASE_POST;
@@ -51,7 +51,7 @@ async function calculateAuraReward(mediaIds: string[]) {
     IMAGE: 0,
     VIDEO: 0,
     AUDIO: 0,
-    CODE: 0
+    CODE: 0,
   };
 
   // biome-ignore lint/complexity/noForEach: This is a simple loop
@@ -78,14 +78,14 @@ async function calculateAuraReward(mediaIds: string[]) {
 export async function submitPost(input: CreatePostInput) {
   try {
     const { user } = await validateRequest();
-    if (!user) throw new Error("Unauthorized");
+    if (!user) throw new Error('Unauthorized');
 
     // Validate input
     const validatedInput = createPostSchema.parse({
       content: input.content,
       mediaIds: input.mediaIds || [],
       tags: input.tags || [],
-      mentions: input.mentions || []
+      mentions: input.mentions || [],
     });
 
     const auraReward = await calculateAuraReward(validatedInput.mediaIds);
@@ -96,10 +96,10 @@ export async function submitPost(input: CreatePostInput) {
         const validUsers = await tx.user.findMany({
           where: {
             id: {
-              in: validatedInput.mentions
-            }
+              in: validatedInput.mentions,
+            },
           },
-          select: { id: true }
+          select: { id: true },
         });
 
         const validUserIds = validUsers.map((u) => u.id);
@@ -114,22 +114,22 @@ export async function submitPost(input: CreatePostInput) {
           userId: user.id,
           aura: 0,
           attachments: {
-            connect: validatedInput.mediaIds.map((id) => ({ id }))
+            connect: validatedInput.mediaIds.map((id) => ({ id })),
           },
           tags: {
             connectOrCreate: validatedInput.tags.map((tagName) => ({
               where: { name: tagName.toLowerCase() },
-              create: { name: tagName.toLowerCase() }
-            }))
+              create: { name: tagName.toLowerCase() },
+            })),
           },
           mentions:
             validatedInput.mentions.length > 0
               ? {
                   create: validatedInput.mentions.map((userId) => ({
-                    userId
-                  }))
+                    userId,
+                  })),
                 }
-              : undefined
+              : undefined,
         },
         include: {
           ...getPostDataInclude(user.id),
@@ -141,12 +141,12 @@ export async function submitPost(input: CreatePostInput) {
                   id: true,
                   username: true,
                   displayName: true,
-                  avatarUrl: true
-                }
-              }
-            }
-          }
-        }
+                  avatarUrl: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       if (validatedInput.mentions.length > 0) {
@@ -154,11 +154,11 @@ export async function submitPost(input: CreatePostInput) {
           validatedInput.mentions.map((userId) =>
             tx.notification.create({
               data: {
-                type: "MENTION",
+                type: 'MENTION',
                 recipientId: userId,
                 issuerId: user.id,
-                postId: post.id
-              }
+                postId: post.id,
+              },
             })
           )
         );
@@ -166,7 +166,7 @@ export async function submitPost(input: CreatePostInput) {
 
       await tx.user.update({
         where: { id: user.id },
-        data: { aura: { increment: auraReward } }
+        data: { aura: { increment: auraReward } },
       });
 
       await tx.auraLog.create({
@@ -174,9 +174,9 @@ export async function submitPost(input: CreatePostInput) {
           userId: user.id,
           issuerId: user.id,
           amount: AURA_REWARDS.BASE_POST,
-          type: "POST_CREATION",
-          postId: post.id
-        }
+          type: 'POST_CREATION',
+          postId: post.id,
+        },
       });
 
       if (auraReward > AURA_REWARDS.BASE_POST) {
@@ -185,9 +185,9 @@ export async function submitPost(input: CreatePostInput) {
             userId: user.id,
             issuerId: user.id,
             amount: auraReward - AURA_REWARDS.BASE_POST,
-            type: "POST_ATTACHMENT_BONUS",
-            postId: post.id
-          }
+            type: 'POST_ATTACHMENT_BONUS',
+            postId: post.id,
+          },
         });
       }
       return post;
@@ -195,7 +195,7 @@ export async function submitPost(input: CreatePostInput) {
 
     return newPost;
   } catch (error) {
-    console.error("Error in submitPost:", error);
+    console.error('Error in submitPost:', error);
     throw error;
   }
 }
@@ -210,15 +210,15 @@ export async function getPostViews(postId: string) {
 
 export async function updatePostTags(postId: string, tags: string[]) {
   const { user } = await validateRequest();
-  if (!user) throw Error("Unauthorized");
+  if (!user) throw Error('Unauthorized');
 
   const post = await prisma.post.findUnique({
     where: { id: postId },
-    include: { tags: true }
+    include: { tags: true },
   });
 
-  if (!post) throw Error("Post not found");
-  if (post.userId !== user.id) throw Error("Unauthorized");
+  if (!post) throw Error('Post not found');
+  if (post.userId !== user.id) throw Error('Unauthorized');
 
   const oldTags = post.tags.map((t) => t.name);
   const tagsToAdd = tags.filter((t) => !oldTags.includes(t));
@@ -231,17 +231,17 @@ export async function updatePostTags(postId: string, tags: string[]) {
         tags: {
           connectOrCreate: tagsToAdd.map((tagName) => ({
             where: { name: tagName },
-            create: { name: tagName }
+            create: { name: tagName },
           })),
-          disconnect: tagsToRemove.map((tagName) => ({ name: tagName }))
-        }
+          disconnect: tagsToRemove.map((tagName) => ({ name: tagName })),
+        },
       },
-      include: getPostDataInclude(user.id)
+      include: getPostDataInclude(user.id),
     });
 
     await Promise.all([
       ...tagsToAdd.map((tagName) => tagCache.incrementTagCount(tagName)),
-      ...tagsToRemove.map((tagName) => tagCache.decrementTagCount(tagName))
+      ...tagsToRemove.map((tagName) => tagCache.decrementTagCount(tagName)),
     ]);
 
     return updatedPost;
@@ -251,46 +251,46 @@ export async function updatePostTags(postId: string, tags: string[]) {
 export async function updatePostMentions(postId: string, mentions: string[]) {
   try {
     const { user } = await validateRequest();
-    if (!user) throw new Error("Unauthorized");
+    if (!user) throw new Error('Unauthorized');
 
     const post = await prisma.post.findUnique({
       where: { id: postId },
-      include: { mentions: true }
+      include: { mentions: true },
     });
 
-    if (!post) throw new Error("Post not found");
-    if (post.userId !== user.id) throw new Error("Unauthorized");
+    if (!post) throw new Error('Post not found');
+    if (post.userId !== user.id) throw new Error('Unauthorized');
 
     return await prisma.$transaction(async (tx) => {
       await tx.mention.deleteMany({
-        where: { postId }
+        where: { postId },
       });
 
       if (mentions.length > 0) {
         await tx.mention.createMany({
           data: mentions.map((userId) => ({
             postId,
-            userId
-          }))
+            userId,
+          })),
         });
 
         await tx.notification.createMany({
           data: mentions.map((userId) => ({
-            type: "MENTION",
+            type: 'MENTION',
             recipientId: userId,
             issuerId: user.id,
-            postId
-          }))
+            postId,
+          })),
         });
       }
 
       return await tx.post.findUnique({
         where: { id: postId },
-        include: getPostDataInclude(user.id)
+        include: getPostDataInclude(user.id),
       });
     });
   } catch (error) {
-    console.error("Error updating mentions:", error);
+    console.error('Error updating mentions:', error);
     throw error;
   }
 }

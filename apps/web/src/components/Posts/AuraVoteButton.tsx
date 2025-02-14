@@ -1,15 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import kyInstance from "@/lib/ky";
-import { cn } from "@/lib/utils";
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import kyInstance from '@/lib/ky';
+import { cn } from '@/lib/utils';
 import {
   type QueryKey,
   useMutation,
   useQuery,
-  useQueryClient
-} from "@tanstack/react-query";
-import type { VoteInfo } from "@zephyr/db";
-import { ArrowBigDown, ArrowBigUp } from "lucide-react";
+  useQueryClient,
+} from '@tanstack/react-query';
+import type { VoteInfo } from '@zephyr/db';
+import { ArrowBigDown, ArrowBigUp } from 'lucide-react';
 
 interface AuraVoteButtonProps {
   postId: string;
@@ -20,11 +20,11 @@ interface AuraVoteButtonProps {
 export default function AuraVoteButton({
   postId,
   initialState,
-  authorName
+  authorName,
 }: AuraVoteButtonProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const queryKey: QueryKey = ["vote-info", postId];
+  const queryKey: QueryKey = ['vote-info', postId];
 
   const { data } = useQuery({
     queryKey,
@@ -33,7 +33,7 @@ export default function AuraVoteButton({
     initialData: initialState,
     staleTime: 0, // Always fetch fresh data
     refetchOnMount: true, // Refetch when component mounts
-    refetchOnWindowFocus: true // Refetch when window regains focus
+    refetchOnWindowFocus: true, // Refetch when window regains focus
   });
 
   const { mutate } = useMutation({
@@ -49,12 +49,12 @@ export default function AuraVoteButton({
         const voteChange = calculateVoteChange(old.userVote, newVote);
         return {
           aura: old.aura + voteChange,
-          userVote: newVote === old.userVote ? 0 : newVote
+          userVote: newVote === old.userVote ? 0 : newVote,
         };
       });
 
       // Update the post data in the cache
-      queryClient.setQueryData(["post", postId], (oldPost: any) => {
+      queryClient.setQueryData(['post', postId], (oldPost: any) => {
         if (!oldPost) return oldPost;
         const voteChange = calculateVoteChange(
           oldPost.vote[0]?.value || 0,
@@ -63,7 +63,8 @@ export default function AuraVoteButton({
         return {
           ...oldPost,
           aura: oldPost.aura + voteChange,
-          vote: newVote === 0 ? [] : [{ userId: "currentUser", value: newVote }]
+          vote:
+            newVote === 0 ? [] : [{ userId: 'currentUser', value: newVote }],
         };
       });
       return { previousState };
@@ -72,19 +73,19 @@ export default function AuraVoteButton({
       const previousVote = data.userVote;
       if (newVote === 1 && previousVote === 1) {
         toast({
-          description: `Amplified ${authorName}'s post`
+          description: `Amplified ${authorName}'s post`,
         });
       } else if (newVote === -1 && previousVote === -1) {
         toast({
-          description: `Muted ${authorName}'s post`
+          description: `Muted ${authorName}'s post`,
         });
       } else if (newVote === 1 && previousVote !== 1) {
         toast({
-          description: `Removed amplification from ${authorName}'s post`
+          description: `Removed amplification from ${authorName}'s post`,
         });
       } else if (newVote === -1 && previousVote !== -1) {
         toast({
-          description: `Removed muting from ${authorName}'s post`
+          description: `Removed muting from ${authorName}'s post`,
         });
       }
     },
@@ -92,10 +93,10 @@ export default function AuraVoteButton({
       queryClient.setQueryData(queryKey, context?.previousState);
       console.error(error);
       toast({
-        variant: "destructive",
-        description: "Something went wrong. Please try again."
+        variant: 'destructive',
+        description: 'Something went wrong. Please try again.',
       });
-    }
+    },
   });
 
   const calculateVoteChange = (oldVote: number, newVote: number): number => {
@@ -111,15 +112,15 @@ export default function AuraVoteButton({
         variant="ghost"
         onClick={() => mutate(1)}
         className={cn(
-          "group rounded-md p-1 text-muted-foreground hover:border hover:border-orange-500 hover:bg-orange-100 hover:bg-opacity-10 hover:shadow-md",
-          data.userVote === 1 && "bg-orange-100 bg-opacity-10"
+          'group rounded-md p-1 text-muted-foreground hover:border hover:border-orange-500 hover:bg-orange-100 hover:bg-opacity-10 hover:shadow-md',
+          data.userVote === 1 && 'bg-orange-100 bg-opacity-10'
         )}
       >
         <div className="flex items-center overflow-hidden hover:text-orange-500">
           <ArrowBigUp
             className={cn(
-              "size-6",
-              data.userVote === 1 && "fill-orange-500 text-orange-500"
+              'size-6',
+              data.userVote === 1 && 'fill-orange-500 text-orange-500'
             )}
           />
           <span className="max-w-0 overflow-hidden whitespace-nowrap transition-all duration-300 group-hover:ml-2 group-hover:max-w-xs">
@@ -132,15 +133,15 @@ export default function AuraVoteButton({
         variant="ghost"
         onClick={() => mutate(-1)}
         className={cn(
-          "group rounded-md p-1 text-muted-foreground hover:border hover:border-violet-500 hover:bg-violet-100 hover:bg-opacity-10 hover:shadow-md",
-          data.userVote === -1 && "bg-violet-100 bg-opacity-10"
+          'group rounded-md p-1 text-muted-foreground hover:border hover:border-violet-500 hover:bg-violet-100 hover:bg-opacity-10 hover:shadow-md',
+          data.userVote === -1 && 'bg-violet-100 bg-opacity-10'
         )}
       >
         <div className="flex items-center overflow-hidden hover:text-violet-500">
           <ArrowBigDown
             className={cn(
-              "size-6",
-              data.userVote === -1 && "fill-violet-500 text-violet-500"
+              'size-6',
+              data.userVote === -1 && 'fill-violet-500 text-violet-500'
             )}
           />
           <span className="max-w-0 overflow-hidden whitespace-nowrap text-violet-500 transition-all duration-300 group-hover:ml-2 group-hover:max-w-xs">

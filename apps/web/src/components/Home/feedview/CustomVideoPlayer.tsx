@@ -1,13 +1,13 @@
-"use client";
-import { Slider } from "@/components/ui/slider";
+'use client';
+import { Slider } from '@/components/ui/slider';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   FastForward,
   Maximize,
@@ -17,9 +17,9 @@ import {
   Rewind,
   Settings,
   Volume2,
-  VolumeX
-} from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+  VolumeX,
+} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 interface CustomVideoPlayerProps {
   src: string;
@@ -38,7 +38,7 @@ export const CustomVideoPlayer = ({
   src,
   onLoadedData,
   onError,
-  className
+  className,
 }: CustomVideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -67,7 +67,7 @@ export const CustomVideoPlayer = ({
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
   useEffect(() => {
@@ -80,20 +80,20 @@ export const CustomVideoPlayer = ({
       setIsFullscreen(!!document.fullscreenElement);
     };
 
-    video.addEventListener("timeupdate", handleTimeUpdate);
-    video.addEventListener("durationchange", handleDurationChange);
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('durationchange', handleDurationChange);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
 
     return () => {
-      video.removeEventListener("timeupdate", handleTimeUpdate);
-      video.removeEventListener("durationchange", handleDurationChange);
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('durationchange', handleDurationChange);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   }, []);
 
   useEffect(() => {
     const keyboardControls: KeyboardControls = {
-      " ": handlePlayPause,
+      ' ': handlePlayPause,
       k: handlePlayPause,
       m: toggleMute,
       f: toggleFullscreen,
@@ -106,14 +106,14 @@ export const CustomVideoPlayer = ({
       ArrowDown: () => {
         const newVolume = Math.max(0, volume - 0.1);
         handleVolumeChange([newVolume]);
-      }
+      },
     };
 
     const handleKeyPress = (e: KeyboardEvent) => {
       if (
         !showControls ||
-        (e.target as HTMLElement)?.tagName === "INPUT" ||
-        (e.target as HTMLElement)?.tagName === "TEXTAREA"
+        (e.target as HTMLElement)?.tagName === 'INPUT' ||
+        (e.target as HTMLElement)?.tagName === 'TEXTAREA'
       )
         return;
 
@@ -125,8 +125,8 @@ export const CustomVideoPlayer = ({
       }
     };
 
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
   }, [volume, showControls]);
 
   const handlePlayPause = () => {
@@ -149,10 +149,8 @@ export const CustomVideoPlayer = ({
   const handleVolumeChange = (value: number[]) => {
     const newVolume = value[0];
     if (videoRef.current) {
-      if (videoRef.current) {
-        if (newVolume !== undefined) {
-          videoRef.current.volume = newVolume;
-        }
+      if (videoRef.current && newVolume !== undefined) {
+        videoRef.current.volume = newVolume;
       }
       if (newVolume !== undefined) {
         setVolume(newVolume);
@@ -168,12 +166,12 @@ export const CustomVideoPlayer = ({
     const handleWaiting = () => setIsBuffering(true);
     const handlePlaying = () => setIsBuffering(false);
 
-    video.addEventListener("waiting", handleWaiting);
-    video.addEventListener("playing", handlePlaying);
+    video.addEventListener('waiting', handleWaiting);
+    video.addEventListener('playing', handlePlaying);
 
     return () => {
-      video.removeEventListener("waiting", handleWaiting);
-      video.removeEventListener("playing", handlePlaying);
+      video.removeEventListener('waiting', handleWaiting);
+      video.removeEventListener('playing', handlePlaying);
     };
   }, []);
 
@@ -236,8 +234,8 @@ export const CustomVideoPlayer = ({
     <div
       ref={containerRef}
       className={cn(
-        "group relative w-full overflow-hidden rounded-lg",
-        isFullscreen && "h-screen",
+        'group relative w-full overflow-hidden rounded-lg',
+        isFullscreen && 'h-screen',
         className
       )}
       onMouseMove={handleMouseMove}
@@ -332,16 +330,16 @@ export const CustomVideoPlayer = ({
                         y: 0,
                         scale: 1,
                         transition: {
-                          type: "spring",
+                          type: 'spring',
                           stiffness: 300,
-                          damping: 30
-                        }
+                          damping: 30,
+                        },
                       }}
                       exit={{
                         opacity: 0,
                         y: -5,
                         scale: 0.95,
-                        transition: { duration: 0.15 }
+                        transition: { duration: 0.15 },
                       }}
                       className="absolute top-full right-0 mt-2 origin-top-right"
                     >
@@ -355,16 +353,16 @@ export const CustomVideoPlayer = ({
                               <motion.button
                                 key={speed}
                                 whileHover={{
-                                  backgroundColor: "rgba(255,255,255,0.1)"
+                                  backgroundColor: 'rgba(255,255,255,0.1)',
                                 }}
                                 onClick={() =>
                                   handlePlaybackSpeedChange(speed.toString())
                                 }
                                 className={cn(
-                                  "w-full rounded-md px-3 py-1.5 text-left text-xs transition-all",
+                                  'w-full rounded-md px-3 py-1.5 text-left text-xs transition-all',
                                   playbackSpeed === speed
-                                    ? "bg-white/20 text-white"
-                                    : "text-white/70 hover:text-white"
+                                    ? 'bg-white/20 text-white'
+                                    : 'text-white/70 hover:text-white'
                                 )}
                               >
                                 <div className="flex items-center justify-between">
@@ -404,7 +402,7 @@ export const CustomVideoPlayer = ({
                     </motion.button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
-                    <p>{isFullscreen ? "Exit Fullscreen" : "Fullscreen"}</p>
+                    <p>{isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -528,30 +526,30 @@ export const CustomVideoPlayer = ({
                         <motion.div
                           initial={{ width: 0, opacity: 0 }}
                           animate={{
-                            width: "140px",
+                            width: '140px',
                             opacity: 1,
                             transition: {
                               width: {
-                                type: "spring",
+                                type: 'spring',
                                 stiffness: 300,
-                                damping: 30
+                                damping: 30,
                               },
                               opacity: {
-                                duration: 0.2
-                              }
-                            }
+                                duration: 0.2,
+                              },
+                            },
                           }}
                           exit={{
                             width: 0,
                             opacity: 0,
                             transition: {
                               width: {
-                                duration: 0.2
+                                duration: 0.2,
                               },
                               opacity: {
-                                duration: 0.1
-                              }
-                            }
+                                duration: 0.1,
+                              },
+                            },
                           }}
                           className="ml-2 overflow-hidden"
                           onMouseLeave={() => setShowVolumeSlider(false)}
@@ -571,7 +569,7 @@ export const CustomVideoPlayer = ({
                             >
                               <motion.div
                                 className="relative h-1 w-full grow overflow-hidden rounded-full bg-white/20"
-                                whileHover={{ height: "6px" }}
+                                whileHover={{ height: '6px' }}
                                 transition={{ duration: 0.2 }}
                               >
                                 <motion.div
@@ -580,9 +578,9 @@ export const CustomVideoPlayer = ({
                                   initial={{ width: 0 }}
                                   animate={{ width: `${volume * 100}%` }}
                                   transition={{
-                                    type: "spring",
+                                    type: 'spring',
                                     stiffness: 300,
-                                    damping: 30
+                                    damping: 30,
                                   }}
                                 />
                               </motion.div>

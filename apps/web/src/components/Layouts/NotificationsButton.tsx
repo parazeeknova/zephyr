@@ -1,25 +1,25 @@
-"use client";
-import kyInstance from "@/lib/ky";
-import { useQuery } from "@tanstack/react-query";
-import { HeaderIconButton } from "@zephyr-ui/Styles/HeaderButtons";
-import type { NotificationCountInfo } from "@zephyr/db";
-import { Bell } from "lucide-react";
+'use client';
+import kyInstance from '@/lib/ky';
+import { useQuery } from '@tanstack/react-query';
+import { HeaderIconButton } from '@zephyr-ui/Styles/HeaderButtons';
+import type { NotificationCountInfo } from '@zephyr/db';
+import { Bell } from 'lucide-react';
 
 interface NotificationsButtonProps {
   initialState: NotificationCountInfo;
 }
 
 export default function NotificationsButton({
-  initialState
+  initialState,
 }: NotificationsButtonProps) {
   const { data } = useQuery({
-    queryKey: ["unread-notification-count"],
+    queryKey: ['unread-notification-count'],
     queryFn: () =>
       kyInstance
-        .get("/api/notifications/unread-count")
+        .get('/api/notifications/unread-count')
         .json<NotificationCountInfo>(),
     initialData: initialState,
-    refetchInterval: 60 * 1000
+    refetchInterval: 60 * 1000,
   });
 
   return (

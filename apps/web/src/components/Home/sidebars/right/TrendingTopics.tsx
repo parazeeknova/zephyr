@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { LucideTrendingUp, RefreshCw } from "lucide-react";
-import Link from "next/link";
-import type React from "react";
-import { useEffect, useState, useTransition } from "react";
+import { LucideTrendingUp, RefreshCw } from 'lucide-react';
+import Link from 'next/link';
+import type React from 'react';
+import { useEffect, useState, useTransition } from 'react';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { formatNumber } from "@/lib/utils";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { formatNumber } from '@/lib/utils';
 import {
   getTrendingTopics,
-  invalidateTrendingTopicsCache
-} from "@/state/TopicActions";
-import TrendingTopicsSkeleton from "@zephyr-ui/Layouts/skeletons/TrendingTopicSkeleton";
-import type { TrendingTopic } from "@zephyr/db";
-import { AnimatePresence, motion } from "framer-motion";
+  invalidateTrendingTopicsCache,
+} from '@/state/TopicActions';
+import TrendingTopicsSkeleton from '@zephyr-ui/Layouts/skeletons/TrendingTopicSkeleton';
+import type { TrendingTopic } from '@zephyr/db';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const TrendingTopics: React.FC = () => {
   const [topics, setTopics] = useState<TrendingTopic[]>([]);
@@ -37,8 +37,8 @@ const TrendingTopics: React.FC = () => {
         }
       });
     } catch (err) {
-      setError("Failed to load trending topics");
-      console.error("Error fetching trending topics:", err);
+      setError('Failed to load trending topics');
+      console.error('Error fetching trending topics:', err);
     }
   };
 
@@ -114,8 +114,8 @@ const TrendingTopics: React.FC = () => {
             <RefreshCw
               className={`h-3.5 w-3.5 transition-all duration-300 ${
                 isPending
-                  ? "animate-spin text-rose-500"
-                  : "text-muted-foreground"
+                  ? 'animate-spin text-rose-500'
+                  : 'text-muted-foreground'
               }`}
             />
           </Button>
@@ -177,7 +177,7 @@ const TrendingTopics: React.FC = () => {
                           {hashtag}
                         </p>
                         <p className="text-muted-foreground text-xs">
-                          {formatNumber(count)} {count === 1 ? "post" : "posts"}
+                          {formatNumber(count)} {count === 1 ? 'post' : 'posts'}
                         </p>
                       </div>
                     </div>
@@ -185,7 +185,7 @@ const TrendingTopics: React.FC = () => {
                       initial={false}
                       animate={{
                         opacity: hoveredTopic === hashtag ? 1 : 0,
-                        x: hoveredTopic === hashtag ? 0 : -4
+                        x: hoveredTopic === hashtag ? 0 : -4,
                       }}
                       className="bg-gradient-to-br from-rose-500 to-orange-500 bg-clip-text font-bold text-sm text-transparent"
                     >

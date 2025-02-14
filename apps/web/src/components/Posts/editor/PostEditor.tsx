@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { useSession } from "@/app/(main)/SessionProvider";
-import { cn } from "@/lib/utils";
-import { useSubmitPostMutation } from "@/posts/editor/mutations";
-import Placeholder from "@tiptap/extension-placeholder";
-import { EditorContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import { AnimatePresence, motion } from "framer-motion";
-import { Loader2, Wind } from "lucide-react";
-import { type ClipboardEvent, useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import { AttachmentPreview } from "./AttachmentPreview";
-import { FileInput } from "./FileInput";
-import "./styles.css";
-import { MentionTags } from "@/components/Tags/MentionTags";
-import { Tags } from "@/components/Tags/Tags";
-import { useQuery } from "@tanstack/react-query";
-import type { TagWithCount, UserData } from "@zephyr/db";
-import useMediaUpload, { type Attachment } from "./useMediaUpload";
+import { useSession } from '@/app/(main)/SessionProvider';
+import { cn } from '@/lib/utils';
+import { useSubmitPostMutation } from '@/posts/editor/mutations';
+import Placeholder from '@tiptap/extension-placeholder';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import LoadingButton from '@zephyr-ui/Auth/LoadingButton';
+import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Loader2, Wind } from 'lucide-react';
+import { type ClipboardEvent, useCallback, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { AttachmentPreview } from './AttachmentPreview';
+import { FileInput } from './FileInput';
+import './styles.css';
+import { MentionTags } from '@/components/Tags/MentionTags';
+import { Tags } from '@/components/Tags/Tags';
+import { useQuery } from '@tanstack/react-query';
+import type { TagWithCount, UserData } from '@zephyr/db';
+import useMediaUpload, { type Attachment } from './useMediaUpload';
 
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -28,14 +28,14 @@ const containerVariants = {
     y: 0,
     transition: {
       duration: 0.3,
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 }
+  visible: { opacity: 1, y: 0 },
 };
 
 const textVariants = {
@@ -44,19 +44,19 @@ const textVariants = {
     x: [0, 2, 0, -2, 0],
     transition: {
       duration: 3,
-      ease: "easeInOut",
-      repeat: Number.POSITIVE_INFINITY
-    }
-  }
+      ease: 'easeInOut',
+      repeat: Number.POSITIVE_INFINITY,
+    },
+  },
 };
 
 export default function PostEditor() {
   const { user } = useSession();
   const mutation = useSubmitPostMutation();
   const { data: userData } = useQuery({
-    queryKey: ["user", user.id],
+    queryKey: ['user', user.id],
     initialData: user,
-    staleTime: 1000 * 60 * 5
+    staleTime: 1000 * 60 * 5,
   });
 
   const {
@@ -65,24 +65,24 @@ export default function PostEditor() {
     isUploading,
     uploadProgress,
     removeAttachment,
-    reset: resetMediaUploads
+    reset: resetMediaUploads,
   } = useMediaUpload();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: async (acceptedFiles: any[]) => {
       const validFiles = acceptedFiles.filter(
         (file: { type: string }) =>
-          file.type.startsWith("image/") || file.type.startsWith("video/")
+          file.type.startsWith('image/') || file.type.startsWith('video/')
       );
       if (validFiles.length) {
         await startUpload(validFiles);
       }
     },
     accept: {
-      "image/*": [],
-      "video/*": []
+      'image/*': [],
+      'video/*': [],
     },
-    maxSize: 128 * 1024 * 1024
+    maxSize: 128 * 1024 * 1024,
   });
 
   const { onClick, ...rootProps } = getRootProps();
@@ -91,27 +91,27 @@ export default function PostEditor() {
     extensions: [
       StarterKit.configure({
         bold: false,
-        italic: false
+        italic: false,
       }),
       Placeholder.configure({
-        placeholder: "What's crack-a-lackin'?"
-      })
+        placeholder: "What's crack-a-lackin'?",
+      }),
     ],
     editorProps: {
       attributes: {
-        class: "focus:outline-none"
+        class: 'focus:outline-none',
       },
       handleDOMEvents: {
         focus: () => {
           setIsEditorFocused(true);
           return false;
-        }
-      }
+        },
+      },
     },
-    immediatelyRender: false
+    immediatelyRender: false,
   });
 
-  const input = editor?.getText({ blockSeparator: "\n" }) || "";
+  const input = editor?.getText({ blockSeparator: '\n' }) || '';
   const [isEditorFocused, setIsEditorFocused] = useState(false);
   const [selectedTags, setSelectedTags] = useState<TagWithCount[]>([]);
   const [selectedMentions, setSelectedMentions] = useState<UserData[]>([]);
@@ -123,7 +123,7 @@ export default function PostEditor() {
   const handleTagsChange = useCallback((newTags: TagWithCount[]) => {
     const tagsWithCount = newTags.map((tag) => ({
       ...tag,
-      _count: tag._count || { posts: 0 }
+      _count: tag._count || { posts: 0 },
     }));
     setSelectedTags(tagsWithCount);
   }, []);
@@ -137,7 +137,7 @@ export default function PostEditor() {
         .map((a) => a.mediaId)
         .filter((id): id is string => Boolean(id)),
       tags: selectedTags.map((tag) => tag.name.toLowerCase()),
-      mentions: selectedMentions.map((user) => user.id)
+      mentions: selectedMentions.map((user) => user.id),
     };
 
     if (!payload.content) {
@@ -151,7 +151,7 @@ export default function PostEditor() {
         setSelectedTags([]);
         setSelectedMentions([]);
         setIsEditorFocused(false);
-      }
+      },
     });
   }, [
     input,
@@ -160,13 +160,13 @@ export default function PostEditor() {
     selectedMentions,
     mutation,
     editor,
-    resetMediaUploads
+    resetMediaUploads,
   ]);
 
   const onPaste = useCallback(
     (e: ClipboardEvent<HTMLInputElement>) => {
       const files = Array.from(e.clipboardData.items)
-        .filter((item) => item.kind === "file")
+        .filter((item) => item.kind === 'file')
         .map((item) => item.getAsFile()) as File[];
       startUpload(files);
     },
@@ -185,7 +185,7 @@ export default function PostEditor() {
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
             <UserAvatar avatarUrl={userData.avatarUrl} />
           </motion.div>
@@ -195,7 +195,7 @@ export default function PostEditor() {
             {isEditorFocused && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
+                animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 className="mb-3 space-y-3"
               >
@@ -219,17 +219,17 @@ export default function PostEditor() {
           <motion.div
             variants={itemVariants}
             className={cn(
-              "relative rounded-2xl transition-all duration-300",
-              isDragActive && "ring-2 ring-primary ring-offset-2"
+              'relative rounded-2xl transition-all duration-300',
+              isDragActive && 'ring-2 ring-primary ring-offset-2'
             )}
           >
             <EditorContent
               editor={editor}
               className={cn(
-                "max-h-[20rem] w-full overflow-y-auto rounded-2xl bg-[hsl(var(--background-alt))] px-5 py-3 text-foreground",
-                "transition-all duration-300 ease-in-out",
-                "focus-within:ring-2 focus-within:ring-primary",
-                isDragActive && "outline-dashed outline-primary"
+                'max-h-[20rem] w-full overflow-y-auto rounded-2xl bg-[hsl(var(--background-alt))] px-5 py-3 text-foreground',
+                'transition-all duration-300 ease-in-out',
+                'focus-within:ring-2 focus-within:ring-primary',
+                isDragActive && 'outline-dashed outline-primary'
               )}
               onPaste={onPaste}
             />
@@ -255,7 +255,7 @@ export default function PostEditor() {
           <motion.div
             layout
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
+            animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
           >
@@ -332,7 +332,7 @@ interface AttachmentPreviewsProps {
 
 function AttachmentPreviews({
   attachments,
-  removeAttachment
+  removeAttachment,
 }: AttachmentPreviewsProps) {
   return (
     <motion.div
@@ -340,8 +340,8 @@ function AttachmentPreviews({
       initial="hidden"
       animate="visible"
       className={cn(
-        "flex flex-col gap-3",
-        attachments.length > 1 && "sm:grid sm:grid-cols-2"
+        'flex flex-col gap-3',
+        attachments.length > 1 && 'sm:grid sm:grid-cols-2'
       )}
     >
       {attachments.map((attachment, index) => (
@@ -355,7 +355,7 @@ function AttachmentPreviews({
           exit={{ opacity: 0, scale: 0.8 }}
           transition={{
             duration: 0.2,
-            layout: { duration: 0.2 }
+            layout: { duration: 0.2 },
           }}
         >
           <AttachmentPreview

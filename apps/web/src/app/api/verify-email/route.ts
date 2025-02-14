@@ -1,18 +1,18 @@
-import { lucia } from "@zephyr/auth/auth";
-import { getStreamClient } from "@zephyr/auth/src";
-import { prisma } from "@zephyr/db";
-import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
-import type { NextRequest } from "next/server";
+import { lucia } from '@zephyr/auth/auth';
+import { getStreamClient } from '@zephyr/auth/src';
+import { prisma } from '@zephyr/db';
+import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
+import type { NextRequest } from 'next/server';
 
 const ERROR_TYPES = {
-  INVALID_TOKEN: "invalid-token",
-  TOKEN_EXPIRED: "token-expired",
-  USER_NOT_FOUND: "user-not-found",
-  VERIFICATION_FAILED: "verification-failed",
-  SERVER_ERROR: "server-error",
-  JWT_SECRET_MISSING: "jwt-secret-missing",
-  CONFIG_ERROR: "configuration-error"
+  INVALID_TOKEN: 'invalid-token',
+  TOKEN_EXPIRED: 'token-expired',
+  USER_NOT_FOUND: 'user-not-found',
+  VERIFICATION_FAILED: 'verification-failed',
+  SERVER_ERROR: 'server-error',
+  JWT_SECRET_MISSING: 'jwt-secret-missing',
+  CONFIG_ERROR: 'configuration-error',
 } as const;
 
 type ErrorType = (typeof ERROR_TYPES)[keyof typeof ERROR_TYPES];
@@ -25,15 +25,15 @@ interface JWTPayload {
 
 const getBaseUrl = () => {
   if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
+    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, '');
   }
 
-  if (process.env.NODE_ENV === "development") {
-    return "http://localhost:3000";
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:3000';
   }
 
-  console.error("NEXT_PUBLIC_SITE_URL not configured in production");
-  throw new Error("Missing NEXT_PUBLIC_SITE_URL configuration");
+  console.error('NEXT_PUBLIC_SITE_URL not configured in production');
+  throw new Error('Missing NEXT_PUBLIC_SITE_URL configuration');
 };
 
 const createErrorRedirect = (errorType: ErrorType) => {
@@ -51,34 +51,34 @@ const createSuccessRedirect = () => {
 };
 
 export async function GET(req: NextRequest) {
-  console.log("Starting email verification process");
+  console.log('Starting email verification process');
 
   try {
     if (!process.env.JWT_SECRET) {
-      console.error("JWT_SECRET not configured");
+      console.error('JWT_SECRET not configured');
       return createErrorRedirect(ERROR_TYPES.JWT_SECRET_MISSING);
     }
 
-    const token = req.nextUrl.searchParams.get("token");
+    const token = req.nextUrl.searchParams.get('token');
     if (!token) {
-      console.log("No verification token provided");
+      console.log('No verification token provided');
       return createErrorRedirect(ERROR_TYPES.INVALID_TOKEN);
     }
 
     const verificationToken = await prisma.emailVerificationToken.findUnique({
       where: { token },
-      include: { user: true }
+      include: { user: true },
     });
 
     if (!verificationToken) {
-      console.log("Verification token not found in database");
+      console.log('Verification token not found in database');
       return createErrorRedirect(ERROR_TYPES.INVALID_TOKEN);
     }
 
     if (verificationToken.expiresAt < new Date()) {
-      console.log("Verification token has expired");
+      console.log('Verification token has expired');
       await prisma.emailVerificationToken.delete({
-        where: { id: verificationToken.id }
+        where: { id: verificationToken.id },
       });
       return createErrorRedirect(ERROR_TYPES.TOKEN_EXPIRED);
     }
@@ -92,8 +92,8 @@ export async function GET(req: NextRequest) {
           id: true,
           username: true,
           displayName: true,
-          emailVerified: true
-        }
+          emailVerified: true,
+        },
       });
 
       if (!user) {
@@ -109,11 +109,11 @@ export async function GET(req: NextRequest) {
       await prisma.$transaction(async (tx) => {
         await tx.user.update({
           where: { id: decoded.userId },
-          data: { emailVerified: true }
+          data: { emailVerified: true },
         });
 
         await tx.emailVerificationToken.delete({
-          where: { id: verificationToken.id }
+          where: { id: verificationToken.id },
         });
       });
 
@@ -123,12 +123,12 @@ export async function GET(req: NextRequest) {
           await streamClient.upsertUser({
             id: user.id,
             name: user.displayName,
-            username: user.username
+            username: user.username,
           });
           console.log(`Stream user created for: ${user.id}`);
         }
       } catch (streamError) {
-        console.error("Stream user creation failed:", streamError);
+        console.error('Stream user creation failed:', streamError);
       }
 
       // @ts-expect-error
@@ -144,11 +144,11 @@ export async function GET(req: NextRequest) {
       console.log(`Email verification successful for user: ${user.id}`);
       return createSuccessRedirect();
     } catch (jwtError) {
-      console.error("JWT verification failed:", jwtError);
+      console.error('JWT verification failed:', jwtError);
       return createErrorRedirect(ERROR_TYPES.VERIFICATION_FAILED);
     }
   } catch (error) {
-    console.error("Verification process failed:", error);
+    console.error('Verification process failed:', error);
     return createErrorRedirect(ERROR_TYPES.SERVER_ERROR);
   }
 }

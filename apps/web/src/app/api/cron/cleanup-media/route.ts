@@ -1,9 +1,9 @@
-import { minioClient } from "@/lib/minio";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { prisma } from "@zephyr/db";
-import { NextResponse } from "next/server";
+import { minioClient } from '@/lib/minio';
+import { DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { prisma } from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
-const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || "uploads";
+const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || 'uploads';
 
 async function cleanupUnusedMedia() {
   const logs: string[] = [];
@@ -18,18 +18,18 @@ async function cleanupUnusedMedia() {
     foundFiles: 0,
     deletedFromMinio: 0,
     deletedFromDb: 0,
-    errors: [] as string[]
+    errors: [] as string[],
   };
 
   try {
-    log("🚀 Starting media cleanup process");
+    log('🚀 Starting media cleanup process');
 
     const unusedMedia = await prisma.media.findMany({
       where: {
         postId: null,
         createdAt: {
-          lte: new Date(Date.now() - 24 * 60 * 60 * 1000) // 24 hours old
-        }
+          lte: new Date(Date.now() - 24 * 60 * 60 * 1000), // 24 hours old
+        },
       },
       select: {
         id: true,
@@ -37,8 +37,8 @@ async function cleanupUnusedMedia() {
         type: true,
         mimeType: true,
         size: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
 
     results.foundFiles = unusedMedia.length;
@@ -74,20 +74,20 @@ async function cleanupUnusedMedia() {
               minioClient.send(
                 new DeleteObjectCommand({
                   Bucket: MINIO_BUCKET,
-                  Key: media.key
+                  Key: media.key,
                 })
               )
             )
           );
 
           minioResults.forEach((result, index) => {
-            if (result.status === "fulfilled") {
+            if (result.status === 'fulfilled') {
               results.deletedFromMinio++;
               if (batch[index]) {
                 log(`✅ Deleted from storage: ${batch[index].key}`);
               }
             } else {
-              const errorMessage = `Failed to delete from storage: ${batch[index]?.key ?? "unknown"} - ${result.reason}`;
+              const errorMessage = `Failed to delete from storage: ${batch[index]?.key ?? 'unknown'} - ${result.reason}`;
               log(`❌ ${errorMessage}`);
               results.errors.push(errorMessage);
             }
@@ -96,9 +96,9 @@ async function cleanupUnusedMedia() {
           const dbResult = await prisma.media.deleteMany({
             where: {
               id: {
-                in: batch.map((m) => m.id)
-              }
-            }
+                in: batch.map((m) => m.id),
+              },
+            },
           });
 
           results.deletedFromDb += dbResult.count;
@@ -116,7 +116,7 @@ async function cleanupUnusedMedia() {
         }
       }
     } else {
-      log("✨ No valid media files to delete");
+      log('✨ No valid media files to delete');
     }
 
     const summary = {
@@ -124,7 +124,7 @@ async function cleanupUnusedMedia() {
       duration: Date.now() - startTime,
       ...results,
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     log(`\n✨ Media cleanup completed successfully:
@@ -139,8 +139,8 @@ async function cleanupUnusedMedia() {
     const errorMessage = error instanceof Error ? error.message : String(error);
     log(`❌ Media cleanup failed: ${errorMessage}`);
     console.error(
-      "Cleanup error stack:",
-      error instanceof Error ? error.stack : "No stack trace"
+      'Cleanup error stack:',
+      error instanceof Error ? error.stack : 'No stack trace'
     );
 
     return {
@@ -149,55 +149,55 @@ async function cleanupUnusedMedia() {
       ...results,
       error: errorMessage,
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } finally {
     try {
       await prisma.$disconnect();
-      log("👋 Database connection closed");
+      log('👋 Database connection closed');
     } catch (_error) {
-      log("❌ Error closing database connection");
+      log('❌ Error closing database connection');
     }
   }
 }
 
 export async function POST(request: Request) {
-  console.log("📥 Received media cleanup request");
+  console.log('📥 Received media cleanup request');
 
   try {
     if (!process.env.CRON_SECRET_KEY) {
-      console.error("❌ CRON_SECRET_KEY environment variable not set");
+      console.error('❌ CRON_SECRET_KEY environment variable not set');
       return NextResponse.json(
         {
-          error: "Server configuration error",
-          timestamp: new Date().toISOString()
+          error: 'Server configuration error',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 500,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
 
-    const authHeader = request.headers.get("authorization");
+    const authHeader = request.headers.get('authorization');
     const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
 
     if (!authHeader || authHeader !== expectedAuth) {
-      console.warn("⚠️ Unauthorized media cleanup attempt");
+      console.warn('⚠️ Unauthorized media cleanup attempt');
       return NextResponse.json(
         {
-          error: "Unauthorized",
-          timestamp: new Date().toISOString()
+          error: 'Unauthorized',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 401,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
@@ -207,32 +207,32 @@ export async function POST(request: Request) {
     return NextResponse.json(results, {
       status: results.success ? 200 : 500,
       headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      }
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
     });
   } catch (error) {
-    console.error("❌ Media cleanup route error:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined
+    console.error('❌ Media cleanup route error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString()
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
       },
       {
         status: 500,
         headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store"
-        }
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store',
+        },
       }
     );
   }
 }
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

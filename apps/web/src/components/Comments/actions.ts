@@ -1,19 +1,19 @@
-"use server";
+'use server';
 
-import { validateRequest } from "@zephyr/auth/auth";
-import { createCommentSchema } from "@zephyr/auth/validation";
-import { type PostData, getCommentDataInclude, prisma } from "@zephyr/db";
+import { validateRequest } from '@zephyr/auth/auth';
+import { createCommentSchema } from '@zephyr/auth/validation';
+import { type PostData, getCommentDataInclude, prisma } from '@zephyr/db';
 
 export async function submitComment({
   post,
-  content
+  content,
 }: {
   post: PostData;
   content: string;
 }) {
   const { user } = await validateRequest();
 
-  if (!user) throw new Error("Unauthorized");
+  if (!user) throw new Error('Unauthorized');
 
   const { content: contentValidated } = createCommentSchema.parse({ content });
 
@@ -22,9 +22,9 @@ export async function submitComment({
       data: {
         content: contentValidated,
         postId: post.id,
-        userId: user.id
+        userId: user.id,
       },
-      include: getCommentDataInclude(user.id)
+      include: getCommentDataInclude(user.id),
     }),
     ...(post.user.id !== user.id
       ? [
@@ -33,11 +33,11 @@ export async function submitComment({
               issuerId: user.id,
               recipientId: post.user.id,
               postId: post.id,
-              type: "COMMENT"
-            }
-          })
+              type: 'COMMENT',
+            },
+          }),
         ]
-      : [])
+      : []),
   ]);
 
   return newComment;
@@ -46,19 +46,19 @@ export async function submitComment({
 export async function deleteComment(id: string) {
   const { user } = await validateRequest();
 
-  if (!user) throw new Error("Unauthorized");
+  if (!user) throw new Error('Unauthorized');
 
   const comment = await prisma.comment.findUnique({
-    where: { id }
+    where: { id },
   });
 
-  if (!comment) throw new Error("Comment not found");
+  if (!comment) throw new Error('Comment not found');
 
-  if (comment.userId !== user.id) throw new Error("Unauthorized");
+  if (comment.userId !== user.id) throw new Error('Unauthorized');
 
   const deletedComment = await prisma.comment.delete({
     where: { id },
-    include: getCommentDataInclude(user.id)
+    include: getCommentDataInclude(user.id),
   });
 
   return deletedComment;

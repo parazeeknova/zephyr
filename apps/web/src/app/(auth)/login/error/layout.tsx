@@ -1,5 +1,5 @@
 export default function ErrorLayout({
-  children
+  children,
 }: {
   children: React.ReactNode;
 }) {
@@ -7,6 +7,6 @@ export default function ErrorLayout({
 }
 
 export const metadata = {
-  title: "Authentication Error",
-  description: "Authentication error occurred during login"
+  title: 'Authentication Error',
+  description: 'Authentication error occurred during login',
 };

@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { useMentionedUsers } from "@/hooks/useMentionedUsers";
-import { cn, formatNumber } from "@/lib/utils";
-import { useQueryClient } from "@tanstack/react-query";
-import type { UserData } from "@zephyr/db";
-import { AnimatePresence, motion } from "framer-motion";
-import { AtSign, RefreshCw } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useCallback, useState, useTransition } from "react";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { useMentionedUsers } from '@/hooks/useMentionedUsers';
+import { cn, formatNumber } from '@/lib/utils';
+import { useQueryClient } from '@tanstack/react-query';
+import type { UserData } from '@zephyr/db';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AtSign, RefreshCw } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useCallback, useState, useTransition } from 'react';
 
 interface MentionedUser extends UserData {
   _count: {
@@ -29,7 +29,7 @@ const MentionedUsersBar = () => {
 
   const handleRefresh = useCallback(() => {
     startTransition(() => {
-      queryClient.invalidateQueries({ queryKey: ["mentionedUsers"] });
+      queryClient.invalidateQueries({ queryKey: ['mentionedUsers'] });
     });
   }, [queryClient]);
 
@@ -62,8 +62,8 @@ const MentionedUsersBar = () => {
             <RefreshCw
               className={`h-3.5 w-3.5 transition-all duration-300 ${
                 isPending || isLoading
-                  ? "animate-spin text-blue-500"
-                  : "text-muted-foreground"
+                  ? 'animate-spin text-blue-500'
+                  : 'text-muted-foreground'
               }`}
             />
           </Button>
@@ -85,8 +85,8 @@ const MentionedUsersBar = () => {
                 <Link
                   href={`/users/${user.username}`}
                   className={cn(
-                    "relative block rounded-md p-2 transition-all duration-300",
-                    "hover:bg-blue-500/5 group-hover:border-blue-500/30"
+                    'relative block rounded-md p-2 transition-all duration-300',
+                    'hover:bg-blue-500/5 group-hover:border-blue-500/30'
                   )}
                 >
                   <AnimatePresence>
@@ -132,8 +132,8 @@ const MentionedUsersBar = () => {
                           @{user.username}
                         </p>
                         <p className="text-muted-foreground text-xs">
-                          {formatNumber(user._count.mentions)}{" "}
-                          {user._count.mentions === 1 ? "mention" : "mentions"}
+                          {formatNumber(user._count.mentions)}{' '}
+                          {user._count.mentions === 1 ? 'mention' : 'mentions'}
                         </p>
                       </div>
                     </div>
@@ -141,7 +141,7 @@ const MentionedUsersBar = () => {
                       initial={false}
                       animate={{
                         opacity: hoveredUser === user.id ? 1 : 0,
-                        x: hoveredUser === user.id ? 0 : -4
+                        x: hoveredUser === user.id ? 0 : -4,
                       }}
                       className="text-blue-500 text-sm"
                     >

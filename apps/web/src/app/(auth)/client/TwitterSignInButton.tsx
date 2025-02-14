@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 export default function TwitterSignInButton() {
   return (
@@ -35,8 +35,8 @@ function TwitterIcon() {
           x2="100%"
           y2="100%"
         >
-          <stop offset="0%" style={{ stopColor: "#ffffff" }} />
-          <stop offset="100%" style={{ stopColor: "#A8A8A8" }} />
+          <stop offset="0%" style={{ stopColor: '#ffffff' }} />
+          <stop offset="100%" style={{ stopColor: '#A8A8A8' }} />
         </linearGradient>
         <filter id="glow">
           <feGaussianBlur stdDeviation="1" result="coloredBlur" />

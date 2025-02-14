@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { GitHub } from "@mui/icons-material";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { motion } from "framer-motion";
-import { ChevronRight, Code2, GitPullRequest, Star } from "lucide-react";
-import Link from "next/link";
+import { Button } from '@/components/ui/button';
+import { GitHub } from '@mui/icons-material';
+import { GitHubLogoIcon } from '@radix-ui/react-icons';
+import { motion } from 'framer-motion';
+import { ChevronRight, Code2, GitPullRequest, Star } from 'lucide-react';
+import Link from 'next/link';
 
 interface ContributeCardProps {
   isCollapsed: boolean;

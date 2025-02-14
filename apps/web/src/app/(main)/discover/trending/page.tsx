@@ -1,13 +1,13 @@
-import { getUserData } from "@/hooks/useUserData";
-import DiscoverySidebar from "@zephyr-ui/Discover/DiscoverSidebar";
-import TrendingUsers from "@zephyr-ui/Discover/TrendingUsers";
-import Friends from "@zephyr-ui/Home/sidebars/left/Friends";
-import { validateRequest } from "@zephyr/auth/auth";
-import type { Metadata } from "next";
+import { getUserData } from '@/hooks/useUserData';
+import DiscoverySidebar from '@zephyr-ui/Discover/DiscoverSidebar';
+import TrendingUsers from '@zephyr-ui/Discover/TrendingUsers';
+import Friends from '@zephyr-ui/Home/sidebars/left/Friends';
+import { validateRequest } from '@zephyr/auth/auth';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Trending Users | Zephyr",
-  description: "Discover trending users on Zephyr"
+  title: 'Trending Users | Zephyr',
+  description: 'Discover trending users on Zephyr',
 };
 
 export default async function TrendingPage() {

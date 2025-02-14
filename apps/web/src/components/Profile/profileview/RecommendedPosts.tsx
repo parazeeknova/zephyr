@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import Image from "next/image";
-import type React from "react";
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import type React from 'react';
 
-import { LayoutGrid } from "@/components/ui/layout-grid";
+import { LayoutGrid } from '@/components/ui/layout-grid';
 
 interface RecommendedPost {
   id: number;
@@ -39,7 +39,7 @@ const PostContent: React.FC<{ post: RecommendedPost }> = ({ post }) => {
 const RecommendedPosts: React.FC<RecommendedPostsProps> = ({ posts }) => {
   const cardsWithContent = posts.map((post) => ({
     ...post,
-    content: <PostContent post={post} />
+    content: <PostContent post={post} />,
   }));
 
   return (

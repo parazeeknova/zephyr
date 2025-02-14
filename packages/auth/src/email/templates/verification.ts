@@ -1,4 +1,4 @@
-import { emailConfig, getEmailStyles } from "../config";
+import { emailConfig, getEmailStyles } from '../config';
 
 export const getVerificationEmailTemplate = (verificationUrl: string) => {
   const styles = getEmailStyles();
@@ -77,7 +77,7 @@ export const getVerificationEmailTemplate = (verificationUrl: string) => {
             </div>
           `
             )
-            .join("")}
+            .join('')}
         </div>
       </div>
 

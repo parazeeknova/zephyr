@@ -1,14 +1,14 @@
-import { validateRequest } from "@zephyr/auth/auth";
-import { redirect } from "next/navigation";
-import Navbar from "./Navbar";
-import SessionProvider from "./SessionProvider";
+import { validateRequest } from '@zephyr/auth/auth';
+import { redirect } from 'next/navigation';
+import Navbar from './Navbar';
+import SessionProvider from './SessionProvider';
 
 export default async function Layout({
-  children
+  children,
 }: { children: React.ReactNode }) {
   const session = await validateRequest();
 
-  if (!session.user) redirect("/login");
+  if (!session.user) redirect('/login');
 
   return (
     <SessionProvider value={session}>

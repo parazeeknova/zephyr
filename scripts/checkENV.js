@@ -1,81 +1,81 @@
 #!/usr/bin/env node
 
-const fs = require("node:fs");
-const path = require("node:path");
-const dotenv = require("dotenv");
+const fs = require('node:fs');
+const path = require('node:path');
+const dotenv = require('dotenv');
 
-const PROJECT_ROOT = path.resolve(__dirname, "../");
+const PROJECT_ROOT = path.resolve(__dirname, '../');
 
 const colors = {
-  reset: "\x1b[0m",
-  red: "\x1b[31m",
-  green: "\x1b[32m",
-  yellow: "\x1b[33m",
-  blue: "\x1b[34m",
-  magenta: "\x1b[35m",
-  cyan: "\x1b[36m",
-  gray: "\x1b[90m"
+  reset: '\x1b[0m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+  gray: '\x1b[90m',
 };
 
 const REQUIRED_ENVS = {
   database: [
-    "POSTGRES_USER",
-    "POSTGRES_PASSWORD",
-    "POSTGRES_DB",
-    "POSTGRES_PORT",
-    "POSTGRES_HOST",
-    "DATABASE_URL",
-    "POSTGRES_PRISMA_URL",
-    "POSTGRES_URL_NON_POOLING"
+    'POSTGRES_USER',
+    'POSTGRES_PASSWORD',
+    'POSTGRES_DB',
+    'POSTGRES_PORT',
+    'POSTGRES_HOST',
+    'DATABASE_URL',
+    'POSTGRES_PRISMA_URL',
+    'POSTGRES_URL_NON_POOLING',
   ],
-  redis: ["REDIS_PASSWORD", "REDIS_PORT", "REDIS_HOST", "REDIS_URL"],
+  redis: ['REDIS_PASSWORD', 'REDIS_PORT', 'REDIS_HOST', 'REDIS_URL'],
   minio: [
-    "MINIO_ROOT_USER",
-    "MINIO_ROOT_PASSWORD",
-    "MINIO_BUCKET_NAME",
-    "MINIO_PORT",
-    "MINIO_CONSOLE_PORT",
-    "MINIO_HOST",
-    "MINIO_ENDPOINT",
-    "NEXT_PUBLIC_MINIO_ENDPOINT",
-    "MINIO_ENABLE_OBJECT_LOCKING"
+    'MINIO_ROOT_USER',
+    'MINIO_ROOT_PASSWORD',
+    'MINIO_BUCKET_NAME',
+    'MINIO_PORT',
+    'MINIO_CONSOLE_PORT',
+    'MINIO_HOST',
+    'MINIO_ENDPOINT',
+    'NEXT_PUBLIC_MINIO_ENDPOINT',
+    'MINIO_ENABLE_OBJECT_LOCKING',
   ],
   application: [
-    "JWT_SECRET",
-    "NODE_ENV",
-    "NEXT_TELEMETRY_DISABLED",
-    "TURBO_TELEMERY_DISABLED",
-    "JWT_EXPIRES_IN",
-    "NEXT_PUBLIC_URL",
-    "NEXT_PUBLIC_SITE_URL"
-  ]
+    'JWT_SECRET',
+    'NODE_ENV',
+    'NEXT_TELEMETRY_DISABLED',
+    'TURBO_TELEMERY_DISABLED',
+    'JWT_EXPIRES_IN',
+    'NEXT_PUBLIC_URL',
+    'NEXT_PUBLIC_SITE_URL',
+  ],
 };
 
 const DB_REQUIRED_ENVS = {
   database: [
-    "POSTGRES_USER",
-    "POSTGRES_PASSWORD",
-    "POSTGRES_DB",
-    "POSTGRES_PORT",
-    "POSTGRES_HOST",
-    "DATABASE_URL",
-    "POSTGRES_PRISMA_URL",
-    "POSTGRES_URL_NON_POOLING"
-  ]
+    'POSTGRES_USER',
+    'POSTGRES_PASSWORD',
+    'POSTGRES_DB',
+    'POSTGRES_PORT',
+    'POSTGRES_HOST',
+    'DATABASE_URL',
+    'POSTGRES_PRISMA_URL',
+    'POSTGRES_URL_NON_POOLING',
+  ],
 };
 
 const OPTIONAL_ENVS = {
   oauth: [
-    "TWITTER_CLIENT_ID",
-    "TWITTER_CLIENT_SECRET",
-    "GITHUB_CLIENT_ID",
-    "GITHUB_CLIENT_SECRET",
-    "GOOGLE_CLIENT_ID",
-    "GOOGLE_CLIENT_SECRET"
+    'TWITTER_CLIENT_ID',
+    'TWITTER_CLIENT_SECRET',
+    'GITHUB_CLIENT_ID',
+    'GITHUB_CLIENT_SECRET',
+    'GOOGLE_CLIENT_ID',
+    'GOOGLE_CLIENT_SECRET',
   ],
-  mail: ["SUPPORT_EMAIL", "UNSEND_API_KEY"],
-  chat: ["NEXT_PUBLIC_STREAM_KEY", "STREAM_SECRET"],
-  misc: ["CRON_SECRET"]
+  mail: ['SUPPORT_EMAIL', 'UNSEND_API_KEY'],
+  chat: ['NEXT_PUBLIC_STREAM_KEY', 'STREAM_SECRET'],
+  misc: ['CRON_SECRET'],
 };
 
 function printBanner() {
@@ -110,23 +110,23 @@ function createStatusTable(results) {
   const maxStatusLength = 10;
 
   console.log(
-    `\n${colors.gray}┌${"─".repeat(maxCategoryLength)}┬${"─".repeat(
+    `\n${colors.gray}┌${'─'.repeat(maxCategoryLength)}┬${'─'.repeat(
       maxVarLength
-    )}┬${"─".repeat(maxStatusLength)}┐${colors.reset}`
+    )}┬${'─'.repeat(maxStatusLength)}┐${colors.reset}`
   );
   console.log(
-    `${colors.gray}│${colors.blue} CATEGORY${" ".repeat(
+    `${colors.gray}│${colors.blue} CATEGORY${' '.repeat(
       maxCategoryLength - 9
-    )}${colors.gray}│${colors.blue} VARIABLE${" ".repeat(maxVarLength - 9)}${
+    )}${colors.gray}│${colors.blue} VARIABLE${' '.repeat(maxVarLength - 9)}${
       colors.gray
-    }│${colors.blue} STATUS${" ".repeat(maxStatusLength - 7)}${colors.gray}│${
+    }│${colors.blue} STATUS${' '.repeat(maxStatusLength - 7)}${colors.gray}│${
       colors.reset
     }`
   );
   console.log(
-    `${colors.gray}├${"─".repeat(maxCategoryLength)}┼${"─".repeat(
+    `${colors.gray}├${'─'.repeat(maxCategoryLength)}┼${'─'.repeat(
       maxVarLength
-    )}┼${"─".repeat(maxStatusLength)}┤${colors.reset}`
+    )}┼${'─'.repeat(maxStatusLength)}┤${colors.reset}`
   );
 
   // biome-ignore lint/complexity/noForEach: This is a simple loop
@@ -134,9 +134,10 @@ function createStatusTable(results) {
     const categoryPadded = category.padEnd(maxCategoryLength);
     const variablePadded = variable.padEnd(maxVarLength);
     const statusColor =
-      status === "✓"
+      status === '✓'
         ? colors.green
-        : status === "❌"
+        : // biome-ignore lint/nursery/noNestedTernary: This is a simple ternary
+          status === '❌'
           ? colors.red
           : colors.yellow;
     const statusSymbol = `${statusColor}${status}${colors.reset}`;
@@ -146,7 +147,7 @@ function createStatusTable(results) {
         colors.reset
       } ${variablePadded}${colors.gray}│${
         colors.reset
-      } ${statusSymbol}${" ".repeat(maxStatusLength - 2)}${colors.gray}│${
+      } ${statusSymbol}${' '.repeat(maxStatusLength - 2)}${colors.gray}│${
         colors.reset
       }`
     );
@@ -162,9 +163,9 @@ function createStatusTable(results) {
   });
 
   console.log(
-    `${colors.gray}└${"─".repeat(maxCategoryLength)}┴${"─".repeat(
+    `${colors.gray}└${'─'.repeat(maxCategoryLength)}┴${'─'.repeat(
       maxVarLength
-    )}┴${"─".repeat(maxStatusLength)}┘${colors.reset}`
+    )}┴${'─'.repeat(maxStatusLength)}┘${colors.reset}`
   );
 }
 
@@ -175,7 +176,7 @@ function validateEnvs(envs, location) {
   let hasWarnings = false;
   const results = [];
 
-  if (location.includes("DB")) {
+  if (location.includes('DB')) {
     // biome-ignore lint/complexity/noForEach: REQUIRED
     Object.entries(DB_REQUIRED_ENVS).forEach(([category, variables]) => {
       // biome-ignore lint/complexity/noForEach: REQUIRED
@@ -184,13 +185,13 @@ function validateEnvs(envs, location) {
           results.push({
             category: category.toUpperCase(),
             variable,
-            status: "✓"
+            status: '✓',
           });
         } else {
           results.push({
             category: category.toUpperCase(),
             variable,
-            status: "❌"
+            status: '❌',
           });
           hasErrors = true;
         }
@@ -205,13 +206,13 @@ function validateEnvs(envs, location) {
           results.push({
             category: category.toUpperCase(),
             variable,
-            status: "✓"
+            status: '✓',
           });
         } else {
           results.push({
             category: category.toUpperCase(),
             variable,
-            status: "❌"
+            status: '❌',
           });
           hasErrors = true;
         }
@@ -226,14 +227,14 @@ function validateEnvs(envs, location) {
           results.push({
             category: `${category.toUpperCase()} (OPT)`,
             variable,
-            status: "✓"
+            status: '✓',
           });
         } else {
           results.push({
             category: `${category.toUpperCase()} (OPT)`,
             variable,
-            status: "⚠️",
-            message: getWarningMessage(variable)
+            status: '⚠️',
+            message: getWarningMessage(variable),
           });
           hasWarnings = true;
         }
@@ -247,31 +248,32 @@ function validateEnvs(envs, location) {
 
 function getWarningMessage(variable) {
   const warnings = {
-    UNSEND_API_KEY: "Email functionality will not work",
-    SUPPORT_EMAIL: "Support email features will be disabled",
-    NEXT_PUBLIC_STREAM_KEY: "Chat features will not work",
-    STREAM_SECRET: "Chat features will not work",
-    TWITTER_CLIENT_ID: "Twitter login will not work",
-    GITHUB_CLIENT_ID: "GitHub login will not work",
-    GOOGLE_CLIENT_ID: "Google login will not work",
-    CRON_SECRET: "Scheduled tasks will not work (not important in development)"
+    UNSEND_API_KEY: 'Email functionality will not work',
+    SUPPORT_EMAIL: 'Support email features will be disabled',
+    NEXT_PUBLIC_STREAM_KEY: 'Chat features will not work',
+    STREAM_SECRET: 'Chat features will not work',
+    TWITTER_CLIENT_ID: 'Twitter login will not work',
+    GITHUB_CLIENT_ID: 'GitHub login will not work',
+    GOOGLE_CLIENT_ID: 'Google login will not work',
+    CRON_SECRET: 'Scheduled tasks will not work (not important in development)',
   };
-  return warnings[variable] || "Feature may be limited";
+  return warnings[variable] || 'Feature may be limited';
 }
 
+// biome-ignore lint/suspicious/useAwait: This is a script
 async function main() {
   printBanner();
 
   const locations = [
-    { path: path.join(PROJECT_ROOT, "apps/web"), name: "Apps/Web" },
-    { path: path.join(PROJECT_ROOT, "packages/db"), name: "Packages/DB" }
+    { path: path.join(PROJECT_ROOT, 'apps/web'), name: 'Apps/Web' },
+    { path: path.join(PROJECT_ROOT, 'packages/db'), name: 'Packages/DB' },
   ];
 
   let hasAnyErrors = false;
   let hasAnyWarnings = false;
 
   for (const location of locations) {
-    const envPath = path.join(location.path, ".env");
+    const envPath = path.join(location.path, '.env');
     const envs = checkEnvFile(envPath, location.name);
 
     if (envs) {

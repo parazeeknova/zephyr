@@ -1,33 +1,33 @@
-"use client";
+'use client';
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Compass, Flame, Sparkles, Users } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Card, CardContent } from '@/components/ui/card';
+import { Compass, Flame, Sparkles, Users } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const DiscoverySidebar = () => {
   const pathname = usePathname();
   const navItems = [
     {
       icon: Sparkles,
-      label: "Suggested for you",
-      href: "/discover"
+      label: 'Suggested for you',
+      href: '/discover',
     },
     {
       icon: Flame,
-      label: "Trending",
-      href: "/discover/trending"
+      label: 'Trending',
+      href: '/discover/trending',
     },
     {
       icon: Users,
-      label: "New Users",
-      href: "/discover/new"
+      label: 'New Users',
+      href: '/discover/new',
     },
     {
       icon: Compass,
-      label: "Browse All",
-      href: "/discover/browse"
-    }
+      label: 'Browse All',
+      href: '/discover/browse',
+    },
   ];
 
   return (
@@ -47,8 +47,8 @@ const DiscoverySidebar = () => {
                 href={item.href}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
                   isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted"
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:bg-muted'
                 }`}
               >
                 <Icon className="h-4 w-4" />

@@ -1,5 +1,5 @@
-import { prisma } from "@zephyr/db";
-import { NextResponse } from "next/server";
+import { prisma } from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
 async function cleanupResetTokens() {
   const logs: string[] = [];
@@ -11,14 +11,14 @@ async function cleanupResetTokens() {
   };
 
   try {
-    log("🚀 Starting password reset tokens cleanup");
+    log('🚀 Starting password reset tokens cleanup');
 
     const expiredCount = await prisma.passwordResetToken.count({
       where: {
         expiresAt: {
-          lt: new Date()
-        }
-      }
+          lt: new Date(),
+        },
+      },
     });
 
     log(`🔍 Found ${expiredCount} expired reset tokens`);
@@ -27,7 +27,7 @@ async function cleanupResetTokens() {
     log(`📊 Current total tokens: ${totalTokens}`);
 
     if (expiredCount === 0) {
-      log("✨ No expired tokens to clean up");
+      log('✨ No expired tokens to clean up');
       return {
         success: true,
         deletedCount: 0,
@@ -35,19 +35,19 @@ async function cleanupResetTokens() {
         stats: {
           totalTokens,
           expiredTokens: 0,
-          deletionPercentage: "0.00"
+          deletionPercentage: '0.00',
         },
         logs,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
 
     const result = await prisma.passwordResetToken.deleteMany({
       where: {
         expiresAt: {
-          lt: new Date()
-        }
-      }
+          lt: new Date(),
+        },
+      },
     });
 
     const remainingTokens = await prisma.passwordResetToken.count();
@@ -61,10 +61,10 @@ async function cleanupResetTokens() {
         totalBefore: totalTokens,
         totalAfter: remainingTokens,
         expiredTokens: expiredCount,
-        deletionPercentage
+        deletionPercentage,
       },
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     log(`✨ Reset tokens cleanup completed successfully:
@@ -77,11 +77,11 @@ async function cleanupResetTokens() {
     return summary;
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+      error instanceof Error ? error.message : 'Unknown error';
     log(`❌ Reset tokens cleanup failed: ${errorMessage}`);
     console.error(
-      "Cleanup error stack:",
-      error instanceof Error ? error.stack : "No stack trace"
+      'Cleanup error stack:',
+      error instanceof Error ? error.stack : 'No stack trace'
     );
 
     return {
@@ -89,55 +89,55 @@ async function cleanupResetTokens() {
       duration: Date.now() - startTime,
       error: errorMessage,
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } finally {
     try {
       await prisma.$disconnect();
-      log("👋 Database connection closed");
+      log('👋 Database connection closed');
     } catch (_error) {
-      log("❌ Error closing database connection");
+      log('❌ Error closing database connection');
     }
   }
 }
 
 export async function POST(request: Request) {
-  console.log("📥 Received reset tokens cleanup request");
+  console.log('📥 Received reset tokens cleanup request');
 
   try {
     if (!process.env.CRON_SECRET_KEY) {
-      console.error("❌ CRON_SECRET_KEY environment variable not set");
+      console.error('❌ CRON_SECRET_KEY environment variable not set');
       return NextResponse.json(
         {
-          error: "Server configuration error",
-          timestamp: new Date().toISOString()
+          error: 'Server configuration error',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 500,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
 
-    const authHeader = request.headers.get("authorization");
+    const authHeader = request.headers.get('authorization');
     const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
 
     if (!authHeader || authHeader !== expectedAuth) {
-      console.warn("⚠️ Unauthorized reset tokens cleanup attempt");
+      console.warn('⚠️ Unauthorized reset tokens cleanup attempt');
       return NextResponse.json(
         {
-          error: "Unauthorized",
-          timestamp: new Date().toISOString()
+          error: 'Unauthorized',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 401,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
@@ -147,32 +147,32 @@ export async function POST(request: Request) {
     return NextResponse.json(results, {
       status: results.success ? 200 : 500,
       headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      }
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
     });
   } catch (error) {
-    console.error("❌ Reset tokens cleanup route error:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined
+    console.error('❌ Reset tokens cleanup route error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString()
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
       },
       {
         status: 500,
         headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store"
-        }
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store',
+        },
       }
     );
   }
 }
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import EditProfileDialog from "@zephyr-ui/Layouts/EditProfileDialog";
-import type { UserData } from "@zephyr/db";
-import { useState } from "react";
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import EditProfileDialog from '@zephyr-ui/Layouts/EditProfileDialog';
+import type { UserData } from '@zephyr/db';
+import { useState } from 'react';
 
 interface EditProfileButtonProps {
   user: UserData;
@@ -13,7 +13,7 @@ interface EditProfileButtonProps {
 
 export default function EditProfileButton({
   user,
-  className
+  className,
 }: EditProfileButtonProps) {
   const [showDialog, setShowDialog] = useState(false);
 
@@ -23,7 +23,7 @@ export default function EditProfileButton({
         variant="outline"
         onClick={() => setShowDialog(true)}
         className={cn(
-          "bg-primary font-medium font-sofiaProSoftMed text-background",
+          'bg-primary font-medium font-sofiaProSoftMed text-background',
           className
         )}
       >

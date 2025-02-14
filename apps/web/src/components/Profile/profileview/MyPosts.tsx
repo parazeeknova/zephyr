@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { BookOpen, Edit, Plus, Settings, Upload } from "lucide-react";
-import type React from "react";
+import { motion } from 'framer-motion';
+import { BookOpen, Edit, Plus, Settings, Upload } from 'lucide-react';
+import type React from 'react';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { DirectionAwareHover } from "@/components/ui/direction-aware-hover";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { DirectionAwareHover } from '@/components/ui/direction-aware-hover';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface MyPostsProps {
   data: {

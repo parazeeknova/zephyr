@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 import {
   useFollowUserMutation,
-  useUnfollowUserMutation
-} from "@/hooks/userMutations";
-import { cn } from "@/lib/utils";
-import { followStateAtom } from "@/state/followState";
-import { useQueryClient } from "@tanstack/react-query";
-import { debugLog } from "@zephyr/config/debug";
-import type { FollowerInfo } from "@zephyr/db";
-import { AnimatePresence, motion } from "framer-motion";
-import { useAtom } from "jotai/react";
-import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+  useUnfollowUserMutation,
+} from '@/hooks/userMutations';
+import { cn } from '@/lib/utils';
+import { followStateAtom } from '@/state/followState';
+import { useQueryClient } from '@tanstack/react-query';
+import { debugLog } from '@zephyr/config/debug';
+import type { FollowerInfo } from '@zephyr/db';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useAtom } from 'jotai/react';
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface ClientFollowButtonProps {
   userId: string;
@@ -35,13 +35,13 @@ const LoadingPulse = () => (
         initial={{ scale: 0.8, opacity: 0.6 }}
         animate={{
           scale: [0.8, 1.2, 0.8],
-          opacity: [0.6, 1, 0.6]
+          opacity: [0.6, 1, 0.6],
         }}
         transition={{
           duration: 1,
           repeat: Number.POSITIVE_INFINITY,
           delay: i * 0.2,
-          ease: "easeInOut"
+          ease: 'easeInOut',
         }}
       />
     ))}
@@ -50,14 +50,14 @@ const LoadingPulse = () => (
 
 const ButtonContent = ({
   isLoading,
-  isFollowing
+  isFollowing,
 }: {
   isLoading: boolean;
   isFollowing: boolean;
 }) => (
   <AnimatePresence mode="wait">
     <motion.div
-      key={isLoading ? "loading" : isFollowing ? "following" : "follow"}
+      key={isLoading ? 'loading' : isFollowing ? 'following' : 'follow'}
       initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -5 }}
@@ -68,7 +68,7 @@ const ButtonContent = ({
         <LoadingPulse />
       ) : (
         <>
-          <span>{isFollowing ? "Following" : "Follow"}</span>
+          <span>{isFollowing ? 'Following' : 'Follow'}</span>
           {isFollowing && (
             <motion.div
               initial={{ scale: 0 }}
@@ -92,7 +92,7 @@ const useFollowState = (userId: string, initialState: FollowerInfo) => {
     if (persistedState && persistedState.lastUpdated > Date.now() - 300000) {
       setLocalState({
         followers: persistedState.followers,
-        isFollowedByUser: persistedState.isFollowing
+        isFollowedByUser: persistedState.isFollowing,
       });
     }
   }, [userId, globalFollowState]);
@@ -105,14 +105,14 @@ const useFollowState = (userId: string, initialState: FollowerInfo) => {
         [userId]: {
           isFollowing: newState.isFollowedByUser,
           followers: newState.followers,
-          lastUpdated: Date.now()
-        }
+          lastUpdated: Date.now(),
+        },
       }));
 
-      queryClient.invalidateQueries({ queryKey: ["follower-info", userId] });
-      queryClient.invalidateQueries({ queryKey: ["suggested-connections"] });
-      queryClient.invalidateQueries({ queryKey: ["trending-users"] });
-      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      queryClient.invalidateQueries({ queryKey: ['follower-info', userId] });
+      queryClient.invalidateQueries({ queryKey: ['suggested-connections'] });
+      queryClient.invalidateQueries({ queryKey: ['trending-users'] });
+      queryClient.invalidateQueries({ queryKey: ['user', userId] });
     },
     [userId, setGlobalFollowState, queryClient]
   );
@@ -129,16 +129,16 @@ const useFollowMutations = (userId: string, onFollowed?: () => void) => {
     try {
       const result = await followMutation.mutateAsync(userId);
       toast({
-        title: "Success",
-        description: `You are now following ${result.displayName || result.username}`
+        title: 'Success',
+        description: `You are now following ${result.displayName || result.username}`,
       });
       onFollowed?.();
       return result;
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to follow user. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to follow user. Please try again.',
+        variant: 'destructive',
       });
       throw error;
     }
@@ -148,15 +148,15 @@ const useFollowMutations = (userId: string, onFollowed?: () => void) => {
     try {
       const result = await unfollowMutation.mutateAsync(userId);
       toast({
-        title: "Success",
-        description: `You have unfollowed ${result.displayName || result.username}`
+        title: 'Success',
+        description: `You have unfollowed ${result.displayName || result.username}`,
       });
       return result;
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to unfollow user. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to unfollow user. Please try again.',
+        variant: 'destructive',
       });
       throw error;
     }
@@ -165,7 +165,7 @@ const useFollowMutations = (userId: string, onFollowed?: () => void) => {
   return {
     handleFollow,
     handleUnfollow,
-    isLoading: followMutation.isPending || unfollowMutation.isPending
+    isLoading: followMutation.isPending || unfollowMutation.isPending,
   };
 };
 
@@ -178,7 +178,7 @@ const useOptimisticUpdate = (
       followers: isFollowing
         ? localState.followers + 1
         : Math.max(localState.followers - 1, 0),
-      isFollowedByUser: isFollowing
+      isFollowedByUser: isFollowing,
     };
     updateState(optimisticState);
     return optimisticState;
@@ -195,7 +195,7 @@ const ClientFollowButton: React.FC<ClientFollowButtonProps> = ({
   userId,
   initialState,
   className,
-  onFollowed
+  onFollowed,
 }) => {
   const [localState, updateState] = useFollowState(userId, initialState);
   const { handleFollow, handleUnfollow, isLoading } = useFollowMutations(
@@ -220,10 +220,10 @@ const ClientFollowButton: React.FC<ClientFollowButtonProps> = ({
     }
   };
 
-  debugLog.component("ClientFollowButton render:", {
+  debugLog.component('ClientFollowButton render:', {
     userId,
     localState,
-    isLoading
+    isLoading,
   });
 
   const isFollowing = localState.isFollowedByUser;
@@ -233,15 +233,15 @@ const ClientFollowButton: React.FC<ClientFollowButtonProps> = ({
       <Button
         onClick={handleFollowToggle}
         disabled={isLoading}
-        variant={isFollowing ? "secondary" : "default"}
+        variant={isFollowing ? 'secondary' : 'default'}
         size="sm"
         className={cn(
           className,
-          "relative overflow-hidden transition-all duration-300",
+          'relative overflow-hidden transition-all duration-300',
           {
-            "bg-primary/90 hover:bg-primary": !isFollowing,
-            "bg-secondary/80 hover:bg-secondary/90": isFollowing,
-            "cursor-not-allowed": isLoading
+            'bg-primary/90 hover:bg-primary': !isFollowing,
+            'bg-secondary/80 hover:bg-secondary/90': isFollowing,
+            'cursor-not-allowed': isLoading,
           }
         )}
       >
@@ -251,13 +251,13 @@ const ClientFollowButton: React.FC<ClientFollowButtonProps> = ({
           {isLoading && (
             <motion.div
               className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-              initial={{ x: "-100%" }}
-              animate={{ x: "100%" }}
-              exit={{ x: "100%" }}
+              initial={{ x: '-100%' }}
+              animate={{ x: '100%' }}
+              exit={{ x: '100%' }}
               transition={{
                 duration: 1,
                 repeat: Number.POSITIVE_INFINITY,
-                ease: "linear"
+                ease: 'linear',
               }}
             />
           )}

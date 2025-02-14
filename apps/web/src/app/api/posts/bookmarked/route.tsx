@@ -1,33 +1,33 @@
-import { validateRequest } from "@zephyr/auth/auth";
-import { type PostsPage, getPostDataInclude, prisma } from "@zephyr/db";
-import type { NextRequest } from "next/server";
+import { validateRequest } from '@zephyr/auth/auth';
+import { type PostsPage, getPostDataInclude, prisma } from '@zephyr/db';
+import type { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
   try {
-    const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
+    const cursor = req.nextUrl.searchParams.get('cursor') || undefined;
 
     const pageSize = 10;
 
     const { user } = await validateRequest();
 
     if (!user) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const bookmarks = await prisma.bookmark.findMany({
       where: {
-        userId: user.id
+        userId: user.id,
       },
       include: {
         post: {
-          include: getPostDataInclude(user.id)
-        }
+          include: getPostDataInclude(user.id),
+        },
       },
       orderBy: {
-        createdAt: "desc"
+        createdAt: 'desc',
       },
       take: pageSize + 1,
-      cursor: cursor ? { id: cursor } : undefined
+      cursor: cursor ? { id: cursor } : undefined,
     });
 
     const nextCursor =
@@ -38,12 +38,12 @@ export async function GET(req: NextRequest) {
     const data: PostsPage = {
       // @ts-ignore
       posts: bookmarks.slice(0, pageSize).map((bookmark) => bookmark.post),
-      nextCursor
+      nextCursor,
     };
 
     return Response.json(data);
   } catch (error) {
     console.error(error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
