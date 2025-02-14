@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 
 ## [2025-02-14]
+### Code Refactoring
+- Refactor part I - untested, unbuildable, messy [MAJOR]
+
+
+## [2025-02-14]
 ### Other Changes
 - Merge pull request #343 from pxrsival/development
 
