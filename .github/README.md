@@ -64,7 +64,7 @@
 
 <div align="center">
 
-###### *<div align="center"><sub>Using BUN</sub></div>*
+###### *<div align="center"><sub>Using BUN (recommended)</sub></div>*
 
 ```bash
 bunx zephyr-forge@latest setup

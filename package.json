@@ -20,7 +20,8 @@
     "codegen": "turbo codegen",
     "dep:check": "pnpm dlx sherif@latest",
     "dep:fix": "pnpm dlx sherif@latest --fix",
-    "dev": "pnpm run biome:fix && turbo dev",
+    "env:check": "node scripts/checkENV.js",
+    "dev": "pnpm run biome:fix && pnpm run env:check && turbo dev",
     "prepare": "husky",
     "typecheck": "pnpm --recursive --parallel run typecheck",
     "docker:status": "docker system df && docker ps && docker volume ls && docker network ls",
@@ -30,19 +31,19 @@
     "docker:start": "docker compose -f docker-compose.dev.yml up -d",
     "docker:down": "docker compose -f docker-compose.dev.yml down",
     "docker:clean:dev": "docker compose -f docker-compose.dev.yml down -v && docker volume rm zephyr_postgres_data_dev zephyr_redis_data_dev zephyr_minio_data_dev && rm -f .dev-init",
-    "env:check": "bunx zephyr-forge@latest env:check",
     "env:fix": "bunx zephyr-forge@latest env:fix",
     "env:validate": "bunx zephyr-forge@latest env:validate"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@turbo/gen": "^2.4.2",
     "@types/node": "^22.13.1",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "dotenv": "^16.4.7",
     "husky": "^9.1.7",
     "react-markdown": "9.0.3",
-    "turbo": "^2.4.0",
+    "turbo": "^2.4.2",
     "typescript": "^5.7.3"
   },
   "packageManager": "pnpm@10.2.0+sha512.0d27364e0139c6aadeed65ada153135e0ca96c8da42123bd50047f961339dc7a758fc2e944b428f52be570d1bd3372455c1c65fa2e7aa0bfbf931190f9552001"
