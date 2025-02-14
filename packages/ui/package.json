@@ -7,8 +7,7 @@
   "types": "./src/index.ts",
   "files": ["src", "styles", "tailwind-preset.ts"],
   "scripts": {
-    "typecheck": "tsc --pretty",
-    "generate:component": "turbo gen react-component"
+    "typecheck": "tsc --pretty"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.6",
@@ -40,7 +39,6 @@
     "usehooks-ts": "^3.1.1"
   },
   "devDependencies": {
-    "@turbo/gen": "^2.4.0",
     "@types/node": "^22.13.1",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
