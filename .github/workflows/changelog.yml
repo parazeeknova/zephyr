@@ -9,12 +9,20 @@ on:
 
 jobs:
   update-changelog:
-    if: "!contains(github.event.head_commit.message, 'skip changelog')"
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
+    
     steps:
+      - name: Check skip condition
+        id: skip-check
+        run: |
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          if echo "$COMMIT_MSG" | grep -iq "skip ci\|skip changelog"; then
+            echo "Should skip this workflow"
+            exit 78
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -28,8 +36,8 @@ jobs:
       - name: Extract commit information
         id: commit-info
         run: |
-          # Get the commit message
-          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          # Get the first line of commit message
+          COMMIT_MSG=$(echo "${{ github.event.head_commit.message }}" | head -n 1)
           
           # Remove merge commit prefix if present
           COMMIT_MSG=$(echo "$COMMIT_MSG" | sed -E 's/^Merge pull request #[0-9]+ from [^[:space:]]+[[:space:]]+//')
@@ -40,10 +48,10 @@ jobs:
           SCOPE=""
           
           # Try to match conventional commit format
-          if [[ $COMMIT_MSG =~ ^([a-z]+)(\[([^\]]+)\])?!?:[[:space:]](.*)$ ]]; then
+          if [[ $COMMIT_MSG =~ ^([a-z]+)\[([^\]]+)\]:[[:space:]]*(.*)$ ]]; then
             TYPE=${BASH_REMATCH[1]}
-            SCOPE=${BASH_REMATCH[3]}
-            MESSAGE=${BASH_REMATCH[4]}
+            SCOPE=${BASH_REMATCH[2]}
+            MESSAGE=${BASH_REMATCH[3]}
             
             # Convert type to readable format
             case $TYPE in
@@ -65,10 +73,11 @@ jobs:
           # Escape special characters in MESSAGE
           MESSAGE=$(echo "$MESSAGE" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
           
-          # Output the variables
-          echo "type=$TYPE" >> $GITHUB_OUTPUT
-          echo "message=$MESSAGE" >> $GITHUB_OUTPUT
-          echo "scope=$SCOPE" >> $GITHUB_OUTPUT
+          {
+            echo "type=$TYPE"
+            echo "message=$MESSAGE"
+            echo "scope=$SCOPE"
+          } >> $GITHUB_OUTPUT
 
       - name: Update CHANGELOG.md
         run: |
