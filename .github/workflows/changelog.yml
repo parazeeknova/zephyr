@@ -1,0 +1,106 @@
+name: Update Changelog
+
+on:
+  push:
+    branches:
+      - development
+    paths-ignore:
+      - 'CHANGELOG.md'
+
+jobs:
+  update-changelog:
+    if: "!contains(github.event.head_commit.message, 'skip changelog')"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          ref: development
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Extract commit information
+        id: commit-info
+        run: |
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          
+          # Extract the type and message
+          if [[ $COMMIT_MSG =~ ^([a-z]+)(\(.*\))?!?:\s*(.*)$ ]]; then
+            TYPE=${BASH_REMATCH[1]}
+            SCOPE=${BASH_REMATCH[2]}
+            MESSAGE=${BASH_REMATCH[3]}
+            
+            # Convert type to readable format
+            case $TYPE in
+              feat) TYPE="Features" ;;
+              fix) TYPE="Bug Fixes" ;;
+              docs) TYPE="Documentation" ;;
+              style) TYPE="Styling" ;;
+              refactor) TYPE="Code Refactoring" ;;
+              perf) TYPE="Performance Improvements" ;;
+              test) TYPE="Tests" ;;
+              build) TYPE="Builds" ;;
+              ci) TYPE="Continuous Integration" ;;
+              chore) TYPE="Chores" ;;
+              revert) TYPE="Reverts" ;;
+              *) TYPE="Other Changes" ;;
+            esac
+            
+            echo "type=$TYPE" >> $GITHUB_OUTPUT
+            echo "message=$MESSAGE" >> $GITHUB_OUTPUT
+            echo "scope=$SCOPE" >> $GITHUB_OUTPUT
+          else
+            echo "type=Other Changes" >> $GITHUB_OUTPUT
+            echo "message=$COMMIT_MSG" >> $GITHUB_OUTPUT
+            echo "scope=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update CHANGELOG.md
+        run: |
+          # Create CHANGELOG.md if it doesn't exist
+          if [ ! -f CHANGELOG.md ]; then
+            echo "# Changelog" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "All notable changes to this project will be documented in this file." >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+          fi
+          
+          # Prepare the new entry
+          ENTRY="## [${{ steps.date.outputs.date }}]"
+          ENTRY="$ENTRY\n### ${{ steps.commit-info.outputs.type }}"
+          if [ ! -z "${{ steps.commit-info.outputs.scope }}" ]; then
+            ENTRY="$ENTRY\n- ${{ steps.commit-info.outputs.message }} ${{ steps.commit-info.outputs.scope }}"
+          else
+            ENTRY="$ENTRY\n- ${{ steps.commit-info.outputs.message }}"
+          fi
+          
+          # Add new entry after the header
+          if grep -q "# Changelog" CHANGELOG.md; then
+            sed -i "/# Changelog/a\\
+          \\
+          $ENTRY\\
+          " CHANGELOG.md
+          else
+            echo -e "# Changelog\n\n$ENTRY" > CHANGELOG.md
+          fi
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # Check if there are changes to commit
+          if git diff --quiet CHANGELOG.md; then
+            echo "No changes to CHANGELOG.md"
+            exit 0
+          fi
+          
+          git add CHANGELOG.md
+          git commit -m "docs: update changelog [skip ci] [skip changelog]"
+          git push origin development

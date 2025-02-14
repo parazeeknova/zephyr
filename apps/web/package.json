@@ -97,6 +97,8 @@
   },
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "0.4.2",
+    "@tailwindcss/nesting": "0.0.0-insiders.565cd3e",
+    "@tailwindcss/postcss": "^4.0.6",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/mime-types": "^2.1.4",
     "@types/node": "^22.13.1",
