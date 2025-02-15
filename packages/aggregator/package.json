@@ -1,7 +1,7 @@
 {
   "name": "@zephyr/aggregator",
   "description": "Aggregator service for Zephyr",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
