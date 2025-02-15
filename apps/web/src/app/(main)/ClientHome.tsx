@@ -1,9 +1,5 @@
 'use client';
 
-import { Globe2Icon, UsersIcon } from 'lucide-react';
-import type React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-
 import ForYouFeed from '@/components/Home/ForYouFeed';
 import FollowingFeed from '@/components/Home/feedview/Following';
 import LeftSideBar from '@/components/Home/sidebars/LeftSideBar';
@@ -18,6 +14,9 @@ import {
   TabsList,
   TabsTrigger,
 } from '@zephyr/ui/shadui/tabs';
+import { Globe2Icon, UsersIcon } from 'lucide-react';
+import type React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface ClientHomeProps {
   userData: UserData;
@@ -31,8 +30,11 @@ const ClientHome: React.FC<ClientHomeProps> = ({ userData }) => {
   const mainRef = useRef<HTMLDivElement>(null);
   const rightSidebarRef = useRef<HTMLDivElement>(null);
 
-  if (!userData) return null;
+  if (!userData) {
+    return null;
+  }
 
+  // biome-ignore lint/correctness/useHookAtTopLevel: This hook is used inside a callback
   const handleScroll = useCallback(() => {
     const scrollThreshold = 200;
     setShowScrollUpButton(window.scrollY > scrollThreshold);
@@ -44,6 +46,7 @@ const ClientHome: React.FC<ClientHomeProps> = ({ userData }) => {
     }
   }, []);
 
+  // biome-ignore lint/correctness/useHookAtTopLevel: This hook is used inside a callback
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => {

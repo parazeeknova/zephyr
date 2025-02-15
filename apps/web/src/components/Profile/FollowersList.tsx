@@ -18,7 +18,7 @@ import { useState } from 'react';
 interface FollowersListProps {
   userId: string;
   isOpen: boolean;
-  onClose: () => void;
+  onCloseAction: () => void;
   loggedInUserId: string;
 }
 
@@ -45,7 +45,7 @@ const emptyStateMessages = [
 export default function FollowersList({
   userId,
   isOpen,
-  onClose,
+  onCloseAction,
   loggedInUserId,
 }: FollowersListProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -58,7 +58,9 @@ export default function FollowersList({
     queryKey: ['followers-list', userId],
     queryFn: async () => {
       const response = await fetch(`/api/users/${userId}/followers-list`);
-      if (!response.ok) throw new Error('Failed to fetch followers');
+      if (!response.ok) {
+        throw new Error('Failed to fetch followers');
+      }
       return response.json() as Promise<Follower[]>;
     },
     enabled: isOpen,
@@ -71,7 +73,7 @@ export default function FollowersList({
   );
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onCloseAction}>
       <DialogContent className="max-h-[90vh] overflow-hidden border border-accent/20 bg-background/95 backdrop-blur-md sm:max-w-[425px]">
         <DialogHeader>
           <motion.div
@@ -103,7 +105,7 @@ export default function FollowersList({
           <AnimatePresence mode="wait">
             {isLoading ? (
               <div className="space-y-4">
-                {[...Array(5)].map((_, i) => (
+                {[...new Array(5)].map((_, i) => (
                   <motion.div
                     key={`skeleton-${i}`}
                     initial={{ opacity: 0, y: 20 }}
@@ -119,6 +121,7 @@ export default function FollowersList({
                   </motion.div>
                 ))}
               </div>
+              // biome-ignore lint/nursery/noNestedTernary: ignore
             ) : !data || filteredFollowers?.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}

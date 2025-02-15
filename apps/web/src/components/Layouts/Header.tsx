@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import type React from 'react';
 import MessagesButton from '../Messages/MessagesButton';
 import { HeaderIconButton } from '../Styles/HeaderButtons';
 import { Button } from '../ui/button';

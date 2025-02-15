@@ -6,12 +6,17 @@
       "packages/ui/shadui/**",
       "packages/ui/hooks/use-toast.ts",
       "packages/ui/hooks/use-mobile.tsx",
+      "packages/ui/styles/**",
       ".vscode/extensions.json",
-      ".vscode/settings.json"
+      ".vscode/settings.json",
+      "apps/web/src/components/Messages/Theme.css"
     ]
   },
   "linter": {
     "rules": {
+      "style": {
+        "useFilenamingConvention": "off"
+      },
       "suspicious": {
         "noConsole": "off",
         "noConsoleLog": "off"

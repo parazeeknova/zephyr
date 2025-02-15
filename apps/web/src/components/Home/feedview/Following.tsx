@@ -1,14 +1,12 @@
 'use client';
 
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { Loader2 } from 'lucide-react';
-
+import FeedView from '@/components/Home/FeedView';
 import InfiniteScrollContainer from '@/components/Layouts/InfiniteScrollContainer';
 import PostsLoadingSkeleton from '@/components/Posts/PostsLoadingSkeleton';
 import kyInstance from '@/lib/ky';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import type { PostsPage } from '@zephyr/db';
-
-import FeedView from '@/components/Home/FeedView';
+import { Loader2 } from 'lucide-react';
 
 export default function FollowingFeed() {
   const {

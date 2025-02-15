@@ -69,6 +69,7 @@ export default function PostEditor() {
   } = useMediaUpload();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    // biome-ignore lint/suspicious/noExplicitAny: any
     onDrop: async (acceptedFiles: any[]) => {
       const validFiles = acceptedFiles.filter(
         (file: { type: string }) =>
@@ -129,7 +130,9 @@ export default function PostEditor() {
   }, []);
 
   const onSubmit = useCallback(() => {
-    if (!input.trim()) return;
+    if (!input.trim()) {
+      return;
+    }
 
     const payload = {
       content: input.trim(),

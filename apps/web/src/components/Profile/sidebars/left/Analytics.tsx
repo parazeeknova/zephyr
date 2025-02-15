@@ -1,9 +1,8 @@
 'use client';
 
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
 import { Eye, ThumbsUp } from 'lucide-react';
 import type React from 'react';
-
-import { Card, CardContent } from '@zephyr/ui/shadui/card';
 
 interface AnalyticsProps {
   data: {

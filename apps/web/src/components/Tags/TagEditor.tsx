@@ -46,15 +46,15 @@ const containerVariants = {
 interface TagEditorProps {
   postId?: string;
   initialTags: string[];
-  onClose: () => void;
-  onTagsUpdate: (tags: Tag[]) => void;
+  onCloseAction: () => void;
+  onTagsUpdateAction: (tags: Tag[]) => void;
 }
 
 export function TagEditor({
   postId,
   initialTags,
-  onClose,
-  onTagsUpdate,
+  onCloseAction,
+  onTagsUpdateAction,
 }: TagEditorProps) {
   const [search, setSearch] = useState('');
   const { suggestions, searchTags } = useTags(postId);
@@ -87,7 +87,7 @@ export function TagEditor({
         },
       }));
 
-      onTagsUpdate(formattedTags);
+      onTagsUpdateAction(formattedTags);
     }
     setSearch('');
   };
@@ -106,7 +106,7 @@ export function TagEditor({
       },
     }));
 
-    onTagsUpdate(formattedTags);
+    onTagsUpdateAction(formattedTags);
   };
 
   const handleSave = async () => {
@@ -119,8 +119,8 @@ export function TagEditor({
         _count: { posts: 1 },
       }));
 
-      onTagsUpdate(optimisticTags);
-      onClose();
+      onTagsUpdateAction(optimisticTags);
+      onCloseAction();
 
       await updateTags.mutateAsync(selectedTags);
       // biome-ignore lint/correctness/noUnusedVariables: ignore
@@ -232,7 +232,7 @@ export function TagEditor({
         <div className="flex justify-end gap-2 pt-2">
           <Button
             variant="ghost"
-            onClick={onClose}
+            onClick={onCloseAction}
             className="hover:bg-destructive/10 hover:text-destructive"
           >
             Cancel

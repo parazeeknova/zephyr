@@ -129,9 +129,12 @@ const MediaViewer = ({
     </Button>
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: it rerenders
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return;
+      if (!isOpen) {
+        return;
+      }
 
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
@@ -147,13 +150,14 @@ const MediaViewer = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: it's fine
   const renderMedia = () => {
     if (!currentMedia) {
       return <p className="text-destructive">No media available</p>;
     }
 
     switch (currentMedia.type) {
-      case 'IMAGE':
+      case 'IMAGE': {
         if (currentMedia.mimeType === 'image/svg+xml') {
           return (
             <div
@@ -207,6 +211,7 @@ const MediaViewer = ({
             )}
           </div>
         );
+      }
 
       case 'VIDEO':
         return (
@@ -234,6 +239,7 @@ const MediaViewer = ({
             <p className="font-medium text-lg">
               {formatFileName(currentMedia.key)}
             </p>
+            {/* biome-ignore lint/a11y/useMediaCaption:  */}
             <audio
               src={getMediaUrl(currentMedia.id)}
               controls

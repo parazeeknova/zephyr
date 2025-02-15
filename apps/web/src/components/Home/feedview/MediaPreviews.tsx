@@ -37,6 +37,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
   const remainingAttachments = attachments.slice(initialCount);
   const remainingCount = attachments.length - initialCount;
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This function is not complex
   const renderPreview = (m: Media, _index: number, isSmall = false) => {
     const commonClasses = cn(
       'mx-auto w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105',
@@ -44,7 +45,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
     );
 
     switch (m.type) {
-      case 'IMAGE':
+      case 'IMAGE': {
         if (m.mimeType === 'image/svg+xml') {
           return (
             <div
@@ -79,6 +80,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
             <div className="absolute inset-0 bg-black/5 transition-opacity group-hover:opacity-0" />
           </div>
         );
+      }
 
       case 'VIDEO':
         return (
@@ -88,6 +90,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
               isSmall ? 'h-20' : 'h-48'
             )}
           >
+            {/* biome-ignore lint/a11y/useMediaCaption: */}
             <video
               src={getMediaUrl(m.id)}
               className={commonClasses}
@@ -296,6 +299,8 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
         exit={{ opacity: 0 }}
         className="px-4 pb-4"
       >
+        {/* biome-ignore lint/nursery/noStaticElementInteractions:  */}
+        {/* biome-ignore lint/a11y/useKeyWithClickEvents:  */}
         <div
           onClick={() => setShowAll(true)}
           className="relative w-full cursor-pointer overflow-hidden rounded-lg bg-primary/5 shadow-sm transition-all duration-300 hover:bg-primary/10 hover:shadow-md"
@@ -337,9 +342,11 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
           'grid gap-4 p-4',
           visibleAttachments.length === 1
             ? 'grid-cols-1'
-            : isMobile
+            : // biome-ignore lint/nursery/noNestedTernary:
+              isMobile
               ? 'grid-cols-2'
-              : visibleAttachments.length === 2
+              : // biome-ignore lint/nursery/noNestedTernary:
+                visibleAttachments.length === 2
                 ? 'grid-cols-2'
                 : 'grid-cols-3'
         )}

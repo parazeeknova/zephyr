@@ -54,7 +54,7 @@ export function MentionTags({
     if (JSON.stringify(localMentions) !== JSON.stringify(initialMentions)) {
       setLocalMentions(initialMentions);
     }
-  }, [initialMentions]);
+  }, [initialMentions, localMentions]);
 
   const handleMentionsUpdate = async (newMentions: UserData[]) => {
     try {
@@ -141,8 +141,8 @@ export function MentionTags({
           <DialogTitle>Edit Mentions</DialogTitle>
           <MentionTagEditor
             initialMentions={localMentions}
-            onClose={() => setIsEditing(false)}
-            onMentionsUpdate={handleMentionsUpdate}
+            onCloseAction={() => setIsEditing(false)}
+            onMentionsUpdateAction={handleMentionsUpdate}
             postId={postId}
           />
         </DialogContent>

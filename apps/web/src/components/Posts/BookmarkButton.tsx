@@ -21,11 +21,8 @@ export default function BookmarkButton({
   initialState,
 }: BookmarkButtonProps) {
   const { toast } = useToast();
-
   const queryClient = useQueryClient();
-
   const queryKey: QueryKey = ['bookmark-info', postId];
-
   const { data } = useQuery({
     queryKey,
     queryFn: () =>
@@ -45,9 +42,7 @@ export default function BookmarkButton({
       });
 
       await queryClient.cancelQueries({ queryKey });
-
       const previousState = queryClient.getQueryData<BookmarkInfo>(queryKey);
-
       queryClient.setQueryData<BookmarkInfo>(queryKey, () => ({
         isBookmarkedByUser: !previousState?.isBookmarkedByUser,
       }));

@@ -15,6 +15,7 @@ import {
   X,
 } from 'lucide-react';
 import Link from 'next/link';
+import type React from 'react';
 
 interface MobileUserMenuProps {
   isOpen: boolean;
@@ -71,7 +72,9 @@ export function MobileUserMenu({
     queryFn: async () => {
       try {
         const response = await fetch(`/api/users/avatar/${user.id}`);
-        if (!response.ok) throw new Error('Failed to fetch avatar');
+        if (!response.ok) {
+          throw new Error('Failed to fetch avatar');
+        }
         const data = await response.json();
         return {
           url: getSecureImageUrl(data.url),

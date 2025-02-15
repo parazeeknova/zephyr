@@ -7,6 +7,7 @@ import type { SearchSuggestion } from '@zephyr/db';
 import { SearchIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import type React from 'react';
 import { SearchCommandList } from '../Search/SearchCommandList';
 import { searchMutations } from '../Search/mutations';
 import { Input } from '../ui/input';
@@ -22,8 +23,11 @@ export default function SearchField() {
 
   const { data: suggestions } = useQuery({
     queryKey: ['search-suggestions', debouncedInput],
+    // biome-ignore lint/suspicious/useAwait: This is a valid use case for useQuery
     queryFn: async () => {
-      if (!debouncedInput) return [];
+      if (!debouncedInput) {
+        return [];
+      }
       return kyInstance
         .get('/api/search', {
           searchParams: { q: debouncedInput, type: 'suggestions' },
@@ -80,7 +84,9 @@ export default function SearchField() {
   }, []);
 
   const handleSearch = (searchQuery: string) => {
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim()) {
+      return;
+    }
     setOpen(false);
     searchMutation.mutate(searchQuery.trim());
     router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);

@@ -10,6 +10,7 @@ import { ScrollArea } from '@zephyr/ui/shadui/scroll-area';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Users } from 'lucide-react';
 import { useState } from 'react';
+import type React from 'react';
 import { FriendListItem } from './FriendListItem';
 import { ViewSwitcher } from './ViewSwitcher';
 import { getRandomTitle } from './randomTitles';
@@ -69,13 +70,17 @@ const Friends: React.FC<FriendsProps> = ({ isCollapsed }) => {
     }
   };
 
-  if (isLoading) return <FriendsSkeleton isCollapsed={isCollapsed} />;
+  if (isLoading) {
+    return <FriendsSkeleton isCollapsed={isCollapsed} />;
+  }
 
   const friendCount = followedUsers?.length ?? 0;
   const showScrollArea = friendCount > 10;
 
   const getContentHeight = () => {
-    if (showScrollArea) return 'calc(100vh - 300px)';
+    if (showScrollArea) {
+      return 'calc(100vh - 300px)';
+    }
     const baseHeight = 64;
     const itemHeight = viewType === 'grid' ? 100 : 56;
     const gap = 12;

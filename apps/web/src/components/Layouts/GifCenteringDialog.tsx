@@ -60,6 +60,8 @@ export default function GifCenteringDialog({
           return { ...prev, x: prev.x + MOVE_AMOUNT };
         case 'right':
           return { ...prev, x: prev.x - MOVE_AMOUNT };
+        default:
+          return prev;
       }
     });
   };
@@ -124,7 +126,7 @@ export default function GifCenteringDialog({
               }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             >
-              <img
+              <Image
                 ref={gifRef}
                 src={URL.createObjectURL(gifFile)}
                 alt="GIF preview"
@@ -133,6 +135,8 @@ export default function GifCenteringDialog({
                   transformOrigin: 'center',
                 }}
                 draggable={false}
+                layout="fill"
+                objectFit="contain"
               />
             </motion.div>
           </div>

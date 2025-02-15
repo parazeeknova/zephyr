@@ -13,7 +13,9 @@ export function updatePostInCaches(
     queryClient.setQueryData(
       [key],
       (oldData: { pages: { posts: PostData[] }[] } | undefined) => {
-        if (!oldData) return oldData;
+        if (!oldData) {
+          return oldData;
+        }
         return {
           ...oldData,
           pages: oldData.pages.map((page) => ({

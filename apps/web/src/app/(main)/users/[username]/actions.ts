@@ -12,7 +12,9 @@ export async function updateUserProfile(values: UpdateUserProfileValues) {
   const validatedValues = updateUserProfileSchema.parse(values);
   const { user } = await validateRequest();
 
-  if (!user) throw new Error('Unauthorized');
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
 
   try {
     const updatedUser = await prisma.user.update({

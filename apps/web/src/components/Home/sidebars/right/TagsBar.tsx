@@ -30,7 +30,9 @@ const TagsBar = () => {
     });
   }, [queryClient]);
 
-  if (!popularTags.length && !isLoading) return null;
+  if (!popularTags.length && !isLoading) {
+    return null;
+  }
 
   return (
     <Card className="relative overflow-hidden border-primary/20 bg-primary/[0.02] shadow-sm backdrop-blur-sm">

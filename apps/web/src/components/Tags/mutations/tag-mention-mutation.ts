@@ -33,9 +33,7 @@ export function useUpdateTagsMutation(postId?: string) {
       }
 
       await queryClient.cancelQueries({ queryKey: ['post', postId] });
-
       const previousPost = queryClient.getQueryData<PostData>(['post', postId]);
-
       const optimisticTags: TagWithCount[] = newTags.map((name) => ({
         id: name,
         name,
@@ -91,9 +89,7 @@ export function useUpdateMentionsMutation(postId?: string) {
       }
 
       await queryClient.cancelQueries({ queryKey: ['post', postId] });
-
       const previousPost = queryClient.getQueryData<PostData>(['post', postId]);
-
       const users = newUserIds
         .map((id) => queryClient.getQueryData<UserData>(['user', id]))
         .filter((u): u is UserData => !!u);

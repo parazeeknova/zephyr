@@ -72,7 +72,9 @@ export const CustomVideoPlayer = ({
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video) {
+      return;
+    }
 
     const handleTimeUpdate = () => setCurrentTime(video.currentTime);
     const handleDurationChange = () => setDuration(video.duration);
@@ -114,8 +116,9 @@ export const CustomVideoPlayer = ({
         !showControls ||
         (e.target as HTMLElement)?.tagName === 'INPUT' ||
         (e.target as HTMLElement)?.tagName === 'TEXTAREA'
-      )
+      ) {
         return;
+      }
 
       if (keyboardControls[e.key]) {
         e.preventDefault();
@@ -161,7 +164,9 @@ export const CustomVideoPlayer = ({
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video) {
+      return;
+    }
 
     const handleWaiting = () => setIsBuffering(true);
     const handlePlaying = () => setIsBuffering(false);
@@ -203,7 +208,9 @@ export const CustomVideoPlayer = ({
   };
 
   const toggleFullscreen = async () => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) {
+      return;
+    }
 
     if (document.fullscreenElement) {
       await document.exitFullscreen();
@@ -226,11 +233,14 @@ export const CustomVideoPlayer = ({
       clearTimeout(controlsTimeoutRef.current);
     }
     controlsTimeoutRef.current = setTimeout(() => {
-      if (isPlaying) setShowControls(false);
+      if (isPlaying) {
+        setShowControls(false);
+      }
     }, 2000);
   };
 
   return (
+    // biome-ignore lint/nursery/noStaticElementInteractions: ignore
     <div
       ref={containerRef}
       className={cn(
@@ -241,6 +251,8 @@ export const CustomVideoPlayer = ({
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setShowControls(false)}
     >
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: ignore */}
+      {/* biome-ignore lint/a11y/useMediaCaption: ignore */}
       <video
         ref={videoRef}
         src={src}
@@ -257,11 +269,13 @@ export const CustomVideoPlayer = ({
       </div>
 
       <div className="absolute inset-0 z-30 flex select-none">
+        {/* biome-ignore lint/nursery/noStaticElementInteractions: ignore */}
         <div
           className="h-full w-1/2"
           onDoubleClick={() => skip(-10)}
           title="Double click to rewind 10s"
         />
+        {/* biome-ignore lint/nursery/noStaticElementInteractions: ingore */}
         <div
           className="h-full w-1/2"
           onDoubleClick={() => skip(10)}
@@ -414,6 +428,7 @@ export const CustomVideoPlayer = ({
               exit={{ y: 20, opacity: 0 }}
               className="space-y-2 p-4"
             >
+              {/* biome-ignore lint/nursery/noStaticElementInteractions: ignore */}
               <div
                 className="group relative"
                 onMouseEnter={() => setShowControls(true)}

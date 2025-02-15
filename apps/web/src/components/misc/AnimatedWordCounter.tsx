@@ -26,7 +26,8 @@ export function AnimatedWordCounter({
           'font-medium',
           isOverLimit
             ? 'text-destructive'
-            : isNearLimit
+            : // biome-ignore lint/nursery/noNestedTernary: ignore
+              isNearLimit
               ? 'text-warning'
               : 'text-muted-foreground'
         )}

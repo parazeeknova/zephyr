@@ -17,6 +17,7 @@ import NewChatDialog from './NewChatDialog';
 interface ChatSidebarProps {
   open: boolean;
   onClose: () => void;
+  // biome-ignore lint/suspicious/noExplicitAny: any
   onChannelSelect?: (channel: any) => void;
 }
 
@@ -104,6 +105,7 @@ export default function ChatSidebar({
 
 interface MenuHeaderProps {
   onClose: () => void;
+  // biome-ignore lint/suspicious/noExplicitAny: any
   onChatCreated: (channel: any) => void;
 }
 

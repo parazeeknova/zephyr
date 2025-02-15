@@ -19,7 +19,9 @@ const getUser = cache(async (username: string, loggedInUserId: string) => {
     select: getUserDataSelect(loggedInUserId),
   });
 
-  if (!user) notFound();
+  if (!user) {
+    notFound();
+  }
 
   return user;
 });

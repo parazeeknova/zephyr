@@ -20,6 +20,7 @@ import { motion } from 'framer-motion';
 import { BadgeCheckIcon, Search, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import type React from 'react';
 
 interface UserData extends BaseUserData {
   followState?: {
@@ -32,8 +33,7 @@ interface BrowseUsersProps {
   userId?: string;
 }
 
-// biome-ignore lint/correctness/noUnusedVariables: template variable
-const BrowseUsers: React.FC<BrowseUsersProps> = ({ userId }) => {
+const BrowseUsers: React.FC<BrowseUsersProps> = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('followers');
   const debouncedSearch = useDebounce(searchTerm, 300);
@@ -94,7 +94,7 @@ const BrowseUsers: React.FC<BrowseUsersProps> = ({ userId }) => {
 
       {isLoading ? (
         <div className="grid gap-4 md:grid-cols-2">
-          {[...Array(6)].map((_, i) => (
+          {[...new Array(6)].map((_, i) => (
             <Skeleton
               key={i}
               className="h-[100px] w-full rounded-lg bg-muted"

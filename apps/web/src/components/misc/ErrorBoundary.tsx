@@ -1,7 +1,6 @@
 import { debugLog } from '@zephyr/config/debug';
 import { Button } from '@zephyr/ui/shadui/button';
 import { AlertCircle } from 'lucide-react';
-// apps/web/src/components/misc/ErrorBoundary.tsx
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface Props {
@@ -16,19 +15,19 @@ interface State {
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
+  state: State = {
     hasError: false,
     error: null,
   };
 
-  public static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): State {
     return {
       hasError: true,
       error,
     };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     debugLog.component('Error boundary caught error:', { error, errorInfo });
   }
 
@@ -37,7 +36,7 @@ export class ErrorBoundary extends Component<Props, State> {
     this.props.onReset?.();
   };
 
-  public render() {
+  render() {
     if (this.state.hasError) {
       return (
         this.props.fallback || (

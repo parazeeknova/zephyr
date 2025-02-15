@@ -3,6 +3,7 @@ import { Button } from '@zephyr/ui/shadui/button';
 import { Input } from '@zephyr/ui/shadui/input';
 import { Loader2, SendHorizonal } from 'lucide-react';
 import { useState } from 'react';
+import type React from 'react';
 import { useSubmitCommentMutation } from './mutations';
 
 interface CommentInputProps {
@@ -17,7 +18,9 @@ export default function CommentInput({ post }: CommentInputProps) {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!input) return;
+    if (!input) {
+      return;
+    }
 
     mutation.mutate(
       {

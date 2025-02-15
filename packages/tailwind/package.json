@@ -8,11 +8,11 @@
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.16",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@zephyr/config": "workspace:*",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^4.0.4"
   }
 }

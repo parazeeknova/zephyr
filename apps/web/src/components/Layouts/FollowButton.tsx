@@ -65,5 +65,5 @@ FollowButton.displayName = 'FollowButton';
 export default FollowButton;
 
 export function preloadFollowButton() {
-  void import('./client/ClientFollowButton');
+  import('./client/ClientFollowButton');
 }

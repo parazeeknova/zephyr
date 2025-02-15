@@ -25,6 +25,7 @@ interface CodePreviewProps {
   className?: string;
 }
 
+const normalizedlangRegex = /^\./;
 const normalizeLanguage = (language = ''): string => {
   const langMap: Record<string, string> = {
     js: 'javascript',
@@ -47,7 +48,9 @@ const normalizeLanguage = (language = ''): string => {
     sql: 'sql',
   };
 
-  const normalizedLang = language.toLowerCase().replace(/^\./, '');
+  const normalizedLang = language
+    .toLowerCase()
+    .replace(normalizedlangRegex, '');
   return langMap[normalizedLang] || normalizedLang || 'text';
 };
 
@@ -71,7 +74,9 @@ export function CodePreview({
       try {
         setLoading(true);
         const response = await fetch(`/api/media/${mediaId}`);
-        if (!response.ok) throw new Error('Failed to fetch code');
+        if (!response.ok) {
+          throw new Error('Failed to fetch code');
+        }
         const text = await response.text();
         setContent(text);
       } catch (err) {

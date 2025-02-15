@@ -1,14 +1,14 @@
 'use client';
 
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { Loader2 } from 'lucide-react';
-import { useMemo } from 'react';
-
 import Post from '@/components/Home/feedview/postCard';
 import InfiniteScrollContainer from '@/components/Layouts/InfiniteScrollContainer';
 import PostsOnlyLoadingSkeleton from '@/components/Layouts/skeletons/PostOnlyLoadingSkeleton';
 import kyInstance from '@/lib/ky';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import type { PostsPage } from '@zephyr/db';
+import { Loader2 } from 'lucide-react';
+import { useMemo } from 'react';
+import type React from 'react';
 
 interface UserPostsProps {
   userId: string;

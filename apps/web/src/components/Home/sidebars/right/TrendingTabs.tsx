@@ -7,7 +7,7 @@ import MentionedUsersBar from './MentionedUsersBar';
 import TagsBar from './TagsBar';
 import TrendingTopics from './TrendingTopics';
 
-const SWITCH_INTERVAL = 10000; // 10 seconds
+const SWITCH_INTERVAL = 10000;
 
 const tabs = [
   { id: 'topics', label: 'Trending', icon: '📈' },
@@ -28,6 +28,7 @@ const TabContent = ({ activeTab }: { activeTab: TabId }) => (
     >
       {activeTab === 'topics' ? (
         <TrendingTopics />
+        // biome-ignore lint/nursery/noNestedTernary: off
       ) : activeTab === 'tags' ? (
         <TagsBar />
       ) : (
@@ -70,7 +71,7 @@ export function TrendingTabs() {
     return () => {
       cancelAnimationFrame(animationFrame);
     };
-  }, [isAutoSwitching, activeTab]);
+  }, [isAutoSwitching]);
 
   return (
     <div className="space-y-3">

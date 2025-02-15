@@ -42,6 +42,7 @@ export default function SecuritySettings({ user }: SecuritySettingsProps) {
     },
   });
 
+  // biome-ignore lint/suspicious/useAwait: This is a React Hook Form function
   async function onSubmit(values: FormValues) {
     startTransition(async () => {
       const result = await requestPasswordReset(values);
@@ -68,7 +69,6 @@ export default function SecuritySettings({ user }: SecuritySettingsProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      // @ts-expect-error
       className="space-y-6"
     >
       <div className="relative overflow-hidden rounded-lg border border-border/50 bg-background/30 p-6 backdrop-blur-md">
@@ -90,7 +90,6 @@ export default function SecuritySettings({ user }: SecuritySettingsProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          // @ts-expect-error
           className="mt-8 space-y-4"
         >
           <div className="flex items-center gap-3">
@@ -135,12 +134,10 @@ export default function SecuritySettings({ user }: SecuritySettingsProps) {
               </form>
             </Form>
 
-            {/* Inner gradient effect */}
             <div className="-z-10 absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-background blur-xl" />
           </div>
         </motion.div>
 
-        {/* Outer gradient effect */}
         <div className="-z-20 absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-background blur-3xl" />
       </div>
     </motion.div>

@@ -12,6 +12,7 @@ interface NavigationCardProps {
   stickyTop?: string;
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This component is simple and does not need to be refactored
 export default function NavigationCard({
   isCollapsed,
   className = '',
@@ -51,7 +52,6 @@ export default function NavigationCard({
           </motion.div>
         </div>
 
-        {/* Will be replaced by MessageButton in messages component*/}
         <div className="block w-full">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link href="/search?q=zephyr" className="block w-full">

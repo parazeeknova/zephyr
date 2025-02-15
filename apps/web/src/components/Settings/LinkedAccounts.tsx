@@ -36,7 +36,6 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
         description: `Your ${provider} account has been unlinked successfully`,
       });
 
-      // Refresh the page to update the UI
       window.location.reload();
     } catch (error) {
       toast({
@@ -64,7 +63,6 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
     <motion.div
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      // @ts-expect-error
       className={`group relative overflow-hidden rounded-lg border border-border/50 p-4 backdrop-blur-sm transition-colors ${
         isComingSoon ? 'opacity-50' : ''
       }`}
@@ -85,7 +83,8 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
             <p className="text-muted-foreground text-sm">
               {isComingSoon
                 ? 'Coming soon'
-                : isConnected
+                : // biome-ignore lint/nursery/noNestedTernary: ignore
+                  isConnected
                   ? 'Connected'
                   : 'Not connected'}
             </p>
@@ -104,13 +103,12 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
         >
           {isComingSoon
             ? 'Coming Soon'
-            : isConnected
+            : // biome-ignore lint/nursery/noNestedTernary: ignore
+              isConnected
               ? 'Disconnect'
               : 'Connect'}
         </LoadingButton>
       </div>
-
-      {/* Gradient border animation */}
       <div className="-z-10 absolute inset-0 animate-gradient bg-gradient-to-r from-primary/5 via-secondary/5 to-primary/5 opacity-0 transition-opacity group-hover:opacity-100" />
     </motion.div>
   );
@@ -120,7 +118,6 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      // @ts-expect-error
       className="space-y-4"
     >
       <div className="flex items-center gap-3">
@@ -128,7 +125,6 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
           Linked Accounts
         </h3>
       </div>
-      {/* @ts-expect-error */}
       <motion.div className="grid gap-4 sm:grid-cols-2">
         <AccountCard
           provider="Google"

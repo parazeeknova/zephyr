@@ -1,13 +1,9 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { BookOpen, Edit, Plus, Settings, Upload } from 'lucide-react';
-import type React from 'react';
-
+import { DirectionAwareHover } from '@zephyr/ui/components/ui/direction-aware-hover';
 import { Badge } from '@zephyr/ui/shadui/badge';
 import { Button } from '@zephyr/ui/shadui/button';
 import { Card, CardContent } from '@zephyr/ui/shadui/card';
-import { DirectionAwareHover } from '@zephyr/ui/shadui/direction-aware-hover';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +16,9 @@ import {
   TabsList,
   TabsTrigger,
 } from '@zephyr/ui/shadui/tabs';
+import { motion } from 'framer-motion';
+import { BookOpen, Edit, Plus, Settings, Upload } from 'lucide-react';
+import type React from 'react';
 
 interface MyPostsProps {
   data: {

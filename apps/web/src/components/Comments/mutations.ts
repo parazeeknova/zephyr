@@ -10,9 +10,7 @@ import { deleteComment, submitComment } from './actions';
 
 export function useSubmitCommentMutation(postId: string) {
   const { toast } = useToast();
-
   const queryClient = useQueryClient();
-
   const mutation = useMutation({
     mutationFn: submitComment,
     onSuccess: async (newComment) => {
@@ -78,7 +76,9 @@ export function useDeleteCommentMutation() {
       queryClient.setQueryData<InfiniteData<CommentsPage, string | null>>(
         queryKey,
         (oldData) => {
-          if (!oldData) return;
+          if (!oldData) {
+            return;
+          }
 
           return {
             pageParams: oldData.pageParams,

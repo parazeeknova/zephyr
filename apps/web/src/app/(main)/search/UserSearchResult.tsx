@@ -39,6 +39,7 @@ export default function UserSearchResults({ query }: { query: string }) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useInfiniteQuery({
       queryKey: ['user-search', query],
+      // biome-ignore lint/suspicious/useAwait: This is a React Query function
       queryFn: async ({ pageParam }) => {
         return kyInstance
           .get('/api/search/users', {
@@ -59,7 +60,7 @@ export default function UserSearchResults({ query }: { query: string }) {
   if (status === 'pending') {
     return (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {[...Array(4)].map((_, i) => (
+        {[...new Array(4)].map((_, i) => (
           <UserCardSkeleton key={i} />
         ))}
       </div>
@@ -94,7 +95,6 @@ export default function UserSearchResults({ query }: { query: string }) {
         variants={container}
         initial="hidden"
         animate="show"
-        // @ts-expect-error
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
       >
         {users.map((user) => (
@@ -107,7 +107,6 @@ export default function UserSearchResults({ query }: { query: string }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          // @ts-expect-error
           className="mt-6"
         >
           <Button
@@ -131,7 +130,6 @@ function UserCard({ user }: { user: UserData }) {
   return (
     <motion.div
       variants={item}
-      // @ts-expect-error
       className="group relative rounded-xl border bg-card transition-all duration-300 hover:bg-muted"
     >
       <div className="p-4">

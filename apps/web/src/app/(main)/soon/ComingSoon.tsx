@@ -9,6 +9,7 @@ import {
   Sparkles,
   Wand,
 } from 'lucide-react';
+import type React from 'react';
 
 const floatingAnimation = {
   initial: { y: 0 },
@@ -64,47 +65,38 @@ export default function ComingSoon() {
         variants={containerAnimation}
         initial="initial"
         animate="animate"
-        // @ts-expect-error
         className="mx-auto max-w-2xl text-center"
       >
-        {/* Floating Icons */}
         <motion.div
           variants={floatingAnimation}
-          // @ts-expect-error
           className="relative mx-auto mb-8 h-32 w-32"
         >
           <motion.div
             variants={iconAnimation}
-            // @ts-expect-error
             className="absolute top-0 left-0"
           >
             <MessageSquareMore className="h-12 w-12 text-primary/80" />
           </motion.div>
           <motion.div
             variants={iconAnimation}
-            // @ts-expect-error
             className="absolute top-0 right-0"
           >
             <Sparkles className="h-10 w-10 text-primary/60" />
           </motion.div>
           <motion.div
             variants={iconAnimation}
-            // @ts-expect-error
             className="absolute bottom-0 left-0"
           >
             <Construction className="h-10 w-10 text-primary/60" />
           </motion.div>
           <motion.div
             variants={iconAnimation}
-            // @ts-expect-error
             className="absolute right-0 bottom-0"
           >
             <Rocket className="h-12 w-12 text-primary/80" />
           </motion.div>
         </motion.div>
 
-        {/* Main Content */}
-        {/* @ts-expect-error */}
         <motion.div variants={textAnimation} className="space-y-6 px-4">
           <h1 className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text font-bold text-4xl text-transparent">
             Coming Soon
@@ -119,10 +111,8 @@ export default function ComingSoon() {
             </p>
           </div>
 
-          {/* Feature Preview */}
           <motion.div
             variants={containerAnimation}
-            // @ts-expect-error
             className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2"
           >
             <FeatureCard
@@ -139,10 +129,8 @@ export default function ComingSoon() {
 
           <FossBanner />
 
-          {/* Progress Indicator */}
           <motion.div
             variants={textAnimation}
-            // @ts-expect-error
             className="mt-12 flex items-center justify-center gap-2 text-muted-foreground text-sm"
           >
             <Construction className="h-4 w-4 animate-spin" />
@@ -166,7 +154,6 @@ function FeatureCard({
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
-      // @ts-expect-error
       className="rounded-xl border bg-card p-6 transition-colors duration-300 hover:bg-muted"
     >
       <div className="mb-3 flex items-center gap-3">

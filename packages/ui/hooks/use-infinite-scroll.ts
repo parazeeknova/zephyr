@@ -17,7 +17,9 @@ export function useInfiniteScroll(
       enabled = true,
     } = options ?? {};
 
-    if (!enabled) return;
+    if (!enabled) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {

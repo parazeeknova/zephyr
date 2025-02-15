@@ -39,7 +39,9 @@ const ProfileFeedView: React.FC<ProfileFeedViewProps> = ({
     queryFn: async () => {
       try {
         const response = await fetch(`/api/users/${initialUserData.id}`);
-        if (!response.ok) throw new Error('Failed to fetch user data');
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
         return response.json();
       } catch (_err) {
         toast({
@@ -63,8 +65,12 @@ const ProfileFeedView: React.FC<ProfileFeedViewProps> = ({
     { value: 'files', label: 'Wisps' },
   ];
 
-  if (isLoading) return <ProfileSkeleton />;
-  if (error || !userData) return <div>Error loading profile</div>;
+  if (isLoading) {
+    return <ProfileSkeleton />;
+  }
+  if (error || !userData) {
+    return <div>Error loading profile</div>;
+  }
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -137,7 +143,9 @@ const ProfileHeader: React.FC<{ userData: UserData }> = ({ userData }) => {
     queryFn: async () => {
       try {
         const response = await fetch(`/api/users/avatar/${userData?.id}`);
-        if (!response.ok) throw new Error('Failed to fetch avatar');
+        if (!response.ok) {
+          throw new Error('Failed to fetch avatar');
+        }
         return response.json();
       } catch (_error) {
         return {
@@ -154,7 +162,9 @@ const ProfileHeader: React.FC<{ userData: UserData }> = ({ userData }) => {
     staleTime: 1000 * 60 * 5,
   });
 
-  if (!userData) return null;
+  if (!userData) {
+    return null;
+  }
 
   return (
     <Card className="mb-6 overflow-hidden">
@@ -162,7 +172,7 @@ const ProfileHeader: React.FC<{ userData: UserData }> = ({ userData }) => {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
-        className="relative h-32" // Fixed height
+        className="relative h-32"
       >
         <div className="absolute inset-0">
           <div

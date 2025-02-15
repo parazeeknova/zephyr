@@ -40,7 +40,7 @@ export default function PostsOnlyLoadingSkeleton() {
           <Skeleton className="mb-4 h-4 w-full" />
           <Skeleton className="mb-6 h-10 w-full max-w-md" />
           <div className="space-y-8">
-            {[...Array(3)].map((_, index) => (
+            {[...new Array(3)].map((_, index) => (
               <PostCardSkeleton key={index} />
             ))}
           </div>

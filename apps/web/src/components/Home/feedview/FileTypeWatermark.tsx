@@ -25,7 +25,6 @@ const iconMap = {
   FileIcon,
 } as const;
 
-// Add animations object
 const animations = {
   container: {
     initial: { opacity: 0, y: 5 },
@@ -112,7 +111,6 @@ export const FileTypeWatermark = ({
         </AnimatePresence>
       </motion.div>
 
-      {/* Glow effect */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: isHovered ? 1 : 0 }}
