@@ -1,10 +1,10 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { Cover } from '@/components/ui/cover';
+import SearchField from '@/components/Layouts/SearchField';
+import UserButton from '@/components/Layouts/UserButton';
 import { cn } from '@/lib/utils';
-import SearchField from '@zephyr-ui/Layouts/SearchField';
-import UserButton from '@zephyr-ui/Layouts/UserButton';
+import { Badge } from '@zephyr/ui/shadui/badge';
+import { Cover } from '@zephyr/ui/shadui/cover';
 import { motion } from 'framer-motion';
 import {
   Bookmark,

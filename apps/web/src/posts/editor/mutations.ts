@@ -1,4 +1,3 @@
-import { useToast } from '@/hooks/use-toast';
 import {
   type InfiniteData,
   type QueryFilters,
@@ -7,6 +6,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import type { PostsPage } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import { submitPost, updatePostMentions } from './actions';
 
 interface PostInput {
@@ -50,7 +50,9 @@ export function useSubmitPostMutation() {
       queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
         queryFilter,
         (oldData) => {
-          if (!oldData?.pages[0]) return oldData;
+          if (!oldData?.pages[0]) {
+            return oldData;
+          }
 
           return {
             pageParams: oldData.pageParams,

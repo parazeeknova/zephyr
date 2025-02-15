@@ -22,7 +22,7 @@ export async function GET() {
       },
       where: {
         mentions: {
-          some: {}, // Only include users who have been mentioned at least once
+          some: {},
         },
       },
       orderBy: {

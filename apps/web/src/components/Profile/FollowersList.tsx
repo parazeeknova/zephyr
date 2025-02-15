@@ -1,16 +1,16 @@
 'use client';
 
+import FollowButton from '@/components/Layouts/FollowButton';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import { useQuery } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useQuery } from '@tanstack/react-query';
-import FollowButton from '@zephyr-ui/Layouts/FollowButton';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
+} from '@zephyr/ui/shadui/dialog';
+import { Input } from '@zephyr/ui/shadui/input';
+import { ScrollArea } from '@zephyr/ui/shadui/scroll-area';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Ghost, SearchIcon, Users2 } from 'lucide-react';
 import { useState } from 'react';

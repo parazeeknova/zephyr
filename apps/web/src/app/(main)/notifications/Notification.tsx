@@ -1,5 +1,5 @@
+import UserAvatar from '@/components/Layouts/UserAvatar';
 import { cn } from '@/lib/utils';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
 import type { NotificationData, NotificationType } from '@zephyr/db';
 import { AtSign, Heart, MessageCircle, User2 } from 'lucide-react';
 import Link from 'next/link';

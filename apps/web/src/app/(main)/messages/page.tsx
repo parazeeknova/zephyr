@@ -1,4 +1,4 @@
-import Chat from '@zephyr-ui/Messages/Chat';
+import Chat from '@/components/Messages/Chat';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {

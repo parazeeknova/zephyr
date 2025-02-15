@@ -1,13 +1,13 @@
 'use client';
 
 import { useSession } from '@/app/(main)/SessionProvider';
+import LoadingButton from '@/components/Auth/LoadingButton';
+import UserAvatar from '@/components/Layouts/UserAvatar';
 import { cn } from '@/lib/utils';
 import { useSubmitPostMutation } from '@/posts/editor/mutations';
 import Placeholder from '@tiptap/extension-placeholder';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import LoadingButton from '@zephyr-ui/Auth/LoadingButton';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, Wind } from 'lucide-react';
 import { type ClipboardEvent, useCallback, useState } from 'react';

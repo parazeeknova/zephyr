@@ -1,7 +1,9 @@
-import { Input, type InputProps } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { Input } from '@zephyr/ui/shadui/input';
 import { Eye, EyeOff } from 'lucide-react';
 import React, { useState } from 'react';
+
+type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
@@ -33,5 +35,4 @@ const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
 );
 
 PasswordInput.displayName = 'PasswordInput';
-
 export { PasswordInput };

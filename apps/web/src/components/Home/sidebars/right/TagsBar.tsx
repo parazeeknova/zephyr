@@ -1,11 +1,11 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { useTags } from '@/hooks/useTags';
 import { cn, formatNumber } from '@/lib/utils';
 import type { Tag } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Hash, RefreshCw } from 'lucide-react';
 import Link from 'next/link';

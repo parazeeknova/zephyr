@@ -2,17 +2,15 @@ import { getContentDisposition, minioClient } from '@/lib/minio';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { validateRequest } from '@zephyr/auth/auth';
 import { prisma, redis } from '@zephyr/db';
-import { type NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-const DOWNLOAD_COOLDOWN = 120; // 2 minutes in seconds
+const DOWNLOAD_COOLDOWN = 120;
 
-export async function GET(
-  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
-  request: NextRequest,
-  context: { params: Promise<{ mediaId: string }> }
-): Promise<NextResponse | Response> {
+export async function GET(context: {
+  params: Promise<{ mediaId: string }>;
+}): Promise<NextResponse | Response> {
   const { mediaId } = await context.params;
 
   try {
@@ -21,7 +19,6 @@ export async function GET(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    // Check rate limit using Redis
     const downloadKey = `download:${user.id}:${mediaId}`;
     const lastDownload = await redis.get(downloadKey);
 
@@ -46,7 +43,6 @@ export async function GET(
       }
     }
 
-    // Get media from database
     const media = await prisma.media.findUnique({
       where: { id: mediaId },
       select: {
@@ -65,14 +61,10 @@ export async function GET(
       return new NextResponse('Media not found', { status: 404 });
     }
 
-    // Set rate limit in Redis using two separate commands
     await redis.set(downloadKey, Date.now().toString());
     await redis.expire(downloadKey, DOWNLOAD_COOLDOWN);
-
-    // Get filename from key
     const filename = media.key.split('/').pop() || 'download';
 
-    // Generate signed URL with specific headers for download
     const command = new GetObjectCommand({
       Bucket: process.env.MINIO_BUCKET_NAME || 'uploads',
       Key: media.key,
@@ -87,8 +79,9 @@ export async function GET(
         throw new Error('No response body from MinIO');
       }
 
-      // Convert readable stream to blob
+      // biome-ignore lint/suspicious/noEvolvingTypes:
       const chunks = [];
+      // biome-ignore lint/suspicious/noExplicitAny: Any is required here
       for await (const chunk of response.Body as any) {
         chunks.push(chunk);
       }

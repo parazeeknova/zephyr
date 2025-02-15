@@ -1,7 +1,7 @@
 @import "@zephyr/ui/styles/globals.css";
 @import "@zephyr/ui/styles/animations.css";
 @import "@zephyr/ui/styles/base.css";
-@import "./fonts.css";
+@import "@zephyr/ui/styles/fonts.css";
 
 .form-input-transition {
   @apply transition-all duration-200 ease-in-out;

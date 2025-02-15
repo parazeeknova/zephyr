@@ -1,5 +1,5 @@
-import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { Dialog, DialogContent } from '@zephyr/ui/shadui/dialog';
 
 interface MediaViewerSkeletonProps {
   type?: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'CODE' | 'DOCUMENT';

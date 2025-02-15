@@ -1,5 +1,3 @@
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
 import kyInstance from '@/lib/ky';
 import { cn } from '@/lib/utils';
 import {
@@ -9,6 +7,8 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import type { VoteInfo } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
 import { ArrowBigDown, ArrowBigUp } from 'lucide-react';
 
 interface AuraVoteButtonProps {

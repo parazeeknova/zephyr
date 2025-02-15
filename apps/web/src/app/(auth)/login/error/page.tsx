@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@zephyr/ui/shadui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -20,7 +20,6 @@ const AnimatedZephyrText = () => {
 
   return (
     <motion.div
-      // @ts-expect-error
       className="pointer-events-none select-none font-bold text-4xl sm:text-6xl"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -30,7 +29,6 @@ const AnimatedZephyrText = () => {
         {letters.map((letter, i) => (
           <motion.span
             key={i}
-            // @ts-expect-error
             className="text-primary/50"
             initial={{ opacity: 0, y: 20 }}
             animate={{
@@ -54,7 +52,6 @@ const AnimatedZephyrText = () => {
         ))}
       </div>
       <motion.div
-        // @ts-expect-error
         className="absolute bottom-0 left-0 h-0.5 bg-primary/30"
         initial={{ scaleX: 0 }}
         animate={{
@@ -85,7 +82,6 @@ export default function LoginErrorPage() {
   return (
     <AnimatePresence>
       <motion.div
-        // @ts-expect-error
         className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-background via-background/95 to-background"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -102,20 +98,17 @@ export default function LoginErrorPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            // @ts-expect-error
             className="w-full max-w-md rounded-lg border border-border/50 bg-background/60 p-8 shadow-lg backdrop-blur-xl"
           >
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              // @ts-expect-error
               className="flex flex-col items-center space-y-6"
             >
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', duration: 0.5 }}
-                // @ts-expect-error
                 className="rounded-full bg-destructive/10 p-4"
               >
                 <AlertCircle className="h-12 w-12 text-destructive" />
@@ -146,7 +139,6 @@ export default function LoginErrorPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                // @ts-expect-error
                 className="text-center text-muted-foreground text-sm"
               >
                 Need help?{' '}
@@ -164,7 +156,6 @@ export default function LoginErrorPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            // @ts-expect-error
             className="-translate-x-1/2 absolute bottom-8 left-1/2"
           >
             <AnimatedZephyrText />

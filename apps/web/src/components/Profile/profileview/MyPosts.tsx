@@ -4,17 +4,22 @@ import { motion } from 'framer-motion';
 import { BookOpen, Edit, Plus, Settings, Upload } from 'lucide-react';
 import type React from 'react';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { DirectionAwareHover } from '@/components/ui/direction-aware-hover';
+import { Badge } from '@zephyr/ui/shadui/badge';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
+import { DirectionAwareHover } from '@zephyr/ui/shadui/direction-aware-hover';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from '@zephyr/ui/shadui/dropdown-menu';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@zephyr/ui/shadui/tabs';
 
 interface MyPostsProps {
   data: {

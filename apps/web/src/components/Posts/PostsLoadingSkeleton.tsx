@@ -1,7 +1,7 @@
 import type React from 'react';
 
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
+import { Skeleton } from '@zephyr/ui/shadui/skeleton';
 
 const StoryCardSkeleton: React.FC = () => (
   <Card className="h-[300px] w-[200px] flex-shrink-0 overflow-hidden bg-card shadow-lg">

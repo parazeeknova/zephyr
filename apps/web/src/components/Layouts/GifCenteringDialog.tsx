@@ -1,14 +1,14 @@
 import { useUpdateAvatarMutation } from '@/app/(main)/users/[username]/avatar-mutations';
-import { Button } from '@/components/ui/button';
+import LoadingButton from '@/components/Auth/LoadingButton';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
-import LoadingButton from '@zephyr-ui/Auth/LoadingButton';
+} from '@zephyr/ui/shadui/dialog';
 import { motion } from 'framer-motion';
 import {
   ChevronDown,

@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
 import { debugLog } from '@zephyr/config/debug';
+import { Button } from '@zephyr/ui/shadui/button';
 import { AlertCircle } from 'lucide-react';
 // apps/web/src/components/misc/ErrorBoundary.tsx
 import { Component, type ErrorInfo, type ReactNode } from 'react';

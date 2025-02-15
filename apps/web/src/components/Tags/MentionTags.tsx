@@ -1,9 +1,9 @@
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import UserAvatar from '@/components/Layouts/UserAvatar';
 import { cn } from '@/lib/utils';
 import { useUpdateMentionsMutation } from '@/posts/editor/mutations';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
 import type { UserData } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Dialog, DialogContent, DialogTitle } from '@zephyr/ui/shadui/dialog';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AtSign } from 'lucide-react';
 import { useEffect, useState } from 'react';

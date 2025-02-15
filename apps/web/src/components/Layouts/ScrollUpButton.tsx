@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import type React from 'react';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@zephyr/ui/shadui/button';
 
 interface ScrollUpButtonProps {
   isVisible: boolean;

@@ -1,20 +1,20 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import FollowButton from '@/components/Layouts/FollowButton';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import Linkify from '@/helpers/global/Linkify';
+import { useFollowStates } from '@/hooks/useFollowStates';
+import { formatNumber } from '@/lib/utils';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import type { UserData } from '@zephyr/db';
+import { Card } from '@zephyr/ui/shadui/card';
+import { Skeleton } from '@zephyr/ui/shadui/skeleton';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import Linkify from '@/helpers/global/Linkify';
-import { useFollowStates } from '@/hooks/useFollowStates';
-import { formatNumber } from '@/lib/utils';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import FollowButton from '@zephyr-ui/Layouts/FollowButton';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
-import type { UserData } from '@zephyr/db';
+} from '@zephyr/ui/shadui/tooltip';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BadgeCheckIcon, MessageSquare, Sparkles, Users } from 'lucide-react';
 import Link from 'next/link';

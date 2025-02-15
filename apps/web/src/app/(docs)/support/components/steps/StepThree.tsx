@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Textarea } from '@zephyr/ui/shadui/textarea';
 import { motion } from 'framer-motion';
 import { Loader2, Upload } from 'lucide-react';
 import type { StepThreeProps } from '../../types';

@@ -8,6 +8,7 @@ import {
   sendVerificationEmail,
 } from '@zephyr/auth/src/email/service';
 import { EMAIL_ERRORS, isEmailValid } from '@zephyr/auth/src/email/validation';
+// biome-ignore lint/nursery/noExportedImports: this is a shared utility
 import { resendVerificationEmail } from '@zephyr/auth/src/verification/resend';
 import { type SignUpValues, signUpSchema } from '@zephyr/auth/validation';
 import { getEnvironmentMode, isStreamConfigured } from '@zephyr/config/src/env';
@@ -144,6 +145,7 @@ async function createProdUser(
 
 export { resendVerificationEmail };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: this is a shared utility
 export async function signUp(
   credentials: SignUpValues
 ): Promise<SignUpResponse> {

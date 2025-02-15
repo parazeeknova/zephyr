@@ -5,9 +5,7 @@ import type { NextRequest } from 'next/server';
 export async function GET(req: NextRequest) {
   try {
     const cursor = req.nextUrl.searchParams.get('cursor') || undefined;
-
     const pageSize = 10;
-
     const { user } = await validateRequest();
 
     if (!user) {
@@ -36,7 +34,6 @@ export async function GET(req: NextRequest) {
         : null;
 
     const data: PostsPage = {
-      // @ts-ignore
       posts: bookmarks.slice(0, pageSize).map((bookmark) => bookmark.post),
       nextCursor,
     };

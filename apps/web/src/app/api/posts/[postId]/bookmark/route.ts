@@ -7,12 +7,10 @@ export async function GET(
   props: { params: Promise<{ postId: string }> }
 ) {
   const params = await props.params;
-
   const { postId } = params;
 
   try {
     const { user: loggedInUser } = await validateRequest();
-
     if (!loggedInUser) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -71,7 +69,9 @@ export async function POST(
         select: { userId: true },
       });
 
-      if (!post) throw new Error('Post not found');
+      if (!post) {
+        throw new Error('Post not found');
+      }
 
       await tx.user.update({
         where: { id: loggedInUser.id },
@@ -138,7 +138,9 @@ export async function DELETE(
         select: { userId: true },
       });
 
-      if (!post) throw new Error('Post not found');
+      if (!post) {
+        throw new Error('Post not found');
+      }
 
       await tx.user.update({
         where: { id: loggedInUser.id },

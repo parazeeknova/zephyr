@@ -9,7 +9,6 @@ export default function PostEditorPage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      // @ts-expect-error
       className="relative"
     >
       <div className="-z-10 absolute inset-0 bg-gradient-to-b from-primary/5 via-background/50 to-background blur-3xl" />
@@ -29,7 +28,6 @@ export default function PostEditorPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        // @ts-expect-error
         className="mt-5 rounded-2xl border border-border bg-card/30 p-5 backdrop-blur-sm"
       >
         <h3 className="font-semibold text-lg">Tips for great posts:</h3>

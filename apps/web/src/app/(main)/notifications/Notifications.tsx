@@ -1,14 +1,14 @@
 'use client';
 
+import InfiniteScrollContainer from '@/components/Layouts/InfiniteScrollContainer';
+import LoadMoreSkeleton from '@/components/Layouts/skeletons/LoadMoreSkeleton';
+import PostsOnlyLoadingSkeleton from '@/components/Layouts/skeletons/PostOnlyLoadingSkeleton';
 import kyInstance from '@/lib/ky';
 import {
   useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import InfiniteScrollContainer from '@zephyr-ui/Layouts/InfiniteScrollContainer';
-import LoadMoreSkeleton from '@zephyr-ui/Layouts/skeletons/LoadMoreSkeleton';
-import PostsOnlyLoadingSkeleton from '@zephyr-ui/Layouts/skeletons/PostOnlyLoadingSkeleton';
 import type { NotificationsPage } from '@zephyr/db';
 import { useEffect } from 'react';
 import Notification from './Notification';

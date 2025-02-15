@@ -1,6 +1,14 @@
 'use client';
 import { login } from '@/app/(auth)/login/actions';
 import { resendVerificationEmail } from '@/app/(auth)/signup/actions';
+import ForgotPasswordLink from '@/components/Auth/ForgotPasswordLink';
+import { LoadingButton } from '@/components/Auth/LoadingButton';
+import { PasswordInput } from '@/components/Auth/PasswordInput';
+// @ts-expect-error - no types
+import supportImage from '@assets/previews/help.png';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { type LoginValues, loginSchema } from '@zephyr/auth/validation';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import {
   Form,
   FormControl,
@@ -8,15 +16,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { zodResolver } from '@hookform/resolvers/zod';
-import supportImage from '@zephyr-assets/previews/help.png';
-import ForgotPasswordLink from '@zephyr-ui/Auth/ForgotPasswordLink';
-import { LoadingButton } from '@zephyr-ui/Auth/LoadingButton';
-import { PasswordInput } from '@zephyr-ui/Auth/PasswordInput';
-import { type LoginValues, loginSchema } from '@zephyr/auth/validation';
+} from '@zephyr/ui/shadui/form';
+import { Input } from '@zephyr/ui/shadui/input';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, Mail, XCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -66,62 +67,79 @@ export default function LoginForm() {
     setUnverifiedEmail(undefined);
     setIsVerificationEmailSent(false);
     setErrorFields({});
+    startTransition(() => handleLogin(values));
+  }
 
-    startTransition(async () => {
-      try {
-        const result = await login(values);
+  async function handleLogin(values: LoginValues) {
+    try {
+      const result = await login(values);
 
-        if (result.error) {
-          setError(result.error);
-          setShake(true);
-          if (result.error.includes('Incorrect username or password')) {
-            setErrorFields({ username: true, password: true });
-          }
-          toast({
-            variant: 'destructive',
-            title: 'Login Failed',
-            description: (
-              <div className="flex items-center gap-2">
-                <XCircle className="h-4 w-4" />
-                {result.error}
-              </div>
-            ),
-            duration: 5000,
-          });
-        } else if (result.emailVerification) {
-          setUnverifiedEmail(result.emailVerification.email);
-          if (result.emailVerification.isNewToken) {
-            setIsVerificationEmailSent(true);
-            toast({
-              title: 'Verification Required',
-              description:
-                'Please check your inbox for the verification email.',
-              duration: 5000,
-            });
-          }
-        } else if (result.success) {
-          toast({
-            title: 'Welcome Back!',
-            description: 'Successfully logged in to your account.',
-            duration: 3000,
-          });
-          router.refresh();
-          router.push('/');
-        }
-      } catch (error) {
-        console.error('Login error:', error);
-        toast({
-          variant: 'destructive',
-          title: 'Login Failed',
-          description: 'An unexpected error occurred. Please try again.',
-          duration: 5000,
-        });
+      if (result.error) {
+        handleLoginError(result.error);
+      } else if (result.emailVerification) {
+        handleEmailVerification(result.emailVerification);
+      } else if (result.success) {
+        handleLoginSuccess();
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description: 'An unexpected error occurred. Please try again.',
+        duration: 5000,
+      });
+    }
+  }
+
+  function handleLoginError(error: string) {
+    setError(error);
+    setShake(true);
+    if (error.includes('Incorrect username or password')) {
+      setErrorFields({ username: true, password: true });
+    }
+    toast({
+      variant: 'destructive',
+      title: 'Login Failed',
+      description: (
+        <div className="flex items-center gap-2">
+          <XCircle className="h-4 w-4" />
+          {error}
+        </div>
+      ),
+      duration: 5000,
     });
   }
 
+  function handleEmailVerification(emailVerification: {
+    email: string;
+    isNewToken: boolean;
+  }) {
+    setUnverifiedEmail(emailVerification.email);
+    if (emailVerification.isNewToken) {
+      setIsVerificationEmailSent(true);
+      toast({
+        title: 'Verification Required',
+        description: 'Please check your inbox for the verification email.',
+        duration: 5000,
+      });
+    }
+  }
+
+  function handleLoginSuccess() {
+    toast({
+      title: 'Welcome Back!',
+      description: 'Successfully logged in to your account.',
+      duration: 3000,
+    });
+    router.refresh();
+    router.push('/');
+  }
+
   const handleResendVerification = async () => {
-    if (!unverifiedEmail) return;
+    if (!unverifiedEmail) {
+      return;
+    }
 
     try {
       const result = await resendVerificationEmail(unverifiedEmail);

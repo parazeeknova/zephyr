@@ -1,6 +1,6 @@
 import { LoadingButton } from '@/components/Auth/LoadingButton';
-import { useToast } from '@/hooks/use-toast';
 import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';

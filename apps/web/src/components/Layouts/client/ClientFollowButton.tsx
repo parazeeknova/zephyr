@@ -1,20 +1,20 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
 import {
   useFollowUserMutation,
   useUnfollowUserMutation,
 } from '@/hooks/userMutations';
 import { cn } from '@/lib/utils';
-import { followStateAtom } from '@/state/followState';
 import { useQueryClient } from '@tanstack/react-query';
 import { debugLog } from '@zephyr/config/debug';
 import type { FollowerInfo } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAtom } from 'jotai/react';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { followStateAtom } from './followState';
 
 interface ClientFollowButtonProps {
   userId: string;
@@ -28,7 +28,7 @@ interface ClientFollowButtonProps {
 
 const LoadingPulse = () => (
   <div className="flex items-center justify-center space-x-1">
-    {[...Array(3)].map((_, i) => (
+    {[...new Array(3)].map((_, i) => (
       <motion.div
         key={i}
         className="h-1.5 w-1.5 rounded-full bg-current"
@@ -57,6 +57,7 @@ const ButtonContent = ({
 }) => (
   <AnimatePresence mode="wait">
     <motion.div
+      // biome-ignore lint/nursery/noNestedTernary: This is a valid use case
       key={isLoading ? 'loading' : isFollowing ? 'following' : 'follow'}
       initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}

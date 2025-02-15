@@ -19,7 +19,7 @@ export function useMentionedUsers() {
       }
       return res.json();
     },
-    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+    staleTime: 1000 * 60 * 5,
   });
 
   return {

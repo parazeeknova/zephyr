@@ -6,6 +6,7 @@ import {
 } from '@zephyr/db';
 import { NextResponse } from 'next/server';
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex logic is required here
 async function syncViewCounts() {
   const logs: string[] = [];
   const startTime = Date.now();
@@ -84,7 +85,9 @@ async function syncViewCounts() {
       });
 
       const batchResults = await pipeline.exec();
-      if (!batchResults) continue;
+      if (!batchResults) {
+        continue;
+      }
 
       batch.forEach((postId, index) => {
         const [error, value] = batchResults[index] || [];

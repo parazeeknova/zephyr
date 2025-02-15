@@ -39,7 +39,9 @@ const AURA_REWARDS = {
 type AttachmentType = 'IMAGE' | 'VIDEO' | 'AUDIO' | 'CODE';
 
 async function calculateAuraReward(mediaIds: string[]) {
-  if (!mediaIds.length) return AURA_REWARDS.BASE_POST;
+  if (!mediaIds.length) {
+    return AURA_REWARDS.BASE_POST;
+  }
 
   const mediaItems = await prisma.media.findMany({
     where: { id: { in: mediaIds } },
@@ -78,9 +80,10 @@ async function calculateAuraReward(mediaIds: string[]) {
 export async function submitPost(input: CreatePostInput) {
   try {
     const { user } = await validateRequest();
-    if (!user) throw new Error('Unauthorized');
+    if (!user) {
+      throw new Error('Unauthorized');
+    }
 
-    // Validate input
     const validatedInput = createPostSchema.parse({
       content: input.content,
       mediaIds: input.mediaIds || [],
@@ -91,7 +94,6 @@ export async function submitPost(input: CreatePostInput) {
     const auraReward = await calculateAuraReward(validatedInput.mediaIds);
 
     const newPost = await prisma.$transaction(async (tx) => {
-      // First, verify all mentioned users exist
       if (validatedInput.mentions.length > 0) {
         const validUsers = await tx.user.findMany({
           where: {
@@ -210,15 +212,21 @@ export async function getPostViews(postId: string) {
 
 export async function updatePostTags(postId: string, tags: string[]) {
   const { user } = await validateRequest();
-  if (!user) throw Error('Unauthorized');
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
 
   const post = await prisma.post.findUnique({
     where: { id: postId },
     include: { tags: true },
   });
 
-  if (!post) throw Error('Post not found');
-  if (post.userId !== user.id) throw Error('Unauthorized');
+  if (!post) {
+    throw new Error('Post not found');
+  }
+  if (post.userId !== user.id) {
+    throw new Error('Unauthorized');
+  }
 
   const oldTags = post.tags.map((t) => t.name);
   const tagsToAdd = tags.filter((t) => !oldTags.includes(t));
@@ -251,15 +259,21 @@ export async function updatePostTags(postId: string, tags: string[]) {
 export async function updatePostMentions(postId: string, mentions: string[]) {
   try {
     const { user } = await validateRequest();
-    if (!user) throw new Error('Unauthorized');
+    if (!user) {
+      throw new Error('Unauthorized');
+    }
 
     const post = await prisma.post.findUnique({
       where: { id: postId },
       include: { mentions: true },
     });
 
-    if (!post) throw new Error('Post not found');
-    if (post.userId !== user.id) throw new Error('Unauthorized');
+    if (!post) {
+      throw new Error('Post not found');
+    }
+    if (post.userId !== user.id) {
+      throw new Error('Unauthorized');
+    }
 
     return await prisma.$transaction(async (tx) => {
       await tx.mention.deleteMany({

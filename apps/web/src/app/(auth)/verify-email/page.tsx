@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@zephyr/ui/shadui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { XCircle } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -207,7 +207,7 @@ export default function VerifyEmailPage() {
     return () => {
       verificationChannel.close();
     };
-  }, [searchParams, router]);
+  }, [searchParams, router, verificationChannel]);
 
   const error = searchParams.get('error');
   const errorMessage = error

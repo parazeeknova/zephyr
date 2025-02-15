@@ -1,27 +1,27 @@
 'use client';
 
+import FollowButton, {
+  preloadFollowButton,
+} from '@/components/Layouts/FollowButton';
+import UserAvatar from '@/components/Layouts/UserAvatar';
 import UserTooltip from '@/components/Layouts/UserTooltip';
-import { Button } from '@/components/ui/button';
+import SuggestedConnectionsSkeleton from '@/components/Layouts/skeletons/SCSkeleton';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { toast } from '@/hooks/use-toast';
-import { getSuggestedConnections } from '@/state/UserActions';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import FollowButton, {
-  preloadFollowButton,
-} from '@zephyr-ui/Layouts/FollowButton';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
-import SuggestedConnectionsSkeleton from '@zephyr-ui/Layouts/skeletons/SCSkeleton';
+} from '@zephyr/ui/shadui/card';
 import { AnimatePresence, motion } from 'framer-motion';
 import { RefreshCw, UserRound, Users } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 import { useEffect, useState } from 'react';
+import { getSuggestedConnections } from './UserActions';
 
 interface SerializableUserData {
   followState: {
@@ -41,7 +41,6 @@ interface SerializableUserData {
 }
 
 const SuggestedConnections: React.FC = () => {
-  const _queryClient = useQueryClient();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
@@ -57,13 +56,15 @@ const SuggestedConnections: React.FC = () => {
     queryKey: ['suggested-connections'],
     queryFn: async () => {
       const result = await getSuggestedConnections();
-      if (result instanceof Error) throw result;
+      if (result instanceof Error) {
+        throw result;
+      }
 
       const followStates = await fetch('/api/users/follow-states', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userIds: result.map((user: { id: any }) => user.id),
+          userIds: result.map((user: { id: string }) => user.id),
         }),
       }).then((r) => r.json());
 

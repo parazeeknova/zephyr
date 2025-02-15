@@ -1,5 +1,11 @@
 'use client';
 
+import { LoadingButton } from '@/components/Auth/LoadingButton';
+import LinkAccountAlert from '@/components/Settings/LinkAccountAlert';
+import LinkedAccounts from '@/components/Settings/LinkedAccounts';
+import { zodResolver } from '@hookform/resolvers/zod';
+import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import {
   Form,
   FormControl,
@@ -7,15 +13,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { LoadingButton } from '@zephyr-ui/Auth/LoadingButton';
-import LinkAccountAlert from '@zephyr-ui/Settings/LinkAccountAlert';
-import LinkedAccounts from '@zephyr-ui/Settings/LinkedAccounts';
-import type { UserData } from '@zephyr/db';
+} from '@zephyr/ui/shadui/form';
+import { Input } from '@zephyr/ui/shadui/input';
+import { Separator } from '@zephyr/ui/shadui/separator';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';

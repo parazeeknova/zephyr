@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       key: upload.key,
       type: media.type,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Upload route error:', error);
     console.error({
       message: error.message,

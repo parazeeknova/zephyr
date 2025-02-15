@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Slider } from '@zephyr/ui/shadui/slider';
 import {
   Download,
   FlipHorizontal,

@@ -14,23 +14,19 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get('type');
     const cursor = searchParams.get('cursor');
 
-    // Handle suggestion requests
     if (type === 'suggestions') {
       const suggestions = await searchSuggestionsCache.getSuggestions(q);
       return Response.json(suggestions);
     }
 
-    // Handle history requests
     if (type === 'history') {
       const history = await searchSuggestionsCache.getHistory(user.id);
       return Response.json(history);
     }
 
-    // Handle regular search
     const searchQuery = q.split(' ').join(' & ');
     const pageSize = 10;
 
-    // Add to search history and suggestions if this is a search request
     if (q) {
       await Promise.all([
         searchSuggestionsCache.addToHistory(user.id, q),
@@ -105,10 +101,8 @@ export async function DELETE(req: NextRequest) {
     }
 
     if (query) {
-      // Remove specific history item
       await searchSuggestionsCache.removeHistoryItem(user.id, query);
     } else {
-      // Clear entire history
       await searchSuggestionsCache.clearHistory(user.id);
     }
 

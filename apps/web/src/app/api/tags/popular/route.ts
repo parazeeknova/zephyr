@@ -6,7 +6,7 @@ export async function GET() {
     const tags = await prisma.tag.findMany({
       where: {
         posts: {
-          some: {}, // Only get tags that have posts
+          some: {},
         },
       },
       select: {

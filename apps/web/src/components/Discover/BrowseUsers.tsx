@@ -1,21 +1,21 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import FollowButton from '@/components/Layouts/FollowButton';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import useDebounce from '@/hooks/useDebounce';
+import { formatNumber } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import type { UserData as BaseUserData } from '@zephyr/db';
+import { Card } from '@zephyr/ui/shadui/card';
+import { Input } from '@zephyr/ui/shadui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
-import useDebounce from '@/hooks/useDebounce';
-import { formatNumber } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
-import FollowButton from '@zephyr-ui/Layouts/FollowButton';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
-import type { UserData as BaseUserData } from '@zephyr/db';
+} from '@zephyr/ui/shadui/select';
+import { Skeleton } from '@zephyr/ui/shadui/skeleton';
 import { motion } from 'framer-motion';
 import { BadgeCheckIcon, Search, Users } from 'lucide-react';
 import Link from 'next/link';

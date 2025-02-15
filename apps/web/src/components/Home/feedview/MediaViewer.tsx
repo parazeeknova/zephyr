@@ -1,15 +1,15 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
+import { MediaViewerSkeleton } from '@/components/Layouts/skeletons/MediaViewerSkeleton';
 import { getLanguageFromFileName } from '@/lib/codefileExtensions';
 import { formatFileName } from '@/lib/formatFileName';
 import { cn } from '@/lib/utils';
 import type { Media } from '@prisma/client';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import fallbackImage from '@zephyr-assets/fallback.png';
-import { MediaViewerSkeleton } from '@zephyr-ui/Layouts/skeletons/MediaViewerSkeleton';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Dialog, DialogContent, DialogTitle } from '@zephyr/ui/shadui/dialog';
 import { ChevronLeft, ChevronRight, Download, FileIcon, X } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';

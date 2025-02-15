@@ -13,7 +13,6 @@ export async function POST() {
       );
     }
 
-    // Fetch full user data with email and hashedPassword
     const user = await prisma.user.findUnique({
       where: { id: sessionUser.id },
       select: {
@@ -33,7 +32,6 @@ export async function POST() {
       );
     }
 
-    // Check if user has an email before unlinking
     if (!user.email?.includes('@twitter.placeholder.com')) {
       return Response.json(
         { error: 'Cannot unlink: No email associated with account' },
@@ -43,7 +41,6 @@ export async function POST() {
       );
     }
 
-    // Check if this is the only auth method
     const hasPassword = !!user.passwordHash;
     if (!hasPassword) {
       return Response.json(
@@ -54,7 +51,6 @@ export async function POST() {
       );
     }
 
-    // Check if Twitter is actually linked
     if (!user.twitterId) {
       return Response.json(
         { error: 'Twitter account is not linked' },

@@ -5,6 +5,7 @@ import {
   prisma,
 } from '@zephyr/db';
 import type { NextRequest } from 'next/server';
+
 export async function GET(req: NextRequest) {
   try {
     const cursor = req.nextUrl.searchParams.get('cursor') || undefined;

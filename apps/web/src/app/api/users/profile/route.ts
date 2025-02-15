@@ -11,7 +11,8 @@ export async function POST(request: Request) {
     const userId = formData.get('userId') as string;
     const oldAvatarKey = formData.get('oldAvatarKey') as string;
 
-    // biome-ignore lint/suspicious/noImplicitAnyLet: need to use let here
+    // biome-ignore lint/suspicious/noImplicitAnyLet: This is safe because we validate the value above
+    // biome-ignore lint/suspicious/noEvolvingTypes: This is safe because we validate the value above
     let avatarResult;
     if (avatar) {
       avatarResult = await uploadAvatar(avatar, userId);

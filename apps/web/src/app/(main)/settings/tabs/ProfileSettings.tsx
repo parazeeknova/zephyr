@@ -1,5 +1,13 @@
 'use client';
 
+import { LoadingButton } from '@/components/Auth/LoadingButton';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  type UpdateUserProfileValues,
+  updateUserProfileSchema,
+} from '@zephyr/auth/validation';
+import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import {
   Form,
   FormControl,
@@ -7,17 +15,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { LoadingButton } from '@zephyr-ui/Auth/LoadingButton';
-import {
-  type UpdateUserProfileValues,
-  updateUserProfileSchema,
-} from '@zephyr/auth/validation';
-import type { UserData } from '@zephyr/db';
+} from '@zephyr/ui/shadui/form';
+import { Input } from '@zephyr/ui/shadui/input';
+import { Textarea } from '@zephyr/ui/shadui/textarea';
 import { motion } from 'framer-motion';
 import { UserCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';

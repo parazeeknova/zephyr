@@ -1,12 +1,12 @@
 'use client';
-import { Slider } from '@/components/ui/slider';
+import { cn } from '@/lib/utils';
+import { Slider } from '@zephyr/ui/shadui/slider';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
+} from '@zephyr/ui/shadui/tooltip';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   FastForward,

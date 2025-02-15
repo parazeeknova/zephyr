@@ -1,16 +1,21 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Post from '@/components/Home/feedview/postCard';
+import InfiniteScrollContainer from '@/components/Layouts/InfiniteScrollContainer';
+import LoadMoreSkeleton from '@/components/Layouts/skeletons/LoadMoreSkeleton';
+import PostsOnlyLoadingSkeleton from '@/components/Layouts/skeletons/PostOnlyLoadingSkeleton';
 import kyInstance from '@/lib/ky';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import Post from '@zephyr-ui/Home/feedview/postCard';
-import InfiniteScrollContainer from '@zephyr-ui/Layouts/InfiniteScrollContainer';
-import LoadMoreSkeleton from '@zephyr-ui/Layouts/skeletons/LoadMoreSkeleton';
-import PostsOnlyLoadingSkeleton from '@zephyr-ui/Layouts/skeletons/PostOnlyLoadingSkeleton';
 import type { HNStory as HNStoryType } from '@zephyr/aggregator/hackernews';
 import type { PostsPage } from '@zephyr/db';
-import { HNStory } from '@zephyr/ui';
+import { HNStory } from '@zephyr/ui/components';
+import { Card } from '@zephyr/ui/shadui/card';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@zephyr/ui/shadui/tabs';
 import { motion } from 'framer-motion';
 import { Newspaper, Terminal } from 'lucide-react';
 

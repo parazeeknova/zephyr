@@ -28,7 +28,9 @@ export async function GET(request: Request) {
     });
 
     const hasMore = bookmarks.length > limit;
-    if (hasMore) bookmarks.pop();
+    if (hasMore) {
+      bookmarks.pop();
+    }
 
     const stories = await Promise.all(
       bookmarks.map((bookmark) => hackerNewsAPI.fetchStory(bookmark.storyId))
@@ -38,9 +40,7 @@ export async function GET(request: Request) {
       JSON.stringify({
         stories: stories.filter(Boolean),
         nextCursor:
-          hasMore && bookmarks.length > 0
-            ? bookmarks[bookmarks.length - 1]?.id
-            : null,
+          hasMore && bookmarks.length > 0 ? bookmarks.at(-1)?.id : null,
       }),
       {
         headers: {

@@ -1,9 +1,9 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import EditProfileDialog from '@/components/Layouts/EditProfileDialog';
 import { cn } from '@/lib/utils';
-import EditProfileDialog from '@zephyr-ui/Layouts/EditProfileDialog';
 import type { UserData } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
 import { useState } from 'react';
 
 interface EditProfileButtonProps {

@@ -16,7 +16,9 @@ export function useTags(postId?: string) {
     queryKey: ['popularTags'],
     queryFn: async () => {
       const res = await fetch('/api/tags/popular');
-      if (!res.ok) return { tags: [] };
+      if (!res.ok) {
+        return { tags: [] };
+      }
       return res.json();
     },
   });
@@ -25,7 +27,9 @@ export function useTags(postId?: string) {
     queryKey: ['tagSuggestions'],
     queryFn: async () => {
       const res = await fetch('/api/tags');
-      if (!res.ok) return { tags: [] };
+      if (!res.ok) {
+        return { tags: [] };
+      }
       return res.json();
     },
     enabled: false,
@@ -38,7 +42,9 @@ export function useTags(postId?: string) {
         return;
       }
       const res = await fetch(`/api/tags?q=${encodeURIComponent(query)}`);
-      if (!res.ok) throw new Error('Failed to fetch tags');
+      if (!res.ok) {
+        throw new Error('Failed to fetch tags');
+      }
       const data = await res.json();
       queryClient.setQueryData(['tagSuggestions'], data);
       return data;
@@ -73,6 +79,7 @@ export function useTags(postId?: string) {
       const previousTags = queryClient.getQueryData(['post', postId]);
 
       if (postId) {
+        // biome-ignore lint/suspicious/noExplicitAny: any
         queryClient.setQueryData(['post', postId], (old: any) => ({
           ...old,
           tags: newTags.map((tag) => ({ id: tag, name: tag })),
@@ -82,8 +89,7 @@ export function useTags(postId?: string) {
       return { previousTags };
     },
 
-    // biome-ignore lint/correctness/noUnusedVariables: ignore
-    onError: (err, newTags, context) => {
+    onError: (context) => {
       if (postId && context?.previousTags) {
         queryClient.setQueryData(['post', postId], context.previousTags);
       }

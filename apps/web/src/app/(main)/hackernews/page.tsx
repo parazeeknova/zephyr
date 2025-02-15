@@ -1,4 +1,4 @@
-import FeedViewSkeleton from '@zephyr-ui/Layouts/skeletons/FeedViewSkeleton';
+import FeedViewSkeleton from '@/components/Layouts/skeletons/FeedViewSkeleton';
 import { HNFeed } from '@zephyr/ui/components';
 import { Suspense } from 'react';
 

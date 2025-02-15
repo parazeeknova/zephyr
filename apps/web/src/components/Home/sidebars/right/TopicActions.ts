@@ -53,7 +53,7 @@ export async function getTrendingTopics(): Promise<TrendingTopic[]> {
 
     if (cachedTopics && cachedTopics.length > 0) {
       if (await trendingTopicsCache.shouldRefresh()) {
-        void backgroundRefreshTopics();
+        backgroundRefreshTopics();
       }
       return cachedTopics;
     }

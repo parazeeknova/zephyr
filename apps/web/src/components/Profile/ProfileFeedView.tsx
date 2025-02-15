@@ -1,11 +1,16 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
 import { useQuery } from '@tanstack/react-query';
 import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Card } from '@zephyr/ui/shadui/card';
+import { Skeleton } from '@zephyr/ui/shadui/skeleton';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@zephyr/ui/shadui/tabs';
 import { motion } from 'framer-motion';
 import type React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';

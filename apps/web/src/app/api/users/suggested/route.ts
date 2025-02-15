@@ -1,15 +1,16 @@
 import { Prisma } from '@prisma/client';
 import { validateRequest } from '@zephyr/auth/auth';
 import { getUserDataSelect, prisma, redis } from '@zephyr/db';
+// biome-ignore lint/nursery/noExportedImports: This is a valid use case
 import type { UserData } from '@zephyr/db';
 
 const SUGGESTED_USERS_CACHE_KEY = (userId: string) =>
   `suggested-users:${userId}`;
-const CACHE_TTL = 300; // 5 minutes
+const CACHE_TTL = 300;
 
 const RECENTLY_SHOWN_CACHE_KEY = (userId: string) =>
   `recently-shown-users:${userId}`;
-const RECENTLY_SHOWN_TTL = 3600; // 1 hour
+const RECENTLY_SHOWN_TTL = 3600;
 
 export async function GET() {
   try {

@@ -1,6 +1,6 @@
-import NavigationCard from '@zephyr-ui/Home/sidebars/left/NavigationCard';
-import SuggestedConnections from '@zephyr-ui/Home/sidebars/right/SuggestedConnections';
-import StickyFooter from '@zephyr-ui/Layouts/StinkyFooter';
+import NavigationCard from '@/components/Home/sidebars/left/NavigationCard';
+import SuggestedConnections from '@/components/Home/sidebars/right/SuggestedConnections';
+import StickyFooter from '@/components/Layouts/StinkyFooter';
 
 const ChatSkeleton = () => {
   return (

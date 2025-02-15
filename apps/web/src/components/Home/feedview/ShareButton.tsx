@@ -1,15 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import {
   Facebook,
@@ -21,6 +11,21 @@ import {
   WhatsApp,
 } from '@mui/icons-material';
 import { DiscordLogoIcon } from '@radix-ui/react-icons';
+import { Button } from '@zephyr/ui/shadui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@zephyr/ui/shadui/dialog';
+import { Input } from '@zephyr/ui/shadui/input';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@zephyr/ui/shadui/tabs';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Copy, Download, Mail, Share2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';

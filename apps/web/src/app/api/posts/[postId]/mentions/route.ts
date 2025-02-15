@@ -2,11 +2,7 @@ import { NotificationType } from '@prisma/client';
 import { validateRequest } from '@zephyr/auth/auth';
 import { prisma } from '@zephyr/db';
 
-export async function GET(
-  // biome-ignore lint/correctness/noUnusedVariables: ignore
-  request: Request,
-  { params }: { params: { postId: string } }
-) {
+export async function GET({ params }: { params: { postId: string } }) {
   try {
     const { user } = await validateRequest();
     if (!user) {
@@ -61,14 +57,11 @@ export async function POST(
       return Response.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    // Start a transaction to handle mentions and notifications
     await prisma.$transaction(async (tx) => {
-      // Remove existing mentions
       await tx.mention.deleteMany({
         where: { postId: params.postId },
       });
 
-      // Create new mentions
       const mentionPromises = mentions.map((userId: string) =>
         tx.mention.create({
           data: {
@@ -78,7 +71,6 @@ export async function POST(
         })
       );
 
-      // Create notifications for newly mentioned users
       const notificationPromises = mentions.map((userId: string) =>
         tx.notification.create({
           data: {

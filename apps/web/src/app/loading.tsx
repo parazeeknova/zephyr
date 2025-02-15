@@ -1,7 +1,7 @@
 'use client';
 
 import { getRandomFact } from '@/components/Constants/loading-facts';
-import { Button } from '@/components/ui/button';
+import { Button } from '@zephyr/ui/shadui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Home } from 'lucide-react';
 import Link from 'next/link';

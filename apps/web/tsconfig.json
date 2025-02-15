@@ -4,8 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@zephyr-ui/*": ["./src/components/*"],
-      "@zephyr-assets/*": ["./src/app/assets/*"]
+      "@assets/*": ["./assets/*"]
     }
   },
   "include": [
@@ -13,6 +12,10 @@
     "next.config.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    "./assets/**/*",
+    ".next/types/**/*.ts",
+    "../../packages/ui/meta/site.ts",
+    "../../packages/ui/meta/icons.ts",
+    "../../packages/ui/meta/colors.ts"
   ]
 }

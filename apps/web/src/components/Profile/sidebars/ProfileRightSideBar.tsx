@@ -1,7 +1,7 @@
 'use client';
 
-import UserDetails from '@zephyr-ui/Profile/sidebars/right/UserDetails';
-import ContributeCard from '@zephyr-ui/misc/ContributionCard';
+import UserDetails from '@/components/Profile/sidebars/right/UserDetails';
+import ContributeCard from '@/components/misc/ContributionCard';
 import type { UserData } from '@zephyr/db';
 import type React from 'react';
 

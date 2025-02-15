@@ -1,12 +1,12 @@
+import PostCard from '@/components/Home/feedview/postCard';
+import NavigationCard from '@/components/Home/sidebars/left/NavigationCard';
+import ProfileCard from '@/components/Home/sidebars/right/ProfileCard';
+import FollowButton from '@/components/Layouts/FollowButton';
+import StickyFooter from '@/components/Layouts/StinkyFooter';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import UserTooltip from '@/components/Layouts/UserTooltip';
 import Linkify from '@/helpers/global/Linkify';
 import { getUserData } from '@/hooks/useUserData';
-import PostCard from '@zephyr-ui/Home/feedview/postCard';
-import NavigationCard from '@zephyr-ui/Home/sidebars/left/NavigationCard';
-import ProfileCard from '@zephyr-ui/Home/sidebars/right/ProfileCard';
-import FollowButton from '@zephyr-ui/Layouts/FollowButton';
-import StickyFooter from '@zephyr-ui/Layouts/StinkyFooter';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
-import UserTooltip from '@zephyr-ui/Layouts/UserTooltip';
 import { validateRequest } from '@zephyr/auth/auth';
 import { type UserData, getPostDataInclude, prisma } from '@zephyr/db';
 import { Loader2 } from 'lucide-react';
@@ -26,7 +26,9 @@ const getPost = cache(async (postId: string, loggedInUser: string) => {
     include: getPostDataInclude(loggedInUser),
   });
 
-  if (!post) notFound();
+  if (!post) {
+    notFound();
+  }
 
   return post;
 });
@@ -35,7 +37,9 @@ export async function generateMetadata(props: PageProps) {
   const params = await props.params;
   const { postId } = params;
   const { user } = await validateRequest();
-  if (!user) return {};
+  if (!user) {
+    return {};
+  }
   const post = await getPost(postId, user.id);
 
   return {
@@ -101,7 +105,9 @@ interface UserInfoSidebarProps {
 async function UserInfoSidebar({ user }: UserInfoSidebarProps) {
   const { user: loggedInUser } = await validateRequest();
 
-  if (!loggedInUser) return null;
+  if (!loggedInUser) {
+    return null;
+  }
 
   return (
     <div className="space-y-5 rounded-2xl border border-border bg-card p-5 shadow-sm">

@@ -7,6 +7,7 @@ import { generateIdFromEntropySize } from 'lucia';
 import { cookies } from 'next/headers';
 import type { NextRequest } from 'next/server';
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex logic is required here
 export async function GET(req: NextRequest) {
   try {
     const code = req.nextUrl.searchParams.get('code');
@@ -26,6 +27,7 @@ export async function GET(req: NextRequest) {
     }
 
     // biome-ignore lint/suspicious/noImplicitAnyLet: this is a third-party library
+    // biome-ignore lint/suspicious/noEvolvingTypes: this is a third-party library
     let tokenResponse;
     try {
       tokenResponse = await google.validateAuthorizationCode(

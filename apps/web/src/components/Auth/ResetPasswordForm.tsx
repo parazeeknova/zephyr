@@ -1,16 +1,10 @@
 'use client';
 
 import { requestPasswordReset } from '@/app/(auth)/reset-password/server-actions';
-import { useToast } from '@/hooks/use-toast';
+// @ts-expect-error - no types
+import resetImage from '@assets/auth/password-reset-image.jpg';
 import { zodResolver } from '@hookform/resolvers/zod';
-import resetImage from '@zephyr-assets/password-reset-image.jpg';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, KeyRound, Mail } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import {
   Form,
   FormControl,
@@ -18,8 +12,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { Input } from '../ui/input';
+} from '@zephyr/ui/shadui/form';
+import { Input } from '@zephyr/ui/shadui/input';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowLeft, KeyRound, Mail } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { LoadingButton } from './LoadingButton';
 
 const schema = z.object({
@@ -28,7 +29,6 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-// Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -77,42 +77,41 @@ export default function ResetPasswordForm() {
   });
 
   async function onSubmit(values: FormValues) {
-    startTransition(async () => {
-      try {
-        const result = await requestPasswordReset(values);
+    startTransition(() => {
+      (async () => {
+        try {
+          const result = await requestPasswordReset(values);
 
-        if (result.error) {
+          if (result.error) {
+            toast({
+              variant: 'destructive',
+              title: 'Error',
+              description: result.error,
+            });
+            return;
+          }
+
+          setIsEmailSent(true);
+          toast({
+            title: 'Check Your Email',
+            description:
+              "If an account exists, you'll receive password reset instructions.",
+          });
+        } catch (_error) {
           toast({
             variant: 'destructive',
             title: 'Error',
-            description: result.error,
+            description: 'Failed to send reset email. Please try again.',
           });
-          return;
         }
-
-        setIsEmailSent(true);
-        toast({
-          title: 'Check Your Email',
-          description:
-            "If an account exists, you'll receive password reset instructions.",
-        });
-      } catch (_error) {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Failed to send reset email. Please try again.',
-        });
-      }
+      })();
     });
   }
 
   const ResetAnimation = () => {
     return (
-      // @ts-expect-error
       <motion.div className="relative mx-auto mb-8 h-24 w-24">
-        {/* Outer rotating circle */}
         <motion.div
-          // @ts-expect-error
           className="absolute inset-0 rounded-full border-4 border-blue-400/20"
           animate={{
             rotate: 360,
@@ -124,9 +123,7 @@ export default function ResetPasswordForm() {
           }}
         />
 
-        {/* Inner rotating circle */}
         <motion.div
-          // @ts-expect-error
           className="absolute inset-2 rounded-full border-4 border-blue-400/30"
           animate={{
             rotate: -360,
@@ -138,9 +135,7 @@ export default function ResetPasswordForm() {
           }}
         />
 
-        {/* Center icon */}
         <motion.div
-          // @ts-expect-error
           className="absolute inset-0 flex items-center justify-center"
           animate={{
             scale: [1, 1.1, 1],
@@ -157,11 +152,9 @@ export default function ResetPasswordForm() {
           </div>
         </motion.div>
 
-        {/* Floating particles */}
-        {[...Array(3)].map((_, i) => (
+        {[...new Array(3)].map((_, i) => (
           <motion.div
             key={i}
-            // @ts-expect-error
             className="absolute h-2 w-2 rounded-full bg-blue-400"
             initial={{ scale: 0, x: 0, y: 0 }}
             animate={{
@@ -185,18 +178,13 @@ export default function ResetPasswordForm() {
   return (
     <AnimatePresence>
       <motion.div
-        // @ts-expect-error
         className="relative flex min-h-screen overflow-hidden bg-background"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
-        {/* Background gradient overlay - updated with blue */}
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-blue-400/5 via-background to-background/95" />
-
-        {/* Reset Text - updated color */}
         <motion.div
-          // @ts-expect-error
           className="absolute right-20 hidden h-full items-center md:flex"
           variants={itemVariants}
         >
@@ -216,7 +204,6 @@ export default function ResetPasswordForm() {
 
         <div className="relative z-10 flex flex-1 items-center justify-center p-4 sm:p-8">
           <motion.div
-            // @ts-expect-error
             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-card/40 shadow-2xl backdrop-blur-xl lg:flex-row"
             variants={itemVariants}
             whileHover={{
@@ -226,7 +213,6 @@ export default function ResetPasswordForm() {
             <div className="relative z-10 flex w-full flex-col justify-center px-6 py-12 sm:px-8 lg:w-1/2">
               <motion.div
                 variants={itemVariants}
-                // @ts-expect-error
                 className="mx-auto w-full max-w-sm"
               >
                 <Link
@@ -237,11 +223,9 @@ export default function ResetPasswordForm() {
                   Back to login
                 </Link>
 
-                {/* Add the reset animation here */}
                 <ResetAnimation />
 
                 <motion.h2
-                  // @ts-expect-error
                   className="mb-6 text-center font-bold text-3xl text-blue-400 sm:text-4xl"
                   variants={itemVariants}
                 >
@@ -255,11 +239,9 @@ export default function ResetPasswordForm() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
-                      // @ts-expect-error
                       className="text-center"
                     >
                       <motion.div
-                        // @ts-expect-error
                         className="mb-6 inline-block"
                         variants={floatAnimation}
                         initial="initial"
@@ -326,16 +308,13 @@ export default function ResetPasswordForm() {
               </motion.div>
             </div>
 
-            {/* Image section with blue overlay */}
             <motion.div
-              // @ts-expect-error
               className="relative min-h-[200px] w-full bg-blue-400/80 lg:min-h-[600px] lg:w-1/2"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
             >
               <motion.div
-                // @ts-expect-error
                 className="absolute inset-0 bg-gradient-to-b from-transparent to-blue-400/20"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -353,9 +332,7 @@ export default function ResetPasswordForm() {
           </motion.div>
         </div>
 
-        {/* Background image with blue tint */}
         <motion.div
-          // @ts-expect-error
           className="absolute top-0 left-0 h-full w-full bg-center bg-cover opacity-5 blur-md lg:w-1/2"
           style={{
             backgroundImage: `url(${resetImage.src})`,

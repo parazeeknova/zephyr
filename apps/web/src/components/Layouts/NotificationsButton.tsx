@@ -1,7 +1,7 @@
 'use client';
+import { HeaderIconButton } from '@/components/Styles/HeaderButtons';
 import kyInstance from '@/lib/ky';
 import { useQuery } from '@tanstack/react-query';
-import { HeaderIconButton } from '@zephyr-ui/Styles/HeaderButtons';
 import type { NotificationCountInfo } from '@zephyr/db';
 import { Bell } from 'lucide-react';
 

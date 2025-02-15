@@ -1,15 +1,15 @@
 import { MentionTags } from '@/components/Tags/MentionTags';
 import { Tags as TagsComponent } from '@/components/Tags/Tags';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import type { PostData, TagWithCount, UserData } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Dialog, DialogContent, DialogTitle } from '@zephyr/ui/shadui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import type { PostData, TagWithCount, UserData } from '@zephyr/db';
+} from '@zephyr/ui/shadui/dropdown-menu';
 import { AtSign, MoreHorizontal, Tags, Trash2 } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import DeletePostDialog from './DeletePostDialog';

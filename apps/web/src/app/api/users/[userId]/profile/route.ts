@@ -1,14 +1,12 @@
-import type { NextRequest } from 'next/server';
-
 import { validateRequest } from '@zephyr/auth/auth';
 import { getUserDataSelect, prisma } from '@zephyr/db';
+import type { NextRequest } from 'next/server';
 
 export async function GET(
   _req: NextRequest,
   props: { params: Promise<{ userId: string }> }
 ) {
   const params = await props.params;
-
   const { userId } = params;
 
   console.log('API route hit for userId:', userId);

@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 
 const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || 'uploads';
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex logic is required here
 async function cleanupUnusedMedia() {
   const logs: string[] = [];
   const startTime = Date.now();

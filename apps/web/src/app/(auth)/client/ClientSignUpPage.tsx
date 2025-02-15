@@ -1,9 +1,11 @@
 'use client';
 
 import AnimatedAuthLink from '@/components/Auth/AnimatedAuthLink';
-import loginImage from '@zephyr-assets/previews/login.png';
-import signupImage from '@zephyr-assets/signup-image.jpg';
-import SignUpForm from '@zephyr-ui/Auth/SignUpForm';
+import SignUpForm from '@/components/Auth/SignUpForm';
+// @ts-expect-error - no types for images
+import signupImage from '@assets/auth/signup-image.jpg';
+// @ts-expect-error - no types for images
+import loginImage from '@assets/previews/login.png';
 import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 

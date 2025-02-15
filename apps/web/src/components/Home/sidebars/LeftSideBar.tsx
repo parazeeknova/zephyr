@@ -4,8 +4,8 @@ import { Menu } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
-import ContributeCard from '@zephyr-ui/misc/ContributionCard';
+import ContributeCard from '@/components/misc/ContributionCard';
+import { Button } from '@zephyr/ui/shadui/button';
 import Friends from './left/Friends';
 import NavigationCard from './left/NavigationCard';
 

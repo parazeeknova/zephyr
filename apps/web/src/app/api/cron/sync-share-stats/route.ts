@@ -32,6 +32,7 @@ const SUPPORTED_PLATFORMS: Platform[] = [
   'qr',
 ];
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex logic is required here
 async function syncShareStats() {
   const logs: string[] = [];
   const startTime = Date.now();

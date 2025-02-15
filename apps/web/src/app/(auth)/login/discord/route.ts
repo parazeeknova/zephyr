@@ -13,6 +13,7 @@ export async function GET() {
     sameSite: 'lax',
   });
 
+  // @ts-expect-error - will be fixed in a future PR
   const url = await discord.createAuthorizationURL(state, [
     'identify',
     'email',

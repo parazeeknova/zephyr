@@ -11,9 +11,13 @@ export function useMentions(postId?: string) {
   const { data: mentions } = useQuery<MentionsResponse>({
     queryKey: ['mentions', postId],
     queryFn: async () => {
-      if (!postId) return { mentions: [] };
+      if (!postId) {
+        return { mentions: [] };
+      }
       const res = await fetch(`/api/posts/${postId}/mentions`);
-      if (!res.ok) return { mentions: [] };
+      if (!res.ok) {
+        return { mentions: [] };
+      }
       return res.json();
     },
     enabled: !!postId,
@@ -50,8 +54,7 @@ export function useMentions(postId?: string) {
       return { previousMentions };
     },
 
-    // biome-ignore lint/correctness/noUnusedVariables: ignore
-    onError: (err, newMentions, context) => {
+    onError: (context) => {
       if (postId && context?.previousMentions) {
         queryClient.setQueryData(
           ['mentions', postId],

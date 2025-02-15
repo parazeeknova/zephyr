@@ -41,7 +41,9 @@ export async function POST(
         select: { userId: true },
       });
 
-      if (!post) throw new Error('Post not found');
+      if (!post) {
+        throw new Error('Post not found');
+      }
 
       await tx.user.update({
         where: { id: user.id },

@@ -9,6 +9,7 @@ import type { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This function is complex by nature
 export async function GET(req: NextRequest) {
   try {
     const code = req.nextUrl.searchParams.get('code');
