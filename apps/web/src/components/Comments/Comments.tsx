@@ -2,7 +2,7 @@ import CommentsSkeleton from '@/components/Layouts/skeletons/CommentsSkeleton';
 import kyInstance from '@/lib/ky';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import type { CommentsPage, PostData } from '@zephyr/db';
-import { Button } from '../ui/button';
+import { Button } from '@zephyr/ui/shadui/button';
 import Comment from './Comment';
 import CommentInput from './CommentInput';
 

@@ -4,7 +4,7 @@ import * as React from "react"
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"
-import { cn } from "@zephyr/lib/utils"
+import { cn } from "../lib/utils"
 import { Button } from "@zephyr/ui/shadui/button"
 import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons"
 

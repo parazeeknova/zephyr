@@ -12,7 +12,7 @@ import {
   useFormContext,
 } from "react-hook-form"
 
-import { cn } from "@zephyr/lib/utils"
+import { cn } from "../lib/utils"
 import { Label } from "@zephyr/ui/shadui/label"
 
 const Form = FormProvider

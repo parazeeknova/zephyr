@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "@zephyr/lib/utils"
+import { cn } from "../lib/utils"
 import { ButtonProps, buttonVariants } from "@zephyr/ui/shadui/button"
 import { ChevronLeftIcon, ChevronRightIcon, DotsHorizontalIcon } from "@radix-ui/react-icons"
 

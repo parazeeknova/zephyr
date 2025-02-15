@@ -13,9 +13,6 @@
     "**/*.ts",
     "**/*.tsx",
     "./assets/**/*",
-    ".next/types/**/*.ts",
-    "../../packages/ui/meta/site.ts",
-    "../../packages/ui/meta/icons.ts",
-    "../../packages/ui/meta/colors.ts"
+    ".next/types/**/*.ts"
   ]
 }

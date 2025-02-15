@@ -4,13 +4,13 @@ import useDebounce from '@/hooks/useDebounce';
 import kyInstance from '@/lib/ky';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { SearchSuggestion } from '@zephyr/db';
+import { Input } from '@zephyr/ui/shadui/input';
 import { SearchIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import type React from 'react';
 import { SearchCommandList } from '../Search/SearchCommandList';
 import { searchMutations } from '../Search/mutations';
-import { Input } from '../ui/input';
 
 export default function SearchField() {
   const router = useRouter();

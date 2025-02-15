@@ -2,9 +2,9 @@
 
 import { ErrorBoundary } from '@/components/misc/ErrorBoundary';
 import { debugLog } from '@zephyr/config/debug';
+import { Button } from '@zephyr/ui/shadui/button';
 import dynamic from 'next/dynamic';
 import type React from 'react';
-import { Button } from '../ui/button';
 
 const ClientFollowButton = dynamic(
   () => import('./client/ClientFollowButton'),

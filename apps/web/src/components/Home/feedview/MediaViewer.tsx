@@ -4,9 +4,9 @@ import { MediaViewerSkeleton } from '@/components/Layouts/skeletons/MediaViewerS
 import { getLanguageFromFileName } from '@/lib/codefileExtensions';
 import { formatFileName } from '@/lib/formatFileName';
 import { cn } from '@/lib/utils';
+import fallbackImage from '@assets/fallbacks/fallback.png';
 import type { Media } from '@prisma/client';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import fallbackImage from '@zephyr-assets/fallback.png';
 import { useToast } from '@zephyr/ui/hooks/use-toast';
 import { Button } from '@zephyr/ui/shadui/button';
 import { Dialog, DialogContent, DialogTitle } from '@zephyr/ui/shadui/dialog';

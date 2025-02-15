@@ -3,8 +3,15 @@
 import SearchField from '@/components/Layouts/SearchField';
 import UserButton from '@/components/Layouts/UserButton';
 import { cn } from '@/lib/utils';
+import { Cover } from '@zephyr/ui/components/ui/cover';
 import { Badge } from '@zephyr/ui/shadui/badge';
-import { Cover } from '@zephyr/ui/shadui/cover';
+import { Button } from '@zephyr/ui/shadui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@zephyr/ui/shadui/dropdown-menu';
 import { motion } from 'framer-motion';
 import {
   Bookmark,
@@ -20,13 +27,6 @@ import { usePathname } from 'next/navigation';
 import type React from 'react';
 import MessagesButton from '../Messages/MessagesButton';
 import { HeaderIconButton } from '../Styles/HeaderButtons';
-import { Button } from '../ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
 import NotificationsButton from './NotificationsButton';
 
 interface HeaderProps {

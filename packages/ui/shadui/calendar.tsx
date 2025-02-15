@@ -3,7 +3,7 @@
 import * as React from "react"
 import { DayPicker } from "react-day-picker"
 
-import { cn } from "@zephyr/lib/utils"
+import { cn } from "../lib/utils"
 import { buttonVariants } from "@zephyr/ui/shadui/button"
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons"
 

@@ -1,6 +1,6 @@
 import LoadingButton from '@/components/Auth/LoadingButton';
 import type { CommentData } from '@zephyr/db';
-import { Button } from '../ui/button';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../ui/dialog';
+} from '@zephyr/ui/shadui/dialog';
 import { useDeleteCommentMutation } from './mutations';
 
 interface DeleteCommentDialogProps {

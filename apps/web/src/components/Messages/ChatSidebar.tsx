@@ -1,6 +1,7 @@
 import { useSession } from '@/app/(main)/SessionProvider';
 import { cn } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '@zephyr/ui/shadui/button';
 import { MailPlus, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import type { ChannelSort } from 'stream-chat';
@@ -11,7 +12,6 @@ import {
   type DefaultStreamChatGenerics,
   useChatContext,
 } from 'stream-chat-react';
-import { Button } from '../ui/button';
 import NewChatDialog from './NewChatDialog';
 
 interface ChatSidebarProps {

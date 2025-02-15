@@ -3,6 +3,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import type { PostData } from '@zephyr/db';
 import { Card, CardContent } from '@zephyr/ui/shadui/card';
+import { Separator } from '@zephyr/ui/shadui/separator';
 import {
   Tabs,
   TabsContent,
@@ -11,7 +12,6 @@ import {
 } from '@zephyr/ui/shadui/tabs';
 import { motion } from 'framer-motion';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Separator } from '../ui/separator';
 import PostCard from './feedview/postCard';
 
 interface FeedViewProps {

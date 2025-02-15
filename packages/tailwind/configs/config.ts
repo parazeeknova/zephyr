@@ -1,12 +1,11 @@
 import typography from '@tailwindcss/typography';
+// @ts-expect-error
 import type { Config } from 'tailwindcss';
 import * as animate from 'tailwindcss-animate';
 import * as colors from 'tailwindcss/colors';
-import { fontFamily } from 'tailwindcss/defaultTheme';
-import typographyConfig from './typography.config';
 
 export const config: Config = {
-  darkMode: ['class'],
+  darkMode: 'class',
   content: [],
   theme: {
     extend: {
@@ -72,11 +71,11 @@ export const config: Config = {
           '900': '#7c2d12',
           '950': '#431407',
         },
-        gray: colors.neutral,
-        green: colors.emerald,
+        gray: colors.default.neutral,
+        green: colors.default.emerald,
       },
       fontFamily: {
-        sans: ['var(--font-sans)', ...fontFamily.sans],
+        sans: ['var(--font-sans)', 'sans-serif'],
         custom: ['SofiaProReg', 'sans-serif'],
         sofiaProSoft: ['SofiaProReg', 'sans-serif'],
         sofiaProSoftMed: ['SofiaProMed', 'sans-serif'],
@@ -106,7 +105,6 @@ export const config: Config = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         shimmer: 'shimmer 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
-      typography: typographyConfig,
     },
   },
   plugins: [animate, typography],

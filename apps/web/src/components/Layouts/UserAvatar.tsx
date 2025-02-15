@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import avatarPlaceholder from '@zephyr-assets/avatar-placeholder.png';
+import avatarPlaceholder from '@assets/general/avatar-placeholder.png';
 import type { UserData } from '@zephyr/db';
 import Image from 'next/image';
 
