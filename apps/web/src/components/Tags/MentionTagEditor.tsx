@@ -44,15 +44,15 @@ const containerVariants = {
 interface MentionTagEditorProps {
   postId?: string;
   initialMentions: UserData[];
-  onClose: () => void;
-  onMentionsUpdate: (mentions: UserData[]) => void;
+  onCloseAction: () => void;
+  onMentionsUpdateAction: (mentions: UserData[]) => void;
 }
 
 export function MentionTagEditor({
   postId,
   initialMentions,
-  onClose,
-  onMentionsUpdate,
+  onCloseAction,
+  onMentionsUpdateAction,
 }: MentionTagEditorProps) {
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +73,9 @@ export function MentionTagEditor({
       const res = await fetch(
         `/api/users/search?q=${encodeURIComponent(query)}`
       );
-      if (!res.ok) throw new Error('Failed to search users');
+      if (!res.ok) {
+        throw new Error('Failed to search users');
+      }
       const data = await res.json();
       setSuggestions(data.users);
     } catch (error) {
@@ -101,7 +103,7 @@ export function MentionTagEditor({
     if (!selectedMentions.some((m) => m.id === user.id)) {
       const newMentions = [...selectedMentions, user];
       setSelectedMentions(newMentions);
-      onMentionsUpdate(newMentions);
+      onMentionsUpdateAction(newMentions);
     }
     setSearch('');
   };
@@ -109,13 +111,13 @@ export function MentionTagEditor({
   const handleRemove = (userId: string) => {
     const newMentions = selectedMentions.filter((m) => m.id !== userId);
     setSelectedMentions(newMentions);
-    onMentionsUpdate(newMentions);
+    onMentionsUpdateAction(newMentions);
   };
 
   const handleSave = async () => {
     try {
-      onMentionsUpdate(selectedMentions);
-      onClose();
+      onMentionsUpdateAction(selectedMentions);
+      onCloseAction();
 
       await updateMentions.mutateAsync(selectedMentions.map((m) => m.id));
       // biome-ignore lint/correctness/noUnusedVariables: ignore
@@ -211,7 +213,7 @@ export function MentionTagEditor({
         <div className="flex justify-end gap-2 pt-2">
           <Button
             variant="ghost"
-            onClick={onClose}
+            onClick={onCloseAction}
             className="hover:bg-destructive/10 hover:text-destructive"
           >
             Cancel

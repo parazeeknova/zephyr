@@ -1,7 +1,6 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-
+import LoadingButton from '@/components/Auth/LoadingButton';
 import { useUnfollowUserMutation } from '@/hooks/userMutations';
+import { useQueryClient } from '@tanstack/react-query';
 import type { UserData } from '@zephyr/db';
 import { Button } from '@zephyr/ui/shadui/button';
 import {
@@ -12,8 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@zephyr/ui/shadui/dialog';
-
-import LoadingButton from '@/components/Auth/LoadingButton';
+import { useState } from 'react';
 
 interface UnfollowUserDialogProps {
   user: UserData;

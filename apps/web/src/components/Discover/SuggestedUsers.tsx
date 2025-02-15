@@ -19,6 +19,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { BadgeCheckIcon, MessageSquare, Sparkles, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
+import type React from 'react';
 
 interface SuggestedUsersProps {
   userId?: string;
@@ -43,13 +44,16 @@ const MutualFollowers = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  if (followers.length === 0) return null;
+  if (followers.length === 0) {
+    return null;
+  }
 
   const displayCount = 3;
   const remainingCount = Math.max(0, followers.length - displayCount);
   const displayedFollowers = followers.slice(0, displayCount);
 
   return (
+    // biome-ignore lint/nursery/noStaticElementInteractions: This is a tooltip trigger
     <div
       className="mt-3"
       onMouseEnter={() => setIsHovered(true)}
@@ -340,7 +344,9 @@ const SuggestedUsers: React.FC<SuggestedUsersProps> = ({ userId }) => {
       queryClient.setQueryData<EnhancedUserData[]>(
         ['suggested-users', userId],
         (oldData) => {
-          if (!oldData) return [];
+          if (!oldData) {
+            return [];
+          }
           return oldData.filter((user) => user.id !== followedUserId);
         }
       );
@@ -355,7 +361,7 @@ const SuggestedUsers: React.FC<SuggestedUsersProps> = ({ userId }) => {
   if (isLoading) {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {[...Array(6)].map((_, i) => (
+        {[...new Array(6)].map((_, i) => (
           <Card key={i} className="p-6">
             <div className="flex justify-between">
               <Skeleton className="h-20 w-20 rounded-full" />

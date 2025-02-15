@@ -14,7 +14,9 @@ interface RightSidebarProps {
 const RightSidebar: React.FC<RightSidebarProps> = ({ userData }) => {
   const { user } = useSession();
 
-  if (!user || !userData) return null;
+  if (!user || !userData) {
+    return null;
+  }
 
   return (
     <aside className="w-80 flex-shrink-0 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-card-foreground">

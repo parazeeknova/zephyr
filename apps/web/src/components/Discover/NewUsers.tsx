@@ -11,6 +11,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
 import { BadgeCheckIcon, Users } from 'lucide-react';
 import Link from 'next/link';
+import type React from 'react';
 
 interface UserData extends BaseUserData {
   followState?: {
@@ -23,8 +24,7 @@ interface NewUsersProps {
   userId?: string;
 }
 
-// biome-ignore lint/correctness/noUnusedVariables: template variable
-const NewUsers: React.FC<NewUsersProps> = ({ userId }) => {
+const NewUsers: React.FC<NewUsersProps> = () => {
   const { data: users, isLoading } = useQuery<UserData[]>({
     queryKey: ['new-users'],
     queryFn: async () => {
@@ -47,7 +47,7 @@ const NewUsers: React.FC<NewUsersProps> = ({ userId }) => {
   if (isLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-2">
-        {[...Array(6)].map((_, i) => (
+        {[...new Array(6)].map((_, i) => (
           <Skeleton key={i} className="h-[100px] w-full rounded-lg bg-muted" />
         ))}
       </div>

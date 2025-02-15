@@ -41,7 +41,7 @@ const TrendingUsers = () => {
   if (isLoading) {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {[...Array(6)].map((_, i) => (
+        {[...new Array(6)].map((_, i) => (
           <Card key={i} className="p-4">
             <Skeleton className="h-32 w-full" />
           </Card>

@@ -54,7 +54,9 @@ const UserDetails: React.FC<UserDetailsProps> = ({
     queryFn: async () => {
       try {
         const response = await fetch(`/api/users/${initialUserData.id}`);
-        if (!response.ok) throw new Error('Failed to fetch user data');
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
         const userData = await response.json();
 
         const followStates = await fetch('/api/users/follow-states', {
@@ -102,7 +104,9 @@ const UserDetails: React.FC<UserDetailsProps> = ({
 
   const formatCreatedAt = (date: Date | string | undefined | null) => {
     try {
-      if (!date) return 'Unknown date';
+      if (!date) {
+        return 'Unknown date';
+      }
       const parsedDate = typeof date === 'string' ? parseISO(date) : date;
       return formatDate(parsedDate, 'MMM d, yyyy');
     } catch (error) {
@@ -189,7 +193,6 @@ const UserDetails: React.FC<UserDetailsProps> = ({
                 </div>
               </div>
 
-              {/* User info and stats */}
               <div className="space-y-3">
                 <div className="flex items-center text-muted-foreground">
                   @{userData.username}
@@ -202,7 +205,6 @@ const UserDetails: React.FC<UserDetailsProps> = ({
                     : 'Unknown date'}
                 </div>
 
-                {/* Followers and Following stats */}
                 <div className="flex items-center gap-4">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -293,13 +295,13 @@ const UserDetails: React.FC<UserDetailsProps> = ({
       <FollowersList
         userId={userData?.id ?? ''}
         isOpen={showFollowers}
-        onClose={() => setShowFollowers(false)}
+        onCloseAction={() => setShowFollowers(false)}
         loggedInUserId={loggedInUserId}
       />
       <FollowingList
         userId={userData?.id ?? ''}
         isOpen={showFollowing}
-        onClose={() => setShowFollowing(false)}
+        onCloseAction={() => setShowFollowing(false)}
         loggedInUserId={loggedInUserId}
       />
     </motion.div>

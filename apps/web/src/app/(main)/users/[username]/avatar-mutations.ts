@@ -24,7 +24,9 @@ export function useUpdateAvatarMutation() {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('userId', userId);
-      if (oldAvatarKey) formData.append('oldAvatarKey', oldAvatarKey);
+      if (oldAvatarKey) {
+        formData.append('oldAvatarKey', oldAvatarKey);
+      }
 
       const response = await fetch('/api/users/avatar', {
         method: 'POST',
@@ -46,6 +48,7 @@ export function useUpdateAvatarMutation() {
       const previousAvatar = queryClient.getQueryData(['avatar', userId]);
       const optimisticUrl = URL.createObjectURL(file);
 
+      // biome-ignore lint/suspicious/noExplicitAny: This is a React Query function
       queryClient.setQueryData(['user', userId], (old: any) => ({
         ...old,
         avatarUrl: optimisticUrl,
@@ -61,6 +64,7 @@ export function useUpdateAvatarMutation() {
     onSuccess: (data, { userId }) => {
       const secureUrl = getSecureImageUrl(data.avatar.url);
 
+      // biome-ignore lint/suspicious/noExplicitAny: This is a React Query function
       queryClient.setQueryData(['user', userId], (old: any) => ({
         ...old,
         avatarUrl: secureUrl,

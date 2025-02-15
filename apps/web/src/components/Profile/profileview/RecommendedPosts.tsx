@@ -1,10 +1,9 @@
 'use client';
 
+import { LayoutGrid } from '@zephyr/ui/shadui/layout-grid';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import type React from 'react';
-
-import { LayoutGrid } from '@zephyr/ui/shadui/layout-grid';
 
 interface RecommendedPost {
   id: number;

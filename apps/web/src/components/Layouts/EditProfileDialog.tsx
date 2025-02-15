@@ -46,6 +46,8 @@ interface EditProfileDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const regex = /\s+/;
+
 export default function EditProfileDialog({
   user,
   open,
@@ -75,8 +77,9 @@ export default function EditProfileDialog({
         bio: user.bio || '',
       });
     }
-  }, [open, user]);
+  }, [open, user, form.reset]);
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex component
   const handleSubmit = async (values: UpdateUserProfileValues) => {
     try {
       const hasProfileChanges =
@@ -185,7 +188,7 @@ export default function EditProfileDialog({
                       <div className="flex justify-end">
                         <AnimatedWordCounter
                           current={
-                            field.value.trim().split(/\s+/).filter(Boolean)
+                            field.value.trim().split(regex).filter(Boolean)
                               .length
                           }
                           max={400}
@@ -240,7 +243,9 @@ function AvatarInput({
 
   const onImageSelected = useCallback(
     async (file: File | undefined) => {
-      if (!file) return;
+      if (!file) {
+        return;
+      }
 
       const maxSize = 10 * 1024 * 1024;
       if (file.size > maxSize) {

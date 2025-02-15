@@ -41,8 +41,12 @@ const LeftSideBar: React.FC = () => {
   }, []);
 
   const sidebarWidth = () => {
-    if (screenSize === 'small') return 'w-0';
-    if (screenSize === 'medium') return 'w-16';
+    if (screenSize === 'small') {
+      return 'w-0';
+    }
+    if (screenSize === 'medium') {
+      return 'w-16';
+    }
     return isCollapsed ? 'w-16' : 'w-72';
   };
 

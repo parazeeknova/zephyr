@@ -32,7 +32,7 @@ export default function useMediaUpload() {
 
       const { mediaId, url } = await response.json();
       return { mediaId, url };
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(error.message || 'Upload failed');
     }
   }
@@ -75,7 +75,7 @@ export default function useMediaUpload() {
             );
             completed++;
             setUploadProgress((completed / files.length) * 100);
-          } catch (error: any) {
+          } catch (error: unknown) {
             toast({
               variant: 'destructive',
               description: error.message,

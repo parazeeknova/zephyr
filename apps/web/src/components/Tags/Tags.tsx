@@ -89,7 +89,7 @@ export function Tags({
     if (JSON.stringify(localTags) !== JSON.stringify(initialTags)) {
       setLocalTags(initialTags);
     }
-  }, [initialTags]);
+  }, [initialTags, localTags]);
 
   const handleOpenEditor = useCallback(() => {
     setIsEditing(true);
@@ -192,8 +192,8 @@ export function Tags({
           <TagEditor
             postId={postId}
             initialTags={localTags.map((t) => t.name)}
-            onClose={() => setIsEditing(false)}
-            onTagsUpdate={handleTagsUpdate}
+            onCloseAction={() => setIsEditing(false)}
+            onTagsUpdateAction={handleTagsUpdate}
           />
         </DialogContent>
       </Dialog>

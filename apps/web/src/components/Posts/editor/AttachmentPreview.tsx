@@ -29,16 +29,19 @@ export const AttachmentPreview = memo(function AttachmentPreview({
   }, [file, existingPreviewUrl]);
 
   const renderPreview = () => {
-    if (!objectUrl) return null;
+    if (!objectUrl) {
+      return null;
+    }
 
     if (file.type.startsWith('image')) {
       return (
         <div className="relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden rounded-2xl bg-primary/5">
-          <img
+          <Image
             src={objectUrl}
             alt={fileName}
             className="h-full w-full rounded-2xl object-cover"
-            loading="lazy"
+            layout="fill"
+            objectFit="cover"
           />
         </div>
       );
@@ -72,6 +75,7 @@ export const AttachmentPreview = memo(function AttachmentPreview({
     if (file.type.startsWith('video')) {
       return (
         <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-primary/5">
+          {/* biome-ignore lint/a11y/useMediaCaption: ignore */}
           <video
             controls
             className="h-full w-full object-cover"
@@ -96,6 +100,7 @@ export const AttachmentPreview = memo(function AttachmentPreview({
                 {formatFileName(fileName)}
               </p>
             </div>
+            {/* biome-ignore lint/a11y/useMediaCaption: ignore */}
             <audio controls className="w-full max-w-md" preload="metadata">
               <source src={objectUrl} type={file.type} />
               Your browser does not support the audio element.
@@ -105,7 +110,6 @@ export const AttachmentPreview = memo(function AttachmentPreview({
       );
     }
 
-    // Default file preview
     return (
       <div className="w-full rounded-2xl bg-primary/5 p-6">
         <div className="flex flex-col items-center gap-4">

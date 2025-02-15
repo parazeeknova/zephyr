@@ -45,7 +45,9 @@ export default function AuraVoteButton({
       await queryClient.cancelQueries({ queryKey });
       const previousState = queryClient.getQueryData<VoteInfo>(queryKey);
       queryClient.setQueryData<VoteInfo>(queryKey, (old) => {
-        if (!old) return old;
+        if (!old) {
+          return old;
+        }
         const voteChange = calculateVoteChange(old.userVote, newVote);
         return {
           aura: old.aura + voteChange,
@@ -53,9 +55,11 @@ export default function AuraVoteButton({
         };
       });
 
-      // Update the post data in the cache
+      // biome-ignore lint/suspicious/noExplicitAny: any
       queryClient.setQueryData(['post', postId], (oldPost: any) => {
-        if (!oldPost) return oldPost;
+        if (!oldPost) {
+          return oldPost;
+        }
         const voteChange = calculateVoteChange(
           oldPost.vote[0]?.value || 0,
           newVote
@@ -100,8 +104,12 @@ export default function AuraVoteButton({
   });
 
   const calculateVoteChange = (oldVote: number, newVote: number): number => {
-    if (oldVote === newVote) return -oldVote; // Removing vote
-    if (oldVote === 0) return newVote; // Adding new vote
+    if (oldVote === newVote) {
+      return -oldVote; // Removing vote
+    }
+    if (oldVote === 0) {
+      return newVote; // Adding new vote
+    }
     return newVote - oldVote; // Changing vote
   };
 

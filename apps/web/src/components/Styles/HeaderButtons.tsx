@@ -7,6 +7,7 @@ import {
 } from '@zephyr/ui/shadui/tooltip';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import type React from 'react';
 
 interface HeaderIconButtonProps {
   href: string;
@@ -38,7 +39,6 @@ export function HeaderIconButton({
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      // @ts-expect-error
                       className="-right-1 -top-1 absolute flex h-4 w-4 items-center justify-center rounded-full bg-primary font-medium text-[10px] text-primary-foreground shadow-sm"
                     >
                       {count}

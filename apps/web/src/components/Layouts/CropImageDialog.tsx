@@ -27,7 +27,9 @@ export default function CropImageDialog({
 
   function crop() {
     const cropper = cropperRef.current?.cropper;
-    if (!cropper) return;
+    if (!cropper) {
+      return;
+    }
     cropper.getCroppedCanvas().toBlob((blob) => onCropped(blob), 'image/webp');
     onClose();
   }

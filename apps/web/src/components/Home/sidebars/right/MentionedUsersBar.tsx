@@ -33,7 +33,9 @@ const MentionedUsersBar = () => {
     });
   }, [queryClient]);
 
-  if (!mentionedUsers?.length && !isLoading) return null;
+  if (!mentionedUsers?.length && !isLoading) {
+    return null;
+  }
 
   return (
     <Card className="relative overflow-hidden border-blue-500/20 bg-blue-500/[0.02] shadow-sm backdrop-blur-sm">

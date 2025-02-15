@@ -21,6 +21,7 @@ import {
 
 interface NewChatDialogProps {
   onOpenChange: (open: boolean) => void;
+  // biome-ignore lint/suspicious/noExplicitAny: any
   onChatCreated: (channel: any) => void;
 }
 

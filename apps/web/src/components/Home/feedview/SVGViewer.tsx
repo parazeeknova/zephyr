@@ -14,6 +14,7 @@ import {
   ZoomOut,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import type React from 'react';
 import { useMediaQuery } from 'usehooks-ts';
 
 interface SVGViewerProps {
@@ -64,7 +65,9 @@ export function SVGViewer({
   };
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) {
+      return;
+    }
 
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -141,12 +144,14 @@ export function SVGViewer({
     setIsDragging(false);
   };
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Not needed
   const Controls = () => (
     <div
       className={cn(
         'z-50 flex flex-col gap-4 rounded-lg bg-background/80 p-4 backdrop-blur-sm',
         isMobile
-          ? showControls
+          ? // biome-ignore lint/nursery/noNestedTernary: Not needed
+            showControls
             ? 'fixed inset-x-0 bottom-0 mx-4 mb-4 transition-transform duration-300'
             : 'fixed inset-x-0 bottom-0 mx-4 mb-4 translate-y-full transition-transform duration-300'
           : 'absolute top-4 right-4'
@@ -309,6 +314,7 @@ export function SVGViewer({
           justifyContent: 'center',
         }}
       >
+        {/* biome-ignore lint/nursery/noStaticElementInteractions: wfl */}
         <div
           className="cursor-move"
           onMouseDown={handleMouseDown}

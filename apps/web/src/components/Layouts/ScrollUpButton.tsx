@@ -1,10 +1,9 @@
 'use client';
 
+import { Button } from '@zephyr/ui/shadui/button';
 import { motion } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import type React from 'react';
-
-import { Button } from '@zephyr/ui/shadui/button';
 
 interface ScrollUpButtonProps {
   isVisible: boolean;
@@ -15,7 +14,9 @@ const ScrollUpButton: React.FC<ScrollUpButtonProps> = ({ isVisible }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <div className="fixed right-4 bottom-20 z-50">
