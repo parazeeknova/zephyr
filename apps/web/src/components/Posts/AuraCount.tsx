@@ -1,11 +1,11 @@
+import { useQuery } from '@tanstack/react-query';
+import type { VoteInfo } from '@zephyr/db';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { useQuery } from '@tanstack/react-query';
-import type { VoteInfo } from '@zephyr/db';
+} from '@zephyr/ui/shadui/tooltip';
 import { Flame } from 'lucide-react';
 
 interface AuraCountProps {

@@ -23,9 +23,10 @@ interface JWTPayload {
   timestamp: number;
 }
 
+const regex = /\/$/;
 const getBaseUrl = () => {
   if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, '');
+    return process.env.NEXT_PUBLIC_SITE_URL.replace(regex, '');
   }
 
   if (process.env.NODE_ENV === 'development') {

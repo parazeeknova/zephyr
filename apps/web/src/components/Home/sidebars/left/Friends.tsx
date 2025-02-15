@@ -1,12 +1,12 @@
 'use client';
-import { Card, CardContent, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import UnfollowUserDialog from '@/components/Layouts/UnfollowUserDialog';
+import FriendsSkeleton from '@/components/Layouts/skeletons/FriendsSkeleton';
 import { useFollowedUsers } from '@/hooks/userFollowerInfo';
 import { useUnfollowUserMutation } from '@/hooks/userMutations';
 import { useQueryClient } from '@tanstack/react-query';
-import UnfollowUserDialog from '@zephyr-ui/Layouts/UnfollowUserDialog';
-import FriendsSkeleton from '@zephyr-ui/Layouts/skeletons/FriendsSkeleton';
 import type { UserData } from '@zephyr/db';
+import { Card, CardContent, CardTitle } from '@zephyr/ui/shadui/card';
+import { ScrollArea } from '@zephyr/ui/shadui/scroll-area';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Users } from 'lucide-react';
 import { useState } from 'react';

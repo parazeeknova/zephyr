@@ -1,12 +1,12 @@
 'use client';
 
 import { FossBanner } from '@/components/misc/foss-banner';
-import {} from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import type React from 'react';
 import { AnimatedZephyrText } from './components/AnimatedZephyrText';
 import { GithubIssueButton } from './components/GithubIssueButton';
 import { StepIndicator } from './components/StepIndicator';
@@ -36,7 +36,12 @@ export default function SupportForm() {
     setLoading(true);
 
     try {
-      const uploadedFiles = [];
+      const uploadedFiles: {
+        url: string;
+        key: string;
+        name: string;
+        type: string;
+      }[] = [];
       for (const file of attachments) {
         const formData = new FormData();
         formData.append('file', file.file);
@@ -90,10 +95,11 @@ export default function SupportForm() {
       });
       setAttachments([]);
       setStep(1);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to send message',
+        description:
+          error instanceof Error ? error.message : 'Failed to send message',
         variant: 'destructive',
       });
     } finally {
@@ -101,6 +107,7 @@ export default function SupportForm() {
     }
   };
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This function is complex by nature
   const handleFileUpload = async (files: FileList) => {
     const maxFiles = 3;
     const allowedTypes = [
@@ -138,9 +145,8 @@ export default function SupportForm() {
           continue;
         }
 
-        // Create FormData
         const formData = new FormData();
-        formData.append('file', file); // Append the actual file
+        formData.append('file', file);
         formData.append('fileName', file.name);
         formData.append('fileType', file.type);
 
@@ -174,11 +180,12 @@ export default function SupportForm() {
           title: 'Success',
           description: 'File uploaded successfully',
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Upload error:', error);
         toast({
           title: 'Upload failed',
-          description: error.message || 'Failed to upload file',
+          description:
+            error instanceof Error ? error.message : 'Failed to upload file',
           variant: 'destructive',
         });
       }
@@ -199,7 +206,7 @@ export default function SupportForm() {
         }
       });
     };
-  }, []);
+  }, [attachments]);
 
   return (
     <div className="relative">

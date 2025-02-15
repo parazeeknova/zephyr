@@ -292,7 +292,9 @@ export const getContentType = (filename: string): string => {
 };
 
 export const getContentDisposition = (filename: string, inline = false) => {
-  if (!filename) throw new Error('Filename is required');
+  if (!filename) {
+    throw new Error('Filename is required');
+  }
   const utf8Filename = encodeURIComponent(filename.trim());
   return `${inline ? 'inline' : 'attachment'}; filename="${utf8Filename}"`;
 };
@@ -320,35 +322,55 @@ export const shouldDisplayInline = (mimeType: string) => {
 };
 
 export const getFileType = (mimeType: string) => {
-  if (mimeType.startsWith('image/')) return 'image';
-  if (mimeType.startsWith('video/')) return 'video';
-  if (mimeType.startsWith('audio/')) return 'audio';
+  if (mimeType.startsWith('image/')) {
+    return 'image';
+  }
+  if (mimeType.startsWith('video/')) {
+    return 'video';
+  }
+  if (mimeType.startsWith('audio/')) {
+    return 'audio';
+  }
   if (
     mimeType.startsWith('text/') ||
     mimeType === 'application/json' ||
     mimeType === 'application/xml'
-  )
+  ) {
     return 'code';
+  }
   return 'document';
 };
 
 export const getFileCategory = (mimeType: string): FileCategory => {
-  if (mimeType.startsWith('image/')) return 'IMAGE';
-  if (mimeType.startsWith('video/')) return 'VIDEO';
-  if (mimeType.startsWith('audio/')) return 'AUDIO';
+  if (mimeType.startsWith('image/')) {
+    return 'IMAGE';
+  }
+  if (mimeType.startsWith('video/')) {
+    return 'VIDEO';
+  }
+  if (mimeType.startsWith('audio/')) {
+    return 'AUDIO';
+  }
   if (
     mimeType.startsWith('text/') ||
     mimeType === 'application/json' ||
     mimeType === 'application/xml'
-  )
+  ) {
     return 'CODE';
+  }
   return 'DOCUMENT';
 };
 
 export const normalizeMimeType = (mimeType: string | undefined): string => {
-  if (!mimeType) return 'application/octet-stream';
-  if (mimeType.includes('quicktime')) return 'video/mp4';
-  if (mimeType.includes('x-matroska')) return 'video/webm';
+  if (!mimeType) {
+    return 'application/octet-stream';
+  }
+  if (mimeType.includes('quicktime')) {
+    return 'video/mp4';
+  }
+  if (mimeType.includes('x-matroska')) {
+    return 'video/webm';
+  }
   return mimeType.toLowerCase();
 };
 
@@ -358,7 +380,9 @@ export const getFileConfigFromMime = (mimeType: string | undefined) => {
     (config) => config.mime === normalizedMime
   );
 
-  if (config) return config;
+  if (config) {
+    return config;
+  }
 
   const category = getFileCategory(normalizedMime);
   return Object.values(FILE_CONFIGS).find(

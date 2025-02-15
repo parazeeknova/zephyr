@@ -1,16 +1,16 @@
 import { useSession } from '@/app/(main)/SessionProvider';
+import LoadingButton from '@/components/Auth/LoadingButton';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import useDebounce from '@/hooks/useDebounce';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
-import useDebounce from '@/hooks/useDebounce';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import LoadingButton from '@zephyr-ui/Auth/LoadingButton';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
+} from '@zephyr/ui/shadui/dialog';
 import { Check, Loader2, SearchIcon, X } from 'lucide-react';
 import { type Key, useState } from 'react';
 import type { UserResponse } from 'stream-chat';

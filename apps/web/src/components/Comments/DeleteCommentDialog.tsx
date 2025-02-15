@@ -1,4 +1,4 @@
-import LoadingButton from '@zephyr-ui/Auth/LoadingButton';
+import LoadingButton from '@/components/Auth/LoadingButton';
 import type { CommentData } from '@zephyr/db';
 import { Button } from '../ui/button';
 import {

@@ -32,7 +32,6 @@ export async function POST() {
       );
     }
 
-    // Check if user has an email before unlinking
     if (!user.email) {
       return Response.json(
         { error: 'Cannot unlink: No email associated with account' },
@@ -42,7 +41,6 @@ export async function POST() {
       );
     }
 
-    // Check if this is the only auth method
     const hasPassword = !!user.passwordHash;
     if (!hasPassword) {
       return Response.json(
@@ -53,7 +51,6 @@ export async function POST() {
       );
     }
 
-    // Check if Discord is actually linked
     if (!user.discordId) {
       return Response.json(
         { error: 'Discord account is not linked' },

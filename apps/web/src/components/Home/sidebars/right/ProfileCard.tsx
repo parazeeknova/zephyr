@@ -1,10 +1,10 @@
 'use client';
 
-import { Card, CardContent } from '@/components/ui/card';
+import UserAvatar from '@/components/Layouts/UserAvatar';
 import Linkify from '@/helpers/global/Linkify';
 import { formatNumber } from '@/lib/utils';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
 import type { UserData } from '@zephyr/db';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
 import { Flame, Users } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';

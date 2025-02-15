@@ -1,7 +1,7 @@
 import type React from 'react';
 
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
+import { Skeleton } from '@zephyr/ui/shadui/skeleton';
 
 const PostCardSkeleton: React.FC = () => (
   <Card className="border-border border-t border-b bg-background">

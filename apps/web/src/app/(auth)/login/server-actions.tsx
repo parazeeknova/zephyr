@@ -108,7 +108,10 @@ export async function loginAction(credentials: LoginValues): Promise<{
       }
     }
 
-    const session = await lucia.createSession(existingUser.id, {});
+    const session = await lucia.createSession(existingUser.id, {
+      username: '',
+      email: '',
+    });
     const sessionCookie = lucia.createSessionCookie(session.id);
     const cookieStore = await cookies();
     cookieStore.set(

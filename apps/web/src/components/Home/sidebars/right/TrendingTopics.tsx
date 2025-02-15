@@ -1,20 +1,19 @@
 'use client';
 
+import TrendingTopicsSkeleton from '@/components/Layouts/skeletons/TrendingTopicSkeleton';
+import { formatNumber } from '@/lib/utils';
+import type { TrendingTopic } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
+import { AnimatePresence, motion } from 'framer-motion';
 import { LucideTrendingUp, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 import { useEffect, useState, useTransition } from 'react';
-
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { formatNumber } from '@/lib/utils';
 import {
   getTrendingTopics,
   invalidateTrendingTopicsCache,
-} from '@/state/TopicActions';
-import TrendingTopicsSkeleton from '@zephyr-ui/Layouts/skeletons/TrendingTopicSkeleton';
-import type { TrendingTopic } from '@zephyr/db';
-import { AnimatePresence, motion } from 'framer-motion';
+} from './TopicActions';
 
 const TrendingTopics: React.FC = () => {
   const [topics, setTopics] = useState<TrendingTopic[]>([]);
@@ -26,26 +25,25 @@ const TrendingTopics: React.FC = () => {
   const fetchTopics = async (invalidateCache = false) => {
     try {
       setError(null);
-      startTransition(async () => {
-        const newTopics = invalidateCache
-          ? await invalidateTrendingTopicsCache()
-          : await getTrendingTopics();
+      const newTopics = invalidateCache
+        ? await invalidateTrendingTopicsCache()
+        : await getTrendingTopics();
 
-        if (newTopics && newTopics.length > 0) {
+      if (newTopics && newTopics.length > 0) {
+        startTransition(() => {
           setTopics(newTopics);
           setLastUpdated(new Date());
-        }
-      });
+        });
+      }
     } catch (err) {
       setError('Failed to load trending topics');
       console.error('Error fetching trending topics:', err);
     }
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: This effect runs frequently
   useEffect(() => {
     fetchTopics();
-
-    // Refresh every 10 minutes
     const intervalId = setInterval(
       () => {
         fetchTopics();
@@ -57,7 +55,7 @@ const TrendingTopics: React.FC = () => {
   }, []);
 
   const handleRefresh = () => {
-    fetchTopics(true); // Force cache invalidation on manual refresh
+    fetchTopics(true);
   };
 
   if (isPending) {
@@ -84,7 +82,9 @@ const TrendingTopics: React.FC = () => {
     );
   }
 
-  if (!topics.length) return null;
+  if (!topics.length) {
+    return null;
+  }
 
   return (
     <Card className="relative overflow-hidden border-rose-500/20 bg-gradient-to-br from-rose-500/[0.02] to-orange-500/[0.02] shadow-sm backdrop-blur-sm">

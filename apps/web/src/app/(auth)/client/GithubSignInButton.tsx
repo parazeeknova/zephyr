@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@zephyr/ui/shadui/button';
 
 export default function GithubSignInButton() {
   return (

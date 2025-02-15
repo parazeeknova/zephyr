@@ -1,12 +1,12 @@
 'use client';
 
 import { useSession } from '@/app/(main)/SessionProvider';
-import { Button } from '@/components/ui/button';
+import NavigationCard from '@/components/Home/sidebars/left/NavigationCard';
+import SuggestedConnections from '@/components/Home/sidebars/right/SuggestedConnections';
+import StickyFooter from '@/components/Layouts/StinkyFooter';
+import ChatSkeleton from '@/components/Layouts/skeletons/ChatSkeleton';
 import useInitializeChatClient from '@/hooks/useInitializeChatClient';
-import NavigationCard from '@zephyr-ui/Home/sidebars/left/NavigationCard';
-import SuggestedConnections from '@zephyr-ui/Home/sidebars/right/SuggestedConnections';
-import StickyFooter from '@zephyr-ui/Layouts/StinkyFooter';
-import ChatSkeleton from '@zephyr-ui/Layouts/skeletons/ChatSkeleton';
+import { Button } from '@zephyr/ui/shadui/button';
 import { motion } from 'framer-motion';
 import { MessageSquarePlus } from 'lucide-react';
 import { useTheme } from 'next-themes';

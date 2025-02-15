@@ -12,7 +12,6 @@ export default function AuthButtonWrapper({
 }: AuthButtonWrapperProps) {
   return (
     <motion.div
-      // @ts-expect-error
       className="mb-3 w-full"
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
@@ -26,12 +25,9 @@ export default function AuthButtonWrapper({
       <div
         className={`group relative overflow-hidden rounded-lg backdrop-blur-md ${className}`}
       >
-        {/* Gradient border animation */}
         <div className="absolute inset-0 opacity-25 transition-opacity group-hover:opacity-50">
           <div className="absolute inset-0 animate-gradient bg-gradient-to-r from-primary/50 via-secondary/50 to-primary/50" />
         </div>
-
-        {/* Inner content with glass effect */}
         <div className="relative bg-background/50 p-[1px] transition-colors group-hover:bg-background/70">
           {children}
         </div>

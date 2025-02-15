@@ -2,7 +2,11 @@
 
 import { logout } from '@/app/(auth)/actions';
 import { useSession } from '@/app/(main)/SessionProvider';
-import { Button } from '@/components/ui/button';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import { cn } from '@/lib/utils';
+import { getSecureImageUrl } from '@/lib/utils/imageUrl';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   Dialog,
   DialogContent,
@@ -10,7 +14,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@zephyr/ui/shadui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,11 +26,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { cn } from '@/lib/utils';
-import { getSecureImageUrl } from '@/utils/imageUrl';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
+} from '@zephyr/ui/shadui/dropdown-menu';
 import { motion } from 'framer-motion';
 import {
   Check,

@@ -41,7 +41,9 @@ export const minioClient = new S3Client({
 export const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || 'zephyr';
 
 export const getPublicUrl = (key: string) => {
-  if (!key) throw new Error('File key is required');
+  if (!key) {
+    throw new Error('File key is required');
+  }
 
   const endpoint =
     typeof window !== 'undefined'
@@ -68,17 +70,18 @@ export const validateBucket = async () => {
       })
     );
     return true;
-  } catch (error: any) {
+  } catch (error) {
     if (
-      error.name === 'NotFound' ||
-      error.Code === 'NoSuchBucket' ||
-      error.$metadata?.httpStatusCode === 404
+      (error as { name: string }).name === 'NotFound' ||
+      (error as { Code: string }).Code === 'NoSuchBucket' ||
+      (error as { $metadata?: { httpStatusCode: number } }).$metadata
+        ?.httpStatusCode === 404
     ) {
       console.warn(`Bucket "${MINIO_BUCKET}" does not exist`);
       return false;
     }
     console.error('Error validating bucket:', error);
-    throw new Error(`Failed to validate bucket: ${error.message}`);
+    throw new Error(`Failed to validate bucket: ${(error as Error).message}`);
   }
 };
 
@@ -90,9 +93,11 @@ export const generatePresignedUrl = async (key: string) => {
 
   return await getSignedUrl(minioClient, command, { expiresIn: 3600 });
 };
-
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This function is complex by nature
 export const uploadToMinio = async (file: File, userId: string) => {
-  if (!file || !userId) throw new Error('File and userId are required');
+  if (!file || !userId) {
+    throw new Error('File and userId are required');
+  }
 
   const toastId = isClient
     ? toast.loading(uploadToasts.started(file.name).description)
@@ -186,7 +191,9 @@ export const checkFileExists = async (key: string) => {
 };
 
 export const uploadAvatar = async (file: File, userId: string) => {
-  if (!file || !userId) throw new Error('File and userId are required');
+  if (!file || !userId) {
+    throw new Error('File and userId are required');
+  }
 
   const toastId = isClient
     ? toast.loading('Updating profile picture...')
@@ -297,7 +304,9 @@ export const uploadAvatar = async (file: File, userId: string) => {
 };
 
 export const deleteAvatar = async (key: string) => {
-  if (!key) throw new Error('Avatar key is required');
+  if (!key) {
+    throw new Error('Avatar key is required');
+  }
 
   const toastId = isClient
     ? toast.loading('Removing profile picture...')

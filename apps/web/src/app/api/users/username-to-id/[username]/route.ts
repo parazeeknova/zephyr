@@ -1,14 +1,12 @@
-import type { NextRequest } from 'next/server';
-
 import { validateRequest } from '@zephyr/auth/auth';
 import { prisma } from '@zephyr/db';
+import type { NextRequest } from 'next/server';
 
 export async function GET(
   _req: NextRequest,
   props: { params: Promise<{ username: string }> }
 ) {
   const params = await props.params;
-
   const { username } = params;
 
   try {

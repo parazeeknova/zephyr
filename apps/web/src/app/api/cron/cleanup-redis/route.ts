@@ -2,6 +2,7 @@ import { prisma } from '@zephyr/db';
 import { redis } from '@zephyr/db';
 import { NextResponse } from 'next/server';
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex logic is required here
 async function cleanupRedisCache() {
   const logs: string[] = [];
   const startTime = Date.now();
@@ -83,6 +84,7 @@ async function cleanupRedisCache() {
         redis.get('trending:topics:backup'),
       ]);
 
+      // biome-ignore lint/suspicious/noEvolvingTypes: This is a valid use case for JSON parsing
       let topics = [];
       if (currentTrendingTopics) {
         topics = JSON.parse(currentTrendingTopics);
@@ -97,6 +99,7 @@ async function cleanupRedisCache() {
       }
 
       if (topics.length > 0) {
+        // biome-ignore lint/suspicious/noEvolvingTypes: This is a valid use case for JSON parsing
         const validTopics = [];
         for (const topic of topics) {
           try {

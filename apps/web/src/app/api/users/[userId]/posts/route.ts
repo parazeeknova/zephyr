@@ -1,21 +1,17 @@
-import type { NextRequest } from 'next/server';
-
 import { validateRequest } from '@zephyr/auth/auth';
 import { type PostsPage, getPostDataInclude, prisma } from '@zephyr/db';
+import type { NextRequest } from 'next/server';
 
 export async function GET(
   req: NextRequest,
   props: { params: Promise<{ userId: string }> }
 ) {
   const params = await props.params;
-
   const { userId } = params;
 
   try {
     const cursor = req.nextUrl.searchParams.get('cursor') || undefined;
-
     const pageSize = 10;
-
     const { user } = await validateRequest();
 
     if (!user) {

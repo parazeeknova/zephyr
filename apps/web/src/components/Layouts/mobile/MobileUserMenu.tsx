@@ -1,8 +1,8 @@
 'use client';
 
-import { getSecureImageUrl } from '@/utils/imageUrl';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import { getSecureImageUrl } from '@/lib/utils/imageUrl';
 import { useQuery } from '@tanstack/react-query';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
 import { AnimatePresence, type Variants, motion } from 'framer-motion';
 import {
   LogOutIcon,

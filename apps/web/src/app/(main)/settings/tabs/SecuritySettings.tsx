@@ -1,6 +1,10 @@
 'use client';
 
 import { requestPasswordReset } from '@/app/(auth)/reset-password/server-actions';
+import { LoadingButton } from '@/components/Auth/LoadingButton';
+import { zodResolver } from '@hookform/resolvers/zod';
+import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import {
   Form,
   FormControl,
@@ -8,12 +12,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { LoadingButton } from '@zephyr-ui/Auth/LoadingButton';
-import type { UserData } from '@zephyr/db';
+} from '@zephyr/ui/shadui/form';
+import { Input } from '@zephyr/ui/shadui/input';
 import { motion } from 'framer-motion';
 import { KeyRound, Mail } from 'lucide-react';
 import { useState, useTransition } from 'react';

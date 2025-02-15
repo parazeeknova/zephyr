@@ -1,10 +1,10 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from '@zephyr/ui/shadui/tooltip';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 

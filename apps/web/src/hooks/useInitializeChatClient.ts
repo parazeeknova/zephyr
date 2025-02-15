@@ -17,8 +17,11 @@ export default function useInitializeChatClient() {
   useEffect(() => {
     let isMounted = true;
 
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This function is complex by nature
     const initializeChat = async () => {
-      if (!isClient) return;
+      if (!isClient) {
+        return;
+      }
 
       const { user } = session;
       const streamKey = process.env.NEXT_PUBLIC_STREAM_KEY;
@@ -95,7 +98,7 @@ export default function useInitializeChatClient() {
           });
       }
     };
-  }, [session, isClient]);
+  }, [session, isClient, chatClient]);
 
   return {
     chatClient,

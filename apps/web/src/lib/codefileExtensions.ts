@@ -1,3 +1,5 @@
+const extensionRegex = /\.[0-9a-z]+$/i;
+
 export const codeFileExtensions: Record<string, string> = {
   '.ts': 'TypeScript',
   '.tsx': 'TypeScript React',
@@ -27,6 +29,6 @@ export const codeFileExtensions: Record<string, string> = {
 };
 
 export function getLanguageFromFileName(fileName: string): string {
-  const extension = fileName.toLowerCase().match(/\.[0-9a-z]+$/i)?.[0];
+  const extension = fileName.toLowerCase().match(extensionRegex)?.[0];
   return extension ? (codeFileExtensions[extension] ?? 'Code') : 'Code';
 }

@@ -4,15 +4,20 @@ import { Globe2Icon, UsersIcon } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import ForYouFeed from '@zephyr-ui/Home/ForYouFeed';
-import FollowingFeed from '@zephyr-ui/Home/feedview/Following';
-import LeftSideBar from '@zephyr-ui/Home/sidebars/LeftSideBar';
-import RightSideBar from '@zephyr-ui/Home/sidebars/RightSideBar';
-import ScrollUpButton from '@zephyr-ui/Layouts/ScrollUpButton';
-import StickyFooter from '@zephyr-ui/Layouts/StinkyFooter';
-import PostEditor from '@zephyr-ui/Posts/editor/PostEditor';
+import ForYouFeed from '@/components/Home/ForYouFeed';
+import FollowingFeed from '@/components/Home/feedview/Following';
+import LeftSideBar from '@/components/Home/sidebars/LeftSideBar';
+import RightSideBar from '@/components/Home/sidebars/RightSideBar';
+import ScrollUpButton from '@/components/Layouts/ScrollUpButton';
+import StickyFooter from '@/components/Layouts/StinkyFooter';
+import PostEditor from '@/components/Posts/editor/PostEditor';
 import type { UserData } from '@zephyr/db';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@zephyr/ui/shadui/tabs';
 
 interface ClientHomeProps {
   userData: UserData;

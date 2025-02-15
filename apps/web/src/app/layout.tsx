@@ -2,9 +2,9 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { DesignSystemProvider } from '@zephyr/ui';
+import { colors } from '@zephyr/ui/meta/colors';
+import { siteConfig } from '@zephyr/ui/meta/site';
 import type { ReactNode } from 'react';
-import { colors } from '../config/colors';
-import { siteConfig } from '../config/site';
 
 const SofiaProSoft = localFont({
   src: './fonts/SofiaProSoftReg.woff2',

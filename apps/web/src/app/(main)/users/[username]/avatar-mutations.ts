@@ -1,8 +1,8 @@
-import { useToast } from '@/hooks/use-toast';
-import { getSecureImageUrl } from '@/utils/imageUrl';
+import { getSecureImageUrl } from '@/lib/utils/imageUrl';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { UpdateUserProfileValues } from '@zephyr/auth/validation';
 import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 
 interface UpdateProfilePayload {
   values: UpdateUserProfileValues;

@@ -1,9 +1,10 @@
 'use client';
 
 import { HelpLink } from '@/components/Animations/ImageLinkPreview';
-import { Button } from '@/components/ui/button';
+// @ts-expect-error - No types available for static assets
+import HOME from '@assets/previews/home.png';
 import { GitHub } from '@mui/icons-material';
-import HOME from '@zephyr-assets/previews/home.png';
+import { Button } from '@zephyr/ui/shadui/button';
 import { motion } from 'framer-motion';
 import { AlertOctagon, Copy, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
@@ -48,17 +49,15 @@ export default function Error({
   };
 
   const auroras = useMemo(() => {
-    return Array(6)
-      .fill(0)
-      .map((_, i) => ({
-        width: 600 + Math.sin(i) * 400,
-        height: 600 + Math.cos(i) * 400,
-        top: `${(i * 25) % 100}%`,
-        left: `${(i * 35) % 100}%`,
-        delay: i * 0.8,
-        duration: 8 + i * 3,
-        opacity: 0.2 + Math.random() * 0.1,
-      }));
+    return new Array(6).fill(0).map((_, i) => ({
+      width: 600 + Math.sin(i) * 400,
+      height: 600 + Math.cos(i) * 400,
+      top: `${(i * 25) % 100}%`,
+      left: `${(i * 35) % 100}%`,
+      delay: i * 0.8,
+      duration: 8 + i * 3,
+      opacity: 0.2 + Math.random() * 0.1,
+    }));
   }, []);
 
   return (

@@ -1,11 +1,12 @@
 'use client';
 
 import { HelpLink } from '@/components/Animations/ImageLinkPreview';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import messagesImage from '@zephyr-assets/fallback.png';
+// @ts-expect-error - static image import
+import messagesImage from '@assets/fallbacks/fallback.png';
 import { getEnvironmentMode, getStreamConfig } from '@zephyr/config/src/env';
+import { Badge } from '@zephyr/ui/shadui/badge';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Card } from '@zephyr/ui/shadui/card';
 import { motion } from 'framer-motion';
 import { AlertCircle, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
@@ -21,17 +22,15 @@ export default function StreamChatNotConfigured() {
   };
 
   const auroras = useMemo(() => {
-    return Array(6)
-      .fill(0)
-      .map((_, i) => ({
-        width: 600 + Math.sin(i) * 400,
-        height: 600 + Math.cos(i) * 400,
-        top: `${(i * 25) % 100}%`,
-        left: `${(i * 35) % 100}%`,
-        delay: i * 0.8,
-        duration: 8 + i * 3,
-        opacity: 0.2 + Math.random() * 0.1,
-      }));
+    return new Array(6).fill(0).map((_, i) => ({
+      width: 600 + Math.sin(i) * 400,
+      height: 600 + Math.cos(i) * 400,
+      top: `${(i * 25) % 100}%`,
+      left: `${(i * 35) % 100}%`,
+      delay: i * 0.8,
+      duration: 8 + i * 3,
+      opacity: 0.2 + Math.random() * 0.1,
+    }));
   }, []);
 
   return (

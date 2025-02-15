@@ -1,10 +1,10 @@
 'use client';
 
-import ScrollUpButton from '@zephyr-ui/Layouts/ScrollUpButton';
-import StickyFooter from '@zephyr-ui/Layouts/StinkyFooter';
-import ProfileFeedView from '@zephyr-ui/Profile/ProfileFeedView';
-import LeftSidebar from '@zephyr-ui/Profile/sidebars/ProfileLeftSideBar';
-import RightSidebar from '@zephyr-ui/Profile/sidebars/ProfileRightSideBar';
+import ScrollUpButton from '@/components/Layouts/ScrollUpButton';
+import StickyFooter from '@/components/Layouts/StinkyFooter';
+import ProfileFeedView from '@/components/Profile/ProfileFeedView';
+import LeftSidebar from '@/components/Profile/sidebars/ProfileLeftSideBar';
+import RightSidebar from '@/components/Profile/sidebars/ProfileRightSideBar';
 import type { UserData } from '@zephyr/db';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';

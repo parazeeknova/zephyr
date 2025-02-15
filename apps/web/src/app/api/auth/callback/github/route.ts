@@ -7,6 +7,7 @@ import { generateIdFromEntropySize } from 'lucia';
 import { cookies } from 'next/headers';
 import type { NextRequest } from 'next/server';
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex logic is required here
 export async function GET(req: NextRequest) {
   try {
     const code = req.nextUrl.searchParams.get('code');
@@ -52,6 +53,7 @@ export async function GET(req: NextRequest) {
       }
 
       const emails = await emailsResponse.json();
+      // biome-ignore lint/suspicious/noExplicitAny: Any is required here
       const primaryEmail = emails.find((email: any) => email.primary)?.email;
 
       if (!primaryEmail) {

@@ -3,12 +3,12 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 
+import InfiniteScrollContainer from '@/components/Layouts/InfiniteScrollContainer';
+import PostsLoadingSkeleton from '@/components/Posts/PostsLoadingSkeleton';
 import kyInstance from '@/lib/ky';
-import InfiniteScrollContainer from '@zephyr-ui/Layouts/InfiniteScrollContainer';
-import PostsLoadingSkeleton from '@zephyr-ui/Posts/PostsLoadingSkeleton';
 import type { PostsPage } from '@zephyr/db';
 
-import FeedView from '@zephyr-ui/Home/FeedView';
+import FeedView from '@/components/Home/FeedView';
 
 export default function FollowingFeed() {
   const {

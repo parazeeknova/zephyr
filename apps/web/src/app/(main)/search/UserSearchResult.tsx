@@ -3,13 +3,13 @@
 import EditProfileButton from '@/components/Layouts/EditProfileButton';
 import FollowButton from '@/components/Layouts/FollowButton';
 import UserAvatar from '@/components/Layouts/UserAvatar';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import Linkify from '@/helpers/global/Linkify';
 import kyInstance from '@/lib/ky';
 import { cn } from '@/lib/utils';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import type { UserData } from '@zephyr/db';
+import { Alert, AlertDescription } from '@zephyr/ui/shadui/alert';
+import { Button } from '@zephyr/ui/shadui/button';
 import { motion } from 'framer-motion';
 import { Users2, VerifiedIcon } from 'lucide-react';
 import Link from 'next/link';

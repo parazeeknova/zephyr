@@ -47,7 +47,9 @@ async function awardViewAura() {
         const lastAwardedCount = post.lastAwardedViewCount || 0;
         const currentViews = post.viewCount;
 
-        if (currentViews <= lastAwardedCount) continue;
+        if (currentViews <= lastAwardedCount) {
+          continue;
+        }
 
         const previousFifties = Math.floor(
           lastAwardedCount / VIEWS_AURA_CONFIG.FIFTY_VIEWS.threshold

@@ -1,7 +1,7 @@
+import DiscoverySidebar from '@/components/Discover/DiscoverSidebar';
+import NewUsers from '@/components/Discover/NewUsers';
+import Friends from '@/components/Home/sidebars/left/Friends';
 import { getUserData } from '@/hooks/useUserData';
-import DiscoverySidebar from '@zephyr-ui/Discover/DiscoverSidebar';
-import NewUsers from '@zephyr-ui/Discover/NewUsers';
-import Friends from '@zephyr-ui/Home/sidebars/left/Friends';
 import { validateRequest } from '@zephyr/auth/auth';
 import type { Metadata } from 'next';
 

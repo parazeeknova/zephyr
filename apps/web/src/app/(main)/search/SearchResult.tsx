@@ -1,14 +1,14 @@
 'use client';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
+import Post from '@/components/Home/feedview/postCard';
+import InfiniteScrollContainer from '@/components/Layouts/InfiniteScrollContainer';
+import LoadMoreSkeleton from '@/components/Layouts/skeletons/LoadMoreSkeleton';
+import PostsLoadingSkeleton from '@/components/Layouts/skeletons/PostOnlyLoadingSkeleton';
 import kyInstance from '@/lib/ky';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import Post from '@zephyr-ui/Home/feedview/postCard';
-import InfiniteScrollContainer from '@zephyr-ui/Layouts/InfiniteScrollContainer';
-import LoadMoreSkeleton from '@zephyr-ui/Layouts/skeletons/LoadMoreSkeleton';
-import PostsLoadingSkeleton from '@zephyr-ui/Layouts/skeletons/PostOnlyLoadingSkeleton';
 import type { PostsPage } from '@zephyr/db';
+import { Alert, AlertDescription } from '@zephyr/ui/shadui/alert';
+import { Separator } from '@zephyr/ui/shadui/separator';
 import { motion } from 'framer-motion';
 import { FileText, Search } from 'lucide-react';
 import UserSearchResults from './UserSearchResult';

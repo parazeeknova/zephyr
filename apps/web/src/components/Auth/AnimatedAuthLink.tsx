@@ -1,6 +1,11 @@
 'use client';
 
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import {
+  type MotionValue,
+  motion,
+  useMotionValue,
+  useSpring,
+} from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -17,8 +22,8 @@ const PreviewCursor = ({
   isHovered,
   previewImage,
 }: {
-  mouseX: any;
-  mouseY: any;
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
   isHovered: boolean;
   previewImage: string;
 }) => {

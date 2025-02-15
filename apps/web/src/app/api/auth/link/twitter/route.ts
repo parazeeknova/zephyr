@@ -3,10 +3,9 @@ import { generateCodeVerifier, generateState } from 'arctic';
 import { cookies } from 'next/headers';
 
 export async function GET() {
-  // Check if user is authenticated
   const { user } = await validateRequest();
   if (!user) {
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    // biome-ignore lint/style/noNonNullAssertion: This is a valid use case
     return Response.redirect(new URL('/login', process.env.NEXT_PUBLIC_URL!));
   }
 
@@ -14,12 +13,11 @@ export async function GET() {
   const codeVerifier = generateCodeVerifier();
   const cookieStore = await cookies();
 
-  // Set OAuth cookies
   cookieStore.set('state', state, {
     path: '/',
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 60 * 10, // 10 minutes
+    maxAge: 60 * 10,
     sameSite: 'lax',
   });
 
@@ -31,7 +29,6 @@ export async function GET() {
     sameSite: 'lax',
   });
 
-  // Set linking flag
   cookieStore.set('linking', 'true', {
     path: '/',
     secure: process.env.NODE_ENV === 'production',

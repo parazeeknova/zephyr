@@ -3,13 +3,24 @@ import {
   useUpdateProfileMutation,
 } from '@/app/(main)/users/[username]/avatar-mutations';
 import avatarPlaceholder from '@/app/assets/avatar-placeholder.png';
+import LoadingButton from '@/components/Auth/LoadingButton';
+import { AnimatedWordCounter } from '@/components/misc/AnimatedWordCounter';
+import { cn } from '@/lib/utils';
+import { getSecureImageUrl } from '@/lib/utils/imageUrl';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  type UpdateUserProfileValues,
+  updateUserProfileSchema,
+} from '@zephyr/auth/validation';
+import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@zephyr/ui/shadui/dialog';
 import {
   Form,
   FormControl,
@@ -17,21 +28,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
-import { getSecureImageUrl } from '@/utils/imageUrl';
-import { zodResolver } from '@hookform/resolvers/zod';
-import LoadingButton from '@zephyr-ui/Auth/LoadingButton';
-import { AnimatedWordCounter } from '@zephyr-ui/misc/AnimatedWordCounter';
-import {
-  type UpdateUserProfileValues,
-  updateUserProfileSchema,
-} from '@zephyr/auth/validation';
-import type { UserData } from '@zephyr/db';
+} from '@zephyr/ui/shadui/form';
+import { Input } from '@zephyr/ui/shadui/input';
+import { Label } from '@zephyr/ui/shadui/label';
+import { Textarea } from '@zephyr/ui/shadui/textarea';
 import { Camera } from 'lucide-react';
 import Image, { type StaticImageData } from 'next/image';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';

@@ -1,8 +1,8 @@
-import { useToast } from '@/hooks/use-toast';
 import kyInstance from '@/lib/ky';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { debugLog } from '@zephyr/config/debug';
 import type { FollowerInfo, UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 
 const QUERY_KEYS = {
   followerInfo: (userId: string) => ['follower-info', userId],

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 export function useInfiniteScroll(
   onIntersect: () => void,
@@ -13,8 +13,8 @@ export function useInfiniteScroll(
   useEffect(() => {
     const {
       threshold = 0.1,
-      rootMargin = "0px",
-      enabled = true
+      rootMargin = '0px',
+      enabled = true,
     } = options ?? {};
 
     if (!enabled) return;

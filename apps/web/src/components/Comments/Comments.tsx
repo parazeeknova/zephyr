@@ -1,6 +1,6 @@
+import CommentsSkeleton from '@/components/Layouts/skeletons/CommentsSkeleton';
 import kyInstance from '@/lib/ky';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import CommentsSkeleton from '@zephyr-ui/Layouts/skeletons/CommentsSkeleton';
 import type { CommentsPage, PostData } from '@zephyr/db';
 import { Button } from '../ui/button';
 import Comment from './Comment';

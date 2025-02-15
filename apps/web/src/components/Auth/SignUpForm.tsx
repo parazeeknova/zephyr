@@ -1,7 +1,16 @@
 'use client';
 
 import { resendVerificationEmail, signUp } from '@/app/(auth)/signup/actions';
-import { FlipWords } from '@/components/ui/flip-words';
+import { LoadingButton } from '@/components/Auth/LoadingButton';
+import { PasswordInput } from '@/components/Auth/PasswordInput';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { isDevelopmentMode } from '@zephyr/auth/src/email/service';
+import { type SignUpValues, signUpSchema } from '@zephyr/auth/validation';
+import { FlipWords } from '@zephyr/ui/components/ui/flip-words';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { useVerification } from '@zephyr/ui/providers/verification';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Checkbox } from '@zephyr/ui/shadui/checkbox';
 import {
   Form,
   FormControl,
@@ -9,15 +18,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useVerification } from '@/context/VerificationContext';
-import { useToast } from '@/hooks/use-toast';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { LoadingButton } from '@zephyr-ui/Auth/LoadingButton';
-import { PasswordInput } from '@zephyr-ui/Auth/PasswordInput';
-import { isDevelopmentMode } from '@zephyr/auth/src/email/service';
-import { type SignUpValues, signUpSchema } from '@zephyr/auth/validation';
+} from '@zephyr/ui/shadui/form';
+import { Input } from '@zephyr/ui/shadui/input';
 import { motion } from 'framer-motion';
 import { AlertCircle, Mail, User } from 'lucide-react';
 import Link from 'next/link';
@@ -28,8 +30,6 @@ import {
   useForm,
 } from 'react-hook-form';
 import { useCountdown } from 'usehooks-ts';
-import { Button } from '../ui/button';
-import { Checkbox } from '../ui/checkbox';
 import { PasswordStrengthChecker } from './PasswordStrengthChecker';
 
 const texts = [
@@ -55,7 +55,9 @@ function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
 }
 
 function toErrorWithMessage(maybeError: unknown): ErrorWithMessage {
-  if (isErrorWithMessage(maybeError)) return maybeError;
+  if (isErrorWithMessage(maybeError)) {
+    return maybeError;
+  }
   try {
     return new Error(JSON.stringify(maybeError));
   } catch {
@@ -114,7 +116,7 @@ export default function SignUpForm() {
     return () => {
       verificationChannel.close();
     };
-  }, [setIsVerifying]);
+  }, [setIsVerifying, verificationChannel]);
 
   const handleInvalidSubmit: SubmitErrorHandler<FieldValues> = useCallback(
     (errors) => {
@@ -148,6 +150,7 @@ export default function SignUpForm() {
       });
       return;
     }
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: ignore
     startTransition(async () => {
       try {
         setIsLoading(true);
@@ -212,7 +215,9 @@ export default function SignUpForm() {
   };
 
   const onResendVerificationEmail = async () => {
-    if (count > 0 && count < 60) return;
+    if (count > 0 && count < 60) {
+      return;
+    }
 
     try {
       setIsResending(true);
@@ -471,6 +476,7 @@ export default function SignUpForm() {
                     <span className="relative text-muted-foreground">
                       Sending...
                     </span>
+                    // biome-ignore lint/nursery/noNestedTernary: ignore
                   ) : count > 0 && count < 60 ? (
                     <>
                       <motion.div

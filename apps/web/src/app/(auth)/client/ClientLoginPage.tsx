@@ -2,9 +2,11 @@
 
 import AnimatedAuthLink from '@/components/Auth/AnimatedAuthLink';
 import AuthButtonWrapper from '@/components/Auth/AuthButtonWrapper';
-import loginImage from '@zephyr-assets/login-image.jpg';
-import signupImage from '@zephyr-assets/previews/signup.png';
-import LoginForm from '@zephyr-ui/Auth/LoginForm';
+import LoginForm from '@/components/Auth/LoginForm';
+// @ts-expect-error - no types for image files
+import loginImage from '@assets/auth/login-image.png';
+// @ts-expect-error - no types for image files
+import signupImage from '@assets/previews/signup.png';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, FileText, Shield } from 'lucide-react';
 import Image from 'next/image';

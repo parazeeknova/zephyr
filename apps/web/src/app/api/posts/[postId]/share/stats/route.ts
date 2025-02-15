@@ -1,10 +1,9 @@
 import { shareStatsCache } from '@zephyr/db';
-import { type NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 type Params = { params: { postId: string } };
 
-// biome-ignore lint/correctness/noUnusedVariables: This is a required function
-export async function GET(request: NextRequest, params: Params) {
+export async function GET(params: Params) {
   const { postId } = await params.params;
 
   if (!postId) {

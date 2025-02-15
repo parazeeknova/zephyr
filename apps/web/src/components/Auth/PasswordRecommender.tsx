@@ -5,6 +5,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Lightbulb, Wand2 } from 'lucide-react';
 import { useState } from 'react';
 import type { UseFormSetValue } from 'react-hook-form';
+import {
+  lowercaseRegex,
+  onenumberRegex,
+  specialCharRegex,
+  uppercaseRegex,
+} from './PasswordStrengthChecker';
 
 interface Requirement {
   text: string;
@@ -27,23 +33,25 @@ export function PasswordRecommender({
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generateRecommendation = (password: string): string => {
-    if (!password) return '';
+    if (!password) {
+      return '';
+    }
 
     let recommendation = password;
     let failedRequirements = requirements.filter(
       (req) => !req.validator(password)
     );
 
-    // Process each failed requirement specifically - @parazeeknova
-    // biome-ignore lint/complexity/noForEach: <explanation>
+    // biome-ignore lint/complexity/noForEach: ignore
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: ignore
     failedRequirements.forEach((req) => {
+      // biome-ignore lint/style/useDefaultSwitchClause: ignore
       switch (req.text) {
         case 'At least 8 characters long': {
           while (recommendation.length < 8) {
             const missingRequirements = requirements.filter(
               (r) => !r.validator(recommendation)
             );
-            // Add characters that help meet other requirements too - @parazeeknova
             if (missingRequirements.some((r) => r.text.includes('uppercase'))) {
               recommendation += 'K';
             } else if (
@@ -62,8 +70,8 @@ export function PasswordRecommender({
         }
 
         case 'Contains at least one uppercase letter':
-          if (!/[A-Z]/.test(recommendation)) {
-            const letterMatch = recommendation.match(/[a-z]/);
+          if (!uppercaseRegex.test(recommendation)) {
+            const letterMatch = recommendation.match(lowercaseRegex);
             if (letterMatch) {
               const pos = recommendation.indexOf(letterMatch[0]);
               recommendation =
@@ -77,13 +85,13 @@ export function PasswordRecommender({
           break;
 
         case 'Contains at least one lowercase letter':
-          if (!/[a-z]/.test(recommendation)) {
+          if (!lowercaseRegex.test(recommendation)) {
             recommendation += 'x';
           }
           break;
 
         case 'Contains at least one number': {
-          if (!/[0-9]/.test(recommendation)) {
+          if (!onenumberRegex.test(recommendation)) {
             const numberMappings: Record<string, string> = {
               o: '0',
               i: '1',
@@ -117,7 +125,7 @@ export function PasswordRecommender({
         }
 
         case 'Contains at least one special character': {
-          if (!/[@$!%*?&#]/.test(recommendation)) {
+          if (!specialCharRegex.test(recommendation)) {
             const specialMappings: Record<string, string> = {
               a: '@',
               i: '!',
@@ -182,14 +190,12 @@ export function PasswordRecommender({
           break;
       }
 
-      // Recheck failed requirements after each modification
       failedRequirements = requirements.filter(
         (req) => !req.validator(recommendation)
       );
     });
 
     if (failedRequirements.length > 0) {
-      // If still not meeting all requirements, create a guaranteed valid password
       const base = recommendation.slice(0, 4);
       recommendation = `${base}K7@x${Math.floor(Math.random() * 100)}`;
     }

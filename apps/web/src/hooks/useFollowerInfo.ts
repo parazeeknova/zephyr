@@ -19,6 +19,7 @@ export function useFollowerInfo(userId: string, initialData: FollowerInfo) {
     onSuccess: (data) => {
       queryClient.setQueriesData(
         { queryKey: ['follower-info'] },
+        // biome-ignore lint/suspicious/noExplicitAny: any
         (oldData: any) => ({
           ...oldData,
           [userId]: data,

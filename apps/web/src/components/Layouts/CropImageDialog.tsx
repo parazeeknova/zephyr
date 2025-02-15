@@ -1,11 +1,11 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@zephyr/ui/shadui/dialog';
 import 'cropperjs/dist/cropper.css';
 import { useRef } from 'react';
 import { Cropper, type ReactCropperElement } from 'react-cropper';

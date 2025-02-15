@@ -1,14 +1,14 @@
 'use client';
 
 import { useSession } from '@/app/(main)/SessionProvider';
+import Linkify from '@/helpers/global/Linkify';
+import type { FollowerInfo, UserData } from '@zephyr/db';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import Linkify from '@/helpers/global/Linkify';
-import type { FollowerInfo, UserData } from '@zephyr/db';
+} from '@zephyr/ui/shadui/tooltip';
 import Link from 'next/link';
 import type { PropsWithChildren } from 'react';
 import FollowButton from './FollowButton';

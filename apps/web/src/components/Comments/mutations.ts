@@ -1,4 +1,3 @@
-import { useToast } from '@/hooks/use-toast';
 import {
   type InfiniteData,
   type QueryKey,
@@ -6,6 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import type { CommentsPage } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import { deleteComment, submitComment } from './actions';
 
 export function useSubmitCommentMutation(postId: string) {

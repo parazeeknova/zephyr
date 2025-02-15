@@ -3,6 +3,7 @@ import { prisma } from '@zephyr/db';
 import { NextResponse } from 'next/server';
 import { StreamChat } from 'stream-chat';
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex logic is required here
 async function syncStreamUsers() {
   const logs: string[] = [];
   const startTime = Date.now();
@@ -34,6 +35,7 @@ async function syncStreamUsers() {
     log('✅ Stream client initialized successfully');
 
     log('📥 Fetching Stream users...');
+    // biome-ignore lint/suspicious/noExplicitAny: Any type is used here due to Stream SDK limitations
     let allStreamUsers: any[] = [];
     let offset = 0;
     const queryLimit = 100;
@@ -49,7 +51,9 @@ async function syncStreamUsers() {
           }
         );
 
-        if (users.length === 0) break;
+        if (users.length === 0) {
+          break;
+        }
 
         allStreamUsers = [...allStreamUsers, ...users];
         offset += users.length;
@@ -58,7 +62,9 @@ async function syncStreamUsers() {
           `📊 Fetched batch of ${users.length} users (total: ${allStreamUsers.length})`
         );
 
-        if (users.length < queryLimit) break;
+        if (users.length < queryLimit) {
+          break;
+        }
 
         await new Promise((resolve) => setTimeout(resolve, 300));
       } catch (error) {

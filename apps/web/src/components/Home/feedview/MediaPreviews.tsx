@@ -1,9 +1,9 @@
-import { Button } from '@/components/ui/button';
 import { getLanguageFromFileName } from '@/lib/codefileExtensions';
 import { formatFileName } from '@/lib/formatFileName';
 import { cn } from '@/lib/utils';
 import { PlayArrowOutlined } from '@mui/icons-material';
 import type { Media } from '@prisma/client';
+import { Button } from '@zephyr/ui/shadui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FileAudioIcon, FileCode, FileIcon } from 'lucide-react';
 import Image from 'next/image';

@@ -5,11 +5,9 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { usePathname, useRouter } from 'next/navigation';
-
-import { useToast } from '@/hooks/use-toast';
 import type { PostsPage } from '@zephyr/db';
-
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { usePathname, useRouter } from 'next/navigation';
 import { deletePost } from './actions';
 
 export function useDeletePostMutation() {
@@ -35,7 +33,9 @@ export function useDeletePostMutation() {
       queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
         queryFilter,
         (oldData) => {
-          if (!oldData) return;
+          if (!oldData) {
+            return;
+          }
 
           return {
             pageParams: oldData.pageParams,

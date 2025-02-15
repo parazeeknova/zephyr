@@ -1,12 +1,12 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
 import { useTags } from '@/hooks/useTags';
 import { cn } from '@/lib/utils';
 import type { Tag } from '@prisma/client';
 import type { TagWithCount } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
+import { DialogHeader, DialogTitle } from '@zephyr/ui/shadui/dialog';
 import { Command } from 'cmdk';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Hash, Loader2, Plus, Search, X } from 'lucide-react';

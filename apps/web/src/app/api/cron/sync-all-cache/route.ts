@@ -23,6 +23,7 @@ async function validateRedisConnection(log: (message: string) => void) {
   }
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: Any type is used here due to Redis SDK limitations
 async function syncViewCounts(log: (message: string) => void, results: any) {
   log('\n📊 Syncing view counts...');
   try {
@@ -84,6 +85,7 @@ async function syncViewCounts(log: (message: string) => void, results: any) {
   }
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: Any type is used here due to Redis SDK limitations
 async function syncShareStats(log: (message: string) => void, results: any) {
   log('\n🔄 Syncing share stats...');
   try {
@@ -129,6 +131,7 @@ async function syncShareStats(log: (message: string) => void, results: any) {
   }
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: Any type is used here due to Redis SDK limitations
 async function syncTagCounts(log: (message: string) => void, results: any) {
   log('\n🏷️ Syncing tag counts...');
   try {
@@ -142,6 +145,7 @@ async function syncTagCounts(log: (message: string) => void, results: any) {
   }
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: Any type is used here due to Redis SDK limitations
 async function syncAvatars(log: (message: string) => void, results: any) {
   log('\n👤 Syncing avatar cache...');
   try {
@@ -169,6 +173,7 @@ async function syncAvatars(log: (message: string) => void, results: any) {
   }
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: Any type is used here due to Redis SDK limitations
 async function syncFollowerInfo(log: (message: string) => void, results: any) {
   log('\n👥 Syncing follower info...');
   try {
@@ -213,6 +218,7 @@ async function syncFollowerInfo(log: (message: string) => void, results: any) {
 
 async function syncTrendingTopics(
   log: (message: string) => void,
+  // biome-ignore lint/suspicious/noExplicitAny: Any type is used here due to Redis SDK limitations
   results: any
 ) {
   log('\n📈 Syncing trending topics...');

@@ -27,7 +27,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Error fetching HN stories:', error);
 
-    if ((error as any).statusCode === 429) {
+    if ((error as { statusCode?: number }).statusCode === 429) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please try again later.' },
         { status: 429 }
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(
       { error: 'Failed to fetch stories' },
-      { status: (error as any).statusCode || 500 }
+      { status: (error as { statusCode?: number }).statusCode || 500 }
     );
   }
 }
@@ -48,7 +48,7 @@ export async function POST() {
   } catch (error) {
     console.error('Error refreshing HN cache:', error);
 
-    if ((error as any).statusCode === 429) {
+    if ((error as { statusCode?: number }).statusCode === 429) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please try again later.' },
         { status: 429 }
@@ -57,7 +57,7 @@ export async function POST() {
 
     return NextResponse.json(
       { error: 'Failed to refresh cache' },
-      { status: (error as any).statusCode || 500 }
+      { status: (error as { statusCode?: number }).statusCode || 500 }
     );
   }
 }

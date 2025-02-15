@@ -1,12 +1,12 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Input } from '@zephyr/ui/shadui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@zephyr/ui/shadui/select';
 import { motion } from 'framer-motion';
 import { SUPPORT_TYPES } from '../../constants';
 import type { StepProps } from '../../types';

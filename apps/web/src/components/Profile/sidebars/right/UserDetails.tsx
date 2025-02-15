@@ -1,23 +1,23 @@
 'use client';
 
 import EditProfileButton from '@/components/Layouts/EditProfileButton';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import FollowButton from '@/components/Layouts/FollowButton';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import Linkify from '@/helpers/global/Linkify';
+import { formatNumber } from '@/lib/utils';
+import { getSecureImageUrl } from '@/lib/utils/imageUrl';
+import { useQuery } from '@tanstack/react-query';
+import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
+import { Skeleton } from '@zephyr/ui/shadui/skeleton';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import Linkify from '@/helpers/global/Linkify';
-import { useToast } from '@/hooks/use-toast';
-import { formatNumber } from '@/lib/utils';
-import { getSecureImageUrl } from '@/utils/imageUrl';
-import { useQuery } from '@tanstack/react-query';
-import FollowButton from '@zephyr-ui/Layouts/FollowButton';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
-import type { UserData } from '@zephyr/db';
+} from '@zephyr/ui/shadui/tooltip';
 import { formatDate, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
 import {

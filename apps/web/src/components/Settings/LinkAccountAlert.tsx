@@ -1,6 +1,6 @@
 'use client';
 
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 

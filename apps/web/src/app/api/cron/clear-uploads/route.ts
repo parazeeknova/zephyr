@@ -2,6 +2,7 @@ import { deleteAvatar } from '@/lib/minio';
 import { prisma } from '@zephyr/db';
 import { NextResponse } from 'next/server';
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex logic is required here
 async function clearUploads() {
   const logs: string[] = [];
   const startTime = Date.now();

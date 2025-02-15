@@ -1,11 +1,11 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { useMentionedUsers } from '@/hooks/useMentionedUsers';
 import { cn, formatNumber } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import type { UserData } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AtSign, RefreshCw } from 'lucide-react';
 import Image from 'next/image';

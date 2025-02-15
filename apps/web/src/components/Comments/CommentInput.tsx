@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import type { PostData } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Input } from '@zephyr/ui/shadui/input';
 import { Loader2, SendHorizonal } from 'lucide-react';
 import { useState } from 'react';
 import { useSubmitCommentMutation } from './mutations';

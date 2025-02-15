@@ -2,7 +2,7 @@
 
 import ScrollUpButton from '@/components/Layouts/ScrollUpButton';
 import { FossBanner } from '@/components/misc/foss-banner';
-import { Button } from '@/components/ui/button';
+import { Button } from '@zephyr/ui/shadui/button';
 import { ArrowLeft, Shield } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect } from 'react';

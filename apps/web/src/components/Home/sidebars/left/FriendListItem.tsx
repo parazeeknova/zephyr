@@ -1,15 +1,15 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import { getAvatarUrl } from '@/lib/utils/getAvatarUrl';
+import type { UserData } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { getAvatarUrl } from '@/utils/getAvatarUrl';
-import UserAvatar from '@zephyr-ui/Layouts/UserAvatar';
-import type { UserData } from '@zephyr/db';
+} from '@zephyr/ui/shadui/dropdown-menu';
 import { motion } from 'framer-motion';
 import { ImageOff, MoreHorizontal, UserMinus } from 'lucide-react';
 import Image from 'next/image';

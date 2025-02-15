@@ -1,5 +1,5 @@
-import { useToast } from '@/hooks/use-toast';
 import { validateFile } from '@/lib/utils/file-validation';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import { useState } from 'react';
 
 export interface Attachment {

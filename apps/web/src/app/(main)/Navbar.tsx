@@ -1,4 +1,4 @@
-import Header from '@zephyr-ui/Layouts/Header';
+import Header from '@/components/Layouts/Header';
 import { validateRequest } from '@zephyr/auth/auth';
 import { getStreamClient } from '@zephyr/auth/src';
 import { prisma } from '@zephyr/db';
@@ -6,7 +6,9 @@ import { prisma } from '@zephyr/db';
 export default async function Navbar() {
   const { user } = await validateRequest();
 
-  if (!user) return null;
+  if (!user) {
+    return null;
+  }
 
   let unreadNotificationCount = 0;
   let unreadMessageCount = 0;

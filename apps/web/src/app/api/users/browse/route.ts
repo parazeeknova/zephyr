@@ -12,6 +12,7 @@ export async function GET(request: Request) {
     const search = searchParams.get('search') || '';
     const sortBy = searchParams.get('sortBy') || 'followers';
 
+    // biome-ignore lint/suspicious/noExplicitAny: This is safe because we validate the value above
     let orderBy: any = {};
 
     switch (sortBy) {
