@@ -1,7 +1,7 @@
 {
   "name": "@zephyr/db",
   "description": "Zephyr's database & cache package",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
