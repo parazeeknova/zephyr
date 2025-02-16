@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { ChevronRight } from "lucide-react";
-import type React from "react";
+import { motion } from 'framer-motion';
+import { ChevronRight } from 'lucide-react';
+import type React from 'react';
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from '@zephyr/ui/shadui/avatar';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
 
 interface RecommendationsProps {
   people: Array<{

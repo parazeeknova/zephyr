@@ -1,15 +1,15 @@
-import { getUserData } from "@/hooks/useUserData";
-import DiscoverySidebar from "@zephyr-ui/Discover/DiscoverSidebar";
-import SuggestedUsers from "@zephyr-ui/Discover/SuggestedUsers";
-import TrendingUsers from "@zephyr-ui/Discover/TrendingUsers";
-import Friends from "@zephyr-ui/Home/sidebars/left/Friends";
-import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
-import { validateRequest } from "@zephyr/auth/auth";
-import type { Metadata } from "next";
+import DiscoverySidebar from '@/components/Discover/DiscoverSidebar';
+import SuggestedUsers from '@/components/Discover/SuggestedUsers';
+import TrendingUsers from '@/components/Discover/TrendingUsers';
+import Friends from '@/components/Home/sidebars/left/Friends';
+import NavigationCard from '@/components/Home/sidebars/left/NavigationCard';
+import { getUserData } from '@/hooks/useUserData';
+import { validateRequest } from '@zephyr/auth/auth';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Discover",
-  description: "Discover and connect with amazing people on Zephyr"
+  title: 'Discover',
+  description: 'Discover and connect with amazing people on Zephyr',
 };
 
 export default async function DiscoveryPage() {

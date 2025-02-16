@@ -1,22 +1,22 @@
-import kyInstance from "@/lib/ky";
+import kyInstance from '@/lib/ky';
 
 export const searchMutations = {
   addSearch: async (query: string) => {
-    return kyInstance.post("/api/search", { json: { query } });
+    return await kyInstance.post('/api/search', { json: { query } });
   },
 
   clearHistory: async () => {
-    return kyInstance.delete("/api/search", {
-      searchParams: { type: "history" }
+    return await kyInstance.delete('/api/search', {
+      searchParams: { type: 'history' },
     });
   },
 
   removeHistoryItem: async (query: string) => {
-    return kyInstance.delete("/api/search", {
+    return await kyInstance.delete('/api/search', {
       searchParams: {
-        type: "history",
-        query
-      }
+        type: 'history',
+        query,
+      },
     });
-  }
+  },
 };

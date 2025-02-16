@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@zephyr/ui/shadui/button';
 
 export default function GithubSignInButton() {
   return (
@@ -26,8 +26,8 @@ function GithubIcon() {
     >
       <defs>
         <linearGradient id="githubGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: "#ffffff" }} />
-          <stop offset="100%" style={{ stopColor: "#16161e" }} />
+          <stop offset="0%" style={{ stopColor: '#ffffff' }} />
+          <stop offset="100%" style={{ stopColor: '#16161e' }} />
         </linearGradient>
       </defs>
       <path

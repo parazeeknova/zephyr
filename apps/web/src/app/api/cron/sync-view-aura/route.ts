@@ -1,15 +1,15 @@
-import { prisma } from "@zephyr/db";
-import { NextResponse } from "next/server";
+import { prisma } from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
 const VIEWS_AURA_CONFIG = {
   FIFTY_VIEWS: {
     threshold: 50,
-    aura: 10
+    aura: 10,
   },
   THOUSAND_VIEWS: {
     threshold: 1000,
-    aura: 100
-  }
+    aura: 100,
+  },
 };
 
 async function awardViewAura() {
@@ -24,11 +24,11 @@ async function awardViewAura() {
   const results = {
     processedPosts: 0,
     auraAwarded: 0,
-    errors: [] as string[]
+    errors: [] as string[],
   };
 
   try {
-    log("🚀 Starting post view aura awards");
+    log('🚀 Starting post view aura awards');
 
     const posts = await prisma.post.findMany({
       select: {
@@ -36,8 +36,8 @@ async function awardViewAura() {
         userId: true,
         viewCount: true,
         lastAwardedViewCount: true,
-        aura: true
-      }
+        aura: true,
+      },
     });
 
     log(`📊 Found ${posts.length} posts to process`);
@@ -47,7 +47,9 @@ async function awardViewAura() {
         const lastAwardedCount = post.lastAwardedViewCount || 0;
         const currentViews = post.viewCount;
 
-        if (currentViews <= lastAwardedCount) continue;
+        if (currentViews <= lastAwardedCount) {
+          continue;
+        }
 
         const previousFifties = Math.floor(
           lastAwardedCount / VIEWS_AURA_CONFIG.FIFTY_VIEWS.threshold
@@ -75,15 +77,15 @@ async function awardViewAura() {
               where: { id: post.id },
               data: {
                 aura: { increment: auraToAward },
-                lastAwardedViewCount: currentViews
-              }
+                lastAwardedViewCount: currentViews,
+              },
             });
 
             await tx.user.update({
               where: { id: post.userId },
               data: {
-                aura: { increment: auraToAward }
-              }
+                aura: { increment: auraToAward },
+              },
             });
 
             await tx.auraLog.create({
@@ -91,9 +93,9 @@ async function awardViewAura() {
                 userId: post.userId,
                 issuerId: post.userId,
                 amount: auraToAward,
-                type: "POST_VIEWS_MILESTONE",
-                postId: post.id
-              }
+                type: 'POST_VIEWS_MILESTONE',
+                postId: post.id,
+              },
             });
 
             log(
@@ -119,9 +121,9 @@ async function awardViewAura() {
       stats: {
         totalPosts: posts.length,
         postsAwarded: results.processedPosts,
-        totalAuraAwarded: results.auraAwarded
+        totalAuraAwarded: results.auraAwarded,
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     log(`\n✨ Post aura awards completed:
@@ -134,14 +136,14 @@ async function awardViewAura() {
     return summary;
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+      error instanceof Error ? error.message : 'Unknown error';
     log(`❌ Fatal error in aura awards: ${errorMessage}`);
     return {
       success: false,
       duration: Date.now() - startTime,
       error: errorMessage,
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -150,16 +152,16 @@ export async function POST(request: Request) {
   try {
     if (!process.env.CRON_SECRET_KEY) {
       return NextResponse.json(
-        { error: "Server configuration error" },
+        { error: 'Server configuration error' },
         { status: 500 }
       );
     }
 
-    const authHeader = request.headers.get("authorization");
+    const authHeader = request.headers.get('authorization');
     const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
 
     if (!authHeader || authHeader !== expectedAuth) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const results = await awardViewAura();
@@ -167,21 +169,21 @@ export async function POST(request: Request) {
     return NextResponse.json(results, {
       status: results.success ? 200 : 500,
       headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      }
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
     });
   } catch (error) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString()
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
       },
       { status: 500 }
     );
   }
 }
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

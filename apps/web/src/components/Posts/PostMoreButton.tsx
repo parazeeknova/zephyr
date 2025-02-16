@@ -1,18 +1,18 @@
-import { MentionTags } from "@/components/Tags/MentionTags";
-import { Tags as TagsComponent } from "@/components/Tags/Tags";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { MentionTags } from '@/components/Tags/MentionTags';
+import { Tags as TagsComponent } from '@/components/Tags/Tags';
+import type { PostData, TagWithCount, UserData } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Dialog, DialogContent, DialogTitle } from '@zephyr/ui/shadui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import type { PostData, TagWithCount, UserData } from "@zephyr/db";
-import { AtSign, MoreHorizontal, Tags, Trash2 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
-import DeletePostDialog from "./DeletePostDialog";
+  DropdownMenuTrigger,
+} from '@zephyr/ui/shadui/dropdown-menu';
+import { AtSign, MoreHorizontal, Tags, Trash2 } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
+import DeletePostDialog from './DeletePostDialog';
 
 interface PostMoreButtonProps {
   post: PostData;
@@ -23,7 +23,7 @@ interface PostMoreButtonProps {
 export default function PostMoreButton({
   post,
   className,
-  onUpdate
+  onUpdate,
 }: PostMoreButtonProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showMentionsDialog, setShowMentionsDialog] = useState(false);
@@ -44,8 +44,8 @@ export default function PostMoreButton({
             postId: post.id,
             userId: user.id,
             user,
-            createdAt: new Date()
-          }))
+            createdAt: new Date(),
+          })),
         };
         onUpdate?.(updatedPost);
         setShowMentionsDialog(false);
@@ -59,7 +59,7 @@ export default function PostMoreButton({
       if (JSON.stringify(post.tags) !== JSON.stringify(newTags)) {
         const updatedPost: PostData = {
           ...post,
-          tags: newTags
+          tags: newTags,
         };
         onUpdate?.(updatedPost);
         setShowTagsDialog(false);

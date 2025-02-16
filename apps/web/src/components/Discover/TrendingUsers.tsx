@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { formatNumber } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import FollowButton from "@zephyr-ui/Layouts/FollowButton";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import type { UserData as BaseUserData } from "@zephyr/db";
-import { motion } from "framer-motion";
-import { BadgeCheckIcon, Flame } from "lucide-react";
-import Link from "next/link";
+import FollowButton from '@/components/Layouts/FollowButton';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import { formatNumber } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import type { UserData as BaseUserData } from '@zephyr/db';
+import { Card } from '@zephyr/ui/shadui/card';
+import { Skeleton } from '@zephyr/ui/shadui/skeleton';
+import { motion } from 'framer-motion';
+import { BadgeCheckIcon, Flame } from 'lucide-react';
+import Link from 'next/link';
 
 interface UserData extends BaseUserData {
   followState?: {
@@ -20,28 +20,28 @@ interface UserData extends BaseUserData {
 
 const TrendingUsers = () => {
   const { data: users, isLoading } = useQuery<UserData[]>({
-    queryKey: ["trending-users"],
+    queryKey: ['trending-users'],
     queryFn: async () => {
-      const response = await fetch("/api/users/trending");
+      const response = await fetch('/api/users/trending');
       const users = await response.json();
 
-      const followStates = await fetch("/api/users/follow-states", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userIds: users.map((u: UserData) => u.id) })
+      const followStates = await fetch('/api/users/follow-states', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userIds: users.map((u: UserData) => u.id) }),
       }).then((r) => r.json());
 
       return users.map((user: UserData) => ({
         ...user,
-        followState: followStates[user.id]
+        followState: followStates[user.id],
       }));
-    }
+    },
   });
 
   if (isLoading) {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {[...Array(6)].map((_, i) => (
+        {[...new Array(6)].map((_, i) => (
           <Card key={i} className="p-4">
             <Skeleton className="h-32 w-full" />
           </Card>
@@ -75,7 +75,7 @@ const TrendingUsers = () => {
                   className="absolute inset-0 bg-center bg-cover transition-transform duration-300 group-hover:scale-105"
                   style={{
                     backgroundImage: `url(${user.avatarUrl})`,
-                    filter: "blur(8px) brightness(0.7)"
+                    filter: 'blur(8px) brightness(0.7)',
                   }}
                 />
                 <div className="relative flex h-full flex-col items-center justify-center p-4">
@@ -118,7 +118,7 @@ const TrendingUsers = () => {
                   initialState={
                     user.followState || {
                       followers: user._count.followers,
-                      isFollowedByUser: false
+                      isFollowedByUser: false,
                     }
                   }
                   className="w-full"

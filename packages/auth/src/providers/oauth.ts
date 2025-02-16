@@ -1,4 +1,4 @@
-import { Discord, GitHub, Google, Twitter } from "arctic";
+import { Discord, GitHub, Google, Twitter } from 'arctic';
 
 export const google = new Google(
   // biome-ignore lint/style/noNonNullAssertion: Required for auth

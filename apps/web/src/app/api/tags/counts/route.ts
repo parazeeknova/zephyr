@@ -1,5 +1,5 @@
-import { prisma } from "@zephyr/db";
-import { NextResponse } from "next/server";
+import { prisma } from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
@@ -13,19 +13,19 @@ export async function GET() {
             name: true,
             _count: {
               select: {
-                posts: true
-              }
-            }
-          }
-        }
-      }
+                posts: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     return NextResponse.json({ posts: postsWithTags });
   } catch (error) {
-    console.error("Error fetching posts with tags:", error);
+    console.error('Error fetching posts with tags:', error);
     return NextResponse.json(
-      { error: "Failed to fetch data" },
+      { error: 'Failed to fetch data' },
       { status: 500 }
     );
   }

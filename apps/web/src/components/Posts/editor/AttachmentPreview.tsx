@@ -1,8 +1,8 @@
-import { getLanguageFromFileName } from "@/lib/codefileExtensions";
-import { formatFileName } from "@/lib/formatFileName";
-import { cn } from "@/lib/utils";
-import { FileAudioIcon, FileCode, FileIcon, X } from "lucide-react";
-import { memo, useEffect, useState } from "react";
+import { getLanguageFromFileName } from '@/lib/codefileExtensions';
+import { formatFileName } from '@/lib/formatFileName';
+import { cn } from '@/lib/utils';
+import { FileAudioIcon, FileCode, FileIcon, X } from 'lucide-react';
+import { memo, useEffect, useState } from 'react';
 
 interface AttachmentPreviewProps {
   attachment: {
@@ -15,9 +15,9 @@ interface AttachmentPreviewProps {
 
 export const AttachmentPreview = memo(function AttachmentPreview({
   attachment: { file, isUploading, previewUrl: existingPreviewUrl },
-  onRemoveClick
+  onRemoveClick,
 }: AttachmentPreviewProps) {
-  const [objectUrl, setObjectUrl] = useState<string>(existingPreviewUrl || "");
+  const [objectUrl, setObjectUrl] = useState<string>(existingPreviewUrl || '');
   const fileName = file.name;
 
   useEffect(() => {
@@ -29,25 +29,28 @@ export const AttachmentPreview = memo(function AttachmentPreview({
   }, [file, existingPreviewUrl]);
 
   const renderPreview = () => {
-    if (!objectUrl) return null;
+    if (!objectUrl) {
+      return null;
+    }
 
-    if (file.type.startsWith("image")) {
+    if (file.type.startsWith('image')) {
       return (
         <div className="relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden rounded-2xl bg-primary/5">
-          <img
+          <Image
             src={objectUrl}
             alt={fileName}
             className="h-full w-full rounded-2xl object-cover"
-            loading="lazy"
+            layout="fill"
+            objectFit="cover"
           />
         </div>
       );
     }
 
     if (
-      file.type.startsWith("text/") ||
-      file.type === "application/json" ||
-      file.type === "application/xml"
+      file.type.startsWith('text/') ||
+      file.type === 'application/json' ||
+      file.type === 'application/xml'
     ) {
       const language = getLanguageFromFileName(fileName);
       return (
@@ -69,9 +72,10 @@ export const AttachmentPreview = memo(function AttachmentPreview({
       );
     }
 
-    if (file.type.startsWith("video")) {
+    if (file.type.startsWith('video')) {
       return (
         <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-primary/5">
+          {/* biome-ignore lint/a11y/useMediaCaption: ignore */}
           <video
             controls
             className="h-full w-full object-cover"
@@ -84,7 +88,7 @@ export const AttachmentPreview = memo(function AttachmentPreview({
       );
     }
 
-    if (file.type.startsWith("audio")) {
+    if (file.type.startsWith('audio')) {
       return (
         <div className="w-full rounded-2xl bg-primary/5 p-6">
           <div className="flex flex-col items-center gap-4">
@@ -96,6 +100,7 @@ export const AttachmentPreview = memo(function AttachmentPreview({
                 {formatFileName(fileName)}
               </p>
             </div>
+            {/* biome-ignore lint/a11y/useMediaCaption: ignore */}
             <audio controls className="w-full max-w-md" preload="metadata">
               <source src={objectUrl} type={file.type} />
               Your browser does not support the audio element.
@@ -105,7 +110,6 @@ export const AttachmentPreview = memo(function AttachmentPreview({
       );
     }
 
-    // Default file preview
     return (
       <div className="w-full rounded-2xl bg-primary/5 p-6">
         <div className="flex flex-col items-center gap-4">
@@ -117,7 +121,7 @@ export const AttachmentPreview = memo(function AttachmentPreview({
               {formatFileName(fileName)}
             </p>
             <p className="text-center text-muted-foreground text-xs">
-              {file.type || "Document"}
+              {file.type || 'Document'}
             </p>
           </div>
         </div>
@@ -128,8 +132,8 @@ export const AttachmentPreview = memo(function AttachmentPreview({
   return (
     <div
       className={cn(
-        "relative w-full transition-opacity duration-200",
-        isUploading && "opacity-50"
+        'relative w-full transition-opacity duration-200',
+        isUploading && 'opacity-50'
       )}
     >
       {renderPreview()}

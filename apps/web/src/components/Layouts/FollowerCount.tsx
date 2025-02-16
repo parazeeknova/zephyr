@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { formatNumber } from "@/lib/utils";
-import { motion } from "framer-motion";
-import { Users } from "lucide-react";
+import { formatNumber } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { Users } from 'lucide-react';
 
 interface FollowerCountProps {
   userId: string;
@@ -12,7 +12,7 @@ interface FollowerCountProps {
 
 export default function FollowerCount({
   initialState,
-  onClick
+  onClick,
 }: FollowerCountProps) {
   return (
     <motion.button
@@ -24,14 +24,14 @@ export default function FollowerCount({
       <motion.div
         initial={{ rotate: 0 }}
         whileHover={{ rotate: 10 }}
-        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 10 }}
       >
         <Users className="h-4 w-4 text-primary group-hover:text-primary/80" />
       </motion.div>
       <span>
         <span className="font-semibold">
           {formatNumber(initialState.followers)}
-        </span>{" "}
+        </span>{' '}
         <span className="text-muted-foreground transition-colors group-hover:text-foreground">
           Followers
         </span>

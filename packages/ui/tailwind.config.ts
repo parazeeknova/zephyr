@@ -1,13 +1,13 @@
-import type { Config } from "tailwindcss";
-import base from "./tailwind-preset";
+import base from '@zephyr/tailwind/configs/config';
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
   ...base,
   content: [
-    "./src/**/*.{ts,tsx}",
-    "../../packages/ui/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}"
-  ]
+    './components/**/*.{js,ts,jsx,tsx}',
+    './shadui/*.{js,ts,jsx,tsx}',
+    './**/*.{js,ts,jsx,tsx}',
+  ],
 };
 
 export default config;

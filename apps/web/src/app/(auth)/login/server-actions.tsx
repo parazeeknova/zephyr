@@ -1,19 +1,19 @@
-"use server";
+'use server';
 
-import { verify } from "@node-rs/argon2";
-import { lucia } from "@zephyr/auth/auth";
-import { sendVerificationEmail } from "@zephyr/auth/src/email/service";
-import { type LoginValues, loginSchema } from "@zephyr/auth/validation";
-import { prisma } from "@zephyr/db";
-import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
+import { verify } from '@node-rs/argon2';
+import { lucia } from '@zephyr/auth/auth';
+import { sendVerificationEmail } from '@zephyr/auth/src/email/service';
+import { type LoginValues, loginSchema } from '@zephyr/auth/validation';
+import { prisma } from '@zephyr/db';
+import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
 
 export async function createVerificationTokenForUser(
   userId: string,
   email: string
 ) {
   const existingToken = await prisma.emailVerificationToken.findFirst({
-    where: { userId }
+    where: { userId },
   });
 
   if (existingToken) {
@@ -21,7 +21,7 @@ export async function createVerificationTokenForUser(
       { userId, email },
       // biome-ignore lint/style/noNonNullAssertion: JWT_SECRET is required
       process.env.JWT_SECRET!,
-      { expiresIn: "1h" }
+      { expiresIn: '1h' }
     );
 
     await prisma.emailVerificationToken.update({
@@ -29,8 +29,8 @@ export async function createVerificationTokenForUser(
       data: {
         token: newToken,
         createdAt: new Date(),
-        expiresAt: new Date(Date.now() + 3600000)
-      }
+        expiresAt: new Date(Date.now() + 3600000),
+      },
     });
 
     return newToken;
@@ -40,15 +40,15 @@ export async function createVerificationTokenForUser(
     { userId, email },
     // biome-ignore lint/style/noNonNullAssertion: JWT_SECRET is required
     process.env.JWT_SECRET!,
-    { expiresIn: "1h" }
+    { expiresIn: '1h' }
   );
 
   await prisma.emailVerificationToken.create({
     data: {
       token,
       userId,
-      expiresAt: new Date(Date.now() + 3600000)
-    }
+      expiresAt: new Date(Date.now() + 3600000),
+    },
   });
 
   return token;
@@ -69,24 +69,24 @@ export async function loginAction(credentials: LoginValues): Promise<{
       where: {
         username: {
           equals: username,
-          mode: "insensitive"
-        }
-      }
+          mode: 'insensitive',
+        },
+      },
     });
 
     if (!existingUser || !existingUser.passwordHash) {
-      return { error: "Incorrect username or password", success: false };
+      return { error: 'Incorrect username or password', success: false };
     }
 
     const validPassword = await verify(existingUser.passwordHash, password);
 
     if (!validPassword) {
-      return { error: "Incorrect username or password", success: false };
+      return { error: 'Incorrect username or password', success: false };
     }
 
     if (!existingUser.emailVerified && !existingUser.googleId) {
       if (!existingUser.email) {
-        return { error: "Account has no associated email", success: false };
+        return { error: 'Account has no associated email', success: false };
       }
 
       try {
@@ -100,15 +100,18 @@ export async function loginAction(credentials: LoginValues): Promise<{
           success: false,
           emailVerification: {
             email: existingUser.email,
-            isNewToken: true
-          }
+            isNewToken: true,
+          },
         };
       } catch (_error) {
-        return { error: "Failed to create verification token", success: false };
+        return { error: 'Failed to create verification token', success: false };
       }
     }
 
-    const session = await lucia.createSession(existingUser.id, {});
+    const session = await lucia.createSession(existingUser.id, {
+      username: '',
+      email: '',
+    });
     const sessionCookie = lucia.createSessionCookie(session.id);
     const cookieStore = await cookies();
     cookieStore.set(
@@ -120,6 +123,6 @@ export async function loginAction(credentials: LoginValues): Promise<{
     return { success: true };
   } catch (error) {
     console.error(error);
-    return { error: "Something went wrong. Please try again.", success: false };
+    return { error: 'Something went wrong. Please try again.', success: false };
   }
 }

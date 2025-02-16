@@ -1,11 +1,18 @@
-"use client";
+'use client';
 
-import { Badge } from "@/components/ui/badge";
-import { Cover } from "@/components/ui/cover";
-import { cn } from "@/lib/utils";
-import SearchField from "@zephyr-ui/Layouts/SearchField";
-import UserButton from "@zephyr-ui/Layouts/UserButton";
-import { motion } from "framer-motion";
+import SearchField from '@/components/Layouts/SearchField';
+import UserButton from '@/components/Layouts/UserButton';
+import { cn } from '@/lib/utils';
+import { Cover } from '@zephyr/ui/components/ui/cover';
+import { Badge } from '@zephyr/ui/shadui/badge';
+import { Button } from '@zephyr/ui/shadui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@zephyr/ui/shadui/dropdown-menu';
+import { motion } from 'framer-motion';
 import {
   Bookmark,
   Compass,
@@ -13,20 +20,14 @@ import {
   MessageSquare,
   MoreHorizontal,
   Newspaper,
-  Settings
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import MessagesButton from "../Messages/MessagesButton";
-import { HeaderIconButton } from "../Styles/HeaderButtons";
-import { Button } from "../ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from "../ui/dropdown-menu";
-import NotificationsButton from "./NotificationsButton";
+  Settings,
+} from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import type React from 'react';
+import MessagesButton from '../Messages/MessagesButton';
+import { HeaderIconButton } from '../Styles/HeaderButtons';
+import NotificationsButton from './NotificationsButton';
 
 interface HeaderProps {
   bookmarkCount: number;
@@ -37,7 +38,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({
   bookmarkCount,
   unreadNotificationCount,
-  unreadMessageCount
+  unreadMessageCount,
 }) => {
   const pathname = usePathname();
   const isActivePath = (path: string) => {
@@ -111,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({
     href,
     icon,
     label,
-    badge = 0
+    badge = 0,
   }: {
     href: string;
     icon: React.ReactNode;
@@ -129,8 +130,8 @@ const Header: React.FC<HeaderProps> = ({
         <Link
           href={href}
           className={cn(
-            "relative flex flex-col items-center",
-            isActive ? "text-foreground" : "text-muted-foreground"
+            'relative flex flex-col items-center',
+            isActive ? 'text-foreground' : 'text-muted-foreground'
           )}
         >
           <div className="relative flex items-center justify-center">
@@ -139,7 +140,7 @@ const Header: React.FC<HeaderProps> = ({
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ type: "spring" }}
+                transition={{ type: 'spring' }}
                 className="-top-1.5 -right-1.5 absolute"
               >
                 <Badge
@@ -156,7 +157,7 @@ const Header: React.FC<HeaderProps> = ({
             <motion.div
               layoutId="activeIndicator"
               className="-bottom-1.5 absolute h-[2px] w-4 bg-primary"
-              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 30 }}
             />
           )}
         </Link>

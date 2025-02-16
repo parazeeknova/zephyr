@@ -1,8 +1,9 @@
-import { getStreamConfig } from "@zephyr/config/src/env";
-import { prisma } from "@zephyr/db";
-import { NextResponse } from "next/server";
-import { StreamChat } from "stream-chat";
+import { getStreamConfig } from '@zephyr/config/src/env';
+import { prisma } from '@zephyr/db';
+import { NextResponse } from 'next/server';
+import { StreamChat } from 'stream-chat';
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex logic is required here
 async function cleanupStreamUsers() {
   const logs: string[] = [];
   const startTime = Date.now();
@@ -17,23 +18,24 @@ async function cleanupStreamUsers() {
     deletedCount: 0,
     errorCount: 0,
     totalProcessed: 0,
-    errors: [] as string[]
+    errors: [] as string[],
   };
 
   try {
-    log("🚀 Starting Stream users cleanup process");
+    log('🚀 Starting Stream users cleanup process');
 
     const { apiKey, secret } = getStreamConfig();
     if (!apiKey || !secret) {
       throw new Error(
-        "❌ Stream Chat configuration missing. Required: NEXT_PUBLIC_STREAM_CHAT_API_KEY and STREAM_CHAT_SECRET"
+        '❌ Stream Chat configuration missing. Required: NEXT_PUBLIC_STREAM_CHAT_API_KEY and STREAM_CHAT_SECRET'
       );
     }
 
     streamClient = StreamChat.getInstance(apiKey, secret);
-    log("✅ Stream client initialized successfully");
+    log('✅ Stream client initialized successfully');
 
-    log("📥 Fetching Stream users...");
+    log('📥 Fetching Stream users...');
+    // biome-ignore lint/suspicious/noExplicitAny: Any type is used here due to Stream SDK limitations
     let allUsers: any[] = [];
     let offset = 0;
     const queryLimit = 100;
@@ -45,11 +47,13 @@ async function cleanupStreamUsers() {
           { last_active: -1 },
           {
             limit: queryLimit,
-            offset: offset
+            offset: offset,
           }
         );
 
-        if (users.length === 0) break;
+        if (users.length === 0) {
+          break;
+        }
 
         allUsers = [...allUsers, ...users];
         offset += users.length;
@@ -58,12 +62,14 @@ async function cleanupStreamUsers() {
           `📊 Fetched batch of ${users.length} users (total: ${allUsers.length})`
         );
 
-        if (users.length < queryLimit) break;
+        if (users.length < queryLimit) {
+          break;
+        }
 
         await new Promise((resolve) => setTimeout(resolve, 300));
       } catch (error) {
         const errorMessage = `Error fetching users batch at offset ${offset}: ${
-          error instanceof Error ? error.message : "Unknown error"
+          error instanceof Error ? error.message : 'Unknown error'
         }`;
         log(`❌ ${errorMessage}`);
         results.errors.push(errorMessage);
@@ -73,9 +79,9 @@ async function cleanupStreamUsers() {
 
     log(`📊 Found ${allUsers.length} total Stream users`);
 
-    log("🔍 Fetching database users...");
+    log('🔍 Fetching database users...');
     const dbUsers = await prisma.user.findMany({
-      select: { id: true }
+      select: { id: true },
     });
     log(`📊 Found ${dbUsers.length} database users`);
 
@@ -85,7 +91,7 @@ async function cleanupStreamUsers() {
     const summary = {
       totalStreamUsers: allUsers.length,
       totalDbUsers: dbUserIds.size,
-      usersToDelete: usersToDelete.length
+      usersToDelete: usersToDelete.length,
     };
 
     log(`📊 Analysis Summary:
@@ -94,13 +100,13 @@ async function cleanupStreamUsers() {
     - Users to Delete: ${summary.usersToDelete}`);
 
     if (usersToDelete.length === 0) {
-      log("✨ No orphaned Stream users found, cleanup not needed");
+      log('✨ No orphaned Stream users found, cleanup not needed');
       return {
         success: true,
         duration: Date.now() - startTime,
         ...results,
         logs,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
 
@@ -119,13 +125,13 @@ async function cleanupStreamUsers() {
           try {
             await streamClient?.deleteUser(user.id, {
               mark_messages_deleted: true,
-              hard_delete: true
+              hard_delete: true,
             });
             log(`✅ Deleted Stream user: ${user.id}`);
             return true;
           } catch (error) {
             const errorMessage = `Failed to delete Stream user ${user.id}: ${
-              error instanceof Error ? error.message : "Unknown error"
+              error instanceof Error ? error.message : 'Unknown error'
             }`;
             log(`❌ ${errorMessage}`);
             results.errors.push(errorMessage);
@@ -137,7 +143,7 @@ async function cleanupStreamUsers() {
       // Process batch results
       // biome-ignore lint/complexity/noForEach: Disable rule for this block
       batchResults.forEach((result) => {
-        if (result.status === "fulfilled") {
+        if (result.status === 'fulfilled') {
           results.deletedCount++;
         } else {
           results.errorCount++;
@@ -151,7 +157,7 @@ async function cleanupStreamUsers() {
       - Failed: ${results.errorCount}`);
 
       if (i + deleteBatchSize < usersToDelete.length) {
-        log("⏳ Rate limit pause between deletion batches...");
+        log('⏳ Rate limit pause between deletion batches...');
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
@@ -161,7 +167,7 @@ async function cleanupStreamUsers() {
       duration: Date.now() - startTime,
       ...results,
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     log(`✨ Stream cleanup completed successfully
@@ -173,11 +179,11 @@ async function cleanupStreamUsers() {
     return successSummary;
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+      error instanceof Error ? error.message : 'Unknown error';
     log(`❌ Fatal error during Stream cleanup: ${errorMessage}`);
     console.error(
-      "Stream cleanup error stack:",
-      error instanceof Error ? error.stack : "No stack trace"
+      'Stream cleanup error stack:',
+      error instanceof Error ? error.stack : 'No stack trace'
     );
 
     return {
@@ -186,83 +192,83 @@ async function cleanupStreamUsers() {
       ...results,
       logs,
       error: errorMessage,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } finally {
     if (streamClient) {
       try {
         await streamClient.disconnectUser();
-        log("👋 Stream client disconnected successfully");
+        log('👋 Stream client disconnected successfully');
       } catch (error) {
-        log("❌ Error disconnecting Stream client");
-        console.error("Disconnect error:", error);
+        log('❌ Error disconnecting Stream client');
+        console.error('Disconnect error:', error);
       }
     }
 
     try {
       await prisma.$disconnect();
-      log("👋 Database connection closed");
+      log('👋 Database connection closed');
     } catch (_error) {
-      log("❌ Error closing database connection");
+      log('❌ Error closing database connection');
     }
   }
 }
 
 export async function GET(request: Request) {
-  console.log("📥 Received Stream cleanup request");
+  console.log('📥 Received Stream cleanup request');
 
   try {
     if (!process.env.CRON_SECRET_KEY) {
-      console.error("❌ CRON_SECRET_KEY environment variable not set");
+      console.error('❌ CRON_SECRET_KEY environment variable not set');
       return NextResponse.json(
         {
-          error: "Server configuration error",
-          timestamp: new Date().toISOString()
+          error: 'Server configuration error',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 500,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
 
-    const authHeader = request.headers.get("authorization");
+    const authHeader = request.headers.get('authorization');
     const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
 
     if (!authHeader || authHeader !== expectedAuth) {
-      console.warn("⚠️ Unauthorized Stream cleanup attempt");
+      console.warn('⚠️ Unauthorized Stream cleanup attempt');
       return NextResponse.json(
         {
-          error: "Unauthorized",
-          timestamp: new Date().toISOString()
+          error: 'Unauthorized',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 401,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
 
     const { apiKey, secret } = getStreamConfig();
     if (!apiKey || !secret) {
-      console.error("❌ Stream configuration missing");
+      console.error('❌ Stream configuration missing');
       return NextResponse.json(
         {
-          error: "Stream configuration missing",
-          timestamp: new Date().toISOString()
+          error: 'Stream configuration missing',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 500,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
@@ -272,32 +278,32 @@ export async function GET(request: Request) {
     return NextResponse.json(results, {
       status: results.success ? 200 : 500,
       headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      }
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
     });
   } catch (error) {
-    console.error("❌ Stream cleanup route error:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined
+    console.error('❌ Stream cleanup route error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString()
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
       },
       {
         status: 500,
         headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store"
-        }
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store',
+        },
       }
     );
   }
 }
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

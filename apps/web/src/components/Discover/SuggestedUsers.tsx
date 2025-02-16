@@ -1,24 +1,25 @@
-"use client";
+'use client';
 
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import FollowButton from '@/components/Layouts/FollowButton';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import Linkify from '@/helpers/global/Linkify';
+import { useFollowStates } from '@/hooks/useFollowStates';
+import { formatNumber } from '@/lib/utils';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import type { UserData } from '@zephyr/db';
+import { Card } from '@zephyr/ui/shadui/card';
+import { Skeleton } from '@zephyr/ui/shadui/skeleton';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from "@/components/ui/tooltip";
-import Linkify from "@/helpers/global/Linkify";
-import { useFollowStates } from "@/hooks/useFollowStates";
-import { formatNumber } from "@/lib/utils";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import FollowButton from "@zephyr-ui/Layouts/FollowButton";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import type { UserData } from "@zephyr/db";
-import { AnimatePresence, motion } from "framer-motion";
-import { BadgeCheckIcon, MessageSquare, Sparkles, Users } from "lucide-react";
-import Link from "next/link";
-import { useCallback, useState } from "react";
+  TooltipTrigger,
+} from '@zephyr/ui/shadui/tooltip';
+import { AnimatePresence, motion } from 'framer-motion';
+import { BadgeCheckIcon, MessageSquare, Sparkles, Users } from 'lucide-react';
+import Link from 'next/link';
+import { useCallback, useState } from 'react';
+import type React from 'react';
 
 interface SuggestedUsersProps {
   userId?: string;
@@ -37,19 +38,22 @@ interface EnhancedUserData extends UserData {
 }
 
 const MutualFollowers = ({
-  followers
+  followers,
 }: {
-  followers: NonNullable<EnhancedUserData["mutualFollowers"]>;
+  followers: NonNullable<EnhancedUserData['mutualFollowers']>;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  if (followers.length === 0) return null;
+  if (followers.length === 0) {
+    return null;
+  }
 
   const displayCount = 3;
   const remainingCount = Math.max(0, followers.length - displayCount);
   const displayedFollowers = followers.slice(0, displayCount);
 
   return (
+    // biome-ignore lint/nursery/noStaticElementInteractions: This is a tooltip trigger
     <div
       className="mt-3"
       onMouseEnter={() => setIsHovered(true)}
@@ -81,7 +85,7 @@ const MutualFollowers = ({
           animate={{ opacity: isHovered ? 1 : 0.7 }}
           className="text-muted-foreground text-xs"
         >
-          Followed by{" "}
+          Followed by{' '}
           {displayedFollowers.map((follower, index) => (
             <span key={follower.username}>
               <Link
@@ -90,7 +94,7 @@ const MutualFollowers = ({
               >
                 {follower.displayName}
               </Link>
-              {index < displayedFollowers.length - 1 && ", "}
+              {index < displayedFollowers.length - 1 && ', '}
             </span>
           ))}
           {remainingCount > 0 && (
@@ -106,7 +110,7 @@ const MutualFollowers = ({
                     {followers
                       .slice(displayCount)
                       .map((f) => f.displayName)
-                      .join(", ")}
+                      .join(', ')}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -122,7 +126,7 @@ const UserCard = ({
   user,
   index,
   onFollowed,
-  initialFollowState
+  initialFollowState,
 }: {
   user: EnhancedUserData;
   index: number;
@@ -141,9 +145,9 @@ const UserCard = ({
         layout: { duration: 0.3 },
         opacity: { duration: 0.2 },
         scale: { duration: 0.2 },
-        type: "spring",
+        type: 'spring',
         stiffness: 200,
-        damping: 20
+        damping: 20,
       }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
@@ -250,7 +254,7 @@ const UserCard = ({
               {user.bio && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
+                  animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
@@ -272,7 +276,7 @@ const UserCard = ({
             initial={false}
             animate={{
               y: isHovered ? 0 : 5,
-              opacity: isHovered ? 1 : 0.9
+              opacity: isHovered ? 1 : 0.9,
             }}
             transition={{ duration: 0.2 }}
           >
@@ -280,7 +284,7 @@ const UserCard = ({
               userId={user.id}
               initialState={{
                 followers: user._count.followers,
-                isFollowedByUser: initialFollowState ?? false
+                isFollowedByUser: initialFollowState ?? false,
               }}
               className="w-full bg-primary/90 hover:bg-primary"
               onFollowed={onFollowed}
@@ -292,7 +296,7 @@ const UserCard = ({
           initial={false}
           animate={{
             opacity: isHovered ? 0.3 : 0.2,
-            scale: isHovered ? 1.1 : 1
+            scale: isHovered ? 1.1 : 1,
           }}
           transition={{ duration: 0.3 }}
           className="-right-4 -top-4 absolute h-20 w-20 rotate-45 bg-gradient-to-br from-primary/20 to-transparent blur-2xl"
@@ -301,7 +305,7 @@ const UserCard = ({
           initial={false}
           animate={{
             opacity: isHovered ? 0.3 : 0.2,
-            scale: isHovered ? 1.1 : 1
+            scale: isHovered ? 1.1 : 1,
           }}
           transition={{ duration: 0.3 }}
           className="-bottom-8 -left-8 absolute h-32 w-32 rounded-full bg-gradient-to-br from-primary/10 to-transparent blur-3xl"
@@ -315,38 +319,40 @@ const SuggestedUsers: React.FC<SuggestedUsersProps> = ({ userId }) => {
   const queryClient = useQueryClient();
 
   const { data: users, isLoading } = useQuery<EnhancedUserData[]>({
-    queryKey: ["suggested-users", userId],
+    queryKey: ['suggested-users', userId],
     queryFn: async () => {
-      const response = await fetch("/api/users/suggested");
+      const response = await fetch('/api/users/suggested');
       if (!response.ok) {
-        throw new Error("Failed to fetch suggested users");
+        throw new Error('Failed to fetch suggested users');
       }
       return response.json();
     },
     enabled: !!userId,
     staleTime: 30000,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
 
   const { data: followStates } = useFollowStates(users?.map((u) => u.id) || []);
 
   const _enhancedUsers = users?.map((user) => ({
     ...user,
-    followState: followStates?.[user.id]
+    followState: followStates?.[user.id],
   }));
 
   const handleUserFollowed = useCallback(
     (followedUserId: string) => {
       queryClient.setQueryData<EnhancedUserData[]>(
-        ["suggested-users", userId],
+        ['suggested-users', userId],
         (oldData) => {
-          if (!oldData) return [];
+          if (!oldData) {
+            return [];
+          }
           return oldData.filter((user) => user.id !== followedUserId);
         }
       );
 
       queryClient.invalidateQueries({
-        queryKey: ["suggested-users", userId]
+        queryKey: ['suggested-users', userId],
       });
     },
     [queryClient, userId]
@@ -355,7 +361,7 @@ const SuggestedUsers: React.FC<SuggestedUsersProps> = ({ userId }) => {
   if (isLoading) {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {[...Array(6)].map((_, i) => (
+        {[...new Array(6)].map((_, i) => (
           <Card key={i} className="p-6">
             <div className="flex justify-between">
               <Skeleton className="h-20 w-20 rounded-full" />
@@ -400,7 +406,7 @@ const SuggestedUsers: React.FC<SuggestedUsersProps> = ({ userId }) => {
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{
                 duration: 0.2,
-                delay: index * 0.05
+                delay: index * 0.05,
               }}
             >
               <UserCard
@@ -409,8 +415,8 @@ const SuggestedUsers: React.FC<SuggestedUsersProps> = ({ userId }) => {
                   _count: {
                     ...user._count,
                     followers:
-                      user.followState?.followers ?? user._count.followers
-                  }
+                      user.followState?.followers ?? user._count.followers,
+                  },
                 }}
                 index={index}
                 onFollowed={() => handleUserFollowed(user.id)}

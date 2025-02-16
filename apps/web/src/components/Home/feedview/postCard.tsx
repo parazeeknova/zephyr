@@ -1,29 +1,29 @@
-"use client";
+'use client';
 
-import { useSession } from "@/app/(main)/SessionProvider";
-import UserTooltip from "@/components/Layouts/UserTooltip";
-import ViewTracker from "@/components/Posts/ViewCounter";
-import { MentionTags } from "@/components/Tags/MentionTags";
-import { Tags } from "@/components/Tags/Tags";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import Linkify from "@/helpers/global/Linkify";
-import { formatNumber, formatRelativeDate } from "@/lib/utils";
-import Comments from "@zephyr-ui/Comments/Comments";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import AuraCount from "@zephyr-ui/Posts/AuraCount";
-import AuraVoteButton from "@zephyr-ui/Posts/AuraVoteButton";
-import BookmarkButton from "@zephyr-ui/Posts/BookmarkButton";
-import PostMoreButton from "@zephyr-ui/Posts/PostMoreButton";
-import type { PostData, TagWithCount } from "@zephyr/db";
-import { motion } from "framer-motion";
-import { ArrowUpRight, Eye, Flame, MessageSquare } from "lucide-react";
-import Link from "next/link";
-import type React from "react";
-import { useCallback, useEffect, useState } from "react";
-import { MediaPreviews } from "./MediaPreviews";
-import ShareButton from "./ShareButton";
+import { useSession } from '@/app/(main)/SessionProvider';
+import Comments from '@/components/Comments/Comments';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import UserTooltip from '@/components/Layouts/UserTooltip';
+import AuraCount from '@/components/Posts/AuraCount';
+import AuraVoteButton from '@/components/Posts/AuraVoteButton';
+import BookmarkButton from '@/components/Posts/BookmarkButton';
+import PostMoreButton from '@/components/Posts/PostMoreButton';
+import ViewTracker from '@/components/Posts/ViewCounter';
+import { MentionTags } from '@/components/Tags/MentionTags';
+import { Tags } from '@/components/Tags/Tags';
+import Linkify from '@/helpers/global/Linkify';
+import { formatNumber, formatRelativeDate } from '@/lib/utils';
+import type { PostData, TagWithCount } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
+import { Separator } from '@zephyr/ui/shadui/separator';
+import { motion } from 'framer-motion';
+import { ArrowUpRight, Eye, Flame, MessageSquare } from 'lucide-react';
+import Link from 'next/link';
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { MediaPreviews } from './MediaPreviews';
+import ShareButton from './ShareButton';
 
 interface PostCardProps {
   post: PostData;
@@ -32,7 +32,7 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({
   post: initialPost,
-  isJoined = false
+  isJoined = false,
 }) => {
   const { user } = useSession();
   const [post, setPost] = useState(initialPost);
@@ -63,8 +63,8 @@ const PostCard: React.FC<PostCardProps> = ({
                   postId: post.id,
                   userId: user.id,
                   user,
-                  createdAt: new Date()
-                }))
+                  createdAt: new Date(),
+                })),
               });
             }}
           />
@@ -119,7 +119,7 @@ const PostCard: React.FC<PostCardProps> = ({
             initialState={{
               isBookmarkedByUser: post.bookmarks.some(
                 (bookmark) => bookmark.userId === user.id
-              )
+              ),
             }}
           />
         </div>
@@ -136,7 +136,7 @@ const PostCard: React.FC<PostCardProps> = ({
             onTagsChange={(newTags) => {
               handlePostUpdate({
                 ...post,
-                tags: newTags
+                tags: newTags,
               });
             }}
           />
@@ -162,7 +162,7 @@ const PostCard: React.FC<PostCardProps> = ({
           postId={post.id}
           initialState={{
             aura: post.aura,
-            userVote: post.vote[0]?.value || 0
+            userVote: post.vote[0]?.value || 0,
           }}
           authorName={post.user.displayName}
         />

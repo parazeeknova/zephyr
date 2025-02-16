@@ -1,16 +1,16 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from '@zephyr/ui/shadui/button';
+import { Input } from '@zephyr/ui/shadui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-import { motion } from "framer-motion";
-import { CATEGORIES, PRIORITIES } from "../../constants";
-import type { StepProps } from "../../types";
-import { stepVariants } from "./variants";
+  SelectValue,
+} from '@zephyr/ui/shadui/select';
+import { motion } from 'framer-motion';
+import { CATEGORIES, PRIORITIES } from '../../constants';
+import type { StepProps } from '../../types';
+import { stepVariants } from './variants';
 
 export function StepTwo({ formData, setFormData, onBack, onNext }: StepProps) {
   return (

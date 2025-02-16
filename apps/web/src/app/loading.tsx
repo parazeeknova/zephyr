@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { getRandomFact } from "@/components/Constants/loading-facts";
-import { Button } from "@/components/ui/button";
-import { AnimatePresence, motion } from "framer-motion";
-import { Home } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { getRandomFact } from '@/components/Constants/loading-facts';
+import { Button } from '@zephyr/ui/shadui/button';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Home } from 'lucide-react';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function Loading() {
-  const [funFact, setFunFact] = useState("");
+  const [funFact, setFunFact] = useState('');
   const [showHomeLink, setShowHomeLink] = useState(false);
 
   useEffect(() => {
@@ -25,16 +25,13 @@ export default function Loading() {
 
   const particles = useMemo(
     () =>
-      Array(30)
-        .fill(0)
-        // biome-ignore lint/correctness/noUnusedVariables: This is a custom loading component
-        .map((_, i) => ({
-          x: Math.random() * 100,
-          y: Math.random() * 100,
-          size: 2 + Math.random() * 4,
-          duration: 4 + Math.random() * 6,
-          delay: Math.random() * 2
-        })),
+      new Array(30).fill(0).map((_, _i) => ({
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: 2 + Math.random() * 4,
+        duration: 4 + Math.random() * 6,
+        delay: Math.random() * 2,
+      })),
     []
   );
 
@@ -45,32 +42,32 @@ export default function Loading() {
           className="absolute inset-0 opacity-20"
           animate={{
             background: [
-              "radial-gradient(600px at 0% 0%, rgba(255,255,255,0.03) 0%, transparent 50%), radial-gradient(800px at 100% 100%, rgba(255,255,255,0.03) 0%, transparent 50%)",
-              "radial-gradient(600px at 100% 0%, rgba(255,255,255,0.03) 0%, transparent 50%), radial-gradient(800px at 0% 100%, rgba(255,255,255,0.03) 0%, transparent 50%)",
-              "radial-gradient(600px at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 50%), radial-gradient(800px at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 50%)",
-              "radial-gradient(600px at 0% 0%, rgba(255,255,255,0.03) 0%, transparent 50%), radial-gradient(800px at 100% 100%, rgba(255,255,255,0.03) 0%, transparent 50%)"
-            ]
+              'radial-gradient(600px at 0% 0%, rgba(255,255,255,0.03) 0%, transparent 50%), radial-gradient(800px at 100% 100%, rgba(255,255,255,0.03) 0%, transparent 50%)',
+              'radial-gradient(600px at 100% 0%, rgba(255,255,255,0.03) 0%, transparent 50%), radial-gradient(800px at 0% 100%, rgba(255,255,255,0.03) 0%, transparent 50%)',
+              'radial-gradient(600px at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 50%), radial-gradient(800px at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 50%)',
+              'radial-gradient(600px at 0% 0%, rgba(255,255,255,0.03) 0%, transparent 50%), radial-gradient(800px at 100% 100%, rgba(255,255,255,0.03) 0%, transparent 50%)',
+            ],
           }}
           transition={{
             duration: 15,
             repeat: Number.POSITIVE_INFINITY,
-            ease: "linear"
+            ease: 'linear',
           }}
         />
         <motion.div
           className="absolute inset-0 opacity-10"
           animate={{
             background: [
-              "radial-gradient(1000px at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 70%)",
-              "radial-gradient(1000px at 30% 70%, rgba(255,255,255,0.02) 0%, transparent 70%)",
-              "radial-gradient(1000px at 70% 30%, rgba(255,255,255,0.02) 0%, transparent 70%)",
-              "radial-gradient(1000px at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 70%)"
-            ]
+              'radial-gradient(1000px at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 70%)',
+              'radial-gradient(1000px at 30% 70%, rgba(255,255,255,0.02) 0%, transparent 70%)',
+              'radial-gradient(1000px at 70% 30%, rgba(255,255,255,0.02) 0%, transparent 70%)',
+              'radial-gradient(1000px at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 70%)',
+            ],
           }}
           transition={{
             duration: 20,
             repeat: Number.POSITIVE_INFINITY,
-            ease: "linear"
+            ease: 'linear',
           }}
         />
       </div>
@@ -83,17 +80,17 @@ export default function Loading() {
             width: particle.size,
             height: particle.size,
             left: `${particle.x}%`,
-            top: `${particle.y}%`
+            top: `${particle.y}%`,
           }}
           animate={{
-            y: ["0%", "-100%"],
-            opacity: [0, 1, 0]
+            y: ['0%', '-100%'],
+            opacity: [0, 1, 0],
           }}
           transition={{
             duration: particle.duration,
             repeat: Number.POSITIVE_INFINITY,
             delay: particle.delay,
-            ease: "linear"
+            ease: 'linear',
           }}
         />
       ))}
@@ -102,23 +99,23 @@ export default function Loading() {
         <motion.div
           className="absolute h-[600px] w-[600px] rounded-full border border-white/02"
           animate={{
-            rotate: [0, 360]
+            rotate: [0, 360],
           }}
           transition={{
             duration: 30,
             repeat: Number.POSITIVE_INFINITY,
-            ease: "linear"
+            ease: 'linear',
           }}
         />
         <motion.div
           className="absolute h-[500px] w-[500px] rounded-full border border-white/02"
           animate={{
-            rotate: [360, 0]
+            rotate: [360, 0],
           }}
           transition={{
             duration: 20,
             repeat: Number.POSITIVE_INFINITY,
-            ease: "linear"
+            ease: 'linear',
           }}
         />
 
@@ -129,7 +126,7 @@ export default function Loading() {
             transition={{
               duration: 2,
               repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           >
             Loading
@@ -138,7 +135,7 @@ export default function Loading() {
               transition={{
                 duration: 1.5,
                 repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut"
+                ease: 'easeInOut',
               }}
             >
               ....

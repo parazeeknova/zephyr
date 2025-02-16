@@ -1,9 +1,9 @@
-import { LoadingButton } from "@/components/Auth/LoadingButton";
-import { useToast } from "@/hooks/use-toast";
-import type { UserData } from "@zephyr/db";
-import { motion } from "framer-motion";
-import Image from "next/image";
-import { useState } from "react";
+import { LoadingButton } from '@/components/Auth/LoadingButton';
+import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { useState } from 'react';
 
 interface LinkedAccountsProps {
   user: UserData;
@@ -23,27 +23,26 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
     setLoadingProvider(provider);
     try {
       const response = await fetch(`/api/auth/unlink/${provider}`, {
-        method: "POST"
+        method: 'POST',
       });
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to unlink account");
+        throw new Error(data.error || 'Failed to unlink account');
       }
 
       toast({
-        title: "Account unlinked",
-        description: `Your ${provider} account has been unlinked successfully`
+        title: 'Account unlinked',
+        description: `Your ${provider} account has been unlinked successfully`,
       });
 
-      // Refresh the page to update the UI
       window.location.reload();
     } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description:
-          error instanceof Error ? error.message : "An error occurred"
+          error instanceof Error ? error.message : 'An error occurred',
       });
     } finally {
       setLoadingProvider(null);
@@ -54,7 +53,7 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
     provider,
     icon,
     isConnected,
-    isComingSoon = false
+    isComingSoon = false,
   }: {
     provider: string;
     icon: string;
@@ -64,9 +63,8 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
     <motion.div
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      // @ts-expect-error
       className={`group relative overflow-hidden rounded-lg border border-border/50 p-4 backdrop-blur-sm transition-colors ${
-        isComingSoon ? "opacity-50" : ""
+        isComingSoon ? 'opacity-50' : ''
       }`}
     >
       <div className="flex items-center justify-between">
@@ -84,15 +82,16 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
             <p className="font-medium">{provider}</p>
             <p className="text-muted-foreground text-sm">
               {isComingSoon
-                ? "Coming soon"
-                : isConnected
-                  ? "Connected"
-                  : "Not connected"}
+                ? 'Coming soon'
+                : // biome-ignore lint/nursery/noNestedTernary: ignore
+                  isConnected
+                  ? 'Connected'
+                  : 'Not connected'}
             </p>
           </div>
         </div>
         <LoadingButton
-          variant={isConnected ? "destructive" : "default"}
+          variant={isConnected ? 'destructive' : 'default'}
           onClick={() =>
             isConnected
               ? handleUnlink(icon.toLowerCase())
@@ -103,14 +102,13 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
           className="relative overflow-hidden transition-all duration-200"
         >
           {isComingSoon
-            ? "Coming Soon"
-            : isConnected
-              ? "Disconnect"
-              : "Connect"}
+            ? 'Coming Soon'
+            : // biome-ignore lint/nursery/noNestedTernary: ignore
+              isConnected
+              ? 'Disconnect'
+              : 'Connect'}
         </LoadingButton>
       </div>
-
-      {/* Gradient border animation */}
       <div className="-z-10 absolute inset-0 animate-gradient bg-gradient-to-r from-primary/5 via-secondary/5 to-primary/5 opacity-0 transition-opacity group-hover:opacity-100" />
     </motion.div>
   );
@@ -120,7 +118,6 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      // @ts-expect-error
       className="space-y-4"
     >
       <div className="flex items-center gap-3">
@@ -128,7 +125,6 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
           Linked Accounts
         </h3>
       </div>
-      {/* @ts-expect-error */}
       <motion.div className="grid gap-4 sm:grid-cols-2">
         <AccountCard
           provider="Google"

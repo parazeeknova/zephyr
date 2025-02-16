@@ -1,24 +1,26 @@
-"use server";
+'use server';
 
-import { validateRequest } from "@zephyr/auth/auth";
-import { getStreamClient } from "@zephyr/auth/src";
+import { validateRequest } from '@zephyr/auth/auth';
+import { getStreamClient } from '@zephyr/auth/src';
 import {
   type UpdateUserProfileValues,
-  updateUserProfileSchema
-} from "@zephyr/auth/validation";
-import { getUserDataSelect, prisma } from "@zephyr/db";
+  updateUserProfileSchema,
+} from '@zephyr/auth/validation';
+import { getUserDataSelect, prisma } from '@zephyr/db';
 
 export async function updateUserProfile(values: UpdateUserProfileValues) {
   const validatedValues = updateUserProfileSchema.parse(values);
   const { user } = await validateRequest();
 
-  if (!user) throw new Error("Unauthorized");
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
 
   try {
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data: validatedValues,
-      select: getUserDataSelect(user.id)
+      select: getUserDataSelect(user.id),
     });
 
     try {
@@ -27,17 +29,17 @@ export async function updateUserProfile(values: UpdateUserProfileValues) {
         await streamClient.partialUpdateUser({
           id: user.id,
           set: {
-            name: validatedValues.displayName
-          }
+            name: validatedValues.displayName,
+          },
         });
       }
     } catch (streamError) {
-      console.error("Failed to update Stream user:", streamError);
+      console.error('Failed to update Stream user:', streamError);
     }
 
     return updatedUser;
   } catch (error) {
-    console.error("Failed to update user profile:", error);
-    throw new Error("Failed to update profile");
+    console.error('Failed to update user profile:', error);
+    throw new Error('Failed to update profile');
   }
 }

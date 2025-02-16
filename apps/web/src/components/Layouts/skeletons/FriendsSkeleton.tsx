@@ -1,6 +1,6 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Users } from "lucide-react";
-import type React from "react";
+import { Card, CardContent, CardTitle } from '@zephyr/ui/shadui/card';
+import { Users } from 'lucide-react';
+import type React from 'react';
 
 interface FriendsSkeletonProps {
   isCollapsed: boolean;
@@ -9,10 +9,10 @@ interface FriendsSkeletonProps {
 const FriendsSkeleton: React.FC<FriendsSkeletonProps> = ({ isCollapsed }) => {
   return (
     <Card
-      className={`bg-card transition-all duration-300 ease-in-out ${isCollapsed ? "w-12 overflow-hidden" : "w-full"}`}
+      className={`bg-card transition-all duration-300 ease-in-out ${isCollapsed ? 'w-12 overflow-hidden' : 'w-full'}`}
     >
       <CardContent
-        className={`${isCollapsed ? "flex justify-center p-2" : "p-4"}`}
+        className={`${isCollapsed ? 'flex justify-center p-2' : 'p-4'}`}
       >
         {isCollapsed ? (
           <Users className="h-6 w-6 text-muted-foreground" />

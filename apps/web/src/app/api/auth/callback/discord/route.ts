@@ -1,20 +1,21 @@
-import { slugify } from "@/lib/utils";
-import { discord, lucia, validateRequest } from "@zephyr/auth/auth";
-import { getStreamClient } from "@zephyr/auth/src";
-import { prisma } from "@zephyr/db";
-import { OAuth2RequestError } from "arctic";
-import { generateIdFromEntropySize } from "lucia";
-import { cookies } from "next/headers";
-import type { NextRequest } from "next/server";
+import { slugify } from '@/lib/utils';
+import { discord, lucia, validateRequest } from '@zephyr/auth/auth';
+import { getStreamClient } from '@zephyr/auth/src';
+import { prisma } from '@zephyr/db';
+import { OAuth2RequestError } from 'arctic';
+import { generateIdFromEntropySize } from 'lucia';
+import { cookies } from 'next/headers';
+import type { NextRequest } from 'next/server';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This function is complex by nature
 export async function GET(req: NextRequest) {
   try {
-    const code = req.nextUrl.searchParams.get("code");
-    const state = req.nextUrl.searchParams.get("state");
-    const storedState = (await cookies()).get("state")?.value;
-    const isLinking = (await cookies()).get("linking")?.value === "true";
+    const code = req.nextUrl.searchParams.get('code');
+    const state = req.nextUrl.searchParams.get('state');
+    const storedState = (await cookies()).get('state')?.value;
+    const isLinking = (await cookies()).get('linking')?.value === 'true';
 
     if (!code || !state || !storedState || state !== storedState) {
       return new Response(null, { status: 400 });
@@ -27,18 +28,18 @@ export async function GET(req: NextRequest) {
       const accessToken = tokens.data?.access_token;
 
       if (!accessToken) {
-        console.error("No access token found in response:", tokens);
-        throw new Error("No access token received from Discord");
+        console.error('No access token found in response:', tokens);
+        throw new Error('No access token received from Discord');
       }
 
-      console.log("Discord access token:", accessToken);
+      console.log('Discord access token:', accessToken);
 
       const discordUserResponse = await fetch(
-        "https://discord.com/api/v10/users/@me",
+        'https://discord.com/api/v10/users/@me',
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
       );
 
@@ -49,7 +50,7 @@ export async function GET(req: NextRequest) {
 
       const discordUser = JSON.parse(responseText);
       if (!discordUser.email) {
-        throw new Error("No email provided by Discord");
+        throw new Error('No email provided by Discord');
       }
 
       if (isLinking) {
@@ -58,60 +59,60 @@ export async function GET(req: NextRequest) {
           return new Response(null, {
             status: 302,
             headers: {
-              Location: "/login"
-            }
+              Location: '/login',
+            },
           });
         }
 
         const existingDiscordUser = await prisma.user.findUnique({
           where: {
-            discordId: discordUser.id
-          }
+            discordId: discordUser.id,
+          },
         });
 
         if (existingDiscordUser && existingDiscordUser.id !== user.id) {
           return new Response(null, {
             status: 302,
             headers: {
-              Location: "/settings?error=discord_account_linked_other"
-            }
+              Location: '/settings?error=discord_account_linked_other',
+            },
           });
         }
 
         await prisma.user.update({
           where: { id: user.id },
-          data: { discordId: discordUser.id }
+          data: { discordId: discordUser.id },
         });
 
-        (await cookies()).set("linking", "", { maxAge: 0 });
+        (await cookies()).set('linking', '', { maxAge: 0 });
 
         return new Response(null, {
           status: 302,
           headers: {
-            Location: "/settings?success=discord_linked"
-          }
+            Location: '/settings?success=discord_linked',
+          },
         });
       }
 
       const existingUserWithEmail = await prisma.user.findUnique({
         where: {
-          email: discordUser.email
-        }
+          email: discordUser.email,
+        },
       });
 
       if (existingUserWithEmail && !existingUserWithEmail.discordId) {
         return new Response(null, {
           status: 302,
           headers: {
-            Location: `/login/error?error=email_exists&email=${encodeURIComponent(discordUser.email)}`
-          }
+            Location: `/login/error?error=email_exists&email=${encodeURIComponent(discordUser.email)}`,
+          },
         });
       }
 
       const existingDiscordUser = await prisma.user.findUnique({
         where: {
-          discordId: discordUser.id
-        }
+          discordId: discordUser.id,
+        },
       });
 
       if (existingDiscordUser) {
@@ -126,8 +127,8 @@ export async function GET(req: NextRequest) {
         return new Response(null, {
           status: 302,
           headers: {
-            Location: "/"
-          }
+            Location: '/',
+          },
         });
       }
 
@@ -146,8 +147,8 @@ export async function GET(req: NextRequest) {
               avatarUrl: discordUser.avatar
                 ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
                 : null,
-              emailVerified: true
-            }
+              emailVerified: true,
+            },
           });
 
           const streamClient = getStreamClient();
@@ -156,10 +157,10 @@ export async function GET(req: NextRequest) {
               await streamClient.upsertUser({
                 id: newUser.id,
                 username: newUser.username,
-                name: newUser.displayName
+                name: newUser.displayName,
               });
             } catch (error) {
-              console.warn("Failed to create Stream user:", error);
+              console.warn('Failed to create Stream user:', error);
             }
           }
         });
@@ -176,27 +177,27 @@ export async function GET(req: NextRequest) {
         return new Response(null, {
           status: 302,
           headers: {
-            Location: "/"
-          }
+            Location: '/',
+          },
         });
       } catch (error) {
-        console.error("Transaction error:", error);
+        console.error('Transaction error:', error);
         throw error;
       }
     } catch (error) {
-      console.error("Discord API error:", error);
+      console.error('Discord API error:', error);
       throw error;
     }
   } catch (error) {
-    console.error("Final error catch:", error);
+    console.error('Final error catch:', error);
     if (error instanceof OAuth2RequestError) {
       return new Response(null, { status: 400 });
     }
     return new Response(JSON.stringify({ error: String(error) }), {
       status: 500,
       headers: {
-        "Content-Type": "application/json"
-      }
+        'Content-Type': 'application/json',
+      },
     });
   }
 }

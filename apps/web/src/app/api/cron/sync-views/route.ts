@@ -2,10 +2,11 @@ import {
   POST_VIEWS_KEY_PREFIX,
   POST_VIEWS_SET,
   prisma,
-  redis
-} from "@zephyr/db";
-import { NextResponse } from "next/server";
+  redis,
+} from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex logic is required here
 async function syncViewCounts() {
   const logs: string[] = [];
   const startTime = Date.now();
@@ -19,36 +20,36 @@ async function syncViewCounts() {
     syncedPosts: 0,
     skippedPosts: 0,
     deletedKeys: 0,
-    errors: [] as string[]
+    errors: [] as string[],
   };
 
   try {
-    log("🚀 Starting view count sync");
+    log('🚀 Starting view count sync');
 
     // 1. Test Redis connection
     try {
       await redis.ping();
-      log("✅ Redis connection successful");
+      log('✅ Redis connection successful');
     } catch (error) {
-      log("❌ Redis connection failed");
-      console.error("Redis connection error:", error);
+      log('❌ Redis connection failed');
+      console.error('Redis connection error:', error);
       return {
         success: false,
         duration: Date.now() - startTime,
         logs,
-        error: "Redis connection failed"
+        error: 'Redis connection failed',
       };
     }
 
     // 2. Get posts with views and create view count map
     const postsWithViews = await redis.smembers(POST_VIEWS_SET);
     if (postsWithViews.length === 0) {
-      log("✨ No posts found with views to sync");
+      log('✨ No posts found with views to sync');
       return {
         success: true,
         duration: Date.now() - startTime,
         logs,
-        ...results
+        ...results,
       };
     }
 
@@ -57,12 +58,12 @@ async function syncViewCounts() {
     // 3. Get existing posts and their current view counts
     const existingPosts = await prisma.post.findMany({
       where: {
-        id: { in: postsWithViews }
+        id: { in: postsWithViews },
       },
       select: {
         id: true,
-        viewCount: true
-      }
+        viewCount: true,
+      },
     });
 
     const existingPostMap = new Map(
@@ -84,7 +85,9 @@ async function syncViewCounts() {
       });
 
       const batchResults = await pipeline.exec();
-      if (!batchResults) continue;
+      if (!batchResults) {
+        continue;
+      }
 
       batch.forEach((postId, index) => {
         const [error, value] = batchResults[index] || [];
@@ -125,7 +128,7 @@ async function syncViewCounts() {
           batch.map(({ postId, views }) =>
             prisma.post.update({
               where: { id: postId },
-              data: { viewCount: views }
+              data: { viewCount: views },
             })
           )
         );
@@ -191,9 +194,9 @@ async function syncViewCounts() {
         existingPosts: existingPostMap.size,
         updatedPosts: results.syncedPosts,
         skippedPosts: results.skippedPosts,
-        cleanedUpPosts: nonExistentPosts.length
+        cleanedUpPosts: nonExistentPosts.length,
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     log(`\n✨ Sync completed successfully:
@@ -207,11 +210,11 @@ async function syncViewCounts() {
     return summary;
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+      error instanceof Error ? error.message : 'Unknown error';
     log(`❌ Fatal error in view count sync: ${errorMessage}`);
     console.error(
-      "Sync error stack:",
-      error instanceof Error ? error.stack : "No stack trace"
+      'Sync error stack:',
+      error instanceof Error ? error.stack : 'No stack trace'
     );
 
     return {
@@ -220,55 +223,55 @@ async function syncViewCounts() {
       ...results,
       error: errorMessage,
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } finally {
     try {
       await prisma.$disconnect();
-      log("👋 Database connection closed");
+      log('👋 Database connection closed');
     } catch (_error) {
-      log("❌ Error closing database connection");
+      log('❌ Error closing database connection');
     }
   }
 }
 
 export async function POST(request: Request) {
-  console.log("📥 Received view count sync request");
+  console.log('📥 Received view count sync request');
 
   try {
     if (!process.env.CRON_SECRET_KEY) {
-      console.error("❌ CRON_SECRET_KEY environment variable not set");
+      console.error('❌ CRON_SECRET_KEY environment variable not set');
       return NextResponse.json(
         {
-          error: "Server configuration error",
-          timestamp: new Date().toISOString()
+          error: 'Server configuration error',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 500,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
 
-    const authHeader = request.headers.get("authorization");
+    const authHeader = request.headers.get('authorization');
     const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
 
     if (!authHeader || authHeader !== expectedAuth) {
-      console.warn("⚠️ Unauthorized sync attempt");
+      console.warn('⚠️ Unauthorized sync attempt');
       return NextResponse.json(
         {
-          error: "Unauthorized",
-          timestamp: new Date().toISOString()
+          error: 'Unauthorized',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 401,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
@@ -278,32 +281,32 @@ export async function POST(request: Request) {
     return NextResponse.json(results, {
       status: results.success ? 200 : 500,
       headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      }
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
     });
   } catch (error) {
-    console.error("❌ Sync route error:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined
+    console.error('❌ Sync route error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString()
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
       },
       {
         status: 500,
         headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store"
-        }
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store',
+        },
       }
     );
   }
 }
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

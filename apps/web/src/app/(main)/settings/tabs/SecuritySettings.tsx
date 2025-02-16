@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { requestPasswordReset } from "@/app/(auth)/reset-password/server-actions";
+import { requestPasswordReset } from '@/app/(auth)/reset-password/server-actions';
+import { LoadingButton } from '@/components/Auth/LoadingButton';
+import { zodResolver } from '@hookform/resolvers/zod';
+import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { LoadingButton } from "@zephyr-ui/Auth/LoadingButton";
-import type { UserData } from "@zephyr/db";
-import { motion } from "framer-motion";
-import { KeyRound, Mail } from "lucide-react";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+  FormMessage,
+} from '@zephyr/ui/shadui/form';
+import { Input } from '@zephyr/ui/shadui/input';
+import { motion } from 'framer-motion';
+import { KeyRound, Mail } from 'lucide-react';
+import { useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const emailSchema = z.object({
-  email: z.string().email("Please enter a valid email address")
+  email: z.string().email('Please enter a valid email address'),
 });
 
 type FormValues = z.infer<typeof emailSchema>;
@@ -38,27 +38,28 @@ export default function SecuritySettings({ user }: SecuritySettingsProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(emailSchema),
     defaultValues: {
-      email: user.email || ""
-    }
+      email: user.email || '',
+    },
   });
 
+  // biome-ignore lint/suspicious/useAwait: This is a React Hook Form function
   async function onSubmit(values: FormValues) {
     startTransition(async () => {
       const result = await requestPasswordReset(values);
 
       if (result.error) {
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: result.error
+          variant: 'destructive',
+          title: 'Error',
+          description: result.error,
         });
         return;
       }
 
       setIsEmailSent(true);
       toast({
-        title: "Email Sent",
-        description: "Check your email for password reset instructions"
+        title: 'Email Sent',
+        description: 'Check your email for password reset instructions',
       });
     });
   }
@@ -68,7 +69,6 @@ export default function SecuritySettings({ user }: SecuritySettingsProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      // @ts-expect-error
       className="space-y-6"
     >
       <div className="relative overflow-hidden rounded-lg border border-border/50 bg-background/30 p-6 backdrop-blur-md">
@@ -90,7 +90,6 @@ export default function SecuritySettings({ user }: SecuritySettingsProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          // @ts-expect-error
           className="mt-8 space-y-4"
         >
           <div className="flex items-center gap-3">
@@ -130,17 +129,15 @@ export default function SecuritySettings({ user }: SecuritySettingsProps) {
                   disabled={isEmailSent}
                   className="w-full sm:w-auto"
                 >
-                  {isEmailSent ? "Email Sent" : "Send Reset Link"}
+                  {isEmailSent ? 'Email Sent' : 'Send Reset Link'}
                 </LoadingButton>
               </form>
             </Form>
 
-            {/* Inner gradient effect */}
             <div className="-z-10 absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-background blur-xl" />
           </div>
         </motion.div>
 
-        {/* Outer gradient effect */}
         <div className="-z-20 absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-background blur-3xl" />
       </div>
     </motion.div>

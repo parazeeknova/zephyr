@@ -10,10 +10,10 @@
     "cssVariables": true
   },
   "aliases": {
-    "components": "@/src/components",
-    "utils": "@/lib/utils",
-    "ui": "@/src/components/ui",
-    "lib": "@/lib",
-    "hooks": "@/hooks"
+    "components": "@ui/shadui",
+    "utils": "@ui/lib/utils",
+    "hooks": "@ui/hooks",
+    "lib": "@ui/lib",
+    "ui": "@ui/shadui"
   }
 }

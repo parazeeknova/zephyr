@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from '@prisma/client';
 
 export function getUserDataSelect(loggedInUserId: string) {
   return {
@@ -19,26 +19,26 @@ export function getUserDataSelect(loggedInUserId: string) {
     emailVerified: true,
     followers: {
       where: {
-        followerId: loggedInUserId
+        followerId: loggedInUserId,
       },
       select: {
-        followerId: true
-      }
+        followerId: true,
+      },
     },
     _count: {
       select: {
         posts: true,
         followers: true,
-        following: true
-      }
-    }
+        following: true,
+      },
+    },
   } satisfies Prisma.UserSelect;
 }
 
 export function getPostDataInclude(loggedInUserId: string) {
   return {
     user: {
-      select: getUserDataSelect(loggedInUserId)
+      select: getUserDataSelect(loggedInUserId),
     },
     attachments: true,
     tags: true,
@@ -49,35 +49,35 @@ export function getPostDataInclude(loggedInUserId: string) {
             id: true,
             username: true,
             displayName: true,
-            avatarUrl: true
-          }
-        }
-      }
+            avatarUrl: true,
+          },
+        },
+      },
     },
     bookmarks: {
       where: {
-        userId: loggedInUserId
-      },
-      select: {
-        userId: true
-      }
-    },
-    vote: {
-      where: {
-        userId: loggedInUserId
+        userId: loggedInUserId,
       },
       select: {
         userId: true,
-        value: true
-      }
+      },
+    },
+    vote: {
+      where: {
+        userId: loggedInUserId,
+      },
+      select: {
+        userId: true,
+        value: true,
+      },
     },
     _count: {
       select: {
         vote: true,
         comments: true,
-        mentions: true
-      }
-    }
+        mentions: true,
+      },
+    },
   } satisfies Prisma.PostInclude;
 }
 
@@ -93,8 +93,8 @@ export interface PostsPage {
 export function getCommentDataInclude(loggedInUserId: string) {
   return {
     user: {
-      select: getUserDataSelect(loggedInUserId)
-    }
+      select: getUserDataSelect(loggedInUserId),
+    },
   } satisfies Prisma.CommentInclude;
 }
 
@@ -113,15 +113,15 @@ export const notificationsInclude = {
       id: true,
       username: true,
       displayName: true,
-      avatarUrl: true
-    }
+      avatarUrl: true,
+    },
   },
   post: {
     select: {
       id: true,
-      content: true
-    }
-  }
+      content: true,
+    },
+  },
 } satisfies Prisma.NotificationInclude;
 
 export type NotificationData = Prisma.NotificationGetPayload<{
@@ -258,9 +258,9 @@ export const mentionsInclude = {
       id: true,
       username: true,
       displayName: true,
-      avatarUrl: true
-    }
-  }
+      avatarUrl: true,
+    },
+  },
 } satisfies Prisma.MentionInclude;
 
 export interface UnfollowUserDialogProps {

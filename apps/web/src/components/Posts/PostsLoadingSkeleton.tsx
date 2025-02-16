@@ -1,7 +1,6 @@
-import type React from "react";
-
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
+import { Skeleton } from '@zephyr/ui/shadui/skeleton';
+import type React from 'react';
 
 const StoryCardSkeleton: React.FC = () => (
   <Card className="h-[300px] w-[200px] flex-shrink-0 overflow-hidden bg-card shadow-lg">
@@ -54,7 +53,7 @@ export default function PostsLoadingSkeleton() {
           <Skeleton className="mb-2 h-8 w-48" />
           <Skeleton className="mb-4 h-4 w-full" />
           <div className="flex space-x-4 overflow-x-hidden">
-            {[...Array(6)].map((_, index) => (
+            {[...new Array(6)].map((_, index) => (
               <StoryCardSkeleton key={index} />
             ))}
           </div>
@@ -67,7 +66,7 @@ export default function PostsLoadingSkeleton() {
           <Skeleton className="mb-4 h-4 w-full" />
           <Skeleton className="mb-6 h-10 w-full max-w-md" />
           <div className="space-y-8">
-            {[...Array(3)].map((_, index) => (
+            {[...new Array(3)].map((_, index) => (
               <PostCardSkeleton key={index} />
             ))}
           </div>

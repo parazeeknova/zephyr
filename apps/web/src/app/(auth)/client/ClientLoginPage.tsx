@@ -1,18 +1,20 @@
-"use client";
+'use client';
 
-import AnimatedAuthLink from "@/components/Auth/AnimatedAuthLink";
-import AuthButtonWrapper from "@/components/Auth/AuthButtonWrapper";
-import loginImage from "@zephyr-assets/login-image.jpg";
-import signupImage from "@zephyr-assets/previews/signup.png";
-import LoginForm from "@zephyr-ui/Auth/LoginForm";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, FileText, Shield } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import DiscordSignInButton from "./DiscordSignInButton";
-import GithubSignInButton from "./GithubSignInButton";
-import GoogleSignInButton from "./GoogleSignInButton";
-import TwitterSignInButton from "./TwitterSignInButton";
+import AnimatedAuthLink from '@/components/Auth/AnimatedAuthLink';
+import AuthButtonWrapper from '@/components/Auth/AuthButtonWrapper';
+import LoginForm from '@/components/Auth/LoginForm';
+// @ts-expect-error - no types for image files
+import loginImage from '@assets/auth/login-image.jpg';
+// @ts-expect-error - no types for image files
+import signupImage from '@assets/previews/signup.png';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, FileText, Shield } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import DiscordSignInButton from './DiscordSignInButton';
+import GithubSignInButton from './GithubSignInButton';
+import GoogleSignInButton from './GoogleSignInButton';
+import TwitterSignInButton from './TwitterSignInButton';
 
 const fadeIn = {
   hidden: { opacity: 0 },
@@ -20,9 +22,9 @@ const fadeIn = {
     opacity: 1,
     transition: {
       duration: 0.6,
-      ease: "easeOut"
-    }
-  }
+      ease: 'easeOut',
+    },
+  },
 };
 
 const slideIn = {
@@ -32,11 +34,11 @@ const slideIn = {
     opacity: 1,
     transition: {
       duration: 0.8,
-      ease: "easeOut",
-      type: "spring",
-      stiffness: 100
-    }
-  }
+      ease: 'easeOut',
+      type: 'spring',
+      stiffness: 100,
+    },
+  },
 };
 
 const scaleUp = {
@@ -47,11 +49,11 @@ const scaleUp = {
     y: 0,
     transition: {
       duration: 0.7,
-      ease: "easeOut",
-      type: "spring",
-      stiffness: 100
-    }
-  }
+      ease: 'easeOut',
+      type: 'spring',
+      stiffness: 100,
+    },
+  },
 };
 
 const contentAnimation = {
@@ -62,13 +64,13 @@ const contentAnimation = {
     transition: {
       duration: 0.5,
       delay: custom * 0.1,
-      ease: "easeOut"
-    }
-  })
+      ease: 'easeOut',
+    },
+  }),
 };
 
 export const AnimatedZephyrText = () => {
-  const letters = "ZEPHYR.".split("");
+  const letters = 'ZEPHYR.'.split('');
 
   return (
     <motion.div
@@ -85,18 +87,18 @@ export const AnimatedZephyrText = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{
               opacity: [0, 1, 1, 0.3, 1],
-              y: [20, 0, 0, 0, 0]
+              y: [20, 0, 0, 0, 0],
             }}
             transition={{
               duration: 4,
               repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: i * 0.1,
-              times: [0, 0.2, 0.5, 0.8, 1]
+              times: [0, 0.2, 0.5, 0.8, 1],
             }}
             style={{
-              textShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-              display: "inline-block"
+              textShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+              display: 'inline-block',
             }}
           >
             {letter}
@@ -109,15 +111,15 @@ export const AnimatedZephyrText = () => {
         initial={{ scaleX: 0 }}
         animate={{
           scaleX: [0, 1, 1, 1, 0],
-          opacity: [0, 1, 1, 0.3, 0]
+          opacity: [0, 1, 1, 0.3, 0],
         }}
         transition={{
           duration: 4,
           repeat: Number.POSITIVE_INFINITY,
-          ease: "easeInOut",
-          times: [0, 0.2, 0.5, 0.8, 1]
+          ease: 'easeInOut',
+          times: [0, 0.2, 0.5, 0.8, 1],
         }}
-        style={{ transformOrigin: "left" }}
+        style={{ transformOrigin: 'left' }}
       />
     </motion.div>
   );
@@ -142,9 +144,9 @@ export default function ClientLoginPage() {
             <h1
               className="-rotate-90 absolute origin-center transform select-none whitespace-nowrap font-bold text-6xl text-primary/20 tracking-wider xl:text-8xl 2xl:text-9xl "
               style={{
-                transformOrigin: "center",
-                left: "-50%",
-                transform: "translateX(-50%) translateY(-50%) rotate(-90deg)"
+                transformOrigin: 'center',
+                left: '-50%',
+                transform: 'translateX(-50%) translateY(-50%) rotate(-90deg)',
               }}
             >
               LOGIN
@@ -156,14 +158,14 @@ export default function ClientLoginPage() {
           <motion.div
             className="relative flex w-full max-w-5xl flex-col rounded-2xl border border-white/10 bg-card/40 shadow-2xl backdrop-blur-xl lg:flex-row"
             variants={scaleUp}
-            whileHover={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
+            whileHover={{ boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
           >
             <div className="overflow-hidden rounded-l-2xl lg:w-1/2">
               <motion.div
                 className="relative min-h-[200px] w-full bg-primary/80 lg:min-h-[850px]"
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
               >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/20"

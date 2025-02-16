@@ -1,3 +1,5 @@
+import type React from 'react';
+
 export interface FormData {
   email: string;
   type: string;
@@ -18,7 +20,7 @@ export interface StepProps {
 }
 
 export interface Attachment {
-  name: any;
+  name: string;
   file: File;
   url: string;
   key: string;
@@ -30,8 +32,8 @@ export interface Attachment {
 }
 
 export interface StepThreeProps {
-  formData: any;
-  setFormData: (data: any) => void;
+  formData: FormData;
+  setFormData: (data: FormData) => void;
   onBack?: () => void;
   loading: boolean;
   attachments: Attachment[];

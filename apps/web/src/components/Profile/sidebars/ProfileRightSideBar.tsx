@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import UserDetails from "@zephyr-ui/Profile/sidebars/right/UserDetails";
-import ContributeCard from "@zephyr-ui/misc/ContributionCard";
-import type { UserData } from "@zephyr/db";
-import type React from "react";
+import UserDetails from '@/components/Profile/sidebars/right/UserDetails';
+import ContributeCard from '@/components/misc/ContributionCard';
+import type { UserData } from '@zephyr/db';
+import type React from 'react';
 
 interface ProfileRightSideBarProps {
   username: string;
@@ -13,7 +13,7 @@ interface ProfileRightSideBarProps {
 
 const ProfileRightSideBar: React.FC<ProfileRightSideBarProps> = ({
   userData,
-  loggedInUserId
+  loggedInUserId,
 }) => {
   return (
     <aside className="w-96 flex-shrink-0 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-card-foreground">

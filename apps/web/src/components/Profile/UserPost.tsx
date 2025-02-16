@@ -1,30 +1,30 @@
-"use client";
+'use client';
 
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
-import { useMemo } from "react";
-
-import kyInstance from "@/lib/ky";
-import Post from "@zephyr-ui/Home/feedview/postCard";
-import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
-import PostsOnlyLoadingSkeleton from "@zephyr-ui/Layouts/skeletons/PostOnlyLoadingSkeleton";
-import type { PostsPage } from "@zephyr/db";
+import Post from '@/components/Home/feedview/postCard';
+import InfiniteScrollContainer from '@/components/Layouts/InfiniteScrollContainer';
+import PostsOnlyLoadingSkeleton from '@/components/Layouts/skeletons/PostOnlyLoadingSkeleton';
+import kyInstance from '@/lib/ky';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import type { PostsPage } from '@zephyr/db';
+import { Loader2 } from 'lucide-react';
+import { useMemo } from 'react';
+import type React from 'react';
 
 interface UserPostsProps {
   userId: string;
-  filter?: "all" | "scribbles" | "snapshots" | "media" | "files";
+  filter?: 'all' | 'scribbles' | 'snapshots' | 'media' | 'files';
 }
 
-const UserPosts: React.FC<UserPostsProps> = ({ userId, filter = "all" }) => {
+const UserPosts: React.FC<UserPostsProps> = ({ userId, filter = 'all' }) => {
   const {
     data,
     fetchNextPage,
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-    status
+    status,
   } = useInfiniteQuery({
-    queryKey: ["post-feed", "user-posts", userId],
+    queryKey: ['post-feed', 'user-posts', userId],
     queryFn: ({ pageParam }) =>
       kyInstance
         .get(
@@ -33,29 +33,29 @@ const UserPosts: React.FC<UserPostsProps> = ({ userId, filter = "all" }) => {
         )
         .json<PostsPage>(),
     initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage.nextCursor
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 
   const filteredPosts = useMemo(() => {
     const allPosts = data?.pages.flatMap((page) => page.posts) || [];
 
     switch (filter) {
-      case "scribbles":
+      case 'scribbles':
         return allPosts.filter((post) => post.attachments.length === 0);
-      case "snapshots":
+      case 'snapshots':
         return allPosts.filter((post) =>
-          post.attachments.some((att) => att.type === "IMAGE")
+          post.attachments.some((att) => att.type === 'IMAGE')
         );
-      case "media":
+      case 'media':
         return allPosts.filter((post) =>
           post.attachments.some(
-            (att) => att.type === "VIDEO" || att.type === "AUDIO"
+            (att) => att.type === 'VIDEO' || att.type === 'AUDIO'
           )
         );
-      case "files":
+      case 'files':
         return allPosts.filter((post) =>
           post.attachments.some(
-            (att) => att.type === "DOCUMENT" || att.type === "CODE"
+            (att) => att.type === 'DOCUMENT' || att.type === 'CODE'
           )
         );
       default:
@@ -63,11 +63,11 @@ const UserPosts: React.FC<UserPostsProps> = ({ userId, filter = "all" }) => {
     }
   }, [data?.pages, filter]);
 
-  if (status === "pending") {
+  if (status === 'pending') {
     return <PostsOnlyLoadingSkeleton />;
   }
 
-  if (status === "error") {
+  if (status === 'error') {
     return (
       <p className="text-center text-destructive">
         An error occurred while loading posts.
@@ -75,10 +75,10 @@ const UserPosts: React.FC<UserPostsProps> = ({ userId, filter = "all" }) => {
     );
   }
 
-  if (status === "success" && !filteredPosts.length) {
+  if (status === 'success' && !filteredPosts.length) {
     return (
       <p className="text-center text-muted-foreground">
-        {filter === "all"
+        {filter === 'all'
           ? "This user hasn't posted anything yet."
           : `No ${filter} available.`}
       </p>

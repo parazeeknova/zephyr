@@ -1,8 +1,8 @@
-import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
-import { prisma } from "@zephyr/db";
-import { Lucia, type Session, type User } from "lucia";
-import { cookies } from "next/headers";
-import { cache } from "react";
+import { PrismaAdapter } from '@lucia-auth/adapter-prisma';
+import { prisma } from '@zephyr/db';
+import { Lucia, type Session, type User } from 'lucia';
+import { cookies } from 'next/headers';
+import { cache } from 'react';
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
@@ -17,12 +17,12 @@ interface DatabaseUserAttributes {
 
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
-    expires: process.env.NODE_ENV === "production",
+    expires: process.env.NODE_ENV === 'production',
     attributes: {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      domain: process.env.COOKIE_DOMAIN || undefined
-    }
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      domain: process.env.COOKIE_DOMAIN || undefined,
+    },
   },
   getUserAttributes: (attributes) => ({
     id: attributes.id,
@@ -30,8 +30,8 @@ export const lucia = new Lucia(adapter, {
     displayName: attributes.displayName,
     avatarUrl: attributes.avatarUrl,
     googleId: attributes.googleId,
-    emailVerified: attributes.emailVerified
-  })
+    emailVerified: attributes.emailVerified,
+  }),
 });
 
 interface SessionAttributes {
@@ -39,7 +39,7 @@ interface SessionAttributes {
   email: string;
 }
 
-declare module "lucia" {
+declare module 'lucia' {
   interface Register {
     Lucia: typeof lucia;
     DatabaseUserAttributes: DatabaseUserAttributes;
@@ -57,7 +57,7 @@ export const validateRequest = cache(
     if (!sessionId) {
       return {
         user: null,
-        session: null
+        session: null,
       };
     }
 
@@ -81,7 +81,7 @@ export const validateRequest = cache(
         );
       }
     } catch (error) {
-      console.error("Session cookie handling error:", error);
+      console.error('Session cookie handling error:', error);
     }
 
     return result;

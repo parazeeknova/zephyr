@@ -1,10 +1,9 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import type React from "react";
-
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from '@zephyr/ui/shadui/badge';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
+import { motion } from 'framer-motion';
+import type React from 'react';
 
 interface SkillsProps {
   skills: string[];

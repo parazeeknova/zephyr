@@ -1,14 +1,12 @@
-"use client";
+'use client';
 
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
-
-import kyInstance from "@/lib/ky";
-import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
-import PostsLoadingSkeleton from "@zephyr-ui/Posts/PostsLoadingSkeleton";
-import type { PostsPage } from "@zephyr/db";
-
-import FeedView from "@zephyr-ui/Home/FeedView";
+import FeedView from '@/components/Home/FeedView';
+import InfiniteScrollContainer from '@/components/Layouts/InfiniteScrollContainer';
+import PostsLoadingSkeleton from '@/components/Posts/PostsLoadingSkeleton';
+import kyInstance from '@/lib/ky';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import type { PostsPage } from '@zephyr/db';
+import { Loader2 } from 'lucide-react';
 
 export default function FollowingFeed() {
   const {
@@ -17,27 +15,27 @@ export default function FollowingFeed() {
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-    status
+    status,
   } = useInfiniteQuery({
-    queryKey: ["post-feed", "following"],
+    queryKey: ['post-feed', 'following'],
     queryFn: ({ pageParam }) =>
       kyInstance
         .get(
-          "/api/posts/following",
+          '/api/posts/following',
           pageParam ? { searchParams: { cursor: pageParam } } : {}
         )
         .json<PostsPage>(),
     initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage.nextCursor
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
-  if (status === "pending") {
+  if (status === 'pending') {
     return <PostsLoadingSkeleton />;
   }
 
-  if (status === "success" && !posts.length && !hasNextPage) {
+  if (status === 'success' && !posts.length && !hasNextPage) {
     return (
       <p className="text-center text-muted-foreground">
         No Fleets found. Start following people to see their Fleets here!
@@ -45,7 +43,7 @@ export default function FollowingFeed() {
     );
   }
 
-  if (status === "error") {
+  if (status === 'error') {
     return (
       <p className="text-center text-destructive">
         An error occurred while loading posts.

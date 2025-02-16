@@ -1,32 +1,25 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
   "ui": "tui",
+  "envMode": "loose",
   "tasks": {
-    "db:generate": {
-      "cache": false,
-      "inputs": ["prisma/**/*"]
-    },
-    "db:push": {
-      "cache": false
-    },
     "build": {
       "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]
-    },
-    "web#build": {
-      "dependsOn": ["^build"]
     },
     "lint": {
       "dependsOn": ["^lint"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
     "clean": {
-      "cache": false,
-      "outputs": []
+      "cache": false
     }
   }
 }

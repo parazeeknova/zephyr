@@ -1,30 +1,31 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import { getAvatarUrl } from '@/lib/utils/getAvatarUrl';
+import type { UserData } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { getAvatarUrl } from "@/utils/getAvatarUrl";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import type { UserData } from "@zephyr/db";
-import { motion } from "framer-motion";
-import { ImageOff, MoreHorizontal, UserMinus } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
+  DropdownMenuTrigger,
+} from '@zephyr/ui/shadui/dropdown-menu';
+import { motion } from 'framer-motion';
+import { ImageOff, MoreHorizontal, UserMinus } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
+import type React from 'react';
 
 interface FriendListItemProps {
   user: UserData;
   onUnfollow: (user: UserData) => void;
-  viewType: "grid" | "list";
+  viewType: 'grid' | 'list';
 }
 
 const PreviewImage = ({
   isHovered,
-  user
+  user,
 }: {
   isHovered: boolean;
   user: UserData;
@@ -35,8 +36,8 @@ const PreviewImage = ({
     <motion.div
       className="absolute top-0 left-full z-50 hidden md:block"
       style={{
-        translateX: "10px",
-        translateY: "0%"
+        translateX: '10px',
+        translateY: '0%',
       }}
     >
       <motion.div
@@ -44,7 +45,7 @@ const PreviewImage = ({
         animate={{
           scale: isHovered ? 1 : 0.9,
           opacity: isHovered ? 1 : 0,
-          x: isHovered ? 0 : -10
+          x: isHovered ? 0 : -10,
         }}
         transition={{ duration: 0.2 }}
         className="relative h-[140px] w-[140px] overflow-hidden rounded-xl border border-primary/10 bg-background/80 p-2 shadow-lg backdrop-blur-sm"
@@ -88,7 +89,7 @@ const PreviewImage = ({
 export const FriendListItem: React.FC<FriendListItemProps> = ({
   user,
   onUnfollow,
-  viewType
+  viewType,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [bgImageError, setBgImageError] = useState(false);
@@ -99,8 +100,8 @@ export const FriendListItem: React.FC<FriendListItemProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`group relative rounded-xl bg-card/50 backdrop-blur-sm transition-all duration-300 hover:bg-card/80 ${viewType === "grid" ? "p-3" : "flex items-center p-2"}
-        ${isHovered ? "z-40" : "z-0"}`}
+      className={`group relative rounded-xl bg-card/50 backdrop-blur-sm transition-all duration-300 hover:bg-card/80 ${viewType === 'grid' ? 'p-3' : 'flex items-center p-2'}
+        ${isHovered ? 'z-40' : 'z-0'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -125,14 +126,14 @@ export const FriendListItem: React.FC<FriendListItemProps> = ({
 
       <div
         className={
-          viewType === "grid" ? "text-center" : "flex flex-1 items-center gap-3"
+          viewType === 'grid' ? 'text-center' : 'flex flex-1 items-center gap-3'
         }
       >
         <div className="relative flex-shrink-0">
           <Link href={`/users/${user.username}`}>
             <UserAvatar
               avatarUrl={getAvatarUrl(user.avatarUrl)}
-              size={viewType === "grid" ? 56 : 40}
+              size={viewType === 'grid' ? 56 : 40}
               className="transition-transform duration-300 group-hover:scale-105"
               // @ts-expect-error
               fallback={user.displayName?.[0] || user.username[0]}
@@ -140,7 +141,7 @@ export const FriendListItem: React.FC<FriendListItemProps> = ({
           </Link>
         </div>
 
-        <div className={`${viewType === "grid" ? "mt-2" : ""} min-w-0 flex-1`}>
+        <div className={`${viewType === 'grid' ? 'mt-2' : ''} min-w-0 flex-1`}>
           <Link href={`/users/${user.username}`}>
             <span className="block truncate font-medium text-foreground transition-colors hover:text-primary">
               {user.displayName || user.username}

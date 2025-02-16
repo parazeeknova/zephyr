@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
+import FollowButton from '@/components/Layouts/FollowButton';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import { useQuery } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useQuery } from "@tanstack/react-query";
-import FollowButton from "@zephyr-ui/Layouts/FollowButton";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import { AnimatePresence, motion } from "framer-motion";
-import { Compass, SearchIcon, Users2 } from "lucide-react";
-import { useState } from "react";
+  DialogTitle,
+} from '@zephyr/ui/shadui/dialog';
+import { Input } from '@zephyr/ui/shadui/input';
+import { ScrollArea } from '@zephyr/ui/shadui/scroll-area';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Compass, SearchIcon, Users2 } from 'lucide-react';
+import { useState } from 'react';
 
 interface FollowingListProps {
   userId: string;
   isOpen: boolean;
-  onClose: () => void;
+  onCloseAction: () => void;
   loggedInUserId: string;
 }
 
@@ -35,33 +35,35 @@ interface Following {
 }
 
 const emptyStateMessages = [
-  "Not following anyone yet? Time to explore! 🗺️",
-  "The follow button is feeling lonely! 🥺",
-  "Your following list is as empty as a desert! 🏜️",
-  "Time to discover some amazing people! ✨",
-  "Looking for inspiration? Start following! 🌟"
+  'Not following anyone yet? Time to explore! 🗺️',
+  'The follow button is feeling lonely! 🥺',
+  'Your following list is as empty as a desert! 🏜️',
+  'Time to discover some amazing people! ✨',
+  'Looking for inspiration? Start following! 🌟',
 ];
 
 export default function FollowingList({
   userId,
   isOpen,
-  onClose,
-  loggedInUserId
+  onCloseAction,
+  loggedInUserId,
 }: FollowingListProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [randomMessage] = useState(
     () =>
       emptyStateMessages[Math.floor(Math.random() * emptyStateMessages.length)]
   );
 
   const { data, isLoading } = useQuery({
-    queryKey: ["following-list", userId],
+    queryKey: ['following-list', userId],
     queryFn: async () => {
       const response = await fetch(`/api/users/${userId}/following-list`);
-      if (!response.ok) throw new Error("Failed to fetch following");
+      if (!response.ok) {
+        throw new Error('Failed to fetch following');
+      }
       return response.json() as Promise<Following[]>;
     },
-    enabled: isOpen
+    enabled: isOpen,
   });
 
   const filteredFollowing = data?.filter(
@@ -71,7 +73,7 @@ export default function FollowingList({
   );
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onCloseAction}>
       <DialogContent className="max-h-[90vh] overflow-hidden border border-accent/20 bg-background/95 backdrop-blur-md sm:max-w-[425px]">
         <DialogHeader>
           <motion.div
@@ -103,7 +105,7 @@ export default function FollowingList({
           <AnimatePresence mode="wait">
             {isLoading ? (
               <div className="space-y-4">
-                {[...Array(5)].map((_, i) => (
+                {[...new Array(5)].map((_, i) => (
                   <motion.div
                     key={`skeleton-${i}`}
                     initial={{ opacity: 0, y: 20 }}
@@ -119,6 +121,7 @@ export default function FollowingList({
                   </motion.div>
                 ))}
               </div>
+              // biome-ignore lint/nursery/noNestedTernary: ignore
             ) : !data || filteredFollowing?.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -170,7 +173,7 @@ export default function FollowingList({
                           userId={user.id}
                           initialState={{
                             isFollowedByUser: user.isFollowing,
-                            followers: user._count.followers
+                            followers: user._count.followers,
                           }}
                         />
                       </motion.div>

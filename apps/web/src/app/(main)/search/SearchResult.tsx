@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
-import kyInstance from "@/lib/ky";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import Post from "@zephyr-ui/Home/feedview/postCard";
-import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
-import LoadMoreSkeleton from "@zephyr-ui/Layouts/skeletons/LoadMoreSkeleton";
-import PostsLoadingSkeleton from "@zephyr-ui/Layouts/skeletons/PostOnlyLoadingSkeleton";
-import type { PostsPage } from "@zephyr/db";
-import { motion } from "framer-motion";
-import { FileText, Search } from "lucide-react";
-import UserSearchResults from "./UserSearchResult";
+import Post from '@/components/Home/feedview/postCard';
+import InfiniteScrollContainer from '@/components/Layouts/InfiniteScrollContainer';
+import LoadMoreSkeleton from '@/components/Layouts/skeletons/LoadMoreSkeleton';
+import PostsLoadingSkeleton from '@/components/Layouts/skeletons/PostOnlyLoadingSkeleton';
+import kyInstance from '@/lib/ky';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import type { PostsPage } from '@zephyr/db';
+import { Alert, AlertDescription } from '@zephyr/ui/shadui/alert';
+import { Separator } from '@zephyr/ui/shadui/separator';
+import { motion } from 'framer-motion';
+import { FileText, Search } from 'lucide-react';
+import UserSearchResults from './UserSearchResult';
 
 interface SearchResultsProps {
   query: string;
@@ -24,30 +24,30 @@ export default function SearchResults({ query }: SearchResultsProps) {
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-    status
+    status,
   } = useInfiniteQuery({
-    queryKey: ["post-feed", "search", query],
+    queryKey: ['post-feed', 'search', query],
     queryFn: ({ pageParam }) =>
       kyInstance
-        .get("/api/search", {
+        .get('/api/search', {
           searchParams: {
             q: query,
-            ...(pageParam ? { cursor: pageParam } : {})
-          }
+            ...(pageParam ? { cursor: pageParam } : {}),
+          },
         })
         .json<PostsPage>(),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
-    gcTime: 0
+    gcTime: 0,
   });
 
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
-  if (status === "pending") {
+  if (status === 'pending') {
     return <PostsLoadingSkeleton />;
   }
 
-  if (status === "error") {
+  if (status === 'error') {
     return (
       <Alert variant="destructive">
         <AlertDescription>
@@ -57,11 +57,11 @@ export default function SearchResults({ query }: SearchResultsProps) {
     );
   }
 
-  if (status === "success" && !posts.length) {
+  if (status === 'success' && !posts.length) {
     return (
       <div className="space-y-8">
         <UserSearchResults query={query} />
-        {status === "success" && (
+        {status === 'success' && (
           <div className="py-8 text-center">
             <Search className="mx-auto h-12 w-12 text-muted-foreground" />
             <p className="mt-4 text-muted-foreground">

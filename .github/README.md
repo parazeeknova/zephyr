@@ -48,6 +48,7 @@
 <p align="center">
   <a href="https://nodejs.org/">Node.js</a> (v20 or higher) | 
   <a href="https://pnpm.io/installation">pnpm</a> (Workspace management) | 
+  <a href="https://bun.sh">bun</a> (optional - zephyr-forge) |
   <a href="https://www.docker.com/">Docker</a> (Containerization) | 
   <a href="https://git-scm.com/">Git</a> (Version control)
 </p>
@@ -63,16 +64,10 @@
 
 <div align="center">
 
-###### *<div align="center"><sub>Linux & MacOS</sub></div>*
+###### *<div align="center"><sub>Using BUN (recommended)</sub></div>*
 
 ```bash
-curl -fsSL https://forge.zephyyrr.in/install.sh | bash
-```
-
-###### *<div align="center"><sub>Windows</sub></div>*
-
-```powershell
-irm https://forge.zephyyrr.in/install.ps1 | iex
+bunx zephyr-forge@latest setup
 ```
 
 </div>
@@ -88,26 +83,36 @@ git clone https://github.com/zephyr.git && cd zephyr
 pnpm install
 
 # 3. First time setup or after clean
-# This will start the development server using docker and create the required services & prisma migrations
-pnpm run start
+# This will start required containers and run migration containers required for prisma schema & minio buckets
+pnpm run docker:dev
+# Clean everything and start fresh if you encounter any issues
+pnpm run docker:clean:dev && pnpm run docker:dev
 
-# Clean everything and start fresh
-pnpm run docker:clean:dev && pnpm run start
+# 3.5 (Optional) Run the migrations manually
+pnpm run docker:dev-noinit # This will start the required services without running the migrations
+cd packages/db && pnpm prisma generate && pnpm prisma db push
+# For minio buckets, create the following buckets from the MinIO console at http://localhost:9001 
+`uploads`, `temp`, `backups`
 
-# 4. Set `.env` variables form `.env.example` file (optional if you want auth and other services)
+# 4. Start the development containers if not already started
+pnpm run docker:start # (optional if you want to start the containers manually)
+
+# 5. Set `.env` variables form `.env.example` file (optional if you want auth and other services)
 cp .env.example .env # Unix/Linux/Mac
 copy .env.example .env # Windows
 # Read the `.env.example` file for more information
+# Some useful commands are:
+pnpm run env:check # Check if all the required environment variables are set
+pnpm run env:fix # Fix the missing environment variables (local development only)
+pnpm run env:validate # Validate the environment variables
 
-# 5. Start the development server
+# 6. Start the development server
 pnpm turbo dev
 # or
 turbo dev
 
-# Check package.json for more scripts in the root directory
+# TIP ⚠️ : Check package.json for more scripts in the root directory
 ```
-> [!TIP]
-> **start** script uses docker-compose to start the required services & migrations. Check individual script in `docker/scripts` folder for more information.
 
 ###### _<div align="right"><sub>// Ports:</sub></div>_
 If everything goes well, you should be able to access the following services:
@@ -147,16 +152,13 @@ This is a high-level overview of the monorepo structure, check the individual pa
 
 #### _<div align="left"><sub>// Troubleshooting</sub></div>_
 
-> [!TIP]
-> Try `pnpm run docker:interactive`: Docker utility to clean and manage the docker services for Zephyr.
-
 ###### _<div align="left"><sub>// pre commit hooks</sub></div>_
 
 If you encounter any issues with the pre-commit hooks, try running the following commands:
 
 ```bash
 # Ensure that your code is formatted and linted
-pnpm run biome:fix
+pnpm run lint && pnpm run format
 ```
 
 If you encounter any issues with the development setup, try the following steps:

@@ -1,9 +1,9 @@
-"use client";
-import kyInstance from "@/lib/ky";
-import { useQuery } from "@tanstack/react-query";
-import { HeaderIconButton } from "@zephyr-ui/Styles/HeaderButtons";
-import type { MessageCountInfo } from "@zephyr/db";
-import { MessageCircle } from "lucide-react";
+'use client';
+import { HeaderIconButton } from '@/components/Styles/HeaderButtons';
+import kyInstance from '@/lib/ky';
+import { useQuery } from '@tanstack/react-query';
+import type { MessageCountInfo } from '@zephyr/db';
+import { MessageCircle } from 'lucide-react';
 
 interface MessagesButtonProps {
   initialState: MessageCountInfo;
@@ -11,11 +11,11 @@ interface MessagesButtonProps {
 
 export default function MessagesButton({ initialState }: MessagesButtonProps) {
   const { data } = useQuery({
-    queryKey: ["unread-messages-count"],
+    queryKey: ['unread-messages-count'],
     queryFn: () =>
-      kyInstance.get("/api/messages/unread-count").json<MessageCountInfo>(),
+      kyInstance.get('/api/messages/unread-count').json<MessageCountInfo>(),
     initialData: initialState,
-    refetchInterval: 60 * 1000
+    refetchInterval: 60 * 1000,
   });
 
   return (

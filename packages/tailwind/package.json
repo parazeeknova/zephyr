@@ -1,0 +1,25 @@
+{
+  "name": "@zephyr/tailwind",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "tailwind-merge": "^3.0.1",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@zephyr/config": "workspace:*",
+    "tailwindcss": "3.4.17"
+  },
+  "overrides": {
+    "devDependencies": {
+      "autoprefixer": "^10.4.20",
+      "postcss": "^8.5.1",
+      "tailwindcss": "3.4.17"
+    }
+  }
+}

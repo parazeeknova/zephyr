@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import kyInstance from "@/lib/ky";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import InfiniteScrollContainer from "@zephyr-ui/Layouts/InfiniteScrollContainer";
-import FeedViewSkeleton from "@zephyr-ui/Layouts/skeletons/FeedViewSkeleton";
-import LoadMoreSkeleton from "@zephyr-ui/Layouts/skeletons/LoadMoreSkeleton";
-import type { PostsPage } from "@zephyr/db";
-import FeedView from "./FeedView";
+import InfiniteScrollContainer from '@/components/Layouts/InfiniteScrollContainer';
+import FeedViewSkeleton from '@/components/Layouts/skeletons/FeedViewSkeleton';
+import LoadMoreSkeleton from '@/components/Layouts/skeletons/LoadMoreSkeleton';
+import kyInstance from '@/lib/ky';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import type { PostsPage } from '@zephyr/db';
+import FeedView from './FeedView';
 
 export default function ForYouFeed() {
   const {
@@ -15,27 +15,27 @@ export default function ForYouFeed() {
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-    status
+    status,
   } = useInfiniteQuery({
-    queryKey: ["post-feed", "for-you"],
+    queryKey: ['post-feed', 'for-you'],
     queryFn: ({ pageParam }) =>
       kyInstance
         .get(
-          "/api/posts/for-you",
+          '/api/posts/for-you',
           pageParam ? { searchParams: { cursor: pageParam } } : {}
         )
         .json<PostsPage>(),
     initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage.nextCursor
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
-  if (status === "pending") {
+  if (status === 'pending') {
     return <FeedViewSkeleton />;
   }
 
-  if (status === "success" && !posts.length && !hasNextPage) {
+  if (status === 'success' && !posts.length && !hasNextPage) {
     return (
       <p className="text-center text-muted-foreground">
         No Fleets to show here.
@@ -43,7 +43,7 @@ export default function ForYouFeed() {
     );
   }
 
-  if (status === "error") {
+  if (status === 'error') {
     return (
       <p className="text-center text-destructive">
         An error occurred while loading posts.

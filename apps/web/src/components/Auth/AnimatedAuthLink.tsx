@@ -1,9 +1,14 @@
-"use client";
+'use client';
 
-import { motion, useMotionValue, useSpring } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import {
+  type MotionValue,
+  motion,
+  useMotionValue,
+  useSpring,
+} from 'framer-motion';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 interface AnimatedAuthLinkProps {
   href: string;
@@ -15,17 +20,17 @@ const PreviewCursor = ({
   mouseX,
   mouseY,
   isHovered,
-  previewImage
+  previewImage,
 }: {
-  mouseX: any;
-  mouseY: any;
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
   isHovered: boolean;
   previewImage: string;
 }) => {
   const springConfig = {
     damping: 15,
     stiffness: 150,
-    mass: 0.5
+    mass: 0.5,
   };
 
   const x = useSpring(mouseX, springConfig);
@@ -34,7 +39,7 @@ const PreviewCursor = ({
   const rotate = useSpring(0, {
     damping: 10,
     stiffness: 100,
-    mass: 0.1
+    mass: 0.1,
   });
 
   useEffect(() => {
@@ -54,33 +59,33 @@ const PreviewCursor = ({
         x,
         y,
         rotate,
-        translateX: "-50%",
-        translateY: "-120%",
-        position: "fixed"
+        translateX: '-50%',
+        translateY: '-120%',
+        position: 'fixed',
       }}
     >
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
         animate={{
           scale: isHovered ? 1 : 0,
-          opacity: isHovered ? 1 : 0
+          opacity: isHovered ? 1 : 0,
         }}
         transition={{
           duration: 0.2,
-          ease: [0.23, 1, 0.32, 1]
+          ease: [0.23, 1, 0.32, 1],
         }}
         className="relative h-[100px] w-[160px] overflow-hidden rounded-lg border border-primary/10 bg-background/80 shadow-lg backdrop-blur-sm"
       >
         <motion.div
           className="absolute inset-0"
           animate={{
-            scale: isHovered ? 1.05 : 1
+            scale: isHovered ? 1.05 : 1,
           }}
           transition={{
             duration: 2,
             repeat: Number.POSITIVE_INFINITY,
-            repeatType: "reverse",
-            ease: "easeInOut"
+            repeatType: 'reverse',
+            ease: 'easeInOut',
           }}
         >
           <Image
@@ -100,7 +105,7 @@ const PreviewCursor = ({
 export default function AnimatedAuthLink({
   href,
   text,
-  previewImage
+  previewImage,
 }: AnimatedAuthLinkProps) {
   const [isHovered, setIsHovered] = useState(false);
   const mouseX = useMotionValue(0);
@@ -113,7 +118,7 @@ export default function AnimatedAuthLink({
     };
 
     checkDevice();
-    window.addEventListener("resize", checkDevice);
+    window.addEventListener('resize', checkDevice);
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
@@ -121,12 +126,12 @@ export default function AnimatedAuthLink({
     };
 
     if (!isMobile) {
-      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener('mousemove', handleMouseMove);
     }
 
     return () => {
-      window.removeEventListener("resize", checkDevice);
-      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener('resize', checkDevice);
+      window.removeEventListener('mousemove', handleMouseMove);
     };
   }, [mouseX, mouseY, isMobile]);
 
@@ -144,7 +149,7 @@ export default function AnimatedAuthLink({
           exit={{ opacity: 0, y: -10 }}
           transition={{
             duration: 0.3,
-            ease: "easeInOut"
+            ease: 'easeInOut',
           }}
           className="relative"
         >
@@ -159,8 +164,8 @@ export default function AnimatedAuthLink({
               scaleX: 1,
               transition: {
                 duration: 0.2,
-                ease: "easeOut"
-              }
+                ease: 'easeOut',
+              },
             }}
           />
         </motion.div>

@@ -1,45 +1,53 @@
-"use client";
+'use client';
 
-import type { SignUpValues } from "@zephyr/auth/src";
-import { AnimatePresence, motion } from "framer-motion";
-import { Check, X } from "lucide-react";
-import type { UseFormSetValue } from "react-hook-form";
-import { PasswordRecommender } from "./PasswordRecommender";
+import type { SignUpValues } from '@zephyr/auth/src';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Check, X } from 'lucide-react';
+import type { UseFormSetValue } from 'react-hook-form';
+import { PasswordRecommender } from './PasswordRecommender';
 
 interface Requirement {
   text: string;
   validator: (password: string) => boolean;
 }
 
+export const uppercaseRegex = /[A-Z]/;
+export const lowercaseRegex = /[a-z]/;
+export const onenumberRegex = /[0-9]/;
+export const specialCharRegex = /[@$!%*?&#]/;
+const numberRegex = /\d/;
+const repeatedCharRegex = /(.)\1{2,}/;
+const commonSequenceRegex = /(?:abc|123|qwe|xyz)/i;
+
 const requirements: Requirement[] = [
   {
-    text: "At least 8 characters long",
-    validator: (password) => password.length >= 8
+    text: 'At least 8 characters long',
+    validator: (password) => password.length >= 8,
   },
   {
-    text: "Contains at least one uppercase letter",
-    validator: (password) => /[A-Z]/.test(password)
+    text: 'Contains at least one uppercase letter',
+    validator: (password) => uppercaseRegex.test(password),
   },
   {
-    text: "Contains at least one lowercase letter",
-    validator: (password) => /[a-z]/.test(password)
+    text: 'Contains at least one lowercase letter',
+    validator: (password) => lowercaseRegex.test(password),
   },
   {
-    text: "Contains at least one number",
-    validator: (password) => /\d/.test(password)
+    text: 'Contains at least one number',
+    validator: (password) => numberRegex.test(password),
   },
   {
-    text: "Contains at least one special character",
-    validator: (password) => /[@$!%*?&#]/.test(password)
+    text: 'Contains at least one special character',
+    validator: (password) => specialCharRegex.test(password),
   },
   {
-    text: "No repeated characters (3+ times)",
-    validator: (password) => !/(.)\1{2,}/.test(password)
+    text: 'No repeated characters (3+ times)',
+    validator: (password) => !repeatedCharRegex.test(password),
   },
   {
-    text: "No common sequences (123, abc)",
-    validator: (password) => !/(?:abc|123|qwe|xyz)/i.test(password)
-  }
+    text: 'No common sequences (123, abc)',
+    validator: (password) => !commonSequenceRegex.test(password),
+  },
 ];
 
 interface PasswordStrengthCheckerProps {
@@ -51,10 +59,12 @@ interface PasswordStrengthCheckerProps {
 export function PasswordStrengthChecker({
   password,
   setValue,
-  setPassword
+  setPassword,
 }: PasswordStrengthCheckerProps) {
   const getStrengthPercent = () => {
-    if (!password) return 0;
+    if (!password) {
+      return 0;
+    }
     const matchedRequirements = requirements.filter((req) =>
       req.validator(password)
     ).length;
@@ -64,35 +74,47 @@ export function PasswordStrengthChecker({
   const strengthPercent = getStrengthPercent();
 
   const getStrengthColor = () => {
-    if (strengthPercent <= 25) return "bg-red-500";
-    if (strengthPercent <= 50) return "bg-orange-500";
-    if (strengthPercent <= 75) return "bg-yellow-500";
-    return "bg-green-500";
+    if (strengthPercent <= 25) {
+      return 'bg-red-500';
+    }
+    if (strengthPercent <= 50) {
+      return 'bg-orange-500';
+    }
+    if (strengthPercent <= 75) {
+      return 'bg-yellow-500';
+    }
+    return 'bg-green-500';
   };
 
   const getStrengthText = () => {
-    if (strengthPercent <= 25) return "Weak";
-    if (strengthPercent <= 50) return "Fair";
-    if (strengthPercent <= 75) return "Good";
-    return "Strong";
+    if (strengthPercent <= 25) {
+      return 'Weak';
+    }
+    if (strengthPercent <= 50) {
+      return 'Fair';
+    }
+    if (strengthPercent <= 75) {
+      return 'Good';
+    }
+    return 'Strong';
   };
 
   const strengthVariants = {
     container: {
       initial: { opacity: 0, height: 0 },
-      animate: { opacity: 1, height: "auto" },
-      exit: { opacity: 0, height: 0, transition: { duration: 0.2 } }
+      animate: { opacity: 1, height: 'auto' },
+      exit: { opacity: 0, height: 0, transition: { duration: 0.2 } },
     },
     indicator: {
       initial: { width: 0, opacity: 0 },
       animate: { width: `${strengthPercent}%`, opacity: 1 },
-      exit: { width: 0, opacity: 0 }
+      exit: { width: 0, opacity: 0 },
     },
     requirement: {
       initial: { opacity: 0, x: -10 },
       animate: { opacity: 1, x: 0 },
-      exit: { opacity: 0, x: 10 }
-    }
+      exit: { opacity: 0, x: 10 },
+    },
   };
 
   return (
@@ -117,7 +139,7 @@ export function PasswordStrengthChecker({
             <div className="flex justify-between text-xs">
               <span className="text-muted-foreground">Password Strength:</span>
               <motion.span
-                className={`font-medium ${getStrengthColor().replace("bg-", "text-")}`}
+                className={`font-medium ${getStrengthColor().replace('bg-', 'text-')}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.2 }}
@@ -173,8 +195,8 @@ export function PasswordStrengthChecker({
                   <span
                     className={`text-xs ${
                       req.validator(password)
-                        ? "text-green-500"
-                        : "text-muted-foreground"
+                        ? 'text-green-500'
+                        : 'text-muted-foreground'
                     }`}
                   >
                     {req.text}

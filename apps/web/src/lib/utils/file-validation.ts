@@ -1,20 +1,20 @@
 import {
   type AllowedAvatarExtension,
   avatarConfig,
-  maxFileSizes
-} from "../config/file-config";
-import { getFileConfigFromMime } from "./mime-utils";
+  maxFileSizes,
+} from '../config/file-config';
+import { getFileConfigFromMime } from './mime-utils';
 
 export const validateFile = (file: File) => {
   if (!file) {
-    throw new Error("No file provided");
+    throw new Error('No file provided');
   }
 
   const fileConfig = getFileConfigFromMime(file.type);
-  console.log("File validation:", {
+  console.log('File validation:', {
     type: file.type,
     config: fileConfig,
-    size: file.size
+    size: file.size,
   });
 
   if (!fileConfig) {
@@ -35,7 +35,7 @@ export const validateFile = (file: File) => {
 };
 
 export const validateAvatar = (file: File) => {
-  const extension = file.name.split(".").pop()?.toLowerCase();
+  const extension = file.name.split('.').pop()?.toLowerCase();
 
   const isAllowedExtension = (
     ext: string | undefined
@@ -47,11 +47,11 @@ export const validateAvatar = (file: File) => {
   };
 
   if (!isAllowedExtension(extension)) {
-    throw new Error("Avatar must be in JPG, PNG, GIF, WebP, or HEIC format");
+    throw new Error('Avatar must be in JPG, PNG, GIF, WebP, or HEIC format');
   }
 
   if (file.size > avatarConfig.maxSize) {
-    throw new Error("Avatar size must be less than 8MB");
+    throw new Error('Avatar size must be less than 8MB');
   }
 
   return true;

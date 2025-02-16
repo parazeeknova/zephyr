@@ -1,10 +1,10 @@
-import { cn } from "@/lib/utils";
-import avatarPlaceholder from "@zephyr-assets/avatar-placeholder.png";
-import type { UserData } from "@zephyr/db";
-import Image from "next/image";
+import { cn } from '@/lib/utils';
+import avatarPlaceholder from '@assets/general/avatar-placeholder.png';
+import type { UserData } from '@zephyr/db';
+import Image from 'next/image';
 
 interface UserAvatarProps {
-  user?: Pick<UserData, "avatarUrl"> | null;
+  user?: Pick<UserData, 'avatarUrl'> | null;
   avatarUrl?: string | null;
   size?: number;
   className?: string;
@@ -16,7 +16,7 @@ export default function UserAvatar({
   avatarUrl: directAvatarUrl,
   size,
   className,
-  priority = false
+  priority = false,
 }: UserAvatarProps) {
   const avatarUrl = user?.avatarUrl ?? directAvatarUrl;
 
@@ -27,11 +27,11 @@ export default function UserAvatar({
       width={size ?? 48}
       height={size ?? 48}
       className={cn(
-        "aspect-square h-fit flex-none rounded-full bg-secondary object-cover",
+        'aspect-square h-fit flex-none rounded-full bg-secondary object-cover',
         className
       )}
       priority={priority}
-      unoptimized={avatarUrl?.endsWith(".gif")} // Don't optimize GIFs to keep animation
+      unoptimized={avatarUrl?.endsWith('.gif')} // Don't optimize GIFs to keep animation
     />
   );
 }

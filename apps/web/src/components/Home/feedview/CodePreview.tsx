@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   AlignLeftIcon,
   Check,
   Copy,
   Expand,
   FileIcon,
-  WrapTextIcon
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+  WrapTextIcon,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {
   oneDark,
-  oneLight
-} from "react-syntax-highlighter/dist/esm/styles/prism";
+  oneLight,
+} from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface CodePreviewProps {
   mediaId: string;
@@ -25,41 +25,44 @@ interface CodePreviewProps {
   className?: string;
 }
 
-const normalizeLanguage = (language = ""): string => {
+const normalizedlangRegex = /^\./;
+const normalizeLanguage = (language = ''): string => {
   const langMap: Record<string, string> = {
-    js: "javascript",
-    ts: "typescript",
-    jsx: "jsx",
-    tsx: "tsx",
-    py: "python",
-    rb: "ruby",
-    s: "csharp",
-    go: "go",
-    rs: "rust",
-    php: "php",
-    html: "html",
-    css: "css",
-    scss: "scss",
-    json: "json",
-    yml: "yaml",
-    yaml: "yaml",
-    md: "markdown",
-    sql: "sql"
+    js: 'javascript',
+    ts: 'typescript',
+    jsx: 'jsx',
+    tsx: 'tsx',
+    py: 'python',
+    rb: 'ruby',
+    s: 'csharp',
+    go: 'go',
+    rs: 'rust',
+    php: 'php',
+    html: 'html',
+    css: 'css',
+    scss: 'scss',
+    json: 'json',
+    yml: 'yaml',
+    yaml: 'yaml',
+    md: 'markdown',
+    sql: 'sql',
   };
 
-  const normalizedLang = language.toLowerCase().replace(/^\./, "");
-  return langMap[normalizedLang] || normalizedLang || "text";
+  const normalizedLang = language
+    .toLowerCase()
+    .replace(normalizedlangRegex, '');
+  return langMap[normalizedLang] || normalizedLang || 'text';
 };
 
 export function CodePreview({
   mediaId,
-  language = "text",
+  language = 'text',
   fileName,
-  className = ""
+  className = '',
 }: CodePreviewProps) {
   const { toast } = useToast();
-  const [content, setContent] = useState<string>("");
-  const [error, setError] = useState<string>("");
+  const [content, setContent] = useState<string>('');
+  const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [isDarkTheme, _setIsDarkTheme] = useState(true);
@@ -71,11 +74,13 @@ export function CodePreview({
       try {
         setLoading(true);
         const response = await fetch(`/api/media/${mediaId}`);
-        if (!response.ok) throw new Error("Failed to fetch code");
+        if (!response.ok) {
+          throw new Error('Failed to fetch code');
+        }
         const text = await response.text();
         setContent(text);
       } catch (err) {
-        setError("Failed to load code content");
+        setError('Failed to load code content');
         console.error(err);
       } finally {
         setLoading(false);
@@ -90,14 +95,14 @@ export function CodePreview({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
       toast({
-        title: "Copied to clipboard",
-        description: "Code has been copied to your clipboard"
+        title: 'Copied to clipboard',
+        description: 'Code has been copied to your clipboard',
       });
     } catch (_error) {
       toast({
-        title: "Failed to copy",
-        description: "Please try again",
-        variant: "destructive"
+        title: 'Failed to copy',
+        description: 'Please try again',
+        variant: 'destructive',
       });
     }
   };
@@ -134,7 +139,7 @@ export function CodePreview({
           variant="ghost"
           size="icon"
           onClick={() => setWrapCode(!wrapCode)}
-          title={wrapCode ? "Disable line wrap" : "Enable line wrap"}
+          title={wrapCode ? 'Disable line wrap' : 'Enable line wrap'}
         >
           {wrapCode ? (
             <WrapTextIcon className="h-4 w-4" />
@@ -159,16 +164,16 @@ export function CodePreview({
   return (
     <div
       className={cn(
-        "rounded-lg border bg-card",
-        isFullScreen && "fixed inset-0 z-50",
+        'rounded-lg border bg-card',
+        isFullScreen && 'fixed inset-0 z-50',
         className
       )}
     >
       <CodeHeader />
       <div
         className={cn(
-          "max-h-[60vh] overflow-auto",
-          isFullScreen && "h-[calc(100%-3rem)]"
+          'max-h-[60vh] overflow-auto',
+          isFullScreen && 'h-[calc(100%-3rem)]'
         )}
       >
         <SyntaxHighlighter
@@ -177,15 +182,15 @@ export function CodePreview({
           showLineNumbers={true}
           customStyle={{
             margin: 0,
-            padding: "1rem",
-            fontSize: "0.9rem",
-            backgroundColor: "transparent",
-            fontFamily: "var(--font-mono)"
+            padding: '1rem',
+            fontSize: '0.9rem',
+            backgroundColor: 'transparent',
+            fontFamily: 'var(--font-mono)',
           }}
           lineNumberStyle={{
-            minWidth: "3em",
-            paddingRight: "1em",
-            fontFamily: "var(--font-mono)"
+            minWidth: '3em',
+            paddingRight: '1em',
+            fontFamily: 'var(--font-mono)',
           }}
           wrapLines
           wrapLongLines

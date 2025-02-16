@@ -1,20 +1,20 @@
-import { Button } from "@/components/ui/button";
+import { cn } from '@/lib/utils';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { FileAudioIcon, FileCode, FileIcon, ImageIcon } from "lucide-react";
-import { type RefObject, useEffect, useRef, useState } from "react";
+  TooltipTrigger,
+} from '@zephyr/ui/shadui/tooltip';
+import { FileAudioIcon, FileCode, FileIcon, ImageIcon } from 'lucide-react';
+import { type RefObject, useEffect, useRef, useState } from 'react';
 
 interface FileInputProps {
   onFilesSelected: (files: File[]) => void;
   disabled: boolean;
 }
 
-type FileButtonType = "image" | "audio" | "document" | "code";
+type FileButtonType = 'image' | 'audio' | 'document' | 'code';
 
 interface FileButtonProps {
   icon:
@@ -39,9 +39,9 @@ const useIsMobile = () => {
     };
 
     checkMobile();
-    window.addEventListener("resize", checkMobile);
+    window.addEventListener('resize', checkMobile);
 
-    return () => window.removeEventListener("resize", checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   return isMobile;
@@ -72,27 +72,27 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
     accept,
     inputRef,
     buttonType,
-    capture
+    capture,
   }: FileButtonProps) => {
     const ButtonContent = (
       <Button
         variant="ghost"
         size="icon"
         className={cn(
-          "relative overflow-hidden transition-all duration-300 ease-in-out",
-          "hover:scale-110 active:scale-95",
-          "before:absolute before:inset-0 before:z-0 before:opacity-0 before:transition-opacity",
-          "before:duration-300 before:ease-in-out hover:before:opacity-100",
-          hoveredButton === buttonType ? "ring-2 ring-primary" : "",
-          buttonType === "image" &&
-            "before:bg-gradient-to-r before:from-pink-500/10 before:to-purple-500/10",
-          buttonType === "audio" &&
-            "before:bg-gradient-to-r before:from-blue-500/10 before:to-cyan-500/10",
-          buttonType === "document" &&
-            "before:bg-gradient-to-r before:from-green-500/10 before:to-emerald-500/10",
-          buttonType === "code" &&
-            "before:bg-gradient-to-r before:from-orange-500/10 before:to-amber-500/10",
-          disabled && "cursor-not-allowed opacity-50"
+          'relative overflow-hidden transition-all duration-300 ease-in-out',
+          'hover:scale-110 active:scale-95',
+          'before:absolute before:inset-0 before:z-0 before:opacity-0 before:transition-opacity',
+          'before:duration-300 before:ease-in-out hover:before:opacity-100',
+          hoveredButton === buttonType ? 'ring-2 ring-primary' : '',
+          buttonType === 'image' &&
+            'before:bg-gradient-to-r before:from-pink-500/10 before:to-purple-500/10',
+          buttonType === 'audio' &&
+            'before:bg-gradient-to-r before:from-blue-500/10 before:to-cyan-500/10',
+          buttonType === 'document' &&
+            'before:bg-gradient-to-r before:from-green-500/10 before:to-emerald-500/10',
+          buttonType === 'code' &&
+            'before:bg-gradient-to-r before:from-orange-500/10 before:to-amber-500/10',
+          disabled && 'cursor-not-allowed opacity-50'
         )}
         disabled={disabled}
         onClick={() => inputRef.current?.click()}
@@ -102,14 +102,14 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
         <Icon
           size={20}
           className={cn(
-            "relative z-10 text-muted-foreground transition-transform duration-300",
-            hoveredButton === buttonType && "rotate-12 transform"
+            'relative z-10 text-muted-foreground transition-transform duration-300',
+            hoveredButton === buttonType && 'rotate-12 transform'
           )}
         />
         <span
           className={cn(
-            "absolute inset-0 z-0 bg-gradient-to-r opacity-0 transition-opacity duration-300",
-            hoveredButton === buttonType && "opacity-10"
+            'absolute inset-0 z-0 bg-gradient-to-r opacity-0 transition-opacity duration-300',
+            hoveredButton === buttonType && 'opacity-10'
           )}
         />
       </Button>
@@ -130,7 +130,7 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
               className="sr-only"
               onChange={(e) => {
                 handleFileSelect(e.target.files);
-                e.target.value = "";
+                e.target.value = '';
               }}
             />
           </>
@@ -139,13 +139,13 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
             <TooltipTrigger asChild>{ButtonContent}</TooltipTrigger>
             <TooltipContent
               className={cn(
-                "fade-in-50 zoom-in-95 animate-in",
-                "bg-gradient-to-r shadow-lg",
-                buttonType === "image" && "from-pink-500/5 to-purple-500/5",
-                buttonType === "audio" && "from-blue-500/5 to-cyan-500/5",
-                buttonType === "document" &&
-                  "from-green-500/5 to-emerald-500/5",
-                buttonType === "code" && "from-orange-500/5 to-amber-500/5"
+                'fade-in-50 zoom-in-95 animate-in',
+                'bg-gradient-to-r shadow-lg',
+                buttonType === 'image' && 'from-pink-500/5 to-purple-500/5',
+                buttonType === 'audio' && 'from-blue-500/5 to-cyan-500/5',
+                buttonType === 'document' &&
+                  'from-green-500/5 to-emerald-500/5',
+                buttonType === 'code' && 'from-orange-500/5 to-amber-500/5'
               )}
             >
               <p className="font-medium">{label}</p>
@@ -160,7 +160,7 @@ export function FileInput({ onFilesSelected, disabled }: FileInputProps) {
               className="sr-only"
               onChange={(e) => {
                 handleFileSelect(e.target.files);
-                e.target.value = "";
+                e.target.value = '';
               }}
             />
           </Tooltip>

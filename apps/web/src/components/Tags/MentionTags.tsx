@@ -1,33 +1,33 @@
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
-import { useUpdateMentionsMutation } from "@/posts/editor/mutations";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import type { UserData } from "@zephyr/db";
-import { AnimatePresence, motion } from "framer-motion";
-import { AtSign } from "lucide-react";
-import { useEffect, useState } from "react";
-import { MentionTagEditor } from "./MentionTagEditor";
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import { cn } from '@/lib/utils';
+import { useUpdateMentionsMutation } from '@/posts/editor/mutations';
+import type { UserData } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Dialog, DialogContent, DialogTitle } from '@zephyr/ui/shadui/dialog';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AtSign } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { MentionTagEditor } from './MentionTagEditor';
 
 const containerVariants = {
   initial: { opacity: 0 },
   animate: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 const tagVariants = {
   initial: { opacity: 0, scale: 0.9 },
   animate: { opacity: 1, scale: 1 },
   hover: { scale: 1.05 },
-  exit: { opacity: 0, scale: 0.9 }
+  exit: { opacity: 0, scale: 0.9 },
 };
 
 const baseTagClass =
-  "flex h-7 items-center gap-1.5 rounded-full border px-3 py-1";
+  'flex h-7 items-center gap-1.5 rounded-full border px-3 py-1';
 
 interface MentionTagsProps {
   mentions: UserData[];
@@ -42,7 +42,7 @@ export function MentionTags({
   isOwner,
   className,
   postId,
-  onMentionsChange
+  onMentionsChange,
 }: MentionTagsProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [localMentions, setLocalMentions] =
@@ -54,7 +54,7 @@ export function MentionTags({
     if (JSON.stringify(localMentions) !== JSON.stringify(initialMentions)) {
       setLocalMentions(initialMentions);
     }
-  }, [initialMentions]);
+  }, [initialMentions, localMentions]);
 
   const handleMentionsUpdate = async (newMentions: UserData[]) => {
     try {
@@ -67,7 +67,7 @@ export function MentionTags({
       onMentionsChange?.(newMentions);
     } catch (error) {
       setLocalMentions(initialMentions);
-      console.error("Failed to update mentions:", error);
+      console.error('Failed to update mentions:', error);
     }
   };
 
@@ -82,7 +82,7 @@ export function MentionTags({
             variants={containerVariants}
             initial="initial"
             animate="animate"
-            className={cn("flex flex-wrap gap-2", className)}
+            className={cn('flex flex-wrap gap-2', className)}
           >
             <AnimatePresence mode="sync">
               {localMentions.map((user) => (
@@ -98,7 +98,7 @@ export function MentionTags({
                   <div
                     className={cn(
                       baseTagClass,
-                      "bg-blue-500/5 text-blue-500 hover:border-blue-500/30 hover:bg-blue-500/10"
+                      'bg-blue-500/5 text-blue-500 hover:border-blue-500/30 hover:bg-blue-500/10'
                     )}
                   >
                     <UserAvatar user={user} size={20} />
@@ -122,8 +122,8 @@ export function MentionTags({
                     onClick={() => setIsEditing(true)}
                     className={cn(
                       baseTagClass,
-                      "bg-muted/50 hover:border-blue-500/30 hover:bg-muted/80",
-                      "font-normal"
+                      'bg-muted/50 hover:border-blue-500/30 hover:bg-muted/80',
+                      'font-normal'
                     )}
                   >
                     <AtSign className="mr-1 h-3.5 w-3.5" />
@@ -141,8 +141,8 @@ export function MentionTags({
           <DialogTitle>Edit Mentions</DialogTitle>
           <MentionTagEditor
             initialMentions={localMentions}
-            onClose={() => setIsEditing(false)}
-            onMentionsUpdate={handleMentionsUpdate}
+            onCloseAction={() => setIsEditing(false)}
+            onMentionsUpdateAction={handleMentionsUpdate}
             postId={postId}
           />
         </DialogContent>

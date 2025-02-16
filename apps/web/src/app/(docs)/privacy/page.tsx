@@ -1,9 +1,9 @@
-import PrivacyPolicyPage from "./ClientPrivacy";
+import PrivacyPolicyPage from './ClientPrivacy';
 
 export const metadata = {
-  title: "Privacy Policy",
+  title: 'Privacy Policy',
   description:
-    "Privacy policy and data handling practices for Zephyr social media platform."
+    'Privacy policy and data handling practices for Zephyr social media platform.',
 };
 
 export default function PrivacyPage() {

@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import { useTags } from "@/hooks/useTags";
-import { cn } from "@/lib/utils";
-import type { Tag } from "@prisma/client";
-import type { TagWithCount } from "@zephyr/db";
-import { Command } from "cmdk";
-import { AnimatePresence, motion } from "framer-motion";
-import { Hash, Loader2, Plus, Search, X } from "lucide-react";
-import { useState } from "react";
-import { useUpdateTagsMutation } from "./mutations/tag-mention-mutation";
+import { useTags } from '@/hooks/useTags';
+import { cn } from '@/lib/utils';
+import type { Tag } from '@prisma/client';
+import type { TagWithCount } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
+import { DialogHeader, DialogTitle } from '@zephyr/ui/shadui/dialog';
+import { Command } from 'cmdk';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Hash, Loader2, Plus, Search, X } from 'lucide-react';
+import { useState } from 'react';
+import { useUpdateTagsMutation } from './mutations/tag-mention-mutation';
 
 const tagVariants = {
   initial: { opacity: 0, scale: 0.9, y: -10 },
@@ -20,43 +20,43 @@ const tagVariants = {
     scale: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: 'spring',
       stiffness: 200,
-      damping: 20
-    }
+      damping: 20,
+    },
   },
   exit: {
     opacity: 0,
     scale: 0.9,
     y: -10,
     transition: {
-      duration: 0.2
-    }
-  }
+      duration: 0.2,
+    },
+  },
 };
 
 const containerVariants = {
   animate: {
     transition: {
-      staggerChildren: 0.05
-    }
-  }
+      staggerChildren: 0.05,
+    },
+  },
 };
 
 interface TagEditorProps {
   postId?: string;
   initialTags: string[];
-  onClose: () => void;
-  onTagsUpdate: (tags: Tag[]) => void;
+  onCloseAction: () => void;
+  onTagsUpdateAction: (tags: Tag[]) => void;
 }
 
 export function TagEditor({
   postId,
   initialTags,
-  onClose,
-  onTagsUpdate
+  onCloseAction,
+  onTagsUpdateAction,
 }: TagEditorProps) {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const { suggestions, searchTags } = useTags(postId);
   const { toast } = useToast();
   const [isFocused, setIsFocused] = useState(false);
@@ -66,9 +66,9 @@ export function TagEditor({
   const handleSelect = (tagName: string) => {
     if (selectedTags.length >= 5) {
       toast({
-        title: "Maximum tags reached",
-        description: "You can only add up to 5 tags per post",
-        variant: "destructive"
+        title: 'Maximum tags reached',
+        description: 'You can only add up to 5 tags per post',
+        variant: 'destructive',
       });
       return;
     }
@@ -83,13 +83,13 @@ export function TagEditor({
         createdAt: new Date(),
         updatedAt: new Date(),
         _count: {
-          posts: 1
-        }
+          posts: 1,
+        },
       }));
 
-      onTagsUpdate(formattedTags);
+      onTagsUpdateAction(formattedTags);
     }
-    setSearch("");
+    setSearch('');
   };
 
   const handleRemove = (tagName: string) => {
@@ -102,11 +102,11 @@ export function TagEditor({
       createdAt: new Date(),
       updatedAt: new Date(),
       _count: {
-        posts: 1
-      }
+        posts: 1,
+      },
     }));
 
-    onTagsUpdate(formattedTags);
+    onTagsUpdateAction(formattedTags);
   };
 
   const handleSave = async () => {
@@ -116,19 +116,19 @@ export function TagEditor({
         name,
         createdAt: new Date(),
         updatedAt: new Date(),
-        _count: { posts: 1 }
+        _count: { posts: 1 },
       }));
 
-      onTagsUpdate(optimisticTags);
-      onClose();
+      onTagsUpdateAction(optimisticTags);
+      onCloseAction();
 
       await updateTags.mutateAsync(selectedTags);
       // biome-ignore lint/correctness/noUnusedVariables: ignore
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update tags. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to update tags. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -179,8 +179,8 @@ export function TagEditor({
 
         <div
           className={cn(
-            "relative rounded-lg transition-all duration-200",
-            isFocused && "ring-2 ring-primary/20 ring-offset-1"
+            'relative rounded-lg transition-all duration-200',
+            isFocused && 'ring-2 ring-primary/20 ring-offset-1'
           )}
         >
           <Command className="overflow-hidden rounded-lg bg-muted/50">
@@ -232,7 +232,7 @@ export function TagEditor({
         <div className="flex justify-end gap-2 pt-2">
           <Button
             variant="ghost"
-            onClick={onClose}
+            onClick={onCloseAction}
             className="hover:bg-destructive/10 hover:text-destructive"
           >
             Cancel
@@ -245,7 +245,7 @@ export function TagEditor({
             {updateTags.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              "Save Changes"
+              'Save Changes'
             )}
           </Button>
         </div>

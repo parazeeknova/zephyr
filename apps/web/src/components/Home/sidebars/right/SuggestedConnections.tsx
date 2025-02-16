@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import UserTooltip from "@/components/Layouts/UserTooltip";
-import { Button } from "@/components/ui/button";
+import FollowButton, {
+  preloadFollowButton,
+} from '@/components/Layouts/FollowButton';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import UserTooltip from '@/components/Layouts/UserTooltip';
+import SuggestedConnectionsSkeleton from '@/components/Layouts/skeletons/SCSkeleton';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle
-} from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
-import { getSuggestedConnections } from "@/state/UserActions";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import FollowButton, {
-  preloadFollowButton
-} from "@zephyr-ui/Layouts/FollowButton";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import SuggestedConnectionsSkeleton from "@zephyr-ui/Layouts/skeletons/SCSkeleton";
-import { AnimatePresence, motion } from "framer-motion";
-import { RefreshCw, UserRound, Users } from "lucide-react";
-import Link from "next/link";
-import type React from "react";
-import { useEffect, useState } from "react";
+  CardTitle,
+} from '@zephyr/ui/shadui/card';
+import { AnimatePresence, motion } from 'framer-motion';
+import { RefreshCw, UserRound, Users } from 'lucide-react';
+import Link from 'next/link';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { getSuggestedConnections } from './UserActions';
 
 interface SerializableUserData {
   followState: {
@@ -41,7 +41,6 @@ interface SerializableUserData {
 }
 
 const SuggestedConnections: React.FC = () => {
-  const _queryClient = useQueryClient();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
@@ -52,29 +51,31 @@ const SuggestedConnections: React.FC = () => {
     data: connections,
     isLoading,
     error,
-    refetch
+    refetch,
   } = useQuery<SerializableUserData[]>({
-    queryKey: ["suggested-connections"],
+    queryKey: ['suggested-connections'],
     queryFn: async () => {
       const result = await getSuggestedConnections();
-      if (result instanceof Error) throw result;
+      if (result instanceof Error) {
+        throw result;
+      }
 
-      const followStates = await fetch("/api/users/follow-states", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const followStates = await fetch('/api/users/follow-states', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userIds: result.map((user: { id: any }) => user.id)
-        })
+          userIds: result.map((user: { id: string }) => user.id),
+        }),
       }).then((r) => r.json());
 
       return result.map((user: { id: string | number }) => ({
         ...user,
-        followState: followStates[user.id]
+        followState: followStates[user.id],
       }));
     },
     staleTime: 5 * 60 * 1000,
     retry: 3,
-    retryDelay: 1000
+    retryDelay: 1000,
   });
 
   const handleRefresh = async () => {
@@ -82,17 +83,17 @@ const SuggestedConnections: React.FC = () => {
       setIsRefreshing(true);
       await refetch();
       toast({
-        title: "Refreshed",
-        description: "Suggestions have been updated.",
-        duration: 3000
+        title: 'Refreshed',
+        description: 'Suggestions have been updated.',
+        duration: 3000,
       });
       // biome-ignore lint/correctness/noUnusedVariables: unused error variable
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to refresh suggestions. Please try again.",
-        variant: "destructive",
-        duration: 3000
+        title: 'Error',
+        description: 'Failed to refresh suggestions. Please try again.',
+        variant: 'destructive',
+        duration: 3000,
       });
     } finally {
       setIsRefreshing(false);
@@ -199,7 +200,7 @@ const SuggestedConnections: React.FC = () => {
                     initialState={
                       connection.followState || {
                         followers: connection._count.followers,
-                        isFollowedByUser: false
+                        isFollowedByUser: false,
                       }
                     }
                     className="opacity-80 transition-opacity group-hover:opacity-100"
@@ -235,15 +236,15 @@ const SuggestedConnections: React.FC = () => {
           disabled={isRefreshing}
         >
           <RefreshCw
-            className={`mr-1.5 h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`}
+            className={`mr-1.5 h-3 w-3 ${isRefreshing ? 'animate-spin' : ''}`}
           />
-          {isRefreshing ? "Refreshing..." : "Refresh"}
+          {isRefreshing ? 'Refreshing...' : 'Refresh'}
         </Button>
       </CardFooter>
     </Card>
   );
 };
 
-SuggestedConnections.displayName = "SuggestedConnections";
+SuggestedConnections.displayName = 'SuggestedConnections';
 
 export default SuggestedConnections;

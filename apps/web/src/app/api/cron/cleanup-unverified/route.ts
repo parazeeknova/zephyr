@@ -1,5 +1,5 @@
-import { prisma } from "@zephyr/db";
-import { NextResponse } from "next/server";
+import { prisma } from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
 async function cleanupUnverifiedUsers() {
   const logs: string[] = [];
@@ -11,7 +11,7 @@ async function cleanupUnverifiedUsers() {
   };
 
   try {
-    log("🚀 Starting unverified users cleanup");
+    log('🚀 Starting unverified users cleanup');
 
     const totalUsers = await prisma.user.count();
     log(`📊 Current total users: ${totalUsers}`);
@@ -22,15 +22,15 @@ async function cleanupUnverifiedUsers() {
         emailVerified: false,
         googleId: null,
         createdAt: {
-          lt: oneHourAgo
-        }
-      }
+          lt: oneHourAgo,
+        },
+      },
     });
 
     log(`🔍 Found ${unverifiedCount} unverified users older than 1 hour`);
 
     if (unverifiedCount === 0) {
-      log("✨ No unverified users to clean up");
+      log('✨ No unverified users to clean up');
       return {
         success: true,
         tokensDeleted: 0,
@@ -39,10 +39,10 @@ async function cleanupUnverifiedUsers() {
         stats: {
           totalUsers,
           unverifiedUsers: 0,
-          deletionPercentage: "0.00"
+          deletionPercentage: '0.00',
         },
         logs,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
 
@@ -51,14 +51,14 @@ async function cleanupUnverifiedUsers() {
         emailVerified: false,
         googleId: null,
         createdAt: {
-          lt: oneHourAgo
-        }
+          lt: oneHourAgo,
+        },
       },
       select: {
         id: true,
         username: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
 
     // biome-ignore lint/complexity/noForEach: No need to refactor
@@ -76,20 +76,20 @@ async function cleanupUnverifiedUsers() {
             emailVerified: false,
             googleId: null,
             createdAt: {
-              lt: oneHourAgo
-            }
-          }
-        }
+              lt: oneHourAgo,
+            },
+          },
+        },
       }),
       prisma.user.deleteMany({
         where: {
           emailVerified: false,
           googleId: null,
           createdAt: {
-            lt: oneHourAgo
-          }
-        }
-      })
+            lt: oneHourAgo,
+          },
+        },
+      }),
     ]);
 
     const remainingUsers = await prisma.user.count();
@@ -107,10 +107,10 @@ async function cleanupUnverifiedUsers() {
         totalUsersBefore: totalUsers,
         totalUsersAfter: remainingUsers,
         unverifiedUsers: unverifiedCount,
-        deletionPercentage
+        deletionPercentage,
       },
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     log(`✨ Unverified users cleanup completed successfully:
@@ -124,11 +124,11 @@ async function cleanupUnverifiedUsers() {
     return summary;
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+      error instanceof Error ? error.message : 'Unknown error';
     log(`❌ Unverified users cleanup failed: ${errorMessage}`);
     console.error(
-      "Cleanup error stack:",
-      error instanceof Error ? error.stack : "No stack trace"
+      'Cleanup error stack:',
+      error instanceof Error ? error.stack : 'No stack trace'
     );
 
     return {
@@ -136,55 +136,55 @@ async function cleanupUnverifiedUsers() {
       duration: Date.now() - startTime,
       error: errorMessage,
       logs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } finally {
     try {
       await prisma.$disconnect();
-      log("👋 Database connection closed");
+      log('👋 Database connection closed');
     } catch (_error) {
-      log("❌ Error closing database connection");
+      log('❌ Error closing database connection');
     }
   }
 }
 
 export async function POST(request: Request) {
-  console.log("📥 Received unverified users cleanup request");
+  console.log('📥 Received unverified users cleanup request');
 
   try {
     if (!process.env.CRON_SECRET_KEY) {
-      console.error("❌ CRON_SECRET_KEY environment variable not set");
+      console.error('❌ CRON_SECRET_KEY environment variable not set');
       return NextResponse.json(
         {
-          error: "Server configuration error",
-          timestamp: new Date().toISOString()
+          error: 'Server configuration error',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 500,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
 
-    const authHeader = request.headers.get("authorization");
+    const authHeader = request.headers.get('authorization');
     const expectedAuth = `Bearer ${process.env.CRON_SECRET_KEY}`;
 
     if (!authHeader || authHeader !== expectedAuth) {
-      console.warn("⚠️ Unauthorized unverified users cleanup attempt");
+      console.warn('⚠️ Unauthorized unverified users cleanup attempt');
       return NextResponse.json(
         {
-          error: "Unauthorized",
-          timestamp: new Date().toISOString()
+          error: 'Unauthorized',
+          timestamp: new Date().toISOString(),
         },
         {
           status: 401,
           headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store"
-          }
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          },
         }
       );
     }
@@ -194,32 +194,32 @@ export async function POST(request: Request) {
     return NextResponse.json(results, {
       status: results.success ? 200 : 500,
       headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      }
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
     });
   } catch (error) {
-    console.error("❌ Unverified users cleanup route error:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined
+    console.error('❌ Unverified users cleanup route error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString()
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
       },
       {
         status: 500,
         headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store"
-        }
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store',
+        },
       }
     );
   }
 }
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

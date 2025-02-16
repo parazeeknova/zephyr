@@ -1,0 +1,21 @@
+{
+  "name": "@zephyr/next",
+  "description": "Zephyr Next.js package contains shared configs for Next.js",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "devDependencies": {
+    "@zephyr/config": "workspace:*",
+    "next": "15.1.6"
+  },
+  "dependencies": {
+    "@next/bundle-analyzer": "15.1.6",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^6.3.1",
+    "@t3-oss/env-core": "^0.11.1",
+    "@t3-oss/env-nextjs": "^0.12.0",
+    "zod": "^3.24.1"
+  }
+}

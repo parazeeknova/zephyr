@@ -1,26 +1,26 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import { Dialog, DialogContent } from '@zephyr/ui/shadui/dialog';
 
 interface MediaViewerSkeletonProps {
-  type?: "IMAGE" | "VIDEO" | "AUDIO" | "CODE" | "DOCUMENT";
+  type?: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'CODE' | 'DOCUMENT';
   className?: string;
 }
 
 export function MediaViewerSkeleton({
-  type = "IMAGE",
-  className
+  type = 'IMAGE',
+  className,
 }: MediaViewerSkeletonProps) {
   const renderSkeletonContent = () => {
     switch (type) {
-      case "IMAGE":
-      case "VIDEO":
+      case 'IMAGE':
+      case 'VIDEO':
         return (
           <div className="relative max-h-[85vh] min-h-[50vh] w-full max-w-4xl animate-pulse">
             <div className="h-full w-full animate-shimmer rounded-lg bg-[length:200%_100%] bg-gradient-to-r from-muted/50 via-muted to-muted/50" />
           </div>
         );
 
-      case "AUDIO":
+      case 'AUDIO':
         return (
           <div className="flex animate-pulse flex-col items-center gap-4 rounded-lg bg-background/50 p-8">
             <div className="flex h-64 w-64 items-center justify-center rounded-full bg-muted/50">
@@ -31,7 +31,7 @@ export function MediaViewerSkeleton({
           </div>
         );
 
-      case "CODE":
+      case 'CODE':
         return (
           <div className="w-full max-w-4xl animate-pulse rounded-lg bg-background/50 p-4">
             <div className="mb-4 flex items-center justify-between">
@@ -53,7 +53,7 @@ export function MediaViewerSkeleton({
           </div>
         );
 
-      case "DOCUMENT":
+      case 'DOCUMENT':
         return (
           <div className="flex animate-pulse flex-col items-center gap-4 rounded-lg bg-background/50 p-8">
             <div className="flex h-32 w-32 items-center justify-center rounded-full bg-muted/50">
@@ -77,7 +77,7 @@ export function MediaViewerSkeleton({
     <Dialog open>
       <DialogContent
         className={cn(
-          "max-h-[95vh] max-w-[95vw] border-none bg-transparent p-0",
+          'max-h-[95vh] max-w-[95vw] border-none bg-transparent p-0',
           className
         )}
       >

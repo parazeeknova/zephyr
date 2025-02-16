@@ -1,6 +1,11 @@
 {
   "name": "@zephyr/config",
-  "version": "0.0.1",
+  "description": "Zephyr configuration package contains shared configs for typescript",
+  "version": "1.2.5",
   "license": "AGPL-3.0",
-  "private": true
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  }
 }

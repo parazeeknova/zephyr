@@ -1,15 +1,15 @@
-import LoadingButton from "@zephyr-ui/Auth/LoadingButton";
-import type { CommentData } from "@zephyr/db";
-import { Button } from "../ui/button";
+import LoadingButton from '@/components/Auth/LoadingButton';
+import type { CommentData } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from "../ui/dialog";
-import { useDeleteCommentMutation } from "./mutations";
+  DialogTitle,
+} from '@zephyr/ui/shadui/dialog';
+import { useDeleteCommentMutation } from './mutations';
 
 interface DeleteCommentDialogProps {
   comment: CommentData;
@@ -20,7 +20,7 @@ interface DeleteCommentDialogProps {
 export default function DeleteCommentDialog({
   comment,
   open,
-  onClose
+  onClose,
 }: DeleteCommentDialogProps) {
   const mutation = useDeleteCommentMutation();
 

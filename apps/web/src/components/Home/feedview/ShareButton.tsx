@@ -1,16 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 import {
   Facebook,
   Instagram,
@@ -18,15 +8,30 @@ import {
   Pinterest,
   Reddit,
   Twitter,
-  WhatsApp
-} from "@mui/icons-material";
-import { DiscordLogoIcon } from "@radix-ui/react-icons";
-import { AnimatePresence, motion } from "framer-motion";
-import { Check, Copy, Download, Mail, Share2 } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-const FALLBACK_THUMBNAIL = "/fallback.png";
+  WhatsApp,
+} from '@mui/icons-material';
+import { DiscordLogoIcon } from '@radix-ui/react-icons';
+import { Button } from '@zephyr/ui/shadui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@zephyr/ui/shadui/dialog';
+import { Input } from '@zephyr/ui/shadui/input';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@zephyr/ui/shadui/tabs';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Check, Copy, Download, Mail, Share2 } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+const FALLBACK_THUMBNAIL = '/fallback.png';
 
 interface ShareButtonProps {
   postId: string;
@@ -45,15 +50,15 @@ const ShareButton = ({
   postId,
   title,
   thumbnail,
-  description
+  description,
 }: ShareButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState("social");
+  const [activeTab, setActiveTab] = useState('social');
   const [shareStats, setShareStats] = useState<ShareStats[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const postUrl = `${baseUrl}/posts/${postId}`;
 
   useEffect(() => {
@@ -73,10 +78,10 @@ const ShareButton = ({
     try {
       setIsLoading(true);
       const response = await fetch(`/api/posts/${postId}/share/stats`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json"
-        }
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -84,16 +89,16 @@ const ShareButton = ({
       }
 
       const data = await response.json();
-      console.log("Received share stats:", data);
+      console.log('Received share stats:', data);
       if (Array.isArray(data)) {
         setShareStats(data);
       } else {
-        console.error("Invalid data format received:", data);
+        console.error('Invalid data format received:', data);
         setShareStats([]);
       }
     } catch (error) {
-      console.error("Failed to fetch share stats:", error);
-      toast.error("Failed to load share statistics");
+      console.error('Failed to fetch share stats:', error);
+      toast.error('Failed to load share statistics');
       setShareStats([]);
     } finally {
       setIsLoading(false);
@@ -103,11 +108,11 @@ const ShareButton = ({
   const trackShare = async (platform: string) => {
     try {
       const response = await fetch(`/api/posts/${postId}/share`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ platform })
+        body: JSON.stringify({ platform }),
       });
 
       if (!response.ok) {
@@ -121,19 +126,19 @@ const ShareButton = ({
         )
       );
     } catch (error) {
-      console.error("Failed to track share:", error);
-      toast.error("Failed to track share");
+      console.error('Failed to track share:', error);
+      toast.error('Failed to track share');
     }
   };
 
   const trackClick = async (platform: string) => {
     try {
       const response = await fetch(`/api/posts/${postId}/share/click`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ platform })
+        body: JSON.stringify({ platform }),
       });
 
       if (!response.ok) {
@@ -147,171 +152,171 @@ const ShareButton = ({
         )
       );
     } catch (error) {
-      console.error("Failed to track click:", error);
-      toast.error("Failed to track click");
+      console.error('Failed to track click:', error);
+      toast.error('Failed to track click');
     }
   };
 
   const socialShareOptions = [
     {
-      name: "Twitter",
+      name: 'Twitter',
       icon: Twitter,
-      color: "#1DA1F2",
+      color: '#1DA1F2',
       onClick: async () => {
-        await trackShare("twitter");
+        await trackShare('twitter');
         window.open(
           `https://twitter.com/intent/tweet?url=${encodeURIComponent(
             postUrl
-          )}&text=${encodeURIComponent(title || "Check out this post!")}`,
-          "_blank"
+          )}&text=${encodeURIComponent(title || 'Check out this post!')}`,
+          '_blank'
         );
-        await trackClick("twitter");
-      }
+        await trackClick('twitter');
+      },
     },
     {
-      name: "Facebook",
+      name: 'Facebook',
       icon: Facebook,
-      color: "#4267B2",
+      color: '#4267B2',
       onClick: async () => {
-        await trackShare("facebook");
+        await trackShare('facebook');
         window.open(
           `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`,
-          "_blank"
+          '_blank'
         );
-        await trackClick("facebook");
-      }
+        await trackClick('facebook');
+      },
     },
     {
-      name: "LinkedIn",
+      name: 'LinkedIn',
       icon: LinkedIn,
-      color: "#0077B5",
+      color: '#0077B5',
       onClick: async () => {
-        await trackShare("linkedin");
+        await trackShare('linkedin');
         window.open(
           `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`,
-          "_blank"
+          '_blank'
         );
-        await trackClick("linkedin");
-      }
+        await trackClick('linkedin');
+      },
     },
     {
-      name: "Instagram",
+      name: 'Instagram',
       icon: Instagram,
-      color: "#E4405F",
+      color: '#E4405F',
       onClick: async () => {
-        await trackShare("instagram");
+        await trackShare('instagram');
         await navigator.clipboard.writeText(postUrl);
-        window.open("https://instagram.com", "_blank");
-        toast.success("Link copied! Share it on Instagram");
-        await trackClick("instagram");
-      }
+        window.open('https://instagram.com', '_blank');
+        toast.success('Link copied! Share it on Instagram');
+        await trackClick('instagram');
+      },
     },
     {
-      name: "Pinterest",
+      name: 'Pinterest',
       icon: Pinterest,
-      color: "#E60023",
+      color: '#E60023',
       onClick: async () => {
-        await trackShare("pinterest");
+        await trackShare('pinterest');
         window.open(
-          `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(postUrl)}&media=${encodeURIComponent(thumbnail || "")}&description=${encodeURIComponent(description || "")}`,
-          "_blank"
+          `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(postUrl)}&media=${encodeURIComponent(thumbnail || '')}&description=${encodeURIComponent(description || '')}`,
+          '_blank'
         );
-        await trackClick("pinterest");
-      }
+        await trackClick('pinterest');
+      },
     },
     {
-      name: "Reddit",
+      name: 'Reddit',
       icon: Reddit,
-      color: "#FF4500",
+      color: '#FF4500',
       onClick: async () => {
-        await trackShare("reddit");
+        await trackShare('reddit');
         window.open(
-          `https://reddit.com/submit?url=${encodeURIComponent(postUrl)}&title=${encodeURIComponent(title || "")}`,
-          "_blank"
+          `https://reddit.com/submit?url=${encodeURIComponent(postUrl)}&title=${encodeURIComponent(title || '')}`,
+          '_blank'
         );
-        await trackClick("reddit");
-      }
+        await trackClick('reddit');
+      },
     },
     {
-      name: "WhatsApp",
+      name: 'WhatsApp',
       icon: WhatsApp,
-      color: "#25D366",
+      color: '#25D366',
       onClick: async () => {
-        await trackShare("whatsapp");
+        await trackShare('whatsapp');
         window.open(
-          `https://wa.me/?text=${encodeURIComponent(`${title || "Check out this post!"} ${postUrl}`)}`,
-          "_blank"
+          `https://wa.me/?text=${encodeURIComponent(`${title || 'Check out this post!'} ${postUrl}`)}`,
+          '_blank'
         );
-        await trackClick("whatsapp");
-      }
+        await trackClick('whatsapp');
+      },
     },
     {
-      name: "Discord",
+      name: 'Discord',
       icon: DiscordLogoIcon,
-      color: "#5865F2",
+      color: '#5865F2',
       onClick: async () => {
-        await trackShare("discord");
+        await trackShare('discord');
         window.open(
           `https://discord.com/channels/@me?message=${encodeURIComponent(
-            `${title || "Check out this post!"} ${postUrl}`
+            `${title || 'Check out this post!'} ${postUrl}`
           )}`,
-          "_blank"
+          '_blank'
         );
-        await trackClick("discord");
-      }
+        await trackClick('discord');
+      },
     },
     {
-      name: "Email",
+      name: 'Email',
       icon: Mail,
-      color: "#EA4335",
+      color: '#EA4335',
       onClick: async () => {
-        await trackShare("email");
+        await trackShare('email');
         window.open(
           `mailto:?subject=${encodeURIComponent(
-            title || "Check out this post!"
-          )}&body=${encodeURIComponent(`${description || ""}\n\n${postUrl}`)}`,
-          "_blank"
+            title || 'Check out this post!'
+          )}&body=${encodeURIComponent(`${description || ''}\n\n${postUrl}`)}`,
+          '_blank'
         );
-        await trackClick("email");
-      }
-    }
+        await trackClick('email');
+      },
+    },
   ];
 
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(postUrl);
       setCopied(true);
-      toast.success("Link copied to clipboard!");
-      await trackShare("copy");
+      toast.success('Link copied to clipboard!');
+      await trackShare('copy');
     } catch (_err) {
-      toast.error("Failed to copy link");
+      toast.error('Failed to copy link');
     }
   };
 
   const downloadQRCode = async () => {
     try {
-      const svg = document.querySelector(".qr-code svg");
+      const svg = document.querySelector('.qr-code svg');
       if (svg) {
         const svgData = new XMLSerializer().serializeToString(svg);
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
         const img = new Image();
         img.onload = () => {
           canvas.width = img.width;
           canvas.height = img.height;
           ctx?.drawImage(img, 0, 0);
-          const pngFile = canvas.toDataURL("image/png");
-          const downloadLink = document.createElement("a");
+          const pngFile = canvas.toDataURL('image/png');
+          const downloadLink = document.createElement('a');
           downloadLink.download = `qr-code-${postId}.png`;
           downloadLink.href = pngFile;
           downloadLink.click();
         };
         img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
-        await trackShare("qr");
-        toast.success("QR Code downloaded!");
+        await trackShare('qr');
+        toast.success('QR Code downloaded!');
       }
     } catch (_error) {
-      toast.error("Failed to download QR code");
+      toast.error('Failed to download QR code');
     }
   };
 
@@ -357,6 +362,7 @@ const ShareButton = ({
               <TabsContent value="social" className="mt-4">
                 {thumbnail && (
                   <div className="relative mb-4 overflow-hidden rounded-lg">
+                    {/* biome-ignore lint/nursery/noImgElement: will fix later */}
                     <img
                       src={thumbnail || FALLBACK_THUMBNAIL}
                       alt="Post thumbnail"
@@ -416,8 +422,8 @@ const ShareButton = ({
                     onClick={copyToClipboard}
                     variant="secondary"
                     className={cn(
-                      "transition-all",
-                      copied && "bg-green-500 text-white hover:bg-green-600"
+                      'transition-all',
+                      copied && 'bg-green-500 text-white hover:bg-green-600'
                     )}
                   >
                     {copied ? (
@@ -438,10 +444,11 @@ const ShareButton = ({
                         transition={{
                           duration: 1,
                           repeat: Number.POSITIVE_INFINITY,
-                          ease: "linear"
+                          ease: 'linear',
                         }}
                       />
                     </div>
+                    // biome-ignore lint/nursery/noNestedTernary: will fix later
                   ) : shareStats.length > 0 ? (
                     <div className="grid gap-2">
                       {shareStats
@@ -499,12 +506,12 @@ const ShareButton = ({
                       Copy Link
                     </Button>
                   </div>
-                  {shareStats.find((stat) => stat.platform === "qr") && (
+                  {shareStats.find((stat) => stat.platform === 'qr') && (
                     <div className="text-center text-muted-foreground text-sm">
                       {
-                        shareStats.find((stat) => stat.platform === "qr")
+                        shareStats.find((stat) => stat.platform === 'qr')
                           ?.shares
-                      }{" "}
+                      }{' '}
                       QR code downloads
                     </div>
                   )}

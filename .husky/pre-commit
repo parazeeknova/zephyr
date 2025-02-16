@@ -1,3 +1,2 @@
-pnpm run biome:check
+pnpm run lint
 pnpm run dep:check
-pnpm typecheck

@@ -1,13 +1,13 @@
-import { getUserData } from "@/hooks/useUserData";
-import BrowseUsers from "@zephyr-ui/Discover/BrowseUsers";
-import DiscoverySidebar from "@zephyr-ui/Discover/DiscoverSidebar";
-import Friends from "@zephyr-ui/Home/sidebars/left/Friends";
-import { validateRequest } from "@zephyr/auth/auth";
-import type { Metadata } from "next";
+import BrowseUsers from '@/components/Discover/BrowseUsers';
+import DiscoverySidebar from '@/components/Discover/DiscoverSidebar';
+import Friends from '@/components/Home/sidebars/left/Friends';
+import { getUserData } from '@/hooks/useUserData';
+import { validateRequest } from '@zephyr/auth/auth';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Browse Users",
-  description: "Browse all users on Zephyr"
+  title: 'Browse Users',
+  description: 'Browse all users on Zephyr',
 };
 
 export default async function BrowsePage() {

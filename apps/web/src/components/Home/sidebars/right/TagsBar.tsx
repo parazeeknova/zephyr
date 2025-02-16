@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { useTags } from "@/hooks/useTags";
-import { cn, formatNumber } from "@/lib/utils";
-import type { Tag } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "framer-motion";
-import { Hash, RefreshCw } from "lucide-react";
-import Link from "next/link";
-import { useCallback, useState, useTransition } from "react";
+import { useTags } from '@/hooks/useTags';
+import { cn, formatNumber } from '@/lib/utils';
+import type { Tag } from '@prisma/client';
+import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Hash, RefreshCw } from 'lucide-react';
+import Link from 'next/link';
+import { useCallback, useState, useTransition } from 'react';
 
 interface TagWithCount extends Tag {
   _count: {
@@ -26,11 +26,13 @@ const TagsBar = () => {
 
   const handleRefresh = useCallback(() => {
     startTransition(() => {
-      queryClient.invalidateQueries({ queryKey: ["popularTags"] });
+      queryClient.invalidateQueries({ queryKey: ['popularTags'] });
     });
   }, [queryClient]);
 
-  if (!popularTags.length && !isLoading) return null;
+  if (!popularTags.length && !isLoading) {
+    return null;
+  }
 
   return (
     <Card className="relative overflow-hidden border-primary/20 bg-primary/[0.02] shadow-sm backdrop-blur-sm">
@@ -59,8 +61,8 @@ const TagsBar = () => {
             <RefreshCw
               className={`h-3.5 w-3.5 transition-all duration-300 ${
                 isPending || isLoading
-                  ? "animate-spin text-primary"
-                  : "text-muted-foreground"
+                  ? 'animate-spin text-primary'
+                  : 'text-muted-foreground'
               }`}
             />
           </Button>
@@ -82,8 +84,8 @@ const TagsBar = () => {
                 <Link
                   href={`/tags/${tag.name}`}
                   className={cn(
-                    "relative block rounded-md p-2 transition-all duration-300",
-                    "hover:bg-primary/5 group-hover:border-primary/30"
+                    'relative block rounded-md p-2 transition-all duration-300',
+                    'hover:bg-primary/5 group-hover:border-primary/30'
                   )}
                 >
                   <AnimatePresence>
@@ -111,8 +113,8 @@ const TagsBar = () => {
                           #{tag.name}
                         </p>
                         <p className="text-muted-foreground text-xs">
-                          {formatNumber(tag._count?.posts ?? 0)}{" "}
-                          {tag._count?.posts === 1 ? "post" : "posts"}
+                          {formatNumber(tag._count?.posts ?? 0)}{' '}
+                          {tag._count?.posts === 1 ? 'post' : 'posts'}
                         </p>
                       </div>
                     </div>
@@ -120,7 +122,7 @@ const TagsBar = () => {
                       initial={false}
                       animate={{
                         opacity: hoveredTag === tag.id ? 1 : 0,
-                        x: hoveredTag === tag.id ? 0 : -4
+                        x: hoveredTag === tag.id ? 0 : -4,
                       }}
                       className="text-primary text-sm"
                     >

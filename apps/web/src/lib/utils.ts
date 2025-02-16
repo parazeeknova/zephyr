@@ -1,6 +1,6 @@
-import { type ClassValue, clsx } from "clsx";
-import { formatDate, formatDistanceToNowStrict } from "date-fns";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx';
+import { formatDate, formatDistanceToNowStrict } from 'date-fns';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -12,9 +12,9 @@ export function formatRelativeDate(from: Date) {
     return formatDistanceToNowStrict(from, { addSuffix: true });
   }
   if (currentDate.getFullYear() === from.getFullYear()) {
-    return formatDate(from, "MMM d");
+    return formatDate(from, 'MMM d');
   }
-  return formatDate(from, "MMM d, yyyy");
+  return formatDate(from, 'MMM d, yyyy');
 }
 
 export function formatNumber(num: number): string {
@@ -30,6 +30,6 @@ export function formatNumber(num: number): string {
 export function slugify(input: string): string {
   return input
     .toLowerCase()
-    .replace(/ /g, "-")
-    .replace(/[^a-z0-9-]/g, "");
+    .replace(/ /g, '-')
+    .replace(/[^a-z0-9-]/g, '');
 }

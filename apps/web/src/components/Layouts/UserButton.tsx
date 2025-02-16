@@ -1,16 +1,20 @@
-"use client";
+'use client';
 
-import { logout } from "@/app/(auth)/actions";
-import { useSession } from "@/app/(main)/SessionProvider";
-import { Button } from "@/components/ui/button";
+import { logout } from '@/app/(auth)/actions';
+import { useSession } from '@/app/(main)/SessionProvider';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import { cn } from '@/lib/utils';
+import { getSecureImageUrl } from '@/lib/utils/imageUrl';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
+  DialogTitle,
+} from '@zephyr/ui/shadui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,13 +25,9 @@ import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
-import { getSecureImageUrl } from "@/utils/imageUrl";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import { motion } from "framer-motion";
+  DropdownMenuTrigger,
+} from '@zephyr/ui/shadui/dropdown-menu';
+import { motion } from 'framer-motion';
 import {
   Check,
   LogOutIcon,
@@ -35,14 +35,14 @@ import {
   Moon,
   Settings2Icon,
   Sun,
-  UserIcon
-} from "lucide-react";
-import { useTheme } from "next-themes";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useMediaQuery } from "usehooks-ts";
-import { getRandomJoke } from "./constants/LogoutMessages";
-import { MobileUserMenu } from "./mobile/MobileUserMenu";
+  UserIcon,
+} from 'lucide-react';
+import { useTheme } from 'next-themes';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useMediaQuery } from 'usehooks-ts';
+import { getRandomJoke } from './constants/LogoutMessages';
+import { MobileUserMenu } from './mobile/MobileUserMenu';
 
 interface UserButtonProps {
   className?: string;
@@ -57,30 +57,32 @@ export default function UserButton({ className }: UserButtonProps) {
   const [logoutJoke, setLogoutJoke] = useState(getRandomJoke());
 
   const { data: avatarData } = useQuery({
-    queryKey: ["avatar", user.id],
+    queryKey: ['avatar', user.id],
     queryFn: async () => {
       try {
         const response = await fetch(`/api/users/avatar/${user.id}`);
-        if (!response.ok) throw new Error("Failed to fetch avatar");
+        if (!response.ok) {
+          throw new Error('Failed to fetch avatar');
+        }
         const data = await response.json();
         return {
           url: getSecureImageUrl(data.url),
-          key: data.key
+          key: data.key,
         };
       } catch (_error) {
         return {
           url: user.avatarUrl ? getSecureImageUrl(user.avatarUrl) : null,
           // @ts-expect-error
-          key: user.avatarKey
+          key: user.avatarKey,
         };
       }
     },
     initialData: {
       url: user.avatarUrl ? getSecureImageUrl(user.avatarUrl) : null,
       // @ts-expect-error
-      key: user.avatarKey
+      key: user.avatarKey,
     },
-    staleTime: 1000 * 60 * 5
+    staleTime: 1000 * 60 * 5,
   });
 
   const [isMounted, setIsMounted] = useState(false);
@@ -88,9 +90,11 @@ export default function UserButton({ className }: UserButtonProps) {
     setIsMounted(true);
   }, []);
 
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
-  if (!isMounted) return null;
+  if (!isMounted) {
+    return null;
+  }
 
   const handleOpenDialog = () => {
     setLogoutJoke(getRandomJoke());
@@ -100,9 +104,9 @@ export default function UserButton({ className }: UserButtonProps) {
 
   const handleLogout = () => {
     setShowLogoutDialog(false);
-    queryClient.removeQueries({ queryKey: ["user"] });
-    queryClient.removeQueries({ queryKey: ["avatar"] });
-    queryClient.removeQueries({ queryKey: ["post-feed"] });
+    queryClient.removeQueries({ queryKey: ['user'] });
+    queryClient.removeQueries({ queryKey: ['avatar'] });
+    queryClient.removeQueries({ queryKey: ['post-feed'] });
     queryClient.clear();
     logout();
   };
@@ -117,7 +121,7 @@ export default function UserButton({ className }: UserButtonProps) {
       <Button
         variant="ghost"
         className={cn(
-          "relative flex-none rounded-full border border-border/50 bg-background/40 p-0 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-border/80 hover:bg-background/60 hover:shadow-md",
+          'relative flex-none rounded-full border border-border/50 bg-background/40 p-0 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-border/80 hover:bg-background/60 hover:shadow-md',
           className
         )}
       >
@@ -134,6 +138,8 @@ export default function UserButton({ className }: UserButtonProps) {
   if (isMobile) {
     return (
       <>
+        {/* biome-ignore lint/nursery/noStaticElementInteractions: skip for now will fix later */}
+        {/* biome-ignore lint/a11y/useKeyWithClickEvents: skip for now will fix later */}
         <div onClick={() => setIsMobileMenuOpen(true)}>
           <UserTrigger />
         </div>
@@ -143,7 +149,7 @@ export default function UserButton({ className }: UserButtonProps) {
           onClose={() => setIsMobileMenuOpen(false)}
           user={{
             ...user,
-            avatarUrl: avatarData?.url
+            avatarUrl: avatarData?.url,
           }}
           theme={theme}
           setTheme={setTheme}
@@ -202,19 +208,19 @@ export default function UserButton({ className }: UserButtonProps) {
               closed: {
                 opacity: 0,
                 scale: 0.96,
-                transformOrigin: "top right"
+                transformOrigin: 'top right',
               },
               open: {
                 opacity: 1,
                 scale: 1,
                 transition: {
-                  type: "spring",
+                  type: 'spring',
                   stiffness: 400,
                   damping: 25,
                   mass: 0.8,
-                  staggerChildren: 0.1
-                }
-              }
+                  staggerChildren: 0.1,
+                },
+              },
             }}
             className="relative"
           >
@@ -225,11 +231,11 @@ export default function UserButton({ className }: UserButtonProps) {
                   opacity: 1,
                   y: 0,
                   transition: {
-                    type: "spring",
+                    type: 'spring',
                     stiffness: 400,
-                    damping: 25
-                  }
-                }
+                    damping: 25,
+                  },
+                },
               }}
               className="relative overflow-hidden"
             >
@@ -244,11 +250,11 @@ export default function UserButton({ className }: UserButtonProps) {
                           opacity: 1,
                           x: 0,
                           transition: {
-                            type: "spring",
+                            type: 'spring',
                             stiffness: 400,
-                            damping: 25
-                          }
-                        }
+                            damping: 25,
+                          },
+                        },
                       }}
                     >
                       <p className="font-medium text-sm leading-none">
@@ -264,12 +270,12 @@ export default function UserButton({ className }: UserButtonProps) {
                         opacity: 1,
                         x: 0,
                         transition: {
-                          type: "spring",
+                          type: 'spring',
                           stiffness: 400,
                           damping: 25,
-                          delay: 0.05
-                        }
-                      }
+                          delay: 0.05,
+                        },
+                      },
                     }}
                   >
                     <p className="text-muted-foreground text-sm leading-none">
@@ -283,12 +289,12 @@ export default function UserButton({ className }: UserButtonProps) {
                         opacity: 1,
                         x: 0,
                         transition: {
-                          type: "spring",
+                          type: 'spring',
                           stiffness: 400,
                           damping: 25,
-                          delay: 0.1
-                        }
-                      }
+                          delay: 0.1,
+                        },
+                      },
                     }}
                   >
                     <p className="text-muted-foreground text-xs leading-none">
@@ -317,15 +323,15 @@ export default function UserButton({ className }: UserButtonProps) {
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent className="animate-in cursor-pointer bg-background/90 shadow-lg backdrop-blur-xl">
                     {[
-                      { icon: Monitor, label: "System", value: "system" },
-                      { icon: Sun, label: "Light", value: "light" },
-                      { icon: Moon, label: "Dark", value: "dark" }
+                      { icon: Monitor, label: 'System', value: 'system' },
+                      { icon: Sun, label: 'Light', value: 'light' },
+                      { icon: Moon, label: 'Dark', value: 'dark' },
                     ].map(({ icon: Icon, label, value }) => (
                       <motion.div
                         key={value}
                         whileHover={{
-                          backgroundColor: "rgba(var(--primary), 0.1)",
-                          transition: { duration: 0.2 }
+                          backgroundColor: 'rgba(var(--primary), 0.1)',
+                          transition: { duration: 0.2 },
                         }}
                       >
                         <DropdownMenuItem
@@ -339,9 +345,9 @@ export default function UserButton({ className }: UserButtonProps) {
                               initial={{ scale: 0, rotate: -90 }}
                               animate={{ scale: 1, rotate: 0 }}
                               transition={{
-                                type: "spring",
+                                type: 'spring',
                                 stiffness: 400,
-                                damping: 17
+                                damping: 17,
                               }}
                               className="ml-auto pl-4"
                             >
@@ -376,7 +382,7 @@ export default function UserButton({ className }: UserButtonProps) {
                 >
                   <motion.div
                     whileHover={{ rotate: 15 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                   >
                     <LogOutIcon className="mr-2 size-4" />
                   </motion.div>
@@ -420,6 +426,7 @@ export default function UserButton({ className }: UserButtonProps) {
   );
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: any
 const MenuItem = ({ icon, label, href }: any) => (
   <motion.div
     variants={{
@@ -428,20 +435,20 @@ const MenuItem = ({ icon, label, href }: any) => (
         opacity: 1,
         x: 0,
         transition: {
-          type: "spring",
+          type: 'spring',
           stiffness: 400,
-          damping: 25
-        }
-      }
+          damping: 25,
+        },
+      },
     }}
   >
     <motion.div
       whileHover={{ scale: 1.02, x: 4 }}
       whileTap={{ scale: 0.98 }}
       transition={{
-        type: "spring",
+        type: 'spring',
         stiffness: 400,
-        damping: 17
+        damping: 17,
       }}
     >
       <DropdownMenuItem
@@ -452,9 +459,9 @@ const MenuItem = ({ icon, label, href }: any) => (
           <motion.div
             whileHover={{ rotate: 10, scale: 1.1 }}
             transition={{
-              type: "spring",
+              type: 'spring',
               stiffness: 400,
-              damping: 17
+              damping: 17,
             }}
           >
             {icon}

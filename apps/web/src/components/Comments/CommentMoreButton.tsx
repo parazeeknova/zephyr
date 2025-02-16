@@ -1,14 +1,14 @@
-import type { CommentData } from "@zephyr/db";
-import { MoreHorizontal, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { Button } from "../ui/button";
+import type { CommentData } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from "../ui/dropdown-menu";
-import DeleteCommentDialog from "./DeleteCommentDialog";
+  DropdownMenuTrigger,
+} from '@zephyr/ui/shadui/dropdown-menu';
+import { MoreHorizontal, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import DeleteCommentDialog from './DeleteCommentDialog';
 
 interface CommentMoreButtonProps {
   comment: CommentData;
@@ -17,7 +17,7 @@ interface CommentMoreButtonProps {
 
 export default function CommentMoreButton({
   comment,
-  className
+  className,
 }: CommentMoreButtonProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 

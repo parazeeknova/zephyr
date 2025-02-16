@@ -1,15 +1,15 @@
-import { getUserData } from "@/hooks/useUserData";
-import NavigationCard from "@zephyr-ui/Home/sidebars/left/NavigationCard";
-import ProfileCard from "@zephyr-ui/Home/sidebars/right/ProfileCard";
-import TrendingTopics from "@zephyr-ui/Home/sidebars/right/TrendingTopics";
-import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
-import { validateRequest } from "@zephyr/auth/auth";
-import type { Metadata } from "next";
-import PostEditorPage from "./PostEditorPage";
+import NavigationCard from '@/components/Home/sidebars/left/NavigationCard';
+import ProfileCard from '@/components/Home/sidebars/right/ProfileCard';
+import TrendingTopics from '@/components/Home/sidebars/right/TrendingTopics';
+import StickyFooter from '@/components/Layouts/StinkyFooter';
+import { getUserData } from '@/hooks/useUserData';
+import { validateRequest } from '@zephyr/auth/auth';
+import type { Metadata } from 'next';
+import PostEditorPage from './PostEditorPage';
 
 export const metadata: Metadata = {
-  title: "Compose New Post | Zephyr",
-  description: "Share your thoughts, code, and media with the Zephyr community"
+  title: 'Compose New Post | Zephyr',
+  description: 'Share your thoughts, code, and media with the Zephyr community',
 };
 
 export default async function Page() {

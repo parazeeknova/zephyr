@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import type { SearchSuggestion } from "@zephyr/db";
-import { History, TrendingUp, X } from "lucide-react";
-import { Button } from "../ui/button";
+import type { SearchSuggestion } from '@zephyr/db';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandItem,
-  CommandList
-} from "../ui/command";
+  CommandList,
+} from '@zephyr/ui/shadui/command';
+import { History, TrendingUp, X } from 'lucide-react';
 
 interface SearchCommandListProps {
   input: string;
   suggestions?: SearchSuggestion[];
   history?: string[];
-  onSelect: (value: string) => void;
+  onSelectAction: (value: string) => void;
   onClearHistory?: () => void;
   onRemoveHistoryItem?: (query: string) => void;
 }
@@ -24,9 +24,9 @@ export function SearchCommandList({
   input,
   suggestions,
   history,
-  onSelect,
+  onSelectAction,
   onClearHistory,
-  onRemoveHistoryItem
+  onRemoveHistoryItem,
 }: SearchCommandListProps) {
   return (
     <Command className="rounded-lg border bg-popover shadow-md">
@@ -43,7 +43,7 @@ export function SearchCommandList({
               <CommandItem
                 key={suggestion.query}
                 value={suggestion.query}
-                onSelect={onSelect}
+                onSelect={onSelectAction}
                 className="flex cursor-pointer items-center gap-2 px-4 py-2"
               >
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -78,7 +78,7 @@ export function SearchCommandList({
               <CommandItem
                 key={query}
                 value={query}
-                onSelect={onSelect}
+                onSelect={onSelectAction}
                 className="group flex cursor-pointer items-center gap-2 px-4 py-2"
               >
                 <History className="h-4 w-4 text-muted-foreground" />

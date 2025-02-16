@@ -1,86 +1,81 @@
-"use client";
+'use client';
 
-import { resetPassword } from "@/app/(auth)/reset-password/server-actions";
-import { useToast } from "@/hooks/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import resetImage from "@zephyr-assets/confirm-reset-image.jpg";
-import { AnimatePresence, motion } from "framer-motion";
-import { AlertCircle, Lock } from "lucide-react";
-import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "../ui/button";
+import { resetPassword } from '@/app/(auth)/reset-password/server-actions';
+// @ts-expect-error - static image import
+import resetImage from '@assets/auth/confirm-reset-image.jpg';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from "../ui/form";
-import { LoadingButton } from "./LoadingButton";
-import { PasswordInput } from "./PasswordInput";
-import { PasswordStrengthChecker } from "./PasswordStrengthChecker";
+  FormMessage,
+} from '@zephyr/ui/shadui/form';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle, Lock } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { LoadingButton } from './LoadingButton';
+import { PasswordInput } from './PasswordInput';
+import { PasswordStrengthChecker } from './PasswordStrengthChecker';
 
 const schema = z
   .object({
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters long")
+      .min(8, 'Password must be at least 8 characters long')
       .regex(
         /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        "Password must include: uppercase & lowercase letters, number, and special character"
+        'Password must include: uppercase & lowercase letters, number, and special character'
       ),
-    confirmPassword: z.string()
+    confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
-    path: ["confirmPassword"]
+    path: ['confirmPassword'],
   });
 
 const PasswordResetAnimation = () => {
   return (
-    // @ts-expect-error
     <motion.div className="relative mx-auto mb-8 h-24 w-24">
-      {/* Shield background */}
       <motion.div
-        // @ts-expect-error
         className="absolute inset-0"
         animate={{
           scale: [1, 1.1, 1],
-          opacity: [0.5, 1, 0.5]
+          opacity: [0.5, 1, 0.5],
         }}
         transition={{
           duration: 2,
           repeat: Number.POSITIVE_INFINITY,
-          ease: "easeInOut"
+          ease: 'easeInOut',
         }}
       >
         <div className="h-full w-full rounded-full bg-blue-400/10" />
       </motion.div>
 
-      {/* Rotating lock circles */}
       <motion.div
-        // @ts-expect-error
         className="absolute inset-0"
         animate={{ rotate: 360 }}
         transition={{
           duration: 10,
           repeat: Number.POSITIVE_INFINITY,
-          ease: "linear"
+          ease: 'linear',
         }}
       >
-        {[...Array(4)].map((_, i) => (
+        {[...new Array(4)].map((_, i) => (
           <motion.div
             key={i}
-            // @ts-expect-error
             className="absolute h-2 w-2"
             style={{
-              top: "50%",
-              left: "50%",
-              transform: `rotate(${i * 90}deg) translate(32px) rotate(-${i * 90}deg)`
+              top: '50%',
+              left: '50%',
+              transform: `rotate(${i * 90}deg) translate(32px) rotate(-${i * 90}deg)`,
             }}
           >
             <div className="h-full w-full rounded-full bg-blue-400/60" />
@@ -88,17 +83,15 @@ const PasswordResetAnimation = () => {
         ))}
       </motion.div>
 
-      {/* Center lock icon */}
       <motion.div
-        // @ts-expect-error
         className="absolute inset-0 flex items-center justify-center"
         animate={{
-          scale: [1, 1.1, 1]
+          scale: [1, 1.1, 1],
         }}
         transition={{
           duration: 2,
           repeat: Number.POSITIVE_INFINITY,
-          ease: "easeInOut"
+          ease: 'easeInOut',
         }}
       >
         <Lock className="h-8 w-8 text-blue-400" />
@@ -119,12 +112,11 @@ export default function ConfirmResetForm() {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      password: "",
-      confirmPassword: ""
-    }
+      password: '',
+      confirmPassword: '',
+    },
   });
 
-  // Validate token
   useEffect(() => {
     async function validateToken(token: string) {
       try {
@@ -133,36 +125,36 @@ export default function ConfirmResetForm() {
 
         if (!response.ok || data.error) {
           toast({
-            variant: "destructive",
-            title: "Invalid Reset Link",
+            variant: 'destructive',
+            title: 'Invalid Reset Link',
             description:
-              data.error || "Please request a new password reset link."
+              data.error || 'Please request a new password reset link.',
           });
-          router.push("/reset-password");
+          await router.push('/reset-password');
           return;
         }
 
         setIsTokenValid(true);
       } catch (_error) {
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to validate reset link. Please try again."
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Failed to validate reset link. Please try again.',
         });
-        router.push("/reset-password");
+        await router.push('/reset-password');
       } finally {
         setIsValidating(false);
       }
     }
 
-    const tokenParam = searchParams.get("token");
+    const tokenParam = searchParams.get('token');
     if (!tokenParam) {
       toast({
-        variant: "destructive",
-        title: "Invalid Reset Link",
-        description: "Please request a new password reset link."
+        variant: 'destructive',
+        title: 'Invalid Reset Link',
+        description: 'Please request a new password reset link.',
       });
-      router.push("/reset-password");
+      router.push('/reset-password');
       return;
     }
 
@@ -170,36 +162,39 @@ export default function ConfirmResetForm() {
     validateToken(tokenParam);
   }, [searchParams, router, toast]);
 
+  // biome-ignore lint/suspicious/useAwait: This function is not async
   async function onSubmit(values: z.infer<typeof schema>) {
-    if (!token || !isTokenValid) return;
+    if (!token || !isTokenValid) {
+      return;
+    }
 
     startTransition(async () => {
       try {
         const result = await resetPassword({
           token,
-          password: values.password
+          password: values.password,
         });
 
         if (result.error) {
           toast({
-            variant: "destructive",
-            title: "Error",
-            description: result.error
+            variant: 'destructive',
+            title: 'Error',
+            description: result.error,
           });
           return;
         }
 
         toast({
-          title: "Success",
-          description: "Your password has been reset successfully."
+          title: 'Success',
+          description: 'Your password has been reset successfully.',
         });
 
-        router.push("/login");
+        router.push('/login');
       } catch (_error) {
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to reset password. Please try again."
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Failed to reset password. Please try again.',
         });
       }
     });
@@ -211,29 +206,26 @@ export default function ConfirmResetForm() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          // @ts-expect-error
           className="text-center"
         >
           <div className="relative mx-auto mb-4 h-12 w-12">
             <motion.div
-              // @ts-expect-error
               className="absolute inset-0 rounded-full border-2 border-blue-400/20"
               animate={{ rotate: 360 }}
               transition={{
                 duration: 2,
                 repeat: Number.POSITIVE_INFINITY,
-                ease: "linear"
+                ease: 'linear',
               }}
             />
             <motion.div
-              // @ts-expect-error
               className="absolute inset-2 rounded-full border-2 border-blue-400"
-              style={{ borderRightColor: "transparent" }}
+              style={{ borderRightColor: 'transparent' }}
               animate={{ rotate: 360 }}
               transition={{
                 duration: 1,
                 repeat: Number.POSITIVE_INFINITY,
-                ease: "linear"
+                ease: 'linear',
               }}
             />
           </div>
@@ -249,7 +241,6 @@ export default function ConfirmResetForm() {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          // @ts-expect-error
           className="rounded-lg border border-white/10 bg-card/40 p-8 text-center backdrop-blur-xl"
         >
           <motion.div
@@ -265,7 +256,7 @@ export default function ConfirmResetForm() {
             The reset link you're trying to use is no longer valid.
           </p>
           <Button
-            onClick={() => router.push("/reset-password")}
+            onClick={() => router.push('/reset-password')}
             className="bg-blue-400 text-white hover:bg-blue-500"
           >
             Request New Reset Link
@@ -278,17 +269,12 @@ export default function ConfirmResetForm() {
   return (
     <AnimatePresence>
       <motion.div
-        // @ts-expect-error
         className="relative flex min-h-screen overflow-hidden bg-background"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        {/* Background gradient overlay */}
         <div className="absolute inset-0 z-0 bg-gradient-to-bl from-blue-400/5 via-background to-background/95" />
-
-        {/* Reset Text */}
         <motion.div
-          // @ts-expect-error
           className="absolute left-20 hidden h-full items-center md:flex"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -298,9 +284,9 @@ export default function ConfirmResetForm() {
             <h1
               className="-rotate-90 absolute origin-center transform select-none whitespace-nowrap font-bold text-6xl text-blue-400/20 tracking-wider xl:text-8xl 2xl:text-9xl"
               style={{
-                transformOrigin: "center",
-                left: "-50%",
-                transform: "translateX(-50%) translateY(-50%) rotate(-90deg)"
+                transformOrigin: 'center',
+                left: '-50%',
+                transform: 'translateX(-50%) translateY(-50%) rotate(-90deg)',
               }}
             >
               CONFIRM
@@ -310,22 +296,18 @@ export default function ConfirmResetForm() {
 
         <div className="relative z-10 flex flex-1 items-center justify-center p-4 sm:p-8">
           <motion.div
-            // @ts-expect-error
             className="relative flex w-full max-w-5xl flex-col-reverse overflow-hidden rounded-2xl border border-white/10 bg-card/40 shadow-2xl backdrop-blur-xl lg:flex-row"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            {/* Image Section - Now on the left */}
             <motion.div
-              // @ts-expect-error
               className="relative min-h-[200px] w-full bg-blue-400/80 lg:min-h-[600px] lg:w-1/2"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
             >
               <motion.div
-                // @ts-expect-error
                 className="absolute inset-0 bg-gradient-to-b from-transparent to-blue-400/20"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -341,10 +323,8 @@ export default function ConfirmResetForm() {
               />
             </motion.div>
 
-            {/* Form Section */}
             <div className="relative z-10 flex w-full flex-col justify-center px-6 py-12 sm:px-8 lg:w-1/2">
               <motion.div
-                // @ts-expect-error
                 className="mx-auto w-full max-w-sm"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -353,7 +333,6 @@ export default function ConfirmResetForm() {
                 <PasswordResetAnimation />
 
                 <motion.h2
-                  // @ts-expect-error
                   className="mb-6 text-center font-bold text-3xl text-blue-400"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -381,6 +360,7 @@ export default function ConfirmResetForm() {
                               />
                             </div>
                           </FormControl>
+                          {/* @ts-expect-error */}
                           <PasswordStrengthChecker password={field.value} />
                           <FormMessage />
                         </FormItem>
@@ -420,13 +400,11 @@ export default function ConfirmResetForm() {
           </motion.div>
         </div>
 
-        {/* Background image */}
         <motion.div
-          // @ts-expect-error
           className="absolute top-0 right-0 h-full w-full bg-center bg-cover opacity-5 blur-md lg:w-1/2"
           style={{
             backgroundImage: `url(${resetImage.src})`,
-            backgroundColor: "rgba(96, 165, 250, 0.1)"
+            backgroundColor: 'rgba(96, 165, 250, 0.1)',
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.05 }}

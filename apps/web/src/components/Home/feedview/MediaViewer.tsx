@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import { getLanguageFromFileName } from "@/lib/codefileExtensions";
-import { formatFileName } from "@/lib/formatFileName";
-import { cn } from "@/lib/utils";
-import type { Media } from "@prisma/client";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import fallbackImage from "@zephyr-assets/fallback.png";
-import { MediaViewerSkeleton } from "@zephyr-ui/Layouts/skeletons/MediaViewerSkeleton";
-import { ChevronLeft, ChevronRight, Download, FileIcon, X } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { CodePreview } from "./CodePreview";
-import { CustomVideoPlayer } from "./CustomVideoPlayer";
-import { FileTypeWatermark } from "./FileTypeWatermark";
-import { SVGViewer } from "./SVGViewer";
+import { MediaViewerSkeleton } from '@/components/Layouts/skeletons/MediaViewerSkeleton';
+import { getLanguageFromFileName } from '@/lib/codefileExtensions';
+import { formatFileName } from '@/lib/formatFileName';
+import { cn } from '@/lib/utils';
+import fallbackImage from '@assets/fallbacks/fallback.png';
+import type { Media } from '@prisma/client';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Dialog, DialogContent, DialogTitle } from '@zephyr/ui/shadui/dialog';
+import { ChevronLeft, ChevronRight, Download, FileIcon, X } from 'lucide-react';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { CodePreview } from './CodePreview';
+import { CustomVideoPlayer } from './CustomVideoPlayer';
+import { FileTypeWatermark } from './FileTypeWatermark';
+import { SVGViewer } from './SVGViewer';
 
 const FALLBACK_IMAGE = fallbackImage;
 
@@ -31,7 +31,7 @@ const MediaViewer = ({
   media,
   initialIndex = 0,
   isOpen,
-  onClose
+  onClose,
 }: MediaViewerProps) => {
   const { toast } = useToast();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
@@ -40,7 +40,7 @@ const MediaViewer = ({
 
   const currentMedia = media[currentIndex];
   const getMediaUrl = (mediaId: string, download = false) =>
-    `/api/media/${mediaId}${download ? "?download=true" : ""}`;
+    `/api/media/${mediaId}${download ? '?download=true' : ''}`;
 
   useEffect(() => {
     if (isOpen) {
@@ -62,9 +62,9 @@ const MediaViewer = ({
 
       if (!currentMedia) {
         toast({
-          title: "Download Failed",
-          description: "No media selected.",
-          variant: "destructive"
+          title: 'Download Failed',
+          description: 'No media selected.',
+          variant: 'destructive',
         });
         return;
       }
@@ -73,21 +73,21 @@ const MediaViewer = ({
       if (response.status === 429) {
         const data = await response.json();
         toast({
-          title: "Download Rate Limited",
+          title: 'Download Rate Limited',
           description: data.message,
-          variant: "destructive"
+          variant: 'destructive',
         });
         return;
       }
 
       if (!response.ok) {
-        throw new Error("Failed to download file");
+        throw new Error('Failed to download file');
       }
 
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
 
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = downloadUrl;
       a.download = formatFileName(currentMedia.key);
       document.body.appendChild(a);
@@ -96,12 +96,12 @@ const MediaViewer = ({
       window.URL.revokeObjectURL(downloadUrl);
       document.body.removeChild(a);
     } catch (error) {
-      console.error("Download failed:", error);
+      console.error('Download failed:', error);
       toast({
-        title: "Download Failed",
+        title: 'Download Failed',
         description:
-          "There was an error downloading the file. Please try again.",
-        variant: "destructive"
+          'There was an error downloading the file. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsDownloading(false);
@@ -123,49 +123,53 @@ const MediaViewer = ({
       ) : (
         <>
           <Download className="h-4 w-4" />
-          Download {currentMedia ? formatFileName(currentMedia.key) : ""}
+          Download {currentMedia ? formatFileName(currentMedia.key) : ''}
         </>
       )}
     </Button>
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: it rerenders
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return;
+      if (!isOpen) {
+        return;
+      }
 
-      if (e.key === "ArrowLeft") {
+      if (e.key === 'ArrowLeft') {
         e.preventDefault();
         handlePrevious();
       }
-      if (e.key === "ArrowRight") {
+      if (e.key === 'ArrowRight') {
         e.preventDefault();
         handleNext();
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: it's fine
   const renderMedia = () => {
     if (!currentMedia) {
       return <p className="text-destructive">No media available</p>;
     }
 
     switch (currentMedia.type) {
-      case "IMAGE":
-        if (currentMedia.mimeType === "image/svg+xml") {
+      case 'IMAGE': {
+        if (currentMedia.mimeType === 'image/svg+xml') {
           return (
             <div
               className="relative flex h-full w-full items-center justify-center"
-              style={{ minHeight: "85vh" }}
+              style={{ minHeight: '85vh' }}
             >
               {isLoading && <MediaViewerSkeleton type="IMAGE" />}
               <SVGViewer
                 url={getMediaUrl(currentMedia.id)}
                 className={cn(
-                  "flex h-full w-full items-center justify-center",
-                  isLoading && "hidden"
+                  'flex h-full w-full items-center justify-center',
+                  isLoading && 'hidden'
                 )}
                 onLoad={() => setIsLoading(false)}
                 onDownload={handleDownload}
@@ -186,38 +190,39 @@ const MediaViewer = ({
               width={1200}
               height={800}
               className={cn(
-                "max-h-[85vh] object-contain",
-                isLoading && "hidden"
+                'max-h-[85vh] object-contain',
+                isLoading && 'hidden'
               )}
               quality={100}
               priority
               sizes="95vw"
               onLoadingComplete={() => setIsLoading(false)}
               onError={(e) => {
-                console.error("Image load error:", e);
+                console.error('Image load error:', e);
                 e.currentTarget.src = FALLBACK_IMAGE.src;
                 setIsLoading(false);
               }}
             />
             {!isLoading && (
               <FileTypeWatermark
-                type={currentMedia.mimeType?.split("/")[1] || "image"}
+                type={currentMedia.mimeType?.split('/')[1] || 'image'}
                 showCategory={false}
               />
             )}
           </div>
         );
+      }
 
-      case "VIDEO":
+      case 'VIDEO':
         return (
           <div className="relative max-h-full max-w-full focus-within:outline-none">
             {isLoading && <MediaViewerSkeleton type="VIDEO" />}
             <CustomVideoPlayer
               src={getMediaUrl(currentMedia.id)}
               className={cn(
-                "max-h-[85vh] w-auto outline-none focus:outline-none focus-visible:outline-none",
-                "shadow-lg transition-transform duration-200",
-                isLoading && "hidden"
+                'max-h-[85vh] w-auto outline-none focus:outline-none focus-visible:outline-none',
+                'shadow-lg transition-transform duration-200',
+                isLoading && 'hidden'
               )}
               onLoadedData={() => setIsLoading(false)}
               onError={() => setIsLoading(false)}
@@ -225,7 +230,7 @@ const MediaViewer = ({
           </div>
         );
 
-      case "AUDIO":
+      case 'AUDIO':
         return (
           <div className="flex flex-col items-center gap-4 rounded-lg bg-background/50 p-8">
             <div className="flex h-64 w-64 items-center justify-center rounded-full bg-primary/10">
@@ -234,6 +239,7 @@ const MediaViewer = ({
             <p className="font-medium text-lg">
               {formatFileName(currentMedia.key)}
             </p>
+            {/* biome-ignore lint/a11y/useMediaCaption:  */}
             <audio
               src={getMediaUrl(currentMedia.id)}
               controls
@@ -245,7 +251,7 @@ const MediaViewer = ({
           </div>
         );
 
-      case "CODE":
+      case 'CODE':
         return (
           <div className="w-full max-w-4xl rounded-lg bg-background/50 p-4">
             {isLoading ? (
@@ -281,7 +287,7 @@ const MediaViewer = ({
           </div>
         );
 
-      case "DOCUMENT":
+      case 'DOCUMENT':
         return (
           <div className="flex flex-col items-center gap-4 rounded-lg bg-background/50 p-8">
             <div className="flex h-32 w-32 items-center justify-center rounded-full bg-primary/10">
@@ -300,10 +306,10 @@ const MediaViewer = ({
                 <Download className="mr-2 h-4 w-4" />
                 Download
               </Button>
-              {currentMedia.mimeType === "application/pdf" && (
+              {currentMedia.mimeType === 'application/pdf' && (
                 <Button
                   onClick={() =>
-                    window.open(getMediaUrl(currentMedia.id), "_blank")
+                    window.open(getMediaUrl(currentMedia.id), '_blank')
                   }
                   variant="outline"
                 >

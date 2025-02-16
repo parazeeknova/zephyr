@@ -1,36 +1,36 @@
-"use client";
+'use client';
 
-import EditProfileButton from "@/components/Layouts/EditProfileButton";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import EditProfileButton from '@/components/Layouts/EditProfileButton';
+import FollowButton from '@/components/Layouts/FollowButton';
+import UserAvatar from '@/components/Layouts/UserAvatar';
+import Linkify from '@/helpers/global/Linkify';
+import { formatNumber } from '@/lib/utils';
+import { getSecureImageUrl } from '@/lib/utils/imageUrl';
+import { useQuery } from '@tanstack/react-query';
+import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
+import { Skeleton } from '@zephyr/ui/shadui/skeleton';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from "@/components/ui/tooltip";
-import Linkify from "@/helpers/global/Linkify";
-import { useToast } from "@/hooks/use-toast";
-import { formatNumber } from "@/lib/utils";
-import { getSecureImageUrl } from "@/utils/imageUrl";
-import { useQuery } from "@tanstack/react-query";
-import FollowButton from "@zephyr-ui/Layouts/FollowButton";
-import UserAvatar from "@zephyr-ui/Layouts/UserAvatar";
-import type { UserData } from "@zephyr/db";
-import { formatDate, parseISO } from "date-fns";
-import { motion } from "framer-motion";
+  TooltipTrigger,
+} from '@zephyr/ui/shadui/tooltip';
+import { formatDate, parseISO } from 'date-fns';
+import { motion } from 'framer-motion';
 import {
   BadgeCheckIcon,
   Flame,
   MoreVertical,
   UserPlus,
-  Users
-} from "lucide-react";
-import type React from "react";
-import { useMemo, useState } from "react";
-import FollowersList from "../../FollowersList";
-import FollowingList from "../../FollowingList";
+  Users,
+} from 'lucide-react';
+import type React from 'react';
+import { useMemo, useState } from 'react';
+import FollowersList from '../../FollowersList';
+import FollowingList from '../../FollowingList';
 
 interface UserDetailsProps {
   userData: UserData;
@@ -39,7 +39,7 @@ interface UserDetailsProps {
 
 const UserDetails: React.FC<UserDetailsProps> = ({
   userData: initialUserData,
-  loggedInUserId
+  loggedInUserId,
 }) => {
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
@@ -48,37 +48,39 @@ const UserDetails: React.FC<UserDetailsProps> = ({
   const {
     data: userData,
     error,
-    isLoading
+    isLoading,
   } = useQuery({
-    queryKey: ["user", initialUserData.id],
+    queryKey: ['user', initialUserData.id],
     queryFn: async () => {
       try {
         const response = await fetch(`/api/users/${initialUserData.id}`);
-        if (!response.ok) throw new Error("Failed to fetch user data");
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
         const userData = await response.json();
 
-        const followStates = await fetch("/api/users/follow-states", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userIds: [userData.id] })
+        const followStates = await fetch('/api/users/follow-states', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userIds: [userData.id] }),
         }).then((r) => r.json());
 
         return {
           ...userData,
-          followState: followStates[userData.id]
+          followState: followStates[userData.id],
         };
       } catch (_err) {
         toast({
-          title: "Error",
-          description: "Failed to load user data. Using cached data.",
-          variant: "destructive"
+          title: 'Error',
+          description: 'Failed to load user data. Using cached data.',
+          variant: 'destructive',
         });
         return initialUserData;
       }
     },
     initialData: initialUserData,
     staleTime: 1000 * 60,
-    retry: 1
+    retry: 1,
   });
 
   const avatarUrl = useMemo(() => {
@@ -97,17 +99,19 @@ const UserDetails: React.FC<UserDetailsProps> = ({
 
   const followerInfo = {
     followers: userData?._count?.followers ?? 0,
-    isFollowedByUser
+    isFollowedByUser,
   };
 
   const formatCreatedAt = (date: Date | string | undefined | null) => {
     try {
-      if (!date) return "Unknown date";
-      const parsedDate = typeof date === "string" ? parseISO(date) : date;
-      return formatDate(parsedDate, "MMM d, yyyy");
+      if (!date) {
+        return 'Unknown date';
+      }
+      const parsedDate = typeof date === 'string' ? parseISO(date) : date;
+      return formatDate(parsedDate, 'MMM d, yyyy');
     } catch (error) {
-      console.error("Error formatting date:", error);
-      return "Unknown date";
+      console.error('Error formatting date:', error);
+      return 'Unknown date';
     }
   };
 
@@ -127,9 +131,9 @@ const UserDetails: React.FC<UserDetailsProps> = ({
           <div
             className="absolute inset-0 bg-center bg-cover"
             style={{
-              backgroundImage: avatarUrl ? `url(${avatarUrl})` : "none",
-              filter: "blur(8px) brightness(0.9)",
-              transform: "scale(1.1)"
+              backgroundImage: avatarUrl ? `url(${avatarUrl})` : 'none',
+              filter: 'blur(8px) brightness(0.9)',
+              transform: 'scale(1.1)',
             }}
           />
         </motion.div>
@@ -163,7 +167,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({
                           <TooltipTrigger>
                             <div className="flex items-center justify-end font-semibold text-foreground text-lg">
                               <Flame className="mr-1 h-6 w-6 text-orange-500" />
-                              {formatNumber(userData?.aura ?? 0)}{" "}
+                              {formatNumber(userData?.aura ?? 0)}{' '}
                             </div>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -189,20 +193,18 @@ const UserDetails: React.FC<UserDetailsProps> = ({
                 </div>
               </div>
 
-              {/* User info and stats */}
               <div className="space-y-3">
                 <div className="flex items-center text-muted-foreground">
                   @{userData.username}
                   <BadgeCheckIcon className="ml-1 h-4 w-4" />
                 </div>
                 <div className="text-muted-foreground">
-                  Member since{" "}
+                  Member since{' '}
                   {userData?.createdAt
                     ? formatCreatedAt(userData.createdAt)
-                    : "Unknown date"}
+                    : 'Unknown date'}
                 </div>
 
-                {/* Followers and Following stats */}
                 <div className="flex items-center gap-4">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -220,7 +222,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({
                       <span>
                         <span className="font-semibold">
                           {formatNumber(followerInfo.followers)}
-                        </span>{" "}
+                        </span>{' '}
                         <span className="text-muted-foreground">Followers</span>
                       </span>
                     </motion.button>
@@ -242,7 +244,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({
                       <span>
                         <span className="font-semibold">
                           {formatNumber(userData?._count?.following ?? 0)}
-                        </span>{" "}
+                        </span>{' '}
                         <span className="text-muted-foreground">Following</span>
                       </span>
                     </motion.button>
@@ -258,7 +260,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({
                     initialState={
                       userData.followState || {
                         followers: userData._count.followers,
-                        isFollowedByUser: false
+                        isFollowedByUser: false,
                       }
                     }
                   />
@@ -291,15 +293,15 @@ const UserDetails: React.FC<UserDetailsProps> = ({
         </CardContent>
       </Card>
       <FollowersList
-        userId={userData?.id ?? ""}
+        userId={userData?.id ?? ''}
         isOpen={showFollowers}
-        onClose={() => setShowFollowers(false)}
+        onCloseAction={() => setShowFollowers(false)}
         loggedInUserId={loggedInUserId}
       />
       <FollowingList
-        userId={userData?.id ?? ""}
+        userId={userData?.id ?? ''}
         isOpen={showFollowing}
-        onClose={() => setShowFollowing(false)}
+        onCloseAction={() => setShowFollowing(false)}
         loggedInUserId={loggedInUserId}
       />
     </motion.div>

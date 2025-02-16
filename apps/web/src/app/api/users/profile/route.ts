@@ -1,17 +1,18 @@
-import { deleteAvatar, uploadAvatar } from "@/lib/minio";
-import { getStreamClient } from "@zephyr/auth/src";
-import { prisma } from "@zephyr/db";
-import { NextResponse } from "next/server";
+import { deleteAvatar, uploadAvatar } from '@/lib/minio';
+import { getStreamClient } from '@zephyr/auth/src';
+import { prisma } from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-    const values = JSON.parse(formData.get("values") as string);
-    const avatar = formData.get("avatar") as File;
-    const userId = formData.get("userId") as string;
-    const oldAvatarKey = formData.get("oldAvatarKey") as string;
+    const values = JSON.parse(formData.get('values') as string);
+    const avatar = formData.get('avatar') as File;
+    const userId = formData.get('userId') as string;
+    const oldAvatarKey = formData.get('oldAvatarKey') as string;
 
-    // biome-ignore lint/suspicious/noImplicitAnyLet: need to use let here
+    // biome-ignore lint/suspicious/noImplicitAnyLet: This is safe because we validate the value above
+    // biome-ignore lint/suspicious/noEvolvingTypes: This is safe because we validate the value above
     let avatarResult;
     if (avatar) {
       avatarResult = await uploadAvatar(avatar, userId);
@@ -27,9 +28,9 @@ export async function POST(request: Request) {
         bio: values.bio,
         ...(avatarResult && {
           avatarUrl: avatarResult.url,
-          avatarKey: avatarResult.key
-        })
-      }
+          avatarKey: avatarResult.key,
+        }),
+      },
     });
 
     try {
@@ -39,20 +40,20 @@ export async function POST(request: Request) {
           id: userId,
           set: {
             image: avatarResult.url,
-            name: values.displayName
-          }
+            name: values.displayName,
+          },
         });
       }
     } catch (streamError) {
-      console.error("Failed to update Stream user profile:", streamError);
+      console.error('Failed to update Stream user profile:', streamError);
     }
 
     return NextResponse.json({
       user: updatedUser,
-      avatar: avatarResult
+      avatar: avatarResult,
     });
   } catch (error) {
-    console.error("Profile update error:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.error('Profile update error:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

@@ -1,9 +1,8 @@
-"use client";
+'use client';
 
-import type React from "react";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from '@zephyr/ui/shadui/avatar';
+import { Card, CardContent } from '@zephyr/ui/shadui/card';
+import type React from 'react';
 
 interface FriendsProps {
   friends: Array<{

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import { useUpdateMentionsMutation } from "@/posts/editor/mutations";
-import type { UserData } from "@zephyr/db";
-import { Command } from "cmdk";
-import { AnimatePresence, motion } from "framer-motion";
-import { Loader2, Search, X } from "lucide-react";
-import { useState } from "react";
-import UserAvatar from "../Layouts/UserAvatar";
+import { useUpdateMentionsMutation } from '@/posts/editor/mutations';
+import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Button } from '@zephyr/ui/shadui/button';
+import { DialogHeader, DialogTitle } from '@zephyr/ui/shadui/dialog';
+import { Command } from 'cmdk';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Loader2, Search, X } from 'lucide-react';
+import { useState } from 'react';
+import UserAvatar from '../Layouts/UserAvatar';
 
 const tagVariants = {
   initial: { opacity: 0, scale: 0.9, y: -10 },
@@ -18,43 +18,43 @@ const tagVariants = {
     scale: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: 'spring',
       stiffness: 200,
-      damping: 20
-    }
+      damping: 20,
+    },
   },
   exit: {
     opacity: 0,
     scale: 0.9,
     y: -10,
     transition: {
-      duration: 0.2
-    }
-  }
+      duration: 0.2,
+    },
+  },
 };
 
 const containerVariants = {
   animate: {
     transition: {
-      staggerChildren: 0.05
-    }
-  }
+      staggerChildren: 0.05,
+    },
+  },
 };
 
 interface MentionTagEditorProps {
   postId?: string;
   initialMentions: UserData[];
-  onClose: () => void;
-  onMentionsUpdate: (mentions: UserData[]) => void;
+  onCloseAction: () => void;
+  onMentionsUpdateAction: (mentions: UserData[]) => void;
 }
 
 export function MentionTagEditor({
   postId,
   initialMentions,
-  onClose,
-  onMentionsUpdate
+  onCloseAction,
+  onMentionsUpdateAction,
 }: MentionTagEditorProps) {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<UserData[]>([]);
   const { toast } = useToast();
@@ -73,15 +73,17 @@ export function MentionTagEditor({
       const res = await fetch(
         `/api/users/search?q=${encodeURIComponent(query)}`
       );
-      if (!res.ok) throw new Error("Failed to search users");
+      if (!res.ok) {
+        throw new Error('Failed to search users');
+      }
       const data = await res.json();
       setSuggestions(data.users);
     } catch (error) {
-      console.error("Error searching users:", error);
+      console.error('Error searching users:', error);
       toast({
-        title: "Error searching users",
-        description: "Please try again later",
-        variant: "destructive"
+        title: 'Error searching users',
+        description: 'Please try again later',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -91,9 +93,9 @@ export function MentionTagEditor({
   const handleSelect = (user: UserData) => {
     if (selectedMentions.length >= 5) {
       toast({
-        title: "Maximum mentions reached",
-        description: "You can only mention up to 5 users per post",
-        variant: "destructive"
+        title: 'Maximum mentions reached',
+        description: 'You can only mention up to 5 users per post',
+        variant: 'destructive',
       });
       return;
     }
@@ -101,29 +103,29 @@ export function MentionTagEditor({
     if (!selectedMentions.some((m) => m.id === user.id)) {
       const newMentions = [...selectedMentions, user];
       setSelectedMentions(newMentions);
-      onMentionsUpdate(newMentions);
+      onMentionsUpdateAction(newMentions);
     }
-    setSearch("");
+    setSearch('');
   };
 
   const handleRemove = (userId: string) => {
     const newMentions = selectedMentions.filter((m) => m.id !== userId);
     setSelectedMentions(newMentions);
-    onMentionsUpdate(newMentions);
+    onMentionsUpdateAction(newMentions);
   };
 
   const handleSave = async () => {
     try {
-      onMentionsUpdate(selectedMentions);
-      onClose();
+      onMentionsUpdateAction(selectedMentions);
+      onCloseAction();
 
       await updateMentions.mutateAsync(selectedMentions.map((m) => m.id));
       // biome-ignore lint/correctness/noUnusedVariables: ignore
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update mentions. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to update mentions. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -211,7 +213,7 @@ export function MentionTagEditor({
         <div className="flex justify-end gap-2 pt-2">
           <Button
             variant="ghost"
-            onClick={onClose}
+            onClick={onCloseAction}
             className="hover:bg-destructive/10 hover:text-destructive"
           >
             Cancel

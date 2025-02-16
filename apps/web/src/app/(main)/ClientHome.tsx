@@ -1,18 +1,22 @@
-"use client";
+'use client';
 
-import { Globe2Icon, UsersIcon } from "lucide-react";
-import type React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ForYouFeed from "@zephyr-ui/Home/ForYouFeed";
-import FollowingFeed from "@zephyr-ui/Home/feedview/Following";
-import LeftSideBar from "@zephyr-ui/Home/sidebars/LeftSideBar";
-import RightSideBar from "@zephyr-ui/Home/sidebars/RightSideBar";
-import ScrollUpButton from "@zephyr-ui/Layouts/ScrollUpButton";
-import StickyFooter from "@zephyr-ui/Layouts/StinkyFooter";
-import PostEditor from "@zephyr-ui/Posts/editor/PostEditor";
-import type { UserData } from "@zephyr/db";
+import ForYouFeed from '@/components/Home/ForYouFeed';
+import FollowingFeed from '@/components/Home/feedview/Following';
+import LeftSideBar from '@/components/Home/sidebars/LeftSideBar';
+import RightSideBar from '@/components/Home/sidebars/RightSideBar';
+import ScrollUpButton from '@/components/Layouts/ScrollUpButton';
+import StickyFooter from '@/components/Layouts/StinkyFooter';
+import PostEditor from '@/components/Posts/editor/PostEditor';
+import type { UserData } from '@zephyr/db';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@zephyr/ui/shadui/tabs';
+import { Globe2Icon, UsersIcon } from 'lucide-react';
+import type React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface ClientHomeProps {
   userData: UserData;
@@ -26,8 +30,11 @@ const ClientHome: React.FC<ClientHomeProps> = ({ userData }) => {
   const mainRef = useRef<HTMLDivElement>(null);
   const rightSidebarRef = useRef<HTMLDivElement>(null);
 
-  if (!userData) return null;
+  if (!userData) {
+    return null;
+  }
 
+  // biome-ignore lint/correctness/useHookAtTopLevel: This hook is used inside a callback
   const handleScroll = useCallback(() => {
     const scrollThreshold = 200;
     setShowScrollUpButton(window.scrollY > scrollThreshold);
@@ -39,10 +46,11 @@ const ClientHome: React.FC<ClientHomeProps> = ({ userData }) => {
     }
   }, []);
 
+  // biome-ignore lint/correctness/useHookAtTopLevel: This hook is used inside a callback
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [handleScroll]);
 
@@ -53,7 +61,7 @@ const ClientHome: React.FC<ClientHomeProps> = ({ userData }) => {
         <main
           ref={mainRef}
           className={`flex-1 overflow-y-auto ${
-            !showLeftSidebar && !showRightSidebar ? "w-full" : ""
+            !showLeftSidebar && !showRightSidebar ? 'w-full' : ''
           }`}
         >
           <Tabs defaultValue="for-you" className="w-full bg-background">
@@ -95,7 +103,7 @@ const ClientHome: React.FC<ClientHomeProps> = ({ userData }) => {
             </div>
             <div
               className={`transition-all duration-300 ${
-                isFooterSticky ? "fixed top-0 right-0 mt-20 w-80" : ""
+                isFooterSticky ? 'fixed top-0 right-0 mt-20 w-80' : ''
               }`}
             >
               <StickyFooter />

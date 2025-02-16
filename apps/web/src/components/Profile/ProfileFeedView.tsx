@@ -1,17 +1,22 @@
-"use client";
+'use client';
 
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
-import { useQuery } from "@tanstack/react-query";
-import type { UserData } from "@zephyr/db";
-import { motion } from "framer-motion";
-import type React from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import { ErrorFallback } from "../misc/ErrorBoundary";
-import UserPosts from "./UserPost";
-import UserDetails from "./sidebars/right/UserDetails";
+import { useQuery } from '@tanstack/react-query';
+import type { UserData } from '@zephyr/db';
+import { useToast } from '@zephyr/ui/hooks/use-toast';
+import { Card } from '@zephyr/ui/shadui/card';
+import { Skeleton } from '@zephyr/ui/shadui/skeleton';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@zephyr/ui/shadui/tabs';
+import { motion } from 'framer-motion';
+import type React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorFallback } from '../misc/ErrorBoundary';
+import UserPosts from './UserPost';
+import UserDetails from './sidebars/right/UserDetails';
 
 interface ProfileFeedViewProps {
   username: string;
@@ -21,45 +26,51 @@ interface ProfileFeedViewProps {
 
 const ProfileFeedView: React.FC<ProfileFeedViewProps> = ({
   userData: initialUserData,
-  loggedInUserId
+  loggedInUserId,
 }) => {
   const { toast } = useToast();
 
   const {
     data: userData,
     isLoading,
-    error
+    error,
   } = useQuery({
-    queryKey: ["user", initialUserData.id],
+    queryKey: ['user', initialUserData.id],
     queryFn: async () => {
       try {
         const response = await fetch(`/api/users/${initialUserData.id}`);
-        if (!response.ok) throw new Error("Failed to fetch user data");
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
         return response.json();
       } catch (_err) {
         toast({
-          title: "Error",
-          description: "Failed to load user data. Using cached data.",
-          variant: "destructive"
+          title: 'Error',
+          description: 'Failed to load user data. Using cached data.',
+          variant: 'destructive',
         });
         return initialUserData;
       }
     },
     initialData: initialUserData,
     staleTime: 1000 * 60,
-    retry: 2
+    retry: 2,
   });
 
   const tabConfig = [
-    { value: "all", label: "All" },
-    { value: "scribbles", label: "Fleets" },
-    { value: "snapshots", label: "Snapshots" },
-    { value: "media", label: "Reels" },
-    { value: "files", label: "Wisps" }
+    { value: 'all', label: 'All' },
+    { value: 'scribbles', label: 'Fleets' },
+    { value: 'snapshots', label: 'Snapshots' },
+    { value: 'media', label: 'Reels' },
+    { value: 'files', label: 'Wisps' },
   ];
 
-  if (isLoading) return <ProfileSkeleton />;
-  if (error || !userData) return <div>Error loading profile</div>;
+  if (isLoading) {
+    return <ProfileSkeleton />;
+  }
+  if (error || !userData) {
+    return <div>Error loading profile</div>;
+  }
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -101,11 +112,11 @@ const ProfileFeedView: React.FC<ProfileFeedViewProps> = ({
                         userId={userData.id}
                         filter={
                           tab.value as
-                            | "all"
-                            | "scribbles"
-                            | "snapshots"
-                            | "media"
-                            | "files"
+                            | 'all'
+                            | 'scribbles'
+                            | 'snapshots'
+                            | 'media'
+                            | 'files'
                         }
                       />
                     </motion.div>
@@ -128,28 +139,32 @@ export default ProfileFeedView;
 
 const ProfileHeader: React.FC<{ userData: UserData }> = ({ userData }) => {
   const { data: avatarData } = useQuery({
-    queryKey: ["avatar", userData?.id],
+    queryKey: ['avatar', userData?.id],
     queryFn: async () => {
       try {
         const response = await fetch(`/api/users/avatar/${userData?.id}`);
-        if (!response.ok) throw new Error("Failed to fetch avatar");
+        if (!response.ok) {
+          throw new Error('Failed to fetch avatar');
+        }
         return response.json();
       } catch (_error) {
         return {
           url: userData?.avatarUrl,
-          key: userData?.avatarKey
+          key: userData?.avatarKey,
         };
       }
     },
     initialData: {
       url: userData?.avatarUrl,
-      key: userData?.avatarKey
+      key: userData?.avatarKey,
     },
     enabled: !!userData?.id,
-    staleTime: 1000 * 60 * 5
+    staleTime: 1000 * 60 * 5,
   });
 
-  if (!userData) return null;
+  if (!userData) {
+    return null;
+  }
 
   return (
     <Card className="mb-6 overflow-hidden">
@@ -157,15 +172,15 @@ const ProfileHeader: React.FC<{ userData: UserData }> = ({ userData }) => {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
-        className="relative h-32" // Fixed height
+        className="relative h-32"
       >
         <div className="absolute inset-0">
           <div
             className="h-full w-full bg-center bg-cover"
             style={{
               backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url(${avatarData?.url})`,
-              filter: "blur(8px)",
-              transform: "scale(1.1)"
+              filter: 'blur(8px)',
+              transform: 'scale(1.1)',
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />

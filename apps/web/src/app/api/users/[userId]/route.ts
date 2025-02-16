@@ -1,5 +1,5 @@
-import { prisma } from "@zephyr/db";
-import { NextResponse } from "next/server";
+import { prisma } from '@zephyr/db';
+import { NextResponse } from 'next/server';
 
 export async function GET(
   _request: Request,
@@ -10,7 +10,7 @@ export async function GET(
 
     if (!userId) {
       return NextResponse.json(
-        { message: "User ID is required" },
+        { message: 'User ID is required' },
         { status: 400 }
       );
     }
@@ -22,29 +22,29 @@ export async function GET(
           select: {
             posts: true,
             followers: true,
-            following: true
-          }
+            following: true,
+          },
         },
         followers: {
           where: {
-            followerId: userId
+            followerId: userId,
           },
           select: {
-            followerId: true
-          }
-        }
-      }
+            followerId: true,
+          },
+        },
+      },
     });
 
     if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
     return NextResponse.json(user);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error('Error fetching user:', error);
     return NextResponse.json(
-      { message: "Failed to fetch user data" },
+      { message: 'Failed to fetch user data' },
       { status: 500 }
     );
   }

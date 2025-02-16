@@ -1,9 +1,8 @@
-import CommentSkeleton from "./CommentSkeleton";
+import CommentSkeleton from './CommentSkeleton';
 
 const CommentsSkeleton = () => {
   return (
     <div className="mt-4 space-y-3">
-      {/* Comment Input Skeleton */}
       <div className="rounded-lg border border-border p-4">
         <div className="flex gap-3">
           <div className="h-10 w-10 animate-pulse rounded-full bg-muted" />
@@ -17,12 +16,10 @@ const CommentsSkeleton = () => {
         </div>
       </div>
 
-      {/* Load More Button Skeleton */}
       <div className="flex justify-center">
         <div className="h-9 w-32 animate-pulse rounded-md bg-muted" />
       </div>
 
-      {/* Comments List Skeleton */}
       <div className="divide-y">
         {Array.from({ length: 3 }).map((_, index) => (
           <CommentSkeleton key={index} />

@@ -1,6 +1,6 @@
-import { redis } from "@zephyr/db";
+import { redis } from '@zephyr/db';
 
-const RATE_LIMIT_PREFIX = "ratelimit:hn:";
+const RATE_LIMIT_PREFIX = 'ratelimit:hn:';
 const WINDOW_SIZE = 60;
 const MAX_REQUESTS = 30;
 

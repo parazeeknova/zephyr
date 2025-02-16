@@ -1,22 +1,23 @@
-import { Prisma } from "@prisma/client";
-import { validateRequest } from "@zephyr/auth/auth";
-import { getUserDataSelect, prisma, redis } from "@zephyr/db";
-import type { UserData } from "@zephyr/db";
+import { Prisma } from '@prisma/client';
+import { validateRequest } from '@zephyr/auth/auth';
+import { getUserDataSelect, prisma, redis } from '@zephyr/db';
+// biome-ignore lint/nursery/noExportedImports: This is a valid use case
+import type { UserData } from '@zephyr/db';
 
 const SUGGESTED_USERS_CACHE_KEY = (userId: string) =>
   `suggested-users:${userId}`;
-const CACHE_TTL = 300; // 5 minutes
+const CACHE_TTL = 300;
 
 const RECENTLY_SHOWN_CACHE_KEY = (userId: string) =>
   `recently-shown-users:${userId}`;
-const RECENTLY_SHOWN_TTL = 3600; // 1 hour
+const RECENTLY_SHOWN_TTL = 3600;
 
 export async function GET() {
   try {
     const { user } = await validateRequest();
 
     if (!user) {
-      return Response.json({ error: "Not authenticated" }, { status: 401 });
+      return Response.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
     const cacheKey = SUGGESTED_USERS_CACHE_KEY(user.id);
@@ -35,8 +36,8 @@ export async function GET() {
           ? { aura: Prisma.SortOrder.desc }
           : {
               followers: {
-                _count: Prisma.SortOrder.desc
-              }
+                _count: Prisma.SortOrder.desc,
+              },
             },
       where: {
         AND: [
@@ -45,11 +46,11 @@ export async function GET() {
           {
             followers: {
               none: {
-                followerId: user.id
-              }
-            }
-          }
-        ]
+                followerId: user.id,
+              },
+            },
+          },
+        ],
       },
       select: {
         ...getUserDataSelect(user.id),
@@ -59,22 +60,22 @@ export async function GET() {
             follower: {
               followers: {
                 some: {
-                  followerId: user.id
-                }
-              }
-            }
+                  followerId: user.id,
+                },
+              },
+            },
           },
           select: {
             follower: {
               select: {
                 username: true,
                 displayName: true,
-                avatarUrl: true
-              }
-            }
-          }
-        }
-      }
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     const selectedUsers = suggestedUsers
@@ -88,21 +89,21 @@ export async function GET() {
 
     const transformedUsers = selectedUsers.map((user) => ({
       ...user,
-      mutualFollowers: user.followers.map((f) => f.follower)
+      mutualFollowers: user.followers.map((f) => f.follower),
     }));
 
     await redis.set(
       cacheKey,
       JSON.stringify(transformedUsers),
-      "EX",
+      'EX',
       CACHE_TTL
     );
 
     return Response.json(transformedUsers);
   } catch (error) {
-    console.error("Error fetching suggested users:", error);
+    console.error('Error fetching suggested users:', error);
     return Response.json(
-      { error: "Failed to fetch suggested users" },
+      { error: 'Failed to fetch suggested users' },
       { status: 500 }
     );
   }
@@ -114,7 +115,7 @@ export const suggestedUsersCache = {
       const cached = await redis.get(SUGGESTED_USERS_CACHE_KEY(userId));
       return cached ? JSON.parse(cached) : null;
     } catch (error) {
-      console.error("Error getting suggested users from cache:", error);
+      console.error('Error getting suggested users from cache:', error);
       return null;
     }
   },
@@ -124,11 +125,11 @@ export const suggestedUsersCache = {
       await redis.set(
         SUGGESTED_USERS_CACHE_KEY(userId),
         JSON.stringify(data),
-        "EX",
+        'EX',
         CACHE_TTL
       );
     } catch (error) {
-      console.error("Error setting suggested users cache:", error);
+      console.error('Error setting suggested users cache:', error);
     }
   },
 
@@ -136,18 +137,18 @@ export const suggestedUsersCache = {
     try {
       await redis.del(SUGGESTED_USERS_CACHE_KEY(userId));
     } catch (error) {
-      console.error("Error invalidating suggested users cache:", error);
+      console.error('Error invalidating suggested users cache:', error);
     }
   },
 
   async invalidateAll() {
     try {
-      const keys = await redis.keys("suggested-users:*");
+      const keys = await redis.keys('suggested-users:*');
       if (keys.length > 0) {
         await redis.del(...keys);
       }
     } catch (error) {
-      console.error("Error invalidating all suggested users caches:", error);
+      console.error('Error invalidating all suggested users caches:', error);
     }
   },
 
@@ -155,12 +156,12 @@ export const suggestedUsersCache = {
     try {
       await Promise.all([
         redis.del(SUGGESTED_USERS_CACHE_KEY(userId)),
-        redis.del(`follower-info:${userId}`)
+        redis.del(`follower-info:${userId}`),
       ]);
     } catch (error) {
-      console.error("Error invalidating user caches:", error);
+      console.error('Error invalidating user caches:', error);
     }
-  }
+  },
 };
 
 export type { UserData };

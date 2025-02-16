@@ -1,9 +1,9 @@
-import { debugLog } from "@zephyr/config/debug";
-import { postViewsCache } from "@zephyr/db";
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import { debugLog } from '@zephyr/config/debug';
+import { postViewsCache } from '@zephyr/db';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export async function POST(
   _request: NextRequest,
@@ -14,9 +14,9 @@ export async function POST(
     debugLog.views(`Received view increment request for post: ${postId}`);
 
     if (!postId) {
-      debugLog.views("Missing postId in request");
+      debugLog.views('Missing postId in request');
       return NextResponse.json(
-        { error: "Post ID is required" },
+        { error: 'Post ID is required' },
         { status: 400 }
       );
     }
@@ -26,12 +26,12 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      viewCount: newCount
+      viewCount: newCount,
     });
   } catch (error) {
-    debugLog.views("Error incrementing view count:", error);
+    debugLog.views('Error incrementing view count:', error);
     return NextResponse.json(
-      { error: "Failed to increment view count" },
+      { error: 'Failed to increment view count' },
       { status: 500 }
     );
   }

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import ScrollUpButton from "@/components/Layouts/ScrollUpButton";
-import { FossBanner } from "@/components/misc/foss-banner";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Shield } from "lucide-react";
-import Link from "next/link";
-import React, { useEffect } from "react";
+import ScrollUpButton from '@/components/Layouts/ScrollUpButton';
+import { FossBanner } from '@/components/misc/foss-banner';
+import { Button } from '@zephyr/ui/shadui/button';
+import { ArrowLeft, Shield } from 'lucide-react';
+import Link from 'next/link';
+import React, { useEffect } from 'react';
 
 export default function TermsPage() {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -19,10 +19,10 @@ export default function TermsPage() {
       }
     };
 
-    window.addEventListener("scroll", toggleVisibility);
+    window.addEventListener('scroll', toggleVisibility);
 
     return () => {
-      window.removeEventListener("scroll", toggleVisibility);
+      window.removeEventListener('scroll', toggleVisibility);
     };
   }, []);
 
@@ -548,7 +548,7 @@ export default function TermsPage() {
               <p>
                 Our commitment to privacy forms the cornerstone of our platform
                 operations. We maintain comprehensive privacy practices that are
-                detailed in our{" "}
+                detailed in our{' '}
                 <Link href="/privacy" className="text-primary hover:underline">
                   Privacy Policy
                 </Link>
@@ -1012,7 +1012,7 @@ export default function TermsPage() {
               <p>
                 We maintain open channels of communication to address user
                 inquiries, concerns, and feedback regarding our platform and
-                services. Our primary points of contact is{" "}
+                services. Our primary points of contact is{' '}
                 <Link
                   href="mailto:zephyyrrnyx@gmail.com"
                   className="text-primary hover:underline"
