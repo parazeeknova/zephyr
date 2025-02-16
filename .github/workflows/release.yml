@@ -11,7 +11,7 @@ on:
       target_branch:
         description: 'Target branch for release'
         required: false
-        default: 'main'
+        default: 'development'
 
 permissions:
   contents: write
@@ -40,7 +40,7 @@ jobs:
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Create 'released' label if it doesn't exist
+      - name: Create or update 'released' label
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -48,6 +48,10 @@ jobs:
             gh label create "released" \
               --color "0E8A16" \
               --description "PRs included in a release"
+          else
+            gh label edit "released" \
+              --color "0E8A16" \
+              --description "PRs included in a release" || true
           fi
 
       - name: Generate Release Notes
