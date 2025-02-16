@@ -4,14 +4,23 @@ on:
   schedule:
     - cron: '0 0 1 * *'
   workflow_dispatch:
+    inputs:
+      custom_version:
+        description: 'Override version (leave empty to use package.json version)'
+        required: false
+      target_branch:
+        description: 'Target branch for release'
+        required: false
+        default: 'main'
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
   create-release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: read
-      issues: read
 
     steps:
       - name: Checkout repository
@@ -24,8 +33,22 @@ jobs:
         run: |
           echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
           echo "LAST_MONTH=$(date -d 'last month' +'%Y-%m')" >> $GITHUB_ENV
-          VERSION=$(node -p "require('./package.json').version")
+          if [ -n "${{ github.event.inputs.custom_version }}" ]; then
+            VERSION="${{ github.event.inputs.custom_version }}"
+          else
+            VERSION=$(node -p "require('./package.json').version")
+          fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Create 'released' label if it doesn't exist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ! gh label list | grep -q "released"; then
+            gh label create "released" \
+              --color "0E8A16" \
+              --description "PRs included in a release"
+          fi
 
       - name: Generate Release Notes
         id: release-notes
@@ -94,14 +117,22 @@ jobs:
           # Get last month's merged PRs and add 'released' label
           prs=$(gh pr list --search "merged:>=$(date -d 'last month' +'%Y-%m-01') merged:<$(date +'%Y-%m-01')" --state merged --json number)
           echo "$prs" | jq -r '.[].number' | while read pr_number; do
-            gh pr edit $pr_number --add-label "released"
+            gh pr edit $pr_number --add-label "released" || echo "Could not add label to PR #$pr_number"
           done
 
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          TARGET_BRANCH="${{ github.event.inputs.target_branch || github.ref }}"
           gh release create "v${{ env.VERSION }}" \
             --title "Release v${{ env.VERSION }}" \
             --notes-file release_notes.md \
-            --target ${{ github.ref }}
+            --target $TARGET_BRANCH
+
+      - name: Upload CHANGELOG.md as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog
+          path: CHANGELOG.md
+          retention-days: 30
