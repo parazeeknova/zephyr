@@ -21,7 +21,7 @@
     "dep:check": "pnpm dlx sherif@latest",
     "dep:fix": "pnpm dlx sherif@latest --fix",
     "env:check": "node scripts/checkENV.js",
-    "dev": "pnpm run lint && pnpm run env:check && turbo dev",
+    "dev": "pnpm run format && pnpm run env:check && turbo dev",
     "prepare": "husky",
     "docker:status": "docker system df && docker ps && docker volume ls && docker network ls",
     "docker:logs": "docker compose -f docker-compose.dev.yml logs -f",

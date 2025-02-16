@@ -1,10 +1,11 @@
 import IORedis, { type RedisOptions } from 'ioredis';
+import { keys } from '../keys';
 
 const createRedisConfig = (): RedisOptions => {
   const config: RedisOptions = {
-    host: process.env.REDIS_HOST,
-    port: Number.parseInt(process.env.REDIS_PORT || '6379', 10),
-    password: process.env.REDIS_PASSWORD,
+    host: keys.REDIS_HOST,
+    port: Number.parseInt(String(keys.REDIS_PORT) || '6379', 10),
+    password: keys.REDIS_PASSWORD,
     db: 0,
     maxRetriesPerRequest: 2,
     connectTimeout: 5000, // 5 seconds

@@ -5,6 +5,7 @@ import {
   isStreamConfigured,
 } from '@zephyr/config/src/env';
 import { StreamChat } from 'stream-chat';
+import { keys } from '../keys';
 
 const { isDevelopment } = getEnvironmentMode();
 
@@ -83,7 +84,7 @@ declare global {
 
 const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
 
-if (process.env.NODE_ENV !== 'production') {
+if (keys.NODE_ENV !== 'production') {
   globalThis.prismaGlobal = prisma;
 }
 

@@ -113,6 +113,13 @@ turbo dev
 
 # TIP ⚠️ : Check package.json for more scripts in the root directory
 ```
+#### What a sucessful docker setup looks like after running ```pnpm run docker:dev```:
+
+<div align="center">
+
+  <img src="./assets/docker.png" alt="Docker setup" width="95%"/>
+
+</div>
 
 ###### _<div align="right"><sub>// Ports:</sub></div>_
 If everything goes well, you should be able to access the following services:

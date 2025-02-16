@@ -1,6 +1,7 @@
 'use server';
 
 import { verify } from '@node-rs/argon2';
+import { env } from '@root/env';
 import { lucia } from '@zephyr/auth/auth';
 import { sendVerificationEmail } from '@zephyr/auth/src/email/service';
 import { type LoginValues, loginSchema } from '@zephyr/auth/validation';
@@ -19,8 +20,10 @@ export async function createVerificationTokenForUser(
   if (existingToken) {
     const newToken = jwt.sign(
       { userId, email },
-      // biome-ignore lint/style/noNonNullAssertion: JWT_SECRET is required
-      process.env.JWT_SECRET!,
+      env.JWT_SECRET ??
+        (() => {
+          throw new Error('JWT_SECRET is not defined');
+        })(),
       { expiresIn: '1h' }
     );
 
@@ -38,8 +41,10 @@ export async function createVerificationTokenForUser(
 
   const token = jwt.sign(
     { userId, email },
-    // biome-ignore lint/style/noNonNullAssertion: JWT_SECRET is required
-    process.env.JWT_SECRET!,
+    env.JWT_SECRET ??
+      (() => {
+        throw new Error('JWT_SECRET is not defined');
+      })(),
     { expiresIn: '1h' }
   );
 
@@ -108,10 +113,9 @@ export async function loginAction(credentials: LoginValues): Promise<{
       }
     }
 
-    const session = await lucia.createSession(existingUser.id, {
-      username: '',
-      email: '',
-    });
+    // @ts-expect-error - createSession expects a userId
+    const session = await lucia.createSession(existingUser.id);
+
     const sessionCookie = lucia.createSessionCookie(session.id);
     const cookieStore = await cookies();
     cookieStore.set(
