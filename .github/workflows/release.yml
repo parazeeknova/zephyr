@@ -1,0 +1,107 @@
+name: Monthly Release
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+      issues: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version and date
+        id: version
+        run: |
+          echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+          echo "LAST_MONTH=$(date -d 'last month' +'%Y-%m')" >> $GITHUB_ENV
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Generate Release Notes
+        id: release-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get last month's merged PRs
+          prs=$(gh pr list --search "merged:>=$(date -d 'last month' +'%Y-%m-01') merged:<$(date +'%Y-%m-01')" --state merged --json number,title,author,mergedAt,body,url)
+          
+          # Get last month's closed issues
+          issues=$(gh issue list --search "closed:>=$(date -d 'last month' +'%Y-%m-01') closed:<$(date +'%Y-%m-01')" --state closed --json number,title,author,closedAt,body,url)
+          
+          # Create changelog content
+          echo "### 🎉 Release v${{ env.VERSION }} (${{ env.CURRENT_DATE }})" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          
+          # Contributors section
+          echo "### 👥 Contributors" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "Thanks to all our contributors for their amazing work!" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          
+          # Extract unique contributors from PRs and issues
+          contributors=$(echo "$prs" | jq -r '.[].author.login' | sort -u)
+          for contributor in $contributors; do
+            echo "- [@$contributor](https://github.com/$contributor)" >> CHANGELOG.md
+          done
+          echo "" >> CHANGELOG.md
+          
+          # Features section
+          echo "### ✨ New Features" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "$prs" | jq -r '.[] | select(.title | test("^feat|^feature"; "i")) | "- [\(.title)](\(.url)) by [@\(.author.login)](https://github.com/\(.author.login))"' >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          
+          # Bug Fixes section
+          echo "### 🐛 Bug Fixes" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "$prs" | jq -r '.[] | select(.title | test("^fix|^bug"; "i")) | "- [\(.title)](\(.url)) by [@\(.author.login)](https://github.com/\(.author.login))"' >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          
+          # Improvements section
+          echo "### 🔨 Improvements" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "$prs" | jq -r '.[] | select(.title | test("^improve|^refactor|^perf|^chore"; "i")) | "- [\(.title)](\(.url)) by [@\(.author.login)](https://github.com/\(.author.login))"' >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          
+          # Documentation section
+          echo "### 📚 Documentation" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "$prs" | jq -r '.[] | select(.title | test("^docs"; "i")) | "- [\(.title)](\(.url)) by [@\(.author.login)](https://github.com/\(.author.login))"' >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          
+          # Closed Issues section
+          echo "### 🎯 Closed Issues" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "$issues" | jq -r '.[] | "- [\(.title)](\(.url)) by [@\(.author.login)](https://github.com/\(.author.login))"' >> CHANGELOG.md
+          
+          # Save changelog content for release
+          cat CHANGELOG.md > release_notes.md
+
+      - name: Label Released PRs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get last month's merged PRs and add 'released' label
+          prs=$(gh pr list --search "merged:>=$(date -d 'last month' +'%Y-%m-01') merged:<$(date +'%Y-%m-01')" --state merged --json number)
+          echo "$prs" | jq -r '.[].number' | while read pr_number; do
+            gh pr edit $pr_number --add-label "released"
+          done
+
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ env.VERSION }}" \
+            --title "Release v${{ env.VERSION }}" \
+            --notes-file release_notes.md \
+            --target ${{ github.ref }}
