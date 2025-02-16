@@ -29,18 +29,15 @@ jobs:
         with:
           version: '10.2.0'
 
-      - name: Determine version bump type
-        id: bump-type
-        run: |
-          if echo "${{ github.event.head_commit.message }}" | grep -q "major:"; then
-            echo "type=major" >> $GITHUB_OUTPUT
-          elif echo "${{ github.event.head_commit.message }}" | grep -q "minor:"; then
-            echo "type=minor" >> $GITHUB_OUTPUT
-          else
-            echo "type=patch" >> $GITHUB_OUTPUT
-          fi
+      - name: Install dependencies
+        run: pnpm install
 
-      - name: Update version in root package.json
+      - name: Run lint and format
+        run: |
+          pnpm run lint
+          pnpm run format
+
+      - name: Update version in package.json files
         run: |
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
@@ -49,28 +46,29 @@ jobs:
           MINOR=${VERSION_PARTS[1]}
           PATCH=${VERSION_PARTS[2]}
           
-          if [ "${{ steps.bump-type.outputs.type }}" = "major" ]; then
-            NEW_VERSION="$((MAJOR + 1)).0.0"
-          elif [ "${{ steps.bump-type.outputs.type }}" = "minor" ]; then
-            NEW_VERSION="${MAJOR}.$((MINOR + 1)).0"
+          # Remove any existing -dev suffix for clean calculation
+          PATCH=$(echo $PATCH | sed 's/-dev//')
+          
+          # Simply increment patch version
+          if [ $PATCH -ge 40 ]; then
+            PATCH=1
           else
-            NEW_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
+            PATCH=$((PATCH + 1))
           fi
           
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}-dev"
           echo "Updating version from $CURRENT_VERSION to $NEW_VERSION"
           
           # Update root package.json
-          sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" package.json
+          sed -i "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" package.json
           
           # Update apps/web/package.json
-          sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" apps/web/package.json
+          if [ -f "apps/web/package.json" ]; then
+            sed -i "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" apps/web/package.json
+          fi
           
-          # Update packages/**/package.json
-          for pkg in packages/*/package.json; do
-            if [ -f "$pkg" ]; then
-              sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" "$pkg"
-            fi
-          done
+          # Update all package.json files in packages directory
+          find packages -name "package.json" -type f -exec sed -i "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" {} \;
           
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
@@ -79,6 +77,10 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          git add package.json apps/web/package.json packages/*/package.json
+          git add package.json
+          if [ -f "apps/web/package.json" ]; then
+            git add apps/web/package.json
+          fi
+          git add packages/*/package.json
           git commit -m "chore: bump version to ${{ env.NEW_VERSION }} [skip ci]"
           git push origin development
