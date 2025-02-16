@@ -43,7 +43,6 @@
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.8.1",
     "@zephyr/aggregator": "workspace:*",
-    "@zephyr/tailwind": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
@@ -67,17 +66,23 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.6",
-    "@tailwindcss/typography": "^0.5.16",
     "@tanstack/react-query-devtools": "^5.66.0",
     "@types/node": "^22.13.1",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "@zephyr/config": "workspace:*",
     "@zephyr/observability": "workspace:*",
+    "@zephyr/tailwind": "workspace:*",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.1",
     "tailwindcss": "3.4.17",
     "typescript": "^5.7.3"
+  },
+  "overrides": {
+    "devDependencies": {
+      "autoprefixer": "^10.4.20",
+      "postcss": "^8.5.1",
+      "tailwindcss": "3.4.17"
+    }
   }
 }

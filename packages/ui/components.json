@@ -10,10 +10,10 @@
     "cssVariables": true
   },
   "aliases": {
-    "components": "@zephyr/ui/shadui",
-    "utils": "@zephyr/ui/lib/utils",
-    "hooks": "@zephyr/ui/hooks",
-    "lib": "@zephyr/ui/lib",
-    "ui": "@zephyr/ui/shadui"
+    "components": "@ui/shadui",
+    "utils": "@ui/lib/utils",
+    "hooks": "@ui/hooks",
+    "lib": "@ui/lib",
+    "ui": "@ui/shadui"
   }
 }

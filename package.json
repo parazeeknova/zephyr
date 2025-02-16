@@ -16,7 +16,7 @@
   "scripts": {
     "lint": "ultracite lint",
     "format": "ultracite format",
-    "build": "turbo build",
+    "build": "pnpm run lint && turbo build",
     "codegen": "turbo codegen",
     "dep:check": "pnpm dlx sherif@latest",
     "dep:fix": "pnpm dlx sherif@latest --fix",

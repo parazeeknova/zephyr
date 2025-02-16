@@ -1,22 +1,9 @@
 import type { Metadata, Viewport } from 'next';
-import localFont from 'next/font/local';
 import './globals.css';
-import { DesignSystemProvider } from '@zephyr/ui';
+import { DesignSystemProvider, SofiaProSoft } from '@zephyr/ui';
 import { colors } from '@zephyr/ui/meta/colors';
 import { siteConfig } from '@zephyr/ui/meta/site';
 import type { ReactNode } from 'react';
-
-const SofiaProSoft = localFont({
-  src: './fonts/SofiaProSoftReg.woff2',
-  variable: '--font-sofia-pro-soft',
-  weight: '100 900',
-});
-
-const _SofiaProSoftMed = localFont({
-  src: './fonts/SofiaProSoftMed.woff2',
-  variable: '--font-sofia-pro-soft-med',
-  weight: '100 900',
-});
 
 export const viewport: Viewport = {
   themeColor: [
@@ -24,12 +11,6 @@ export const viewport: Viewport = {
     { media: '(prefers-color-scheme: dark)', color: colors.dark.primary },
   ],
 };
-
-const _SofiaProSoftBold = localFont({
-  src: './fonts/SofiaProSoftBold.woff2',
-  variable: '--font-sofia-pro-soft-bold',
-  weight: '100 900',
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),

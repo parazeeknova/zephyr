@@ -4,7 +4,7 @@ import AnimatedAuthLink from '@/components/Auth/AnimatedAuthLink';
 import AuthButtonWrapper from '@/components/Auth/AuthButtonWrapper';
 import LoginForm from '@/components/Auth/LoginForm';
 // @ts-expect-error - no types for image files
-import loginImage from '@assets/auth/login-image.png';
+import loginImage from '@assets/auth/login-image.jpg';
 // @ts-expect-error - no types for image files
 import signupImage from '@assets/previews/signup.png';
 import { AnimatePresence, motion } from 'framer-motion';

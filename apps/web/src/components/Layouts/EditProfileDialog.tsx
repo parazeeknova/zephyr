@@ -2,11 +2,11 @@ import {
   useUpdateAvatarMutation,
   useUpdateProfileMutation,
 } from '@/app/(main)/users/[username]/avatar-mutations';
-import avatarPlaceholder from '@/app/assets/avatar-placeholder.png';
 import LoadingButton from '@/components/Auth/LoadingButton';
 import { AnimatedWordCounter } from '@/components/misc/AnimatedWordCounter';
 import { cn } from '@/lib/utils';
 import { getSecureImageUrl } from '@/lib/utils/imageUrl';
+import avatarPlaceholder from '@assets/general/avatar-placeholder.png';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   type UpdateUserProfileValues,
