@@ -1,7 +1,7 @@
 {
   "name": "@zephyr/config",
   "description": "Zephyr configuration package contains shared configs for typescript",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
