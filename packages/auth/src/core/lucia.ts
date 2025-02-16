@@ -62,46 +62,14 @@ export const validateRequest = cache(
     }
 
     const result = await lucia.validateSession(sessionId);
-
-    try {
-      if (result.session?.fresh) {
-        const sessionCookie = lucia.createSessionCookie(result.session.id);
-        (await cookies()).set(
-          sessionCookie.name,
-          sessionCookie.value,
-          sessionCookie.attributes
-        );
-      }
-      if (!result.session) {
-        const sessionCookie = lucia.createBlankSessionCookie();
-        (await cookies()).set(
-          sessionCookie.name,
-          sessionCookie.value,
-          sessionCookie.attributes
-        );
-      }
-    } catch (error) {
-      console.error('Session cookie handling error:', error);
-    }
-
     return result;
   }
 );
 
-export const createSessionCookie = async (sessionId: string) => {
-  const sessionCookie = lucia.createSessionCookie(sessionId);
-  (await cookies()).set(
-    sessionCookie.name,
-    sessionCookie.value,
-    sessionCookie.attributes
-  );
-};
+export function createSessionCookie(sessionId: string) {
+  return lucia.createSessionCookie(sessionId);
+}
 
-export const clearSessionCookie = async () => {
-  const sessionCookie = lucia.createBlankSessionCookie();
-  (await cookies()).set(
-    sessionCookie.name,
-    sessionCookie.value,
-    sessionCookie.attributes
-  );
-};
+export function createBlankSessionCookie() {
+  return lucia.createBlankSessionCookie();
+}

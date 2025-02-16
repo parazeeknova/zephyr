@@ -1,7 +1,12 @@
 export * from './stream/services';
 
 // Core exports
-export { lucia, validateRequest } from './core/lucia';
+export {
+  lucia,
+  validateRequest,
+  createBlankSessionCookie,
+  createSessionCookie,
+} from './core/lucia';
 
 // OAuth providers
 export { google, github, discord, twitter } from './providers/oauth';
