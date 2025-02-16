@@ -1,6 +1,6 @@
 {
   "name": "@zephyr/web",
-  "version": "1.2.6",
+  "version": "2.0.2-dev",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
@@ -31,9 +31,11 @@
     "@zephyr/tailwind": "workspace:*",
     "@zephyr/ui": "workspace:*",
     "arctic": "^3.2.4",
+    "buffer": "^6.0.3",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
     "cropperjs": "^1.6.2",
+    "crypto-browserify": "^3.12.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.4.1",
     "jotai": "^2.11.3",
@@ -43,6 +45,7 @@
     "lucide-react": "^0.474.0",
     "next": "15.1.6",
     "next-themes": "^0.4.4",
+    "process": "^0.11.10",
     "qrcode.react": "^4.2.0",
     "react": "19.0.0",
     "react-cropper": "^2.3.3",
@@ -55,10 +58,12 @@
     "react-linkify-it": "^1.0.8",
     "react-syntax-highlighter": "^15.6.1",
     "sonner": "^1.7.4",
+    "stream-browserify": "^3.0.0",
     "stream-chat": "^8.55.0",
     "stream-chat-react": "^12.11.0",
     "tailwind-merge": "^3.0.1",
     "usehooks-ts": "^3.1.1",
+    "util": "^0.12.5",
     "zod": "^3.24.1"
   },
   "devDependencies": {
