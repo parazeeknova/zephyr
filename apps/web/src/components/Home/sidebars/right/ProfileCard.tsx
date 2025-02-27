@@ -29,7 +29,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ userData }) => {
       suppressHydrationWarning
     >
       <div className="relative">
-        {/* Background blur effect */}
         <div
           className="absolute inset-0 bg-center bg-cover transition-opacity duration-300"
           style={{
