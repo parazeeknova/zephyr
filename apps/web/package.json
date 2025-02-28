@@ -1,6 +1,6 @@
 {
   "name": "@zephyr/web",
-  "version": "2.0.7-dev",
+  "version": "2.0.8-dev",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
