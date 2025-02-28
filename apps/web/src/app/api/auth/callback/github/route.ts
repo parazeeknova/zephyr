@@ -111,7 +111,7 @@ export async function GET(req: NextRequest) {
         return new Response(null, {
           status: 302,
           headers: {
-            Location: `/login/error?error=email_exists&email=${encodeURIComponent(githubUser.email)}`,
+            Location: `/login/error?error=email_exists&email=${encodeURIComponent(primaryEmail)}`,
           },
         });
       }
