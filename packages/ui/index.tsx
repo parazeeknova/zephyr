@@ -20,7 +20,7 @@ export const DesignSystemProvider = ({
   <ReactQueryProvider>
     <ThemeProvider {...properties}>
       <VerificationProvider>{children}</VerificationProvider>
-      <Toaster />
+      <Toaster position="bottom-right" containerClassName="mb-4 mr-4" />
     </ThemeProvider>
   </ReactQueryProvider>
 );

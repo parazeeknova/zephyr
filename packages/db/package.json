@@ -1,7 +1,7 @@
 {
   "name": "@zephyr/db",
   "description": "Zephyr's database & cache package",
-  "version": "2.0.5-dev",
+  "version": "2.0.7-dev",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
@@ -15,9 +15,11 @@
     "migrate:apply": "pnpm prisma migrate deploy"
   },
   "dependencies": {
+    "@t3-oss/env-nextjs": "^0.12.0",
     "date-fns": "^4.1.0",
     "ioredis": "^5.5.0",
-    "stream-chat": "^8.55.0"
+    "stream-chat": "^8.55.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@prisma/client": "^6.3.1",

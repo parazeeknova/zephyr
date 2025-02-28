@@ -2,6 +2,7 @@ import { getLanguageFromFileName } from '@/lib/codefileExtensions';
 import { formatFileName } from '@/lib/formatFileName';
 import { cn } from '@/lib/utils';
 import { FileAudioIcon, FileCode, FileIcon, X } from 'lucide-react';
+import Image from 'next/image';
 import { memo, useEffect, useState } from 'react';
 
 interface AttachmentPreviewProps {

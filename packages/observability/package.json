@@ -1,7 +1,7 @@
 {
   "name": "@zephyr/observability",
   "description": "Observability package for Zephyr",
-  "version": "2.0.5-dev",
+  "version": "2.0.7-dev",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -9,8 +9,6 @@
   },
   "dependencies": {
     "@logtail/next": "^0.1.7",
-    "@sentry/nextjs": "^8.54.0",
-    "@t3-oss/env-nextjs": "^0.12.0",
     "react": "19.0.0",
     "zod": "^3.24.1"
   },

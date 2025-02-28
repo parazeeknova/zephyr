@@ -1,7 +1,7 @@
 {
   "name": "zephyr",
   "displayName": "Zephyr",
-  "version": "2.0.5-dev",
+  "version": "2.0.7-dev",
   "description": "FOSS social media aggregator, part social media",
   "author": "parazeeknova",
   "license": "AGPL-3.0",
@@ -21,7 +21,8 @@
     "dep:check": "pnpm dlx sherif@latest",
     "dep:fix": "pnpm dlx sherif@latest --fix",
     "env:check": "node scripts/checkENV.js",
-    "dev": "pnpm run lint && pnpm run env:check && turbo dev",
+    "dev": "pnpm run format && pnpm run env:check && turbo dev",
+    "dev-nocheck": "pnpm run format && turbo dev",
     "prepare": "husky",
     "docker:status": "docker system df && docker ps && docker volume ls && docker network ls",
     "docker:logs": "docker compose -f docker-compose.dev.yml logs -f",
@@ -46,7 +47,7 @@
     "typescript": "^5.7.3",
     "ultracite": "^4.1.19"
   },
-  "packageManager": "pnpm@10.2.0+sha512.0d27364e0139c6aadeed65ada153135e0ca96c8da42123bd50047f961339dc7a758fc2e944b428f52be570d1bd3372455c1c65fa2e7aa0bfbf931190f9552001",
+  "packageManager": "pnpm@10.5.2",
   "pnpm": {
     "onlyBuiltDependencies": [
       "@biomejs/biome",
