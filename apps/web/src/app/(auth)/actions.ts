@@ -5,21 +5,20 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export async function logout() {
-  const { session } = await validateRequest();
-
-  if (!session) {
-    throw new Error('Unauthorized');
+  try {
+    const { session } = await validateRequest();
+    if (session) {
+      await lucia.invalidateSession(session.id);
+    }
+    const sessionCookie = lucia.createBlankSessionCookie();
+    (await cookies()).set(
+      sessionCookie.name,
+      sessionCookie.value,
+      sessionCookie.attributes
+    );
+  } catch (error) {
+    console.error('Session invalidation error:', error);
   }
 
-  await lucia.invalidateSession(session.id);
-
-  const sessionCookie = lucia.createBlankSessionCookie();
-
-  (await cookies()).set(
-    sessionCookie.name,
-    sessionCookie.value,
-    sessionCookie.attributes
-  );
-
-  return redirect('/login');
+  redirect('/login');
 }
