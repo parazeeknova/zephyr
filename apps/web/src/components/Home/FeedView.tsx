@@ -28,15 +28,20 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts: initialPosts }) => {
       const feedQueries = queryClient.getQueriesData<{
         pages: { posts: PostData[] }[];
       }>({
-        queryKey: ['post-feed'],
+        queryKey: ['post-feed', 'for-you'],
       });
 
-      const updatedPosts = feedQueries.flatMap(
-        ([, data]) => data?.pages?.flatMap((page) => page.posts) || []
-      );
+      if (feedQueries.length > 0) {
+        const updatedPosts = feedQueries.flatMap(
+          ([, data]) => data?.pages?.flatMap((page) => page.posts) || []
+        );
 
-      if (updatedPosts.length) {
-        setPosts(updatedPosts);
+        if (updatedPosts.length) {
+          const uniquePosts = Array.from(
+            new Map(updatedPosts.map((post) => [post.id, post])).values()
+          );
+          setPosts(uniquePosts);
+        }
       }
     });
 
@@ -46,8 +51,16 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts: initialPosts }) => {
   }, [queryClient]);
 
   useEffect(() => {
-    setPosts(initialPosts);
-  }, [initialPosts]);
+    if (
+      initialPosts.length > 0 &&
+      (posts.length === 0 || initialPosts[0].id !== posts[0]?.id)
+    ) {
+      const uniquePosts = Array.from(
+        new Map(initialPosts.map((post) => [post.id, post])).values()
+      );
+      setPosts(uniquePosts);
+    }
+  }, [initialPosts, posts]);
 
   const sortedPosts = useMemo(() => {
     const sorted = [...posts].sort(

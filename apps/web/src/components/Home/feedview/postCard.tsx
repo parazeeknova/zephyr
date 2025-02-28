@@ -22,11 +22,24 @@ import { ArrowUpRight, Eye, Flame, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { HNStoryCard } from './HNStoryCard';
 import { MediaPreviews } from './MediaPreviews';
 import ShareButton from './ShareButton';
 
+type ExtendedPostData = PostData & {
+  hnStoryShare?: {
+    storyId: number;
+    title: string;
+    url?: string | null;
+    by: string;
+    time: number;
+    score: number;
+    descendants: number;
+  } | null;
+};
+
 interface PostCardProps {
-  post: PostData;
+  post: ExtendedPostData;
   isJoined?: boolean;
 }
 
@@ -148,6 +161,8 @@ const PostCard: React.FC<PostCardProps> = ({
           {post.content}
         </p>
       </Linkify>
+
+      {post.hnStoryShare && <HNStoryCard hnStory={post.hnStoryShare} />}
 
       {!!post.attachments.length && (
         <div className="max-w-full overflow-hidden">

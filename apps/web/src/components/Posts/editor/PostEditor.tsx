@@ -10,7 +10,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, Wind } from 'lucide-react';
-import { type ClipboardEvent, useCallback, useState } from 'react';
+import { type ClipboardEvent, useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { AttachmentPreview } from './AttachmentPreview';
 import { FileInput } from './FileInput';
@@ -19,6 +19,8 @@ import { MentionTags } from '@/components/Tags/MentionTags';
 import { Tags } from '@/components/Tags/Tags';
 import { useQuery } from '@tanstack/react-query';
 import type { TagWithCount, UserData } from '@zephyr/db';
+import { useHNShareStore } from '@zephyr/ui/store/hnShareStore';
+import { HNStoryPreview } from './HNStoryPreview';
 import useMediaUpload, { type Attachment } from './useMediaUpload';
 
 const containerVariants = {
@@ -53,6 +55,10 @@ const textVariants = {
 export default function PostEditor() {
   const { user } = useSession();
   const mutation = useSubmitPostMutation();
+  const hnShareStore = useHNShareStore();
+  const sharedHNStory = hnShareStore.story;
+  const isHNSharing = hnShareStore.isSharing;
+
   const { data: userData } = useQuery({
     queryKey: ['user', user.id],
     initialData: user,
@@ -129,8 +135,18 @@ export default function PostEditor() {
     setSelectedTags(tagsWithCount);
   }, []);
 
+  useEffect(() => {
+    if (isHNSharing && editor) {
+      editor.commands.focus();
+      editor.commands.setContent(`Sharing: "${sharedHNStory?.title}"`);
+      setTimeout(() => {
+        editor.commands.selectAll();
+      }, 100);
+    }
+  }, [isHNSharing, sharedHNStory, editor]);
+
   const onSubmit = useCallback(() => {
-    if (!input.trim()) {
+    if (!input.trim() && !isHNSharing) {
       return;
     }
 
@@ -141,9 +157,22 @@ export default function PostEditor() {
         .filter((id): id is string => Boolean(id)),
       tags: selectedTags.map((tag) => tag.name.toLowerCase()),
       mentions: selectedMentions.map((user) => user.id),
+      ...(isHNSharing && sharedHNStory
+        ? {
+            hnStory: {
+              storyId: sharedHNStory.id,
+              title: sharedHNStory.title,
+              url: sharedHNStory.url,
+              by: sharedHNStory.by,
+              time: sharedHNStory.time,
+              score: sharedHNStory.score,
+              descendants: sharedHNStory.descendants,
+            },
+          }
+        : {}),
     };
 
-    if (!payload.content) {
+    if (!payload.content && !isHNSharing) {
       return;
     }
 
@@ -154,6 +183,9 @@ export default function PostEditor() {
         setSelectedTags([]);
         setSelectedMentions([]);
         setIsEditorFocused(false);
+        if (isHNSharing) {
+          hnShareStore.clearState();
+        }
       },
     });
   }, [
@@ -164,6 +196,9 @@ export default function PostEditor() {
     mutation,
     editor,
     resetMediaUploads,
+    isHNSharing,
+    sharedHNStory,
+    hnShareStore,
   ]);
 
   const onPaste = useCallback(
@@ -247,6 +282,14 @@ export default function PostEditor() {
                   Drop files here
                 </p>
               </motion.div>
+            )}
+            {isHNSharing && sharedHNStory && (
+              <div className="mt-3">
+                <HNStoryPreview
+                  story={sharedHNStory}
+                  onRemoveAction={() => hnShareStore.clearState()}
+                />
+              </div>
             )}
           </motion.div>
           <input {...getInputProps()} />

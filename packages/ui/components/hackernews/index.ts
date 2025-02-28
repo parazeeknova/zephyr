@@ -3,3 +3,4 @@ export { HNSearchInput } from './HNSearchInput';
 export { HNStory } from './HNStory';
 export { hackerNewsMutations } from './mutations';
 export type { FetchStoriesParams, HNResponse } from './mutations';
+export type { HNStoryType, HNApiResponse } from './types';

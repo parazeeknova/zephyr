@@ -1,5 +1,4 @@
 // Prisma schema for the Zephyr database
-// Uses Supabase or Vercel Postgres from vercel
 
 generator client {
   provider        = "prisma-client-js"
@@ -147,6 +146,7 @@ model Post {
   auraLogs             AuraLog[]
   tags                 Tag[]
   mentions             Mention[]
+  hnStoryShare         HNStoryShare?
 
   createdAt DateTime @default(now())
 
@@ -220,6 +220,23 @@ model HNBookmark {
 
   @@unique([userId, storyId])
   @@index([userId])
+}
+
+// Hacker News story share model
+model HNStoryShare {
+  id          String   @id @default(cuid())
+  postId      String   @unique
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  storyId     Int
+  title       String
+  url         String?
+  by          String
+  time        Int
+  score       Int
+  descendants Int
+  createdAt   DateTime @default(now())
+
+  @@map("hn_story_shares")
 }
 
 // Comment model
