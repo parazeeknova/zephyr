@@ -9,8 +9,21 @@ import {
   tagCache,
 } from '@zephyr/db';
 
+type ExtendedCreatePostInput = CreatePostInput & {
+  hnStory?: {
+    storyId: number;
+    title: string;
+    url?: string;
+    by: string;
+    time: number;
+    score: number;
+    descendants: number;
+  };
+};
+
 const AURA_REWARDS = {
   BASE_POST: 10,
+  HN_SHARE: 15, // Add a reward for sharing HN stories
   ATTACHMENTS: {
     IMAGE: {
       BASE: 20,
@@ -38,9 +51,13 @@ const AURA_REWARDS = {
 
 type AttachmentType = 'IMAGE' | 'VIDEO' | 'AUDIO' | 'CODE';
 
-async function calculateAuraReward(mediaIds: string[]) {
+async function calculateAuraReward(mediaIds: string[], hasHNStory: boolean) {
+  let totalAura = hasHNStory
+    ? AURA_REWARDS.BASE_POST + AURA_REWARDS.HN_SHARE
+    : AURA_REWARDS.BASE_POST;
+
   if (!mediaIds.length) {
-    return AURA_REWARDS.BASE_POST;
+    return totalAura;
   }
 
   const mediaItems = await prisma.media.findMany({
@@ -48,7 +65,6 @@ async function calculateAuraReward(mediaIds: string[]) {
     select: { id: true, type: true },
   });
 
-  let totalAura = AURA_REWARDS.BASE_POST;
   const typeCount: Record<AttachmentType, number> = {
     IMAGE: 0,
     VIDEO: 0,
@@ -77,7 +93,7 @@ async function calculateAuraReward(mediaIds: string[]) {
   return Math.min(totalAura, AURA_REWARDS.MAX_TOTAL);
 }
 
-export async function submitPost(input: CreatePostInput) {
+export async function submitPost(input: ExtendedCreatePostInput) {
   try {
     const { user } = await validateRequest();
     if (!user) {
@@ -91,7 +107,10 @@ export async function submitPost(input: CreatePostInput) {
       mentions: input.mentions || [],
     });
 
-    const auraReward = await calculateAuraReward(validatedInput.mediaIds);
+    const auraReward = await calculateAuraReward(
+      validatedInput.mediaIds,
+      !!input.hnStory
+    );
 
     const newPost = await prisma.$transaction(async (tx) => {
       if (validatedInput.mentions.length > 0) {
@@ -148,8 +167,24 @@ export async function submitPost(input: CreatePostInput) {
               },
             },
           },
+          hnStoryShare: true,
         },
       });
+
+      if (input.hnStory) {
+        await tx.hNStoryShare.create({
+          data: {
+            postId: post.id,
+            storyId: input.hnStory.storyId,
+            title: input.hnStory.title,
+            url: input.hnStory.url || null,
+            by: input.hnStory.by,
+            time: input.hnStory.time,
+            score: input.hnStory.score,
+            descendants: input.hnStory.descendants,
+          },
+        });
+      }
 
       if (validatedInput.mentions.length > 0) {
         await Promise.all(
@@ -181,18 +216,56 @@ export async function submitPost(input: CreatePostInput) {
         },
       });
 
-      if (auraReward > AURA_REWARDS.BASE_POST) {
+      if (input.hnStory) {
         await tx.auraLog.create({
           data: {
             userId: user.id,
             issuerId: user.id,
-            amount: auraReward - AURA_REWARDS.BASE_POST,
+            amount: AURA_REWARDS.HN_SHARE,
             type: 'POST_ATTACHMENT_BONUS',
             postId: post.id,
           },
         });
       }
-      return post;
+
+      const attachmentBonus =
+        auraReward -
+        AURA_REWARDS.BASE_POST -
+        (input.hnStory ? AURA_REWARDS.HN_SHARE : 0);
+      if (attachmentBonus > 0) {
+        await tx.auraLog.create({
+          data: {
+            userId: user.id,
+            issuerId: user.id,
+            amount: attachmentBonus,
+            type: 'POST_ATTACHMENT_BONUS',
+            postId: post.id,
+          },
+        });
+      }
+
+      const completePost = await tx.post.findUnique({
+        where: { id: post.id },
+        include: {
+          ...getPostDataInclude(user.id),
+          tags: true,
+          mentions: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                  displayName: true,
+                  avatarUrl: true,
+                },
+              },
+            },
+          },
+          hnStoryShare: true,
+        },
+      });
+
+      return completePost;
     });
 
     return newPost;
@@ -300,7 +373,10 @@ export async function updatePostMentions(postId: string, mentions: string[]) {
 
       return await tx.post.findUnique({
         where: { id: postId },
-        include: getPostDataInclude(user.id),
+        include: {
+          ...getPostDataInclude(user.id),
+          hnStoryShare: true,
+        },
       });
     });
   } catch (error) {

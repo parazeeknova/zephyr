@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
             },
           },
         },
+        hnStoryShare: true, // Include HN story share data
       },
       orderBy: { createdAt: 'desc' },
       take: pageSize + 1,
@@ -100,6 +101,8 @@ export async function GET(req: NextRequest) {
         })),
         // @ts-expect-error
         mentions: post.mentions || [],
+        // @ts-expect-error
+        hnStoryShare: post.hnStoryShare,
       })),
       nextCursor,
     };

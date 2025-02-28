@@ -14,6 +14,15 @@ interface PostInput {
   mediaIds: string[];
   tags: string[];
   mentions: string[];
+  hnStory?: {
+    storyId: number;
+    title: string;
+    url?: string;
+    by: string;
+    time: number;
+    score: number;
+    descendants: number;
+  };
 }
 
 export function useSubmitPostMutation() {
@@ -29,6 +38,7 @@ export function useSubmitPostMutation() {
         mentions: Array.isArray(input.mentions)
           ? input.mentions.filter(Boolean)
           : [],
+        hnStory: input.hnStory,
       };
 
       const response = await submitPost(payload);
@@ -68,10 +78,14 @@ export function useSubmitPostMutation() {
       );
 
       queryClient.invalidateQueries({ queryKey: ['popularTags'] });
-
+      const isHNShare = !!newPost.hnStoryShare;
       toast({
-        title: 'Post created successfully!',
-        description: 'Your post is now live ✨',
+        title: isHNShare
+          ? 'HN Story shared successfully!'
+          : 'Post created successfully!',
+        description: isHNShare
+          ? 'Hacker News story has been shared with your thoughts ✨'
+          : 'Your post is now live ✨',
         duration: 5000,
       });
     },
@@ -91,6 +105,7 @@ export function useSubmitPostMutation() {
 }
 
 export function useUpdateMentionsMutation(postId?: string) {
+  // No changes needed here
   const { toast } = useToast();
   const queryClient = useQueryClient();
 

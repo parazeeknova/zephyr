@@ -57,7 +57,19 @@ export function TrendingTabs() {
       const newProgress = (elapsed / SWITCH_INTERVAL) * 100;
 
       if (newProgress >= 100) {
-        setActiveTab((current) => (current === 'topics' ? 'tags' : 'topics'));
+        setActiveTab((current) => {
+          switch (current) {
+            case 'topics':
+              return 'tags';
+            case 'tags':
+              return 'mentions';
+            case 'mentions':
+              return 'topics';
+            default:
+              return 'topics';
+          }
+        });
+
         startTime = Date.now();
         setProgress(0);
       } else {
