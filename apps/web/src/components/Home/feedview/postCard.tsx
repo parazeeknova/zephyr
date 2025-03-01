@@ -18,7 +18,7 @@ import { Button } from '@zephyr/ui/shadui/button';
 import { Card, CardContent } from '@zephyr/ui/shadui/card';
 import { Separator } from '@zephyr/ui/shadui/separator';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Eye, Flame, MessageSquare } from 'lucide-react';
+import { ArrowUpRight, Eye, Flame, MessageSquare, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
@@ -162,7 +162,17 @@ const PostCard: React.FC<PostCardProps> = ({
         </p>
       </Linkify>
 
-      {post.hnStoryShare && <HNStoryCard hnStory={post.hnStoryShare} />}
+      {post.hnStoryShare && (
+        <div className="mb-4">
+          <div className="mb-2 flex items-center text-muted-foreground text-xs sm:text-sm">
+            <Share2 className="mr-1.5 h-3.5 w-3.5 text-orange-500 sm:h-4 sm:w-4" />
+            <span className="font-medium">Reshared from Hacker News</span>
+          </div>
+          <div className="overflow-hidden rounded-lg border border-orange-500/30 bg-gradient-to-br from-orange-50/70 to-white dark:border-orange-500/20 dark:from-orange-950/10 dark:to-background/50">
+            <HNStoryCard hnStory={post.hnStoryShare} />
+          </div>
+        </div>
+      )}
 
       {!!post.attachments.length && (
         <div className="max-w-full overflow-hidden">
@@ -213,16 +223,24 @@ const PostCard: React.FC<PostCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       id={`post-${post.id}`}
+      className={post.hnStoryShare ? 'hn-story-share' : ''}
     >
       <ViewTracker postId={post.id} />
       {isJoined ? (
-        <div className="group/post">
-          <div className="p-4">
+        <div
+          className={`group/post ${post.hnStoryShare ? 'relative pb-1' : ''}`}
+        >
+          {post.hnStoryShare && (
+            <div className="absolute top-0 left-0 h-full w-1 rounded-full bg-gradient-to-b from-orange-400 to-yellow-500" />
+          )}
+          <div className={`p-4 ${post.hnStoryShare ? 'pl-5' : ''}`}>
             <PostContent />
           </div>
         </div>
       ) : (
-        <Card className="group/post border-border border-t border-b bg-background">
+        <Card
+          className={`group/post border-border border-t border-b bg-background ${post.hnStoryShare ? 'border-l-2 border-l-orange-500' : ''}`}
+        >
           <CardContent className="p-4">
             <PostContent />
           </CardContent>

@@ -37,17 +37,27 @@ export default function ForYouFeed() {
 
   if (status === 'success' && !posts.length && !hasNextPage) {
     return (
-      <p className="text-center text-muted-foreground">
-        No Fleets to show here.
-      </p>
+      <div className="p-4 text-center">
+        <p className="text-muted-foreground text-sm sm:text-base">
+          No Fleets to show here.
+        </p>
+        <p className="mt-2 text-muted-foreground/70 text-xs sm:text-sm">
+          Follow more users to see their fleets in your feed.
+        </p>
+      </div>
     );
   }
 
   if (status === 'error') {
     return (
-      <p className="text-center text-destructive">
-        An error occurred while loading posts.
-      </p>
+      <div className="p-4 text-center">
+        <p className="text-destructive text-sm sm:text-base">
+          An error occurred while loading posts.
+        </p>
+        <p className="mt-2 text-muted-foreground/70 text-xs sm:text-sm">
+          Please try refreshing the page.
+        </p>
+      </div>
     );
   }
 

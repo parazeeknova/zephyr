@@ -1,7 +1,6 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useHNShareStore } from '@ui/store/hnShareStore';
 import { toast } from '@zephyr/ui/hooks/use-toast';
 import { cn } from '@zephyr/ui/lib/utils';
 import { Badge } from '@zephyr/ui/shadui/badge';
@@ -26,6 +25,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
+import { useHNShareStore } from '../../store/hnShareStore';
 
 const storyVariants = {
   initial: { opacity: 0, y: 20 },

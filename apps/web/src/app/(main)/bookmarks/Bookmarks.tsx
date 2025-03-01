@@ -8,7 +8,7 @@ import kyInstance from '@/lib/ky';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import type { HNStory as HNStoryType } from '@zephyr/aggregator/hackernews';
 import type { PostsPage } from '@zephyr/db';
-import { HNStory } from '@zephyr/ui/components';
+import { HNStory } from '@zephyr/ui/components/hackernews';
 import { Card } from '@zephyr/ui/shadui/card';
 import {
   Tabs,
@@ -29,6 +29,22 @@ const tabVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
+interface BookmarkedPostsPage extends PostsPage {
+  posts: Array<
+    PostsPage['posts'][0] & {
+      hnStoryShare?: {
+        storyId: number;
+        title: string;
+        url?: string | null;
+        by: string;
+        time: number;
+        score: number;
+        descendants: number;
+      } | null;
+    }
+  >;
+}
+
 export default function Bookmarks() {
   const {
     data: postsData,
@@ -39,13 +55,16 @@ export default function Bookmarks() {
     status: postsStatus,
   } = useInfiniteQuery({
     queryKey: ['post-feed', 'bookmarks'],
-    queryFn: ({ pageParam }) =>
-      kyInstance
+    queryFn: async ({ pageParam }) => {
+      const response = await kyInstance
         .get(
           '/api/posts/bookmarked',
           pageParam ? { searchParams: { cursor: pageParam } } : {}
         )
-        .json<PostsPage>(),
+        .json<BookmarkedPostsPage>();
+
+      return response;
+    },
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
