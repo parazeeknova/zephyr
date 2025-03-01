@@ -107,7 +107,11 @@ export async function GET(req: NextRequest) {
       nextCursor,
     };
 
-    return NextResponse.json(responseData);
+    return NextResponse.json(responseData, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=20, stale-while-revalidate=30',
+      },
+    });
   } catch (error) {
     console.error('Error details:', {
       message: error instanceof Error ? error.message : 'Unknown error',
