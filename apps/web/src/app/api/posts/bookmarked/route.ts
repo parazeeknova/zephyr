@@ -12,13 +12,19 @@ export async function GET(req: NextRequest) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const standardInclude = getPostDataInclude(user.id);
+    const enhancedInclude = {
+      ...standardInclude,
+      hnStoryShare: true,
+    };
+
     const bookmarks = await prisma.bookmark.findMany({
       where: {
         userId: user.id,
       },
       include: {
         post: {
-          include: getPostDataInclude(user.id),
+          include: enhancedInclude,
         },
       },
       orderBy: {
