@@ -9,7 +9,7 @@ import { Card, CardContent } from '@zephyr/ui/shadui/card';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Hash, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import { useCallback, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 
 interface TagWithCount extends Tag {
   _count: {
@@ -21,8 +21,26 @@ const TagsBar = () => {
   const [hoveredTag, setHoveredTag] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const queryClient = useQueryClient();
-  // @ts-expect-error
-  const { popularTags, isLoading } = useTags();
+  const { popularTags } = useTags();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (popularTags) {
+      setIsLoading(false);
+    }
+  }, [popularTags]);
+  const [localTags, setLocalTags] = useState<TagWithCount[]>([]);
+
+  useEffect(() => {
+    if (popularTags && popularTags.length > 0) {
+      setLocalTags(
+        popularTags.map((tag) => ({
+          ...tag,
+          _count: { posts: 0 },
+        }))
+      );
+    }
+  }, [popularTags]);
 
   const handleRefresh = useCallback(() => {
     startTransition(() => {
@@ -30,7 +48,7 @@ const TagsBar = () => {
     });
   }, [queryClient]);
 
-  if (!popularTags.length && !isLoading) {
+  if (!localTags.length && !isLoading) {
     return null;
   }
 
@@ -70,7 +88,7 @@ const TagsBar = () => {
 
         <ul className="space-y-1.5">
           <AnimatePresence mode="popLayout">
-            {(popularTags as TagWithCount[]).map((tag, index) => (
+            {localTags.map((tag, index) => (
               <motion.li
                 key={tag.id}
                 initial={{ opacity: 0, y: 10 }}

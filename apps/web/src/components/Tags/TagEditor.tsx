@@ -6,7 +6,6 @@ import type { Tag } from '@prisma/client';
 import type { TagWithCount } from '@zephyr/db';
 import { useToast } from '@zephyr/ui/hooks/use-toast';
 import { Button } from '@zephyr/ui/shadui/button';
-import { DialogHeader, DialogTitle } from '@zephyr/ui/shadui/dialog';
 import { Command } from 'cmdk';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Hash, Loader2, Plus, Search, X } from 'lucide-react';
@@ -141,11 +140,7 @@ export function TagEditor({
   };
 
   return (
-    <div className="space-y-6">
-      <DialogHeader>
-        <DialogTitle className="font-semibold text-xl">Manage Tags</DialogTitle>
-      </DialogHeader>
-
+    <div>
       <motion.div
         variants={containerVariants}
         initial="initial"

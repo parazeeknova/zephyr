@@ -1,3 +1,4 @@
+import { useSession } from '@/app/(main)/SessionProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { PostData, TagWithCount, UserData } from '@zephyr/db';
 import { updatePostInCaches } from './cache-utils';
@@ -68,15 +69,20 @@ export function useUpdateTagsMutation(postId?: string) {
 
 export function useUpdateMentionsMutation(postId?: string) {
   const queryClient = useQueryClient();
+  const { user: currentUser } = useSession();
 
   return useMutation<PostData, Error, string[], MentionsMutationContext>({
     mutationFn: async (userIds) => {
+      const filteredUserIds = currentUser
+        ? userIds.filter((id) => id !== currentUser.id)
+        : userIds;
+
       const response = await fetch(`/api/posts/${postId}/mentions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userIds }),
+        body: JSON.stringify({ userIds: filteredUserIds }),
       });
       if (!response.ok) {
         throw new Error('Failed to update mentions');
@@ -90,7 +96,12 @@ export function useUpdateMentionsMutation(postId?: string) {
 
       await queryClient.cancelQueries({ queryKey: ['post', postId] });
       const previousPost = queryClient.getQueryData<PostData>(['post', postId]);
-      const users = newUserIds
+
+      const filteredUserIds = currentUser
+        ? newUserIds.filter((id) => id !== currentUser.id)
+        : newUserIds;
+
+      const users = filteredUserIds
         .map((id) => queryClient.getQueryData<UserData>(['user', id]))
         .filter((u): u is UserData => !!u);
 

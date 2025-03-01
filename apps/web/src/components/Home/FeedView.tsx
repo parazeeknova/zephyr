@@ -25,24 +25,26 @@ export const FeedView: React.FC<FeedViewProps> = ({ posts: initialPosts }) => {
 
   useEffect(() => {
     const unsubscribe = queryClient.getQueryCache().subscribe(() => {
-      const feedQueries = queryClient.getQueriesData<{
-        pages: { posts: PostData[] }[];
-      }>({
-        queryKey: ['post-feed', 'for-you'],
-      });
+      setTimeout(() => {
+        const feedQueries = queryClient.getQueriesData<{
+          pages: { posts: PostData[] }[];
+        }>({
+          queryKey: ['post-feed', 'for-you'],
+        });
 
-      if (feedQueries.length > 0) {
-        const updatedPosts = feedQueries.flatMap(
-          ([, data]) => data?.pages?.flatMap((page) => page.posts) || []
-        );
-
-        if (updatedPosts.length) {
-          const uniquePosts = Array.from(
-            new Map(updatedPosts.map((post) => [post.id, post])).values()
+        if (feedQueries.length > 0) {
+          const updatedPosts = feedQueries.flatMap(
+            ([, data]) => data?.pages?.flatMap((page) => page.posts) || []
           );
-          setPosts(uniquePosts);
+
+          if (updatedPosts.length) {
+            const uniquePosts = Array.from(
+              new Map(updatedPosts.map((post) => [post.id, post])).values()
+            );
+            setPosts(uniquePosts);
+          }
         }
-      }
+      }, 0);
     });
 
     return () => {
