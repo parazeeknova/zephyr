@@ -1,7 +1,6 @@
-import type { NextRequest } from 'next/server';
-
 import { validateRequest } from '@zephyr/auth/auth';
 import { type PostsPage, getPostDataInclude, prisma } from '@zephyr/db';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,7 +9,7 @@ export async function GET(req: NextRequest) {
     const { user } = await validateRequest();
 
     if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const posts = await prisma.post.findMany({
@@ -37,9 +36,21 @@ export async function GET(req: NextRequest) {
       nextCursor,
     };
 
-    return Response.json(data);
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=20, stale-while-revalidate=30',
+      },
+    });
   } catch (error) {
-    console.error(error);
-    return Response.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      name: error instanceof Error ? error.name : 'Unknown',
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

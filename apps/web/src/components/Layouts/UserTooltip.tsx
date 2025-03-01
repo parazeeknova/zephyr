@@ -10,7 +10,7 @@ import {
   TooltipTrigger,
 } from '@zephyr/ui/shadui/tooltip';
 import Link from 'next/link';
-import type { PropsWithChildren } from 'react';
+import { type PropsWithChildren, useEffect, useState } from 'react';
 import FollowButton from './FollowButton';
 import FollowerCount from './FollowerCount';
 import UserAvatar from './UserAvatar';
@@ -21,6 +21,21 @@ interface UserTooltipProps extends PropsWithChildren {
 
 export default function UserTooltip({ children, user }: UserTooltipProps) {
   const { user: loggedInUser } = useSession();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsMobile(window.innerWidth < 768);
+      const handleResize = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+  }, []);
 
   const followerState: FollowerInfo = {
     followers: user._count.followers,
@@ -30,6 +45,10 @@ export default function UserTooltip({ children, user }: UserTooltipProps) {
         )
       : false,
   };
+
+  if (isMobile) {
+    return <>{children}</>;
+  }
 
   return (
     <TooltipProvider>
