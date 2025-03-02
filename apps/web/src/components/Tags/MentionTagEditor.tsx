@@ -1,10 +1,10 @@
 'use client';
 
+import { useSession } from '@/app/(main)/SessionProvider';
 import { useUpdateMentionsMutation } from '@/posts/editor/mutations';
 import type { UserData } from '@zephyr/db';
 import { useToast } from '@zephyr/ui/hooks/use-toast';
 import { Button } from '@zephyr/ui/shadui/button';
-import { DialogHeader, DialogTitle } from '@zephyr/ui/shadui/dialog';
 import { Command } from 'cmdk';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, Search, X } from 'lucide-react';
@@ -61,6 +61,7 @@ export function MentionTagEditor({
   const [selectedMentions, setSelectedMentions] =
     useState<UserData[]>(initialMentions);
   const updateMentions = useUpdateMentionsMutation(postId);
+  const { user: currentUser } = useSession();
 
   const searchUsers = async (query: string) => {
     if (!query.trim()) {
@@ -77,6 +78,7 @@ export function MentionTagEditor({
         throw new Error('Failed to search users');
       }
       const data = await res.json();
+
       setSuggestions(data.users);
     } catch (error) {
       console.error('Error searching users:', error);
@@ -120,8 +122,7 @@ export function MentionTagEditor({
       onCloseAction();
 
       await updateMentions.mutateAsync(selectedMentions.map((m) => m.id));
-      // biome-ignore lint/correctness/noUnusedVariables: ignore
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update mentions. Please try again.',
@@ -130,19 +131,17 @@ export function MentionTagEditor({
     }
   };
 
-  return (
-    <div className="space-y-6">
-      <DialogHeader>
-        <DialogTitle className="font-semibold text-xl">
-          Mention Users
-        </DialogTitle>
-      </DialogHeader>
+  const isCurrentUser = (userId: string) => {
+    return currentUser?.id === userId;
+  };
 
+  return (
+    <div>
       <motion.div
         variants={containerVariants}
         initial="initial"
         animate="animate"
-        className="space-y-4"
+        className="space-y-2"
       >
         <div className="flex min-h-[40px] flex-wrap gap-2">
           <AnimatePresence mode="popLayout">
@@ -156,6 +155,9 @@ export function MentionTagEditor({
                 <UserAvatar user={user} size={20} />
                 <span className="font-medium text-blue-500 text-sm">
                   @{user.username}
+                  {isCurrentUser(user.id) && (
+                    <span className="ml-1 text-blue-400 text-xs">(you)</span>
+                  )}
                 </span>
                 <button
                   type="button"
@@ -197,6 +199,9 @@ export function MentionTagEditor({
                     <span className="font-medium">{user.displayName}</span>
                     <span className="text-muted-foreground text-xs">
                       @{user.username}
+                      {isCurrentUser(user.id) && (
+                        <span className="ml-1 text-blue-400">(you)</span>
+                      )}
                     </span>
                   </div>
                 </Command.Item>

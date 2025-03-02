@@ -213,6 +213,32 @@ export async function DELETE(
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const existingVote = await prisma.vote.findUnique({
+      where: {
+        userId_postId: {
+          userId: loggedInUser.id,
+          postId,
+        },
+      },
+    });
+
+    if (!existingVote) {
+      const post = await prisma.post.findUnique({
+        where: { id: postId },
+        include: getPostDataInclude(loggedInUser.id),
+      });
+
+      if (!post) {
+        return Response.json({ error: 'Post not found' }, { status: 404 });
+      }
+
+      return Response.json({
+        ...post,
+        aura: post.aura,
+        userVote: 0,
+      });
+    }
+
     const updatedPost = await prisma.$transaction(async (tx) => {
       const existingVote = await tx.vote.findUnique({
         where: {

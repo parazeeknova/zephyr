@@ -23,7 +23,9 @@ import {
   User,
   // @ts-expect-error - lucide-react is not typed
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import type React from 'react';
+import { useHNShareStore } from '../../store/hnShareStore';
 
 const storyVariants = {
   initial: { opacity: 0, y: 20 },
@@ -54,6 +56,26 @@ interface HNStoryProps {
 export function HNStory({ story }: HNStoryProps) {
   const domain = story.url ? new URL(story.url).hostname : null;
   const timeAgo = formatDistanceToNow(story.time * 1000, { addSuffix: true });
+  const hnShareStore = useHNShareStore();
+  const router = useRouter();
+
+  const handleShareToZephyr = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    hnShareStore.startSharing({
+      id: story.id,
+      title: story.title,
+      url: story.url,
+      by: story.by,
+      time: story.time,
+      score: story.score,
+      descendants: story.descendants,
+    });
+    toast({
+      title: 'Story ready to share',
+      description: 'Add your thoughts and share with your followers',
+    });
+    router.push('/');
+  };
 
   const handleShare = async () => {
     try {
@@ -232,6 +254,15 @@ export function HNStory({ story }: HNStoryProps) {
           >
             <Share2 className="h-4 w-4" />
             <span>Share</span>
+          </motion.button>
+
+          <motion.button
+            onClick={handleShareToZephyr}
+            className="group flex cursor-pointer items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-orange-500"
+            whileHover={{ scale: 1.05 }}
+          >
+            <Share2 className="h-4 w-4 rotate-90" />
+            <span>Share to Zephyr</span>
           </motion.button>
 
           <motion.button

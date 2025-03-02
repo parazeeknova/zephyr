@@ -102,13 +102,23 @@ export default function UserButton({ className }: UserButtonProps) {
     setIsMobileMenuOpen(false);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setShowLogoutDialog(false);
     queryClient.removeQueries({ queryKey: ['user'] });
     queryClient.removeQueries({ queryKey: ['avatar'] });
     queryClient.removeQueries({ queryKey: ['post-feed'] });
     queryClient.clear();
-    logout();
+
+    try {
+      const result = await logout();
+      if (result.redirect) {
+        window.location.href = result.redirect;
+      } else if (result.error) {
+        console.error('Logout error:', result.error);
+      }
+    } catch (error) {
+      console.error('Failed to logout:', error);
+    }
   };
 
   const UserTrigger = () => (
@@ -415,7 +425,7 @@ export default function UserButton({ className }: UserButtonProps) {
             <Button
               variant="destructive"
               onClick={handleLogout}
-              className="w-full sm:w-auto"
+              className="w-full border border-red-600/20 bg-red-500/75 font-medium text-white shadow-sm backdrop-blur-md transition-all duration-200 hover:bg-red-600/90 sm:w-auto"
             >
               Logout
             </Button>

@@ -1,11 +1,19 @@
+'use client';
+
 import UserAvatar from '@/components/Layouts/UserAvatar';
 import { cn } from '@/lib/utils';
 import { useUpdateMentionsMutation } from '@/posts/editor/mutations';
 import type { UserData } from '@zephyr/db';
 import { Button } from '@zephyr/ui/shadui/button';
-import { Dialog, DialogContent, DialogTitle } from '@zephyr/ui/shadui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@zephyr/ui/shadui/dialog';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AtSign } from 'lucide-react';
+import { AtSign, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { MentionTagEditor } from './MentionTagEditor';
 
@@ -14,20 +22,57 @@ const containerVariants = {
   animate: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.04,
+      when: 'beforeChildren',
     },
   },
 };
 
 const tagVariants = {
-  initial: { opacity: 0, scale: 0.9 },
-  animate: { opacity: 1, scale: 1 },
-  hover: { scale: 1.05 },
-  exit: { opacity: 0, scale: 0.9 },
+  initial: { opacity: 0, y: -3 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 120,
+      damping: 20,
+    },
+  },
+  hover: {
+    y: -1,
+    transition: {
+      type: 'spring',
+      stiffness: 150,
+      damping: 15,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    transition: {
+      duration: 0.15,
+      ease: 'easeOut',
+    },
+  },
+};
+
+const glowVariants = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: [0.25, 0.4, 0.25],
+    scale: [0.95, 1.05, 0.95],
+    filter: ['blur(6px)', 'blur(10px)', 'blur(6px)'],
+    transition: {
+      duration: 2,
+      repeat: Number.POSITIVE_INFINITY,
+      ease: 'easeInOut',
+    },
+  },
 };
 
 const baseTagClass =
-  'flex h-7 items-center gap-1.5 rounded-full border px-3 py-1';
+  'flex items-center gap-1.5 rounded-full border px-3 py-1 shadow-sm h-7';
 
 interface MentionTagsProps {
   mentions: UserData[];
@@ -47,7 +92,7 @@ export function MentionTags({
   const [isEditing, setIsEditing] = useState(false);
   const [localMentions, setLocalMentions] =
     useState<UserData[]>(initialMentions);
-  const [_hoveredTag, setHoveredTag] = useState<string | null>(null);
+  const [hoveredTag, setHoveredTag] = useState<string | null>(null);
   const updateMentions = useUpdateMentionsMutation(postId);
 
   useEffect(() => {
@@ -71,12 +116,32 @@ export function MentionTags({
     }
   };
 
+  const getTagWidth = (user: UserData) => {
+    const displayName = user.displayName || user.username;
+    const username = user.username;
+    const displayNameLength = displayName.length;
+    const usernameLength = username.length;
+    const maxLength = Math.max(displayNameLength, usernameLength);
+
+    if (maxLength <= 10) {
+      return 'w-auto min-w-[80px]';
+    }
+    if (maxLength <= 15) {
+      return 'w-auto min-w-[100px]';
+    }
+    if (maxLength <= 20) {
+      return 'w-auto min-w-[120px]';
+    }
+    return 'w-auto min-w-[140px]';
+  };
+
   return (
     <>
       {localMentions.length > 0 || isOwner ? (
         <div className="space-y-2">
-          <h3 className="text-muted-foreground text-sm">
-            People mentioned in this post:
+          <h3 className="flex items-center gap-1.5 text-muted-foreground text-xs">
+            <Sparkles className="h-3 w-3 text-blue-400" />
+            <span>Mentioned in post</span>
           </h3>
           <motion.div
             variants={containerVariants}
@@ -86,27 +151,62 @@ export function MentionTags({
           >
             <AnimatePresence mode="sync">
               {localMentions.map((user) => (
-                <motion.div
+                <Link
+                  href={`/users/${user.username}`}
                   key={user.id}
-                  variants={tagVariants}
-                  layout
-                  whileHover="hover"
-                  onHoverStart={() => setHoveredTag(user.id)}
-                  onHoverEnd={() => setHoveredTag(null)}
-                  className="group relative"
+                  className="rounded-full no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                 >
-                  <div
-                    className={cn(
-                      baseTagClass,
-                      'bg-blue-500/5 text-blue-500 hover:border-blue-500/30 hover:bg-blue-500/10'
-                    )}
+                  <motion.div
+                    variants={tagVariants}
+                    layout
+                    whileHover="hover"
+                    onHoverStart={() => setHoveredTag(user.id)}
+                    onHoverEnd={() => setHoveredTag(null)}
+                    className="group relative cursor-pointer"
                   >
-                    <UserAvatar user={user} size={20} />
-                    <span className="pointer-events-none font-medium">
-                      @{user.username}
-                    </span>
-                  </div>
-                </motion.div>
+                    {hoveredTag === user.id && (
+                      <motion.div
+                        variants={glowVariants}
+                        initial="initial"
+                        animate="animate"
+                        className="-z-10 absolute inset-0 rounded-full bg-blue-500/20"
+                      />
+                    )}
+                    <div
+                      className={cn(
+                        baseTagClass,
+                        getTagWidth(user),
+                        'border-blue-400/20 bg-blue-500/5 text-blue-600 hover:border-blue-500/30 hover:bg-blue-500/10',
+                        'backdrop-blur-sm backdrop-filter'
+                      )}
+                    >
+                      <UserAvatar user={user} size={20} />
+                      <div className="relative flex flex-1 items-center justify-center overflow-hidden">
+                        <motion.span
+                          className="pointer-events-none inline-block truncate text-center font-normal"
+                          animate={{
+                            opacity: hoveredTag === user.id ? 0 : 1,
+                            y: hoveredTag === user.id ? -8 : 0,
+                            transition: { duration: 0.15 },
+                          }}
+                        >
+                          {user.displayName || user.username}
+                        </motion.span>
+
+                        <motion.span
+                          className="pointer-events-none absolute inline-block truncate text-center font-medium text-xs"
+                          animate={{
+                            opacity: hoveredTag === user.id ? 1 : 0,
+                            y: hoveredTag === user.id ? 0 : 8,
+                            transition: { duration: 0.15 },
+                          }}
+                        >
+                          @{user.username}
+                        </motion.span>
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
               ))}
 
               {isOwner && (
@@ -122,13 +222,21 @@ export function MentionTags({
                     onClick={() => setIsEditing(true)}
                     className={cn(
                       baseTagClass,
-                      'bg-muted/50 hover:border-blue-500/30 hover:bg-muted/80',
+                      'h-7 border-blue-400/15 bg-blue-500/5 hover:border-blue-500/30 hover:bg-blue-500/10',
                       'font-normal'
                     )}
                   >
-                    <AtSign className="mr-1 h-3.5 w-3.5" />
-                    <span className="text-sm">Mention someone</span>
+                    <AtSign className="mr-1 h-3 w-3 text-blue-500" />
+                    <span className="text-blue-600 text-xs">Add mention</span>
                   </Button>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileHover={{
+                      opacity: 1,
+                      transition: { duration: 0.2 },
+                    }}
+                    className="-z-10 absolute inset-0 rounded-full bg-blue-500/20 blur-md"
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -137,8 +245,17 @@ export function MentionTags({
       ) : null}
 
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogTitle>Edit Mentions</DialogTitle>
+        <DialogContent className="rounded-xl border border-blue-500/15 shadow-blue-500/5 shadow-lg sm:max-w-[400px]">
+          <DialogTitle className="flex items-center gap-2 font-medium text-base">
+            <AtSign className="h-3.5 w-3.5 text-blue-500" />
+            Mention People
+          </DialogTitle>
+          <DialogDescription
+            className="text-muted-foreground text-xs"
+            aria-describedby="MentionTagEditor"
+          >
+            Add people to notify about this post
+          </DialogDescription>
           <MentionTagEditor
             initialMentions={localMentions}
             onCloseAction={() => setIsEditing(false)}

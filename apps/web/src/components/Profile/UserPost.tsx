@@ -8,7 +8,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import type { PostsPage } from '@zephyr/db';
 import { Loader2 } from 'lucide-react';
 import { useMemo } from 'react';
-import type React from 'react';
+import React from 'react';
 
 interface UserPostsProps {
   userId: string;
@@ -24,7 +24,7 @@ const UserPosts: React.FC<UserPostsProps> = ({ userId, filter = 'all' }) => {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ['post-feed', 'user-posts', userId],
+    queryKey: ['post-feed', 'user-posts', userId, filter],
     queryFn: ({ pageParam }) =>
       kyInstance
         .get(
@@ -34,6 +34,7 @@ const UserPosts: React.FC<UserPostsProps> = ({ userId, filter = 'all' }) => {
         .json<PostsPage>(),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+    staleTime: 1000 * 60, // 1 minute stale time to reduce refetches
   });
 
   const filteredPosts = useMemo(() => {
@@ -85,6 +86,9 @@ const UserPosts: React.FC<UserPostsProps> = ({ userId, filter = 'all' }) => {
     );
   }
 
+  // Using a memoized post renderer to prevent unnecessary re-renders
+  const MemoizedPost = React.memo(Post);
+
   return (
     <div className="space-y-4">
       <InfiniteScrollContainer
@@ -92,7 +96,7 @@ const UserPosts: React.FC<UserPostsProps> = ({ userId, filter = 'all' }) => {
         onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
       >
         {filteredPosts.map((post) => (
-          <Post key={post.id} post={post} />
+          <MemoizedPost key={post.id} post={post} />
         ))}
         {isFetchingNextPage && (
           <div className="flex justify-center py-4">
@@ -104,4 +108,4 @@ const UserPosts: React.FC<UserPostsProps> = ({ userId, filter = 'all' }) => {
   );
 };
 
-export default UserPosts;
+export default React.memo(UserPosts);

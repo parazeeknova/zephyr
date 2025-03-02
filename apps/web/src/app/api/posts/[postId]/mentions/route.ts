@@ -42,7 +42,11 @@ export async function POST(
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { mentions } = await request.json();
+    const { userIds } = await request.json();
+
+    const filteredUserIds = Array.isArray(userIds)
+      ? userIds.filter((id) => id !== user.id)
+      : [];
 
     const post = await prisma.post.findUnique({
       where: { id: params.postId },
@@ -62,7 +66,7 @@ export async function POST(
         where: { postId: params.postId },
       });
 
-      const mentionPromises = mentions.map((userId: string) =>
+      const mentionPromises = filteredUserIds.map((userId: string) =>
         tx.mention.create({
           data: {
             postId: params.postId,
@@ -71,7 +75,7 @@ export async function POST(
         })
       );
 
-      const notificationPromises = mentions.map((userId: string) =>
+      const notificationPromises = filteredUserIds.map((userId: string) =>
         tx.notification.create({
           data: {
             type: NotificationType.MENTION,

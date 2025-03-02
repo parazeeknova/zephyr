@@ -31,16 +31,23 @@ export default function AuraVoteButton({
     queryFn: () =>
       kyInstance.get(`/api/posts/${postId}/votes`).json<VoteInfo>(),
     initialData: initialState,
-    staleTime: 0, // Always fetch fresh data
-    refetchOnMount: true, // Refetch when component mounts
-    refetchOnWindowFocus: true, // Refetch when window regains focus
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   const { mutate } = useMutation({
-    mutationFn: (vote: number) =>
-      vote === data.userVote
-        ? kyInstance.delete(`/api/posts/${postId}/votes`)
-        : kyInstance.post(`/api/posts/${postId}/votes`, { json: { vote } }),
+    mutationFn: async (vote: number) => {
+      const response =
+        vote === data.userVote
+          ? await kyInstance
+              .delete(`/api/posts/${postId}/votes`)
+              .json<VoteInfo>()
+          : await kyInstance
+              .post(`/api/posts/${postId}/votes`, { json: { vote } })
+              .json<VoteInfo>();
+      return { serverResponse: response, voteAttempted: vote };
+    },
     onMutate: async (newVote) => {
       await queryClient.cancelQueries({ queryKey });
       const previousState = queryClient.getQueryData<VoteInfo>(queryKey);
@@ -73,21 +80,28 @@ export default function AuraVoteButton({
       });
       return { previousState };
     },
-    onSuccess: (_, newVote) => {
+    onSuccess: (result, _newVote) => {
+      const { serverResponse } = result;
+      queryClient.setQueryData<VoteInfo>(queryKey, {
+        aura: serverResponse.aura,
+        userVote: serverResponse.userVote,
+      });
+
       const previousVote = data.userVote;
-      if (newVote === 1 && previousVote === 1) {
+
+      if (serverResponse.userVote === 1) {
         toast({
           description: `Amplified ${authorName}'s post`,
         });
-      } else if (newVote === -1 && previousVote === -1) {
+      } else if (serverResponse.userVote === -1) {
         toast({
           description: `Muted ${authorName}'s post`,
         });
-      } else if (newVote === 1 && previousVote !== 1) {
+      } else if (serverResponse.userVote === 0 && previousVote === 1) {
         toast({
           description: `Removed amplification from ${authorName}'s post`,
         });
-      } else if (newVote === -1 && previousVote !== -1) {
+      } else if (serverResponse.userVote === 0 && previousVote === -1) {
         toast({
           description: `Removed muting from ${authorName}'s post`,
         });
@@ -105,12 +119,12 @@ export default function AuraVoteButton({
 
   const calculateVoteChange = (oldVote: number, newVote: number): number => {
     if (oldVote === newVote) {
-      return -oldVote; // Removing vote
+      return -oldVote;
     }
     if (oldVote === 0) {
-      return newVote; // Adding new vote
+      return newVote;
     }
-    return newVote - oldVote; // Changing vote
+    return newVote - oldVote;
   };
 
   return (

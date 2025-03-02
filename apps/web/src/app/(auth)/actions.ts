@@ -2,24 +2,25 @@
 
 import { lucia, validateRequest } from '@zephyr/auth/auth';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 export async function logout() {
-  const { session } = await validateRequest();
+  try {
+    const { session } = await validateRequest();
+    if (session) {
+      await lucia.invalidateSession(session.id);
+    }
 
-  if (!session) {
-    throw new Error('Unauthorized');
+    const cookieStore = await cookies();
+    const sessionCookie = lucia.createBlankSessionCookie();
+
+    cookieStore.set(sessionCookie.name, sessionCookie.value, {
+      ...sessionCookie.attributes,
+      path: '/',
+    });
+
+    return { redirect: '/login' };
+  } catch (error) {
+    console.error('Session invalidation error:', error);
+    return { error: 'Logout failed' };
   }
-
-  await lucia.invalidateSession(session.id);
-
-  const sessionCookie = lucia.createBlankSessionCookie();
-
-  (await cookies()).set(
-    sessionCookie.name,
-    sessionCookie.value,
-    sessionCookie.attributes
-  );
-
-  return redirect('/login');
 }

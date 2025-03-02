@@ -10,7 +10,9 @@ type RouteContext = {
 
 export async function GET(_request: NextRequest, context: RouteContext) {
   try {
-    const { userId } = context.params;
+    const params = await context.params;
+    const userId = params.userId;
+
     const cachedAvatar = await avatarCache.get(userId);
 
     if (cachedAvatar) {

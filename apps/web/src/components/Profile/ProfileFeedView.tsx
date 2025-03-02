@@ -12,9 +12,12 @@ import {
   TabsTrigger,
 } from '@zephyr/ui/shadui/tabs';
 import { motion } from 'framer-motion';
+import { AtSignIcon, FileTextIcon } from 'lucide-react';
 import type React from 'react';
+import { useCallback, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { ErrorFallback } from '../misc/ErrorBoundary';
+import MentionedPosts from './MentionedPosts';
 import UserPosts from './UserPost';
 import UserDetails from './sidebars/right/UserDetails';
 
@@ -29,6 +32,7 @@ const ProfileFeedView: React.FC<ProfileFeedViewProps> = ({
   loggedInUserId,
 }) => {
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState('posts');
 
   const {
     data: userData,
@@ -57,24 +61,21 @@ const ProfileFeedView: React.FC<ProfileFeedViewProps> = ({
     retry: 2,
   });
 
-  const tabConfig = [
-    { value: 'all', label: 'All' },
-    { value: 'scribbles', label: 'Fleets' },
-    { value: 'snapshots', label: 'Snapshots' },
-    { value: 'media', label: 'Reels' },
-    { value: 'files', label: 'Wisps' },
-  ];
+  const handleTabChange = useCallback((value: string) => {
+    setActiveTab(value);
+  }, []);
 
   if (isLoading) {
     return <ProfileSkeleton />;
   }
+
   if (error || !userData) {
     return <div>Error loading profile</div>;
   }
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <div className="flex-1 overflow-auto bg-background p-4 text-foreground md:p-8">
+      <div className="flex-1 bg-background p-4 text-foreground md:p-8">
         <motion.main
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -88,40 +89,83 @@ const ProfileFeedView: React.FC<ProfileFeedViewProps> = ({
             <ProfileHeader userData={userData} />
           </div>
 
-          <Card className="mb-8 bg-card shadow-lg">
+          <Card className="mb-8 overflow-hidden bg-card shadow-lg">
             <div className="p-4">
-              <Tabs defaultValue="all" className="w-full">
-                <div className="mb-4 flex justify-center sm:mb-6">
-                  <TabsList className="grid w-full max-w-2xl grid-cols-5">
-                    {tabConfig.map((tab) => (
-                      <TabsTrigger key={tab.value} value={tab.value}>
-                        {tab.label}
-                      </TabsTrigger>
-                    ))}
+              <Tabs
+                defaultValue="posts"
+                value={activeTab}
+                onValueChange={handleTabChange}
+                className="w-full"
+              >
+                <div className="mb-6 flex justify-center">
+                  <TabsList className="relative flex gap-2 rounded-full border bg-muted/30 p-0 shadow-inner shadow-white/5 ring-1 ring-white/10 backdrop-blur-xl dark:shadow-black/10 dark:ring-black/20">
+                    <div
+                      className="-z-10 absolute inset-0 rounded-full bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20 opacity-30 blur-md"
+                      style={{
+                        background:
+                          'radial-gradient(circle at top left, rgba(var(--primary-rgb), 0.15), transparent 70%), radial-gradient(circle at bottom right, rgba(var(--accent-rgb), 0.15), transparent 70%)',
+                      }}
+                    />
+                    <TabsTrigger
+                      value="posts"
+                      className="group relative flex items-center gap-2 rounded-full px-5 py-2.5 font-medium text-sm transition-all duration-300 ease-out hover:bg-background/50 data-[state=active]:scale-105 data-[state=active]:text-primary"
+                    >
+                      <span className="absolute inset-0 rounded-full bg-background/0 shadow-none transition-all duration-300 group-data-[state=active]:bg-background group-data-[state=active]:shadow-md group-data-[state=active]:shadow-primary/10" />
+                      <span className="relative z-10 flex items-center gap-2">
+                        <span className="relative">
+                          <FileTextIcon className="h-4 w-4 transition-all duration-300 group-data-[state=active]:text-primary" />
+                          <span className="absolute inset-0 rounded-full bg-primary/20 opacity-0 blur-sm transition-opacity group-hover:opacity-30 group-data-[state=active]:opacity-50" />
+                        </span>
+                        <span className="transition-all duration-300 group-data-[state=active]:font-semibold">
+                          Posts
+                        </span>
+                      </span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="mentions"
+                      className="group relative flex items-center gap-2 rounded-full px-5 py-2.5 font-medium text-sm transition-all duration-300 ease-out hover:bg-background/50 data-[state=active]:scale-105 data-[state=active]:text-primary"
+                    >
+                      <span className="absolute inset-0 rounded-full bg-background/0 shadow-none transition-all duration-300 group-data-[state=active]:bg-background group-data-[state=active]:shadow-md group-data-[state=active]:shadow-primary/10" />
+                      <span className="relative z-10 flex items-center gap-2">
+                        <span className="relative">
+                          <AtSignIcon className="h-4 w-4 transition-all duration-300 group-data-[state=active]:text-primary" />
+                          <span className="absolute inset-0 rounded-full bg-primary/20 opacity-0 blur-sm transition-opacity group-hover:opacity-30 group-data-[state=active]:opacity-50" />
+                        </span>
+                        <span className="transition-all duration-300 group-data-[state=active]:font-semibold">
+                          Mentions
+                        </span>
+                      </span>
+                    </TabsTrigger>
                   </TabsList>
                 </div>
 
-                {tabConfig.map((tab) => (
-                  <TabsContent key={tab.value} value={tab.value}>
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.4, duration: 0.5 }}
-                    >
-                      <UserPosts
-                        userId={userData.id}
-                        filter={
-                          tab.value as
-                            | 'all'
-                            | 'scribbles'
-                            | 'snapshots'
-                            | 'media'
-                            | 'files'
-                        }
-                      />
-                    </motion.div>
-                  </TabsContent>
-                ))}
+                <TabsContent
+                  value="posts"
+                  className={activeTab === 'posts' ? 'block' : 'hidden'}
+                >
+                  <motion.div
+                    initial={false}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                    key="posts-tab"
+                  >
+                    <UserPosts userId={userData.id} filter="all" />
+                  </motion.div>
+                </TabsContent>
+
+                <TabsContent
+                  value="mentions"
+                  className={activeTab === 'mentions' ? 'block' : 'hidden'}
+                >
+                  <motion.div
+                    initial={false}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                    key="mentions-tab"
+                  >
+                    <MentionedPosts userId={userData.id} />
+                  </motion.div>
+                </TabsContent>
               </Tabs>
             </div>
           </Card>
@@ -191,7 +235,7 @@ const ProfileHeader: React.FC<{ userData: UserData }> = ({ userData }) => {
               {userData.displayName}'s Profile
             </h1>
             <p className="mt-1 text-muted-foreground">
-              You are viewing {userData.displayName}'s fleets.
+              You are viewing {userData.displayName}'s content
             </p>
           </div>
         </div>

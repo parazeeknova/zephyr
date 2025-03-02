@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
             },
           },
         },
+        hnStoryShare: true, // Include HN story share data
       },
       orderBy: { createdAt: 'desc' },
       take: pageSize + 1,
@@ -100,11 +101,17 @@ export async function GET(req: NextRequest) {
         })),
         // @ts-expect-error
         mentions: post.mentions || [],
+        // @ts-expect-error
+        hnStoryShare: post.hnStoryShare,
       })),
       nextCursor,
     };
 
-    return NextResponse.json(responseData);
+    return NextResponse.json(responseData, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=20, stale-while-revalidate=30',
+      },
+    });
   } catch (error) {
     console.error('Error details:', {
       message: error instanceof Error ? error.message : 'Unknown error',

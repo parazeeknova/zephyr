@@ -1,5 +1,5 @@
 import FeedViewSkeleton from '@/components/Layouts/skeletons/FeedViewSkeleton';
-import { HNFeed } from '@zephyr/ui/components';
+import { HNFeed } from '@zephyr/ui/components/hackernews/HNFeed';
 import { Suspense } from 'react';
 
 export const metadata = {
