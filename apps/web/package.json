@@ -60,7 +60,7 @@
     "sonner": "^1.7.4",
     "stream-browserify": "^3.0.0",
     "stream-chat": "^8.55.0",
-    "stream-chat-react": "^12.11.0",
+    "stream-chat-react": "^12.13.0",
     "tailwind-merge": "^3.0.1",
     "usehooks-ts": "^3.1.1",
     "util": "^0.12.5",
