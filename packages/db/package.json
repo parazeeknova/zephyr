@@ -17,15 +17,15 @@
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.12.0",
     "date-fns": "^4.1.0",
-    "ioredis": "^5.5.0",
-    "stream-chat": "^8.55.0",
-    "zod": "^3.24.1"
+    "ioredis": "^5.6.0",
+    "stream-chat": "^8.57.6",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@prisma/client": "^6.3.1",
-    "@types/node": "^22.13.1",
+    "@prisma/client": "^6.4.1",
+    "@types/node": "^22.13.10",
     "@zephyr/config": "workspace:*",
-    "prisma": "^6.3.1",
-    "typescript": "^5.7.3"
+    "prisma": "^6.4.1",
+    "typescript": "^5.8.2"
   }
 }
