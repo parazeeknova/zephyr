@@ -21,7 +21,7 @@
     "dep:check": "pnpm dlx sherif@latest",
     "dep:fix": "pnpm dlx sherif@latest --fix",
     "env:check": "node scripts/checkENV.js",
-    "dev": "pnpm run format && pnpm run env:check && turbo dev",
+    "dev": "pnpm run format && turbo dev",
     "dev-nocheck": "pnpm run format && turbo dev",
     "prepare": "husky",
     "docker:status": "docker system df && docker ps && docker volume ls && docker network ls",
@@ -37,15 +37,17 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@turbo/gen": "^2.4.4",
-    "@types/node": "^22.13.10",
+    "@types/node": "^22.13.11",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.3",
     "dotenv": "^16.4.7",
     "husky": "^9.1.7",
+    "import-in-the-middle": "^1.13.1",
     "react-markdown": "9.0.3",
+    "require-in-the-middle": "^7.5.2",
     "turbo": "^2.4.4",
     "typescript": "^5.8.2",
-    "ultracite": "^4.1.20"
+    "ultracite": "^4.2.0"
   },
   "packageManager": "pnpm@10.5.2",
   "pnpm": {
@@ -56,6 +58,7 @@
       "@sentry/cli",
       "@tsparticles/engine",
       "core-js-pure",
+      "esbuild",
       "prisma",
       "sharp"
     ]
