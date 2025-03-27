@@ -19,23 +19,13 @@
 
 </div>
 
-#### _<div align="left"><sub>// Project Overview</sub></div>_
+#### _<div align="left"><sub>// About 🌿</sub></div>_
 
 <p align="left">
-<strong>Zephyr</strong> is a Social aggregator, part social media platform, part news aggregator. It is a platform that allows users to share and discover content from around the web. Completly open-source and community-driven, Zephyr is a platform that is built by the community, for the community.
+Zephyr is a next-generation social platform designed for seamless interaction, privacy, and speed. Built with modern web technologies, Zephyr redefines how users connect, share, and engage in a clutter-free digital space. Whether it's real-time conversations, media sharing, or a smooth user experience, Zephyr is crafted for the future of social networking.
 </p>
 
-#### _<div align="left"><sub>// Local Development Setup</sub></div>_
-
-###### _<div align="left"><sub>// Prerequisites</sub></div>_
-
-<p align="center">
-  <a href="https://nodejs.org/">Node.js</a> (v20 or higher) | 
-  <a href="https://pnpm.io/installation">pnpm</a> (Workspace management) | 
-  <a href="https://www.docker.com/">Docker</a> (Containerization)
-</p>
-
-###### _<div align="left"><sub>// Installation</sub></div>_
+#### _<div align="left"><sub>// Local Development Setup 📐</sub></div>_
 
 > [!NOTE]
 > **Zephyr** is a monorepo project, which means that it is composed of multiple packages that are managed together. The project uses [pnpm](https://pnpm.io/) for workspace management and [Docker](https://www.docker.com/) for containerization. Make sure you have the following prerequisites installed before setting up the development environment.
@@ -81,7 +71,7 @@ turbo dev
 # TIP ⚠️ : Check package.json for more scripts in the root directory
 ```
 
-###### _<div align="center"><sub>Using Zephyr Forge (deprecated)</sub></div>_
+###### _<div align="center"><sub>Using Zephyr Forge (deprecated) ⚠️</sub></div>_
 
 > [!WARNING]
 > **Zephyr Forge** is deprecated and no longer maintained. It is recommended to use the manual installation process for setting up the development environment.
@@ -89,8 +79,6 @@ turbo dev
 [Zephyr Forge](https://github.com/parazeeknova/zephyr-forge) is a powerful utility designed to streamline the setup process for Zephyr development environments. It automates the entire configuration process, handling everything from dependency checks to Docker container management.
 
 <div align="center">
-
-###### *<div align="center"><sub>Using BUN</sub></div>*
 
 ```bash
 bunx zephyr-forge@latest setup
@@ -114,23 +102,6 @@ If everything goes well, you should be able to access the following services:
 - Redis: http://localhost:6379
 - MinIO Console: http://localhost:9001 or http://localhost:9000
 
-
-#### _<div align="left"><sub>// Project Structure</sub></div>_
-This is a high-level overview of the monorepo structure, check the individual package for more sub-packages and details.
-
-```
-/zephyr          - Root directory
-  /apps
-   /web          - web app (main)
-  /packages
-   /aggregator   - Aggregator service
-   /auth         - Authentication & Email
-   /config       - Shared configs & utils
-   /db           - Database & Cache
-   /ui           - UI components
-  /docker         - Container configs & scripts
-```
-
 #### _<div align="left"><sub>// Screenshots</sub></div>_
 
 |                    Homepage                     |                      Notifications                       |                    Bookmarks                     |
@@ -142,7 +113,7 @@ This is a high-level overview of the monorepo structure, check the individual pa
 | ![profile](./assets/screenshots/profile.png) | ![settings](./assets/screenshots/chat.png) | ![users](./assets/screenshots/users.png) |
 
 
-#### _<div align="left"><sub>// Troubleshooting</sub></div>_
+#### _<div align="left"><sub>// Troubleshooting 🍋‍🟩</sub></div>_
 
 ###### _<div align="left"><sub>// pre commit hooks</sub></div>_
 
@@ -168,7 +139,7 @@ pnpm prisma generate
 pnpm prisma db push
 ```
 
-###### _<div align="right"><sub>// Minio (Object Storage)</sub></div>_
+###### _<div align="left"><sub>// Minio 🦩</sub></div>_
 
 If you encounter any issues with Minio or the buckets are not created, try the following steps:
 
@@ -191,7 +162,7 @@ Create the following buckets:
 
 If you still encounter any issues with the development server, report the issue on the [Issues](https://github.com/parazeeknova/zephyr/issues) page.
 
-#### _<div align="left"><sub>// Analytics</sub></div>_
+#### _<div align="left"><sub>// Analytics 📊</sub></div>_
 ![Alt](https://repobeats.axiom.co/api/embed/21d8d944036757fcd0624e71d0b2598ca8b8041f.svg "Repobeats analytics image")
 
 #### _<div align="left"><sub>// Contributors</sub></div>_
