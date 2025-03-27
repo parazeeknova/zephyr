@@ -8,6 +8,7 @@ const config: Config = {
   content: [],
   theme: {
     extend: {
+      suppressWarnings: true,
       utilities: {
         '.overflow-wrap-anywhere': {
           'overflow-wrap': 'anywhere',
@@ -70,7 +71,11 @@ const config: Config = {
           '900': '#7c2d12',
           '950': '#431407',
         },
-        gray: colors.neutral,
+        gray: colors.gray,
+        neutral: colors.neutral,
+        stone: colors.stone,
+        sky: colors.sky,
+        slate: colors.slate,
         green: colors.emerald,
       },
       fontFamily: {

@@ -25,32 +25,14 @@
 <strong>Zephyr</strong> is a Social aggregator, part social media platform, part news aggregator. It is a platform that allows users to share and discover content from around the web. Completly open-source and community-driven, Zephyr is a platform that is built by the community, for the community.
 </p>
 
-#### _<div align="left"><sub>// Sub-services under Zephyr</sub></div>_
-
-<div align="center">
-
-<p>
-  <a href="https://share.zephyyrr.in/s/repo"><strong>Zephyr Services (GITEA)</strong></a> | 
-  <a href="https://development.zephyyrr.in/support"><strong>Zephyr Support</strong></a> | 
-  <a href="https://github.com/parazeeknova/velastria"><strong>Velastria / Zephyr chat</strong></a> | 
-  <a href="https://github.com/parazeeknova/zephyr-forge"><strong>Zephyr Forge</strong></a>
-</p>
-
-</div>
-
 #### _<div align="left"><sub>// Local Development Setup</sub></div>_
-
-> [!NOTE]
-> **Note for SWOC contributors**: Zephyr is a large project with multiple services and dependencies. The Issues page containes list of issues that may or may not be suitable for SWOC contributions. Check ISSUES with `SWOC` label for issues that are suitable for SWOC contributions. If you are unsure about the issue, feel free to ask in the issue thread. You can also create a new issue with `SWOC` label for any feature or bug you want to work on.
 
 ###### _<div align="left"><sub>// Prerequisites</sub></div>_
 
 <p align="center">
   <a href="https://nodejs.org/">Node.js</a> (v20 or higher) | 
   <a href="https://pnpm.io/installation">pnpm</a> (Workspace management) | 
-  <a href="https://bun.sh">bun</a> (optional - zephyr-forge) |
-  <a href="https://www.docker.com/">Docker</a> (Containerization) | 
-  <a href="https://git-scm.com/">Git</a> (Version control)
+  <a href="https://www.docker.com/">Docker</a> (Containerization)
 </p>
 
 ###### _<div align="left"><sub>// Installation</sub></div>_
@@ -58,22 +40,7 @@
 > [!NOTE]
 > **Zephyr** is a monorepo project, which means that it is composed of multiple packages that are managed together. The project uses [pnpm](https://pnpm.io/) for workspace management and [Docker](https://www.docker.com/) for containerization. Make sure you have the following prerequisites installed before setting up the development environment.
 
-###### _<div align="center"><sub>Using Zephyr Forge (recommended)</sub></div>_
-
-[Zephyr Forge](https://github.com/parazeeknova/zephyr-forge) is a powerful utility designed to streamline the setup process for Zephyr development environments. It automates the entire configuration process, handling everything from dependency checks to Docker container management.
-
-<div align="center">
-
-###### *<div align="center"><sub>Using BUN (recommended)</sub></div>*
-
-```bash
-bunx zephyr-forge@latest setup
-```
-
-</div>
-
 ###### _<div align="center"><sub>Manual Installation</sub></div>_
-
 
 ```bash
 # 1. Clone the repository
@@ -113,6 +80,24 @@ turbo dev
 
 # TIP ⚠️ : Check package.json for more scripts in the root directory
 ```
+
+###### _<div align="center"><sub>Using Zephyr Forge (deprecated)</sub></div>_
+
+> [!WARNING]
+> **Zephyr Forge** is deprecated and no longer maintained. It is recommended to use the manual installation process for setting up the development environment.
+
+[Zephyr Forge](https://github.com/parazeeknova/zephyr-forge) is a powerful utility designed to streamline the setup process for Zephyr development environments. It automates the entire configuration process, handling everything from dependency checks to Docker container management.
+
+<div align="center">
+
+###### *<div align="center"><sub>Using BUN</sub></div>*
+
+```bash
+bunx zephyr-forge@latest setup
+```
+
+</div>
+
 #### What a sucessful docker setup looks like after running ```pnpm run docker:dev```:
 
 <div align="center">

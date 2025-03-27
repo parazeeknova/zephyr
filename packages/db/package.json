@@ -10,7 +10,6 @@
     "db:studio": "prisma studio",
     "db:push": "prisma db push --skip-generate",
     "backup": "tsx scripts/backup.ts",
-    "pre-migrate": "tsx scripts/pre-migration-check.ts",
     "migrate:safe": "pnpm run backup && pnpm run pre-migrate && pnpm prisma migrate dev --create-only",
     "migrate:apply": "pnpm prisma migrate deploy"
   },

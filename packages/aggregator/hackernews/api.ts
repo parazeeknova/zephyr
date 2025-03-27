@@ -1,4 +1,3 @@
-// @ts-expect-error - ky does not have a type definition file
 import ky from 'ky';
 import { hackerNewsCache } from './cache';
 import { checkRateLimit } from './rate-limiter';
