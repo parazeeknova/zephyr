@@ -1,6 +1,6 @@
 {
   "name": "@zephyr/tailwind",
-  "version": "2.0.15-dev",
+  "version": "2.0.16-dev",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
