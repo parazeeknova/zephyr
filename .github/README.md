@@ -36,12 +36,16 @@ Zephyr is a next-generation social platform designed for seamless interaction, p
 # 1. Clone the repository
 git clone https://github.com/zephyr.git && cd zephyr
 
+# 1.5 For Automatic setup (This will install packages, format using ultracite & setup local .env files and start init docker containers)
+pnpm run dev:aio
+
+# Manual setup
 # 2. Install the dependencies
-pnpm install
+pnpm install # (skip if you ran: dev:aio)
 
 # 3. First time setup or after clean
 # This will start required containers and run migration containers required for prisma schema & minio buckets
-pnpm run docker:dev
+pnpm run docker:dev # (skip if you ran: dev:aio)
 # Clean everything and start fresh if you encounter any issues
 pnpm run docker:clean:dev && pnpm run docker:dev
 
@@ -51,17 +55,21 @@ cd packages/db && pnpm prisma generate && pnpm prisma db push
 # For minio buckets, create the following buckets from the MinIO console at http://localhost:9001 
 `uploads`, `temp`, `backups`
 
-# 4. Start the development containers if not already started
+# 4. Start the development containers if not already started (optional)
 pnpm run docker:start # (optional if you want to start the containers manually)
 
-# 5. Set `.env` variables form `.env.example` file (optional if you want auth and other services)
+# 5. Setup the environment variables automatically
+pnpm run env:local # (skip if you ran: dev:aio)
+
+# Set `.env` variables form `.env.example` file manually (optional if you want auth and other services)
 cp .env.example .env # Unix/Linux/Mac
 copy .env.example .env # Windows
 # Read the `.env.example` file for more information
 # Some useful commands are:
-pnpm run env:check # Check if all the required environment variables are set
-pnpm run env:fix # Fix the missing environment variables (local development only)
 pnpm run env:validate # Validate the environment variables
+
+# 6. Prisma migrations 
+pnpm run prisma:up # (skip if you ran: dev:aio)
 
 # 6. Start the development server
 pnpm turbo dev
@@ -69,6 +77,7 @@ pnpm turbo dev
 turbo dev
 
 # TIP ⚠️ : Check package.json for more scripts in the root directory
+# If you encounter any issues, refer to the troubleshooting section below or report the issue on the Issues page
 ```
 
 ###### _<div align="center"><sub>Using Zephyr Forge (deprecated) ⚠️</sub></div>_

@@ -2,7 +2,7 @@
   "name": "zephyr",
   "displayName": "Zephyr",
   "version": "2.0.16-dev",
-  "description": "FOSS social media aggregator, part social media",
+  "description": "A seamless, next-gen social experience built for speed, privacy, and effortless connection.",
   "author": "parazeeknova",
   "license": "AGPL-3.0",
   "homepage": "https://development.zephyyrr.in",
@@ -24,15 +24,14 @@
     "dev": "pnpm run format && turbo dev",
     "dev-nocheck": "pnpm run format && turbo dev",
     "prepare": "husky",
-    "docker:status": "docker system df && docker ps && docker volume ls && docker network ls",
     "docker:logs": "docker compose -f docker-compose.dev.yml logs -f",
-    "docker:dev": "docker compose -f docker-compose.dev.yml --profile init up --build",
+    "docker:dev": "docker compose -f docker-compose.dev.yml --profile init up -d --build",
     "docker:dev-noinit": "docker compose -f docker-compose.dev.yml up --build",
-    "docker:start": "docker compose -f docker-compose.dev.yml up -d",
     "docker:down": "docker compose -f docker-compose.dev.yml down",
     "docker:clean:dev": "docker compose -f docker-compose.dev.yml down -v && docker volume rm zephyr_postgres_data_dev zephyr_redis_data_dev zephyr_minio_data_dev && rm -f .dev-init",
-    "env:fix": "bunx zephyr-forge@latest env:fix",
-    "env:validate": "bunx zephyr-forge@latest env:validate"
+    "env:local": "node -e \"const fs=require('fs');const path=require('path');fs.copyFileSync('.env.example','.env');fs.copyFileSync(path.join('apps','web','.env.example'),path.join('apps','web','.env'));fs.copyFileSync(path.join('packages','db','.env.example'),path.join('packages','db','.env'));console.log('✅ Environment files copied successfully');\"",
+    "prisma:up": "cd packages/db && pnpm prisma generate && pnpm prisma db push",
+    "dev:aio": "pnpm install && pnpm run format && pnpm run env:local && pnpm run docker:dev && pnpm run prisma:up"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
