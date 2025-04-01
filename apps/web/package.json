@@ -12,7 +12,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.772.0",
     "@aws-sdk/s3-request-presigner": "^3.772.0",
-    "@hookform/resolvers": "^3.10.0",
+    "@hookform/resolvers": "^5.0.0",
     "@mui/icons-material": "^6.4.8",
     "@node-rs/argon2": "^2.0.2",
     "@prisma/client": "^6.5.0",
