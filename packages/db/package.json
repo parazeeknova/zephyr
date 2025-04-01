@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@prisma/client": "^6.5.0",
-    "@types/node": "^22.13.11",
+    "@types/node": "^22.13.16",
     "@zephyr/config": "workspace:*",
     "prisma": "^6.5.0",
     "typescript": "^5.8.2"
