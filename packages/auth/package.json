@@ -12,22 +12,22 @@
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@node-rs/argon2": "^2.0.2",
     "@zephyr/db": "workspace:*",
-    "arctic": "^3.5.0",
+    "arctic": "^3.6.0",
     "deep-email-validator": "^0.1.21",
     "email-validator": "^2.0.4",
     "jsonwebtoken": "^9.0.2",
     "lucia": "^3.2.2",
     "next": "15.2.4",
     "react": "19.0.0",
-    "stream-chat": "^8.57.6",
-    "unsend": "^1.4.0",
-    "zod": "^3.24.2"
+    "stream-chat": "^8.60.0",
+    "unsend": "^1.5.0",
+    "zod": "^3.24.4"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.13.11",
+    "@types/node": "^22.15.11",
     "@types/react": "19.0.10",
     "@zephyr/config": "workspace:*",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }

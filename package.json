@@ -35,26 +35,25 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@turbo/gen": "^2.4.4",
-    "@types/node": "^22.13.11",
+    "@types/node": "^22.15.11",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.3",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.5.0",
     "husky": "^9.1.7",
     "import-in-the-middle": "^1.13.1",
+    "prettier": "^3.5.3",
     "react-markdown": "9.0.3",
     "require-in-the-middle": "^7.5.2",
-    "turbo": "^2.4.4",
-    "typescript": "^5.8.2",
-    "ultracite": "^4.2.0"
+    "turbo": "^2.5.2",
+    "typescript": "^5.8.3",
+    "ultracite": "^4.2.4"
   },
-  "packageManager": "pnpm@10.5.2",
+  "packageManager": "pnpm@10.10.0+sha512.d615db246fe70f25dcfea6d8d73dee782ce23e2245e3c4f6f888249fb568149318637dca73c2c5c8ef2a4ca0d5657fb9567188bfab47f566d1ee6ce987815c39",
   "pnpm": {
     "onlyBuiltDependencies": [
       "@biomejs/biome",
       "@prisma/client",
       "@prisma/engines",
-      "@sentry/cli",
       "@tsparticles/engine",
       "core-js-pure",
       "esbuild",

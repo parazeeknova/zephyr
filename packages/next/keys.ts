@@ -1,4 +1,3 @@
-// @ts-expect-error - This file is not a module
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 

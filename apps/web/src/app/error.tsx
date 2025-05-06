@@ -1,6 +1,7 @@
 'use client';
 
 import { HelpLink } from '@/components/Animations/ImageLinkPreview';
+// @ts-expect-error - Image optimization is not supported in this file
 import HOME from '@assets/previews/home.png';
 import { GitHub } from '@mui/icons-material';
 import { Button } from '@zephyr/ui/shadui/button';
