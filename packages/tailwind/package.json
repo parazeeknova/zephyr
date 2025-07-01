@@ -13,13 +13,13 @@
   },
   "devDependencies": {
     "@zephyr/config": "workspace:*",
-    "tailwindcss": "3.4.17"
+    "tailwindcss": "4.1.11"
   },
   "overrides": {
     "devDependencies": {
       "autoprefixer": "^10.4.20",
       "postcss": "^8.5.1",
-      "tailwindcss": "3.4.17"
+      "tailwindcss": "4.1.11"
     }
   }
 }
