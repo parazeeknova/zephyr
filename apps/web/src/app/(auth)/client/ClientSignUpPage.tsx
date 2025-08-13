@@ -133,14 +133,7 @@ export default function ClientSignupPage() {
           variants={slideIn}
         >
           <div className="relative">
-            <h1
-              className="absolute origin-center rotate-90 transform select-none whitespace-nowrap font-bold text-6xl text-primary/20 tracking-wider xl:text-8xl 2xl:text-9xl"
-              style={{
-                transformOrigin: 'center',
-                right: '-50%',
-                transform: 'translateX(50%) translateY(-50%) rotate(90deg)',
-              }}
-            >
+            <h1 className="vertical-right -translate-y-1/2 absolute top-1/2 right-0 select-none whitespace-nowrap font-bold text-6xl text-primary/20 tracking-wider xl:text-8xl 2xl:text-9xl">
               SIGN UP
             </h1>
           </div>

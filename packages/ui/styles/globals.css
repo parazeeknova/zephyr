@@ -73,6 +73,18 @@
   font-weight: 700;
 }
 
+/* Vertical text helpers for auth pages */
+@utility vertical-left {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  transform-origin: center;
+}
+
+@utility vertical-right {
+  writing-mode: vertical-rl;
+  transform-origin: center;
+}
+
 @layer base {
   :root {
     --background: 0 0% 97.65%;

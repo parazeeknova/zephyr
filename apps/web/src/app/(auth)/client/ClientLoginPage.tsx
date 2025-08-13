@@ -139,14 +139,7 @@ export default function ClientLoginPage() {
           variants={slideIn}
         >
           <div className="relative">
-            <h1
-              className="-rotate-90 absolute origin-center transform select-none whitespace-nowrap font-bold text-6xl text-primary/20 tracking-wider xl:text-8xl 2xl:text-9xl "
-              style={{
-                transformOrigin: 'center',
-                left: '-50%',
-                transform: 'translateX(-50%) translateY(-50%) rotate(-90deg)',
-              }}
-            >
+            <h1 className="vertical-left -translate-y-1/2 absolute top-1/2 left-0 select-none whitespace-nowrap font-bold text-6xl text-primary/20 tracking-wider xl:text-8xl 2xl:text-9xl">
               LOGIN
             </h1>
           </div>
