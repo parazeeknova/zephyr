@@ -17,7 +17,6 @@
     "lint": "ultracite lint",
     "format": "ultracite format",
     "build": "pnpm run lint && turbo build",
-    "codegen": "turbo codegen",
     "dep:check": "pnpm dlx sherif@latest",
     "dep:fix": "pnpm dlx sherif@latest --fix",
     "env:check": "node scripts/checkENV.js",
