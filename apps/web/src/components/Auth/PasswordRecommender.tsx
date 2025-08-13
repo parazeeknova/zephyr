@@ -227,7 +227,7 @@ export function PasswordRecommender({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
-          className="mt-2 rounded-lg border border-yellow-200 bg-yellow-50/50 p-3 backdrop-blur-sm dark:border-yellow-900/50 dark:bg-yellow-900/20"
+          className="mt-2 rounded-lg border border-yellow-200 bg-yellow-50/50 p-3 backdrop-blur-xs dark:border-yellow-900/50 dark:bg-yellow-900/20"
         >
           <div className="flex items-start gap-2">
             <Lightbulb className="mt-0.5 size-4 text-yellow-600 dark:text-yellow-400" />
@@ -239,7 +239,7 @@ export function PasswordRecommender({
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="rounded bg-yellow-100/80 px-2 py-1 font-mono text-yellow-900 dark:bg-yellow-900/40 dark:text-yellow-100"
+                  className="rounded-sm bg-yellow-100/80 px-2 py-1 font-mono text-yellow-900 dark:bg-yellow-900/40 dark:text-yellow-100"
                 >
                   {recommendedPassword}
                 </motion.div>

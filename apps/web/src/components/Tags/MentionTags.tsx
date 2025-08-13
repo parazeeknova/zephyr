@@ -72,7 +72,7 @@ const glowVariants = {
 };
 
 const baseTagClass =
-  'flex items-center gap-1.5 rounded-full border px-3 py-1 shadow-sm h-7';
+  'flex items-center gap-1.5 rounded-full border px-3 py-1 shadow-xs h-7';
 
 interface MentionTagsProps {
   mentions: UserData[];
@@ -154,7 +154,7 @@ export function MentionTags({
                 <Link
                   href={`/users/${user.username}`}
                   key={user.id}
-                  className="rounded-full no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                  className="rounded-full no-underline focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                 >
                   <motion.div
                     variants={tagVariants}
@@ -177,7 +177,7 @@ export function MentionTags({
                         baseTagClass,
                         getTagWidth(user),
                         'border-blue-400/20 bg-blue-500/5 text-blue-600 hover:border-blue-500/30 hover:bg-blue-500/10',
-                        'backdrop-blur-sm backdrop-filter'
+                        'backdrop-blur-xs backdrop-filter'
                       )}
                     >
                       <UserAvatar user={user} size={20} />

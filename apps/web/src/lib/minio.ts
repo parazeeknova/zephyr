@@ -20,7 +20,7 @@ export const minioClient = new S3Client({
   endpoint:
     process.env.NODE_ENV === 'production'
       ? 'https://minio-objectstorage.zephyyrr.in'
-      : process.env.MINIO_ENDPOINT || 'http://localhost:9000',
+      : process.env.MINIO_ENDPOINT || 'http://localhost:9080',
   credentials: {
     accessKeyId: process.env.MINIO_ROOT_USER || 'minioadmin',
     secretAccessKey: process.env.MINIO_ROOT_PASSWORD || 'minioadmin',
@@ -55,7 +55,7 @@ export const getPublicUrl = (key: string) => {
   const finalEndpoint =
     process.env.NODE_ENV === 'production'
       ? productionEndpoint
-      : endpoint || 'http://localhost:9001';
+      : endpoint || 'http://localhost:9080';
 
   return `${finalEndpoint}/${MINIO_BUCKET}/${encodeURIComponent(key)}`;
 };

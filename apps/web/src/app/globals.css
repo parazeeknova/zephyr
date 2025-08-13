@@ -12,7 +12,7 @@
 
 .settings-card {
   @apply relative overflow-hidden rounded-lg border border-border/50;
-  @apply bg-background/30 backdrop-blur-md shadow-sm;
+  @apply bg-background/30 backdrop-blur-md shadow-xs;
   @apply transition-all duration-200 hover:shadow-md hover:bg-background/40;
 }
 
@@ -84,7 +84,7 @@
 }
 
 .slider-thumb {
-  @apply h-2.5 w-2.5 rounded-full border border-white/90 bg-white shadow-sm transition-transform hover:scale-110;
+  @apply h-2.5 w-2.5 rounded-full border border-white/90 bg-white shadow-xs transition-transform hover:scale-110;
 }
 
 .slider-track {

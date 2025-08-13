@@ -138,7 +138,7 @@ export default function Bookmarks() {
           className="relative w-full px-4 sm:w-auto sm:px-0"
         >
           <div className="-inset-3 absolute hidden rounded-lg bg-gradient-to-r from-orange-500/20 via-yellow-500/20 to-orange-500/20 blur-xl sm:block" />
-          <TabsList className="relative grid w-full grid-cols-2 rounded-full bg-background/95 p-1 text-muted-foreground shadow-xl backdrop-blur-sm sm:w-[400px]">
+          <TabsList className="relative grid w-full grid-cols-2 rounded-full bg-background/95 p-1 text-muted-foreground shadow-xl backdrop-blur-xs sm:w-[400px]">
             <TabsTrigger
               value="posts"
               className="relative rounded-full data-[state=active]:bg-orange-500/10 data-[state=active]:text-orange-500"

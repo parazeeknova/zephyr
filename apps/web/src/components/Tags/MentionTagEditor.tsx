@@ -182,7 +182,7 @@ export function MentionTagEditor({
                   searchUsers(value);
                 }}
                 placeholder="Search users to mention..."
-                className="h-11 flex-1 border-0 bg-transparent text-sm outline-none placeholder:text-muted-foreground/70 focus:ring-0"
+                className="h-11 flex-1 border-0 bg-transparent text-sm outline-hidden placeholder:text-muted-foreground/70 focus:ring-0"
               />
               {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
             </div>

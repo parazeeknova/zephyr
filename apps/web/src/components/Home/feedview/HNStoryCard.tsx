@@ -54,7 +54,7 @@ export function HNStoryCard({ hnStory }: HNStoryCardProps) {
               variant="secondary"
               className="max-w-[200px] truncate bg-background/80 px-2 text-xs hover:bg-orange-500/10 hover:text-orange-500 sm:max-w-full"
             >
-              <LinkIcon className="mr-1 h-3 w-3 flex-shrink-0" />
+              <LinkIcon className="mr-1 h-3 w-3 shrink-0" />
               <span className="truncate">{domain}</span>
             </Badge>
           </div>

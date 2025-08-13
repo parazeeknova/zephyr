@@ -156,7 +156,7 @@ export default function StreamChatNotConfigured() {
                 <li>Copy the API key and secret</li>
                 <li>
                   Add them to your{' '}
-                  <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
+                  <code className="rounded-sm bg-muted px-1.5 py-0.5 font-mono text-xs">
                     .env
                   </code>{' '}
                   file

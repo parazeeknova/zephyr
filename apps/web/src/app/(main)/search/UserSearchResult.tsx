@@ -134,7 +134,7 @@ function UserCard({ user }: { user: UserData }) {
     >
       <div className="p-4">
         <div className="flex items-start gap-4">
-          <Link href={`/users/${user.username}`} className="flex-shrink-0">
+          <Link href={`/users/${user.username}`} className="shrink-0">
             <UserAvatar
               user={user}
               className="h-16 w-16 ring-2 ring-primary/10 ring-offset-2 ring-offset-background transition-all group-hover:ring-primary/20"
@@ -149,7 +149,7 @@ function UserCard({ user }: { user: UserData }) {
                 {user.displayName}
               </Link>
               {user.emailVerified && (
-                <VerifiedIcon className="h-4 w-4 flex-shrink-0 text-primary" />
+                <VerifiedIcon className="h-4 w-4 shrink-0 text-primary" />
               )}
             </div>
             <div className="truncate text-muted-foreground text-sm">
@@ -214,14 +214,14 @@ function UserCardSkeleton() {
       <div className="flex items-start gap-4">
         <div className="h-16 w-16 animate-pulse rounded-full bg-muted" />
         <div className="flex-1">
-          <div className="h-5 w-32 animate-pulse rounded bg-muted" />
-          <div className="mt-2 h-4 w-24 animate-pulse rounded bg-muted" />
-          <div className="mt-4 h-8 w-full animate-pulse rounded bg-muted" />
+          <div className="h-5 w-32 animate-pulse rounded-sm bg-muted" />
+          <div className="mt-2 h-4 w-24 animate-pulse rounded-sm bg-muted" />
+          <div className="mt-4 h-8 w-full animate-pulse rounded-sm bg-muted" />
           <div className="mt-4 flex gap-4">
-            <div className="h-4 w-20 animate-pulse rounded bg-muted" />
-            <div className="h-4 w-16 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-20 animate-pulse rounded-sm bg-muted" />
+            <div className="h-4 w-16 animate-pulse rounded-sm bg-muted" />
           </div>
-          <div className="mt-4 h-9 w-full animate-pulse rounded bg-muted" />
+          <div className="mt-4 h-9 w-full animate-pulse rounded-sm bg-muted" />
         </div>
       </div>
     </div>

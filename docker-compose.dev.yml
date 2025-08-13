@@ -167,7 +167,7 @@ services:
       context: .
       dockerfile: ./docker/minio/Dockerfile
     ports:
-      - "9000:9000"
+      - "9080:9000"
       - "9001:9001"
     environment:
       - MINIO_ROOT_USER=minioadmin

@@ -38,7 +38,7 @@ const MentionedUsersBar = () => {
   }
 
   return (
-    <Card className="relative overflow-hidden border-blue-500/20 bg-blue-500/[0.02] shadow-sm backdrop-blur-sm">
+    <Card className="relative overflow-hidden border-blue-500/20 bg-blue-500/[0.02] shadow-xs backdrop-blur-sm">
       <CardContent className="p-3">
         <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-1.5">

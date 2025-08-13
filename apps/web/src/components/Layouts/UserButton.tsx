@@ -131,7 +131,7 @@ export default function UserButton({ className }: UserButtonProps) {
       <Button
         variant="ghost"
         className={cn(
-          'relative flex-none rounded-full border border-border/50 bg-background/40 p-0 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-border/80 hover:bg-background/60 hover:shadow-md',
+          'relative flex-none rounded-full border border-border/50 bg-background/40 p-0 shadow-xs backdrop-blur-md transition-all duration-200 hover:border-border/80 hover:bg-background/60 hover:shadow-md',
           className
         )}
       >
@@ -425,7 +425,7 @@ export default function UserButton({ className }: UserButtonProps) {
             <Button
               variant="destructive"
               onClick={handleLogout}
-              className="w-full border border-red-600/20 bg-red-500/75 font-medium text-white shadow-sm backdrop-blur-md transition-all duration-200 hover:bg-red-600/90 sm:w-auto"
+              className="w-full border border-red-600/20 bg-red-500/75 font-medium text-white shadow-xs backdrop-blur-md transition-all duration-200 hover:bg-red-600/90 sm:w-auto"
             >
               Logout
             </Button>

@@ -4,7 +4,7 @@ export default function TwitterSignInButton() {
   return (
     <Button
       variant="outline"
-      className="w-full border-0 bg-white/5 text-foreground backdrop-blur-sm transition-all duration-300 hover:bg-white/10"
+      className="w-full border-0 bg-white/5 text-foreground backdrop-blur-xs transition-all duration-300 hover:bg-white/10"
       asChild
     >
       <a

@@ -66,7 +66,7 @@ export default async function Page(props: PageProps) {
   return (
     <>
       <main className="flex w-full min-w-0 gap-5">
-        <aside className="sticky top-[5rem] ml-1 hidden h-[calc(100vh-5.25rem)] w-72 flex-shrink-0 md:block">
+        <aside className="sticky top-[5rem] ml-1 hidden h-[calc(100vh-5.25rem)] w-72 shrink-0 md:block">
           <div className="flex h-full flex-col">
             <NavigationCard
               isCollapsed={false}
@@ -110,7 +110,7 @@ async function UserInfoSidebar({ user }: UserInfoSidebarProps) {
   }
 
   return (
-    <div className="space-y-5 rounded-2xl border border-border bg-card p-5 shadow-sm">
+    <div className="space-y-5 rounded-2xl border border-border bg-card p-5 shadow-xs">
       <div className="font-bold text-xl">About this user</div>
       <UserTooltip user={user}>
         <Link

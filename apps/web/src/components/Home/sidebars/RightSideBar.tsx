@@ -19,7 +19,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ userData }) => {
   }
 
   return (
-    <aside className="w-80 flex-shrink-0 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-card-foreground">
+    <aside className="w-80 shrink-0 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-card-foreground">
       <div className="space-y-4">
         <ProfileCard userData={userData} />
         <SuggestedConnections />

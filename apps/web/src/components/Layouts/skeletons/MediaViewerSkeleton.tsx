@@ -45,7 +45,7 @@ export function MediaViewerSkeleton({
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-4 w-full rounded bg-muted/50"
+                  className="h-4 w-full rounded-sm bg-muted/50"
                   style={{ width: `${Math.random() * 40 + 60}%` }}
                 />
               ))}

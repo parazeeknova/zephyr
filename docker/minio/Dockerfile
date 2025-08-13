@@ -1,6 +1,6 @@
 FROM minio/minio:latest
 
-LABEL maintainer="Parazeeknova" 
+LABEL maintainer="Parazeeknova"
 LABEL description="Zephyr Development MinIO Instance"
 
 EXPOSE 9000 9001

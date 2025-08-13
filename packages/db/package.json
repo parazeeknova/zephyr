@@ -1,7 +1,7 @@
 {
   "name": "@zephyr/db",
   "description": "Zephyr's database & cache package",
-  "version": "2.0.19-dev",
+  "version": "2.0.20-dev",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
@@ -16,15 +16,15 @@
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.12.0",
     "date-fns": "^4.1.0",
-    "ioredis": "^5.6.1",
+    "ioredis": "^5.7.0",
     "stream-chat": "^8.60.0",
-    "zod": "^3.24.4"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@prisma/client": "^6.7.0",
-    "@types/node": "^22.15.11",
+    "@prisma/client": "^6.14.0",
+    "@types/node": "^22.17.1",
     "@zephyr/config": "workspace:*",
-    "prisma": "^6.7.0",
-    "typescript": "^5.8.3"
+    "prisma": "^6.14.0",
+    "typescript": "^5.9.2"
   }
 }

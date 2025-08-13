@@ -108,13 +108,13 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
               <div className="relative">
                 <div className="-inset-4 absolute">
                   <div className="absolute inset-0 rounded-full bg-white/10 group-hover:animate-[ping_1s_cubic-bezier(0,0,0.2,1)_infinite]" />
-                  <div className="absolute inset-0 rounded-full bg-black/20 blur-sm group-hover:animate-pulse" />
+                  <div className="absolute inset-0 rounded-full bg-black/20 blur-xs group-hover:animate-pulse" />
                 </div>
 
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 360 }}
                   transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-                  className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm transition-colors duration-300 group-hover:bg-white/20"
+                  className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 backdrop-blur-xs transition-colors duration-300 group-hover:bg-white/20"
                 >
                   <PlayArrowOutlined
                     className={cn(
@@ -241,7 +241,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
         transition={{ duration: 0.2, delay: index * 0.05 }}
         onClick={() => setSelectedIndex(index)}
         className={cn(
-          'hover:-translate-y-0.5 relative cursor-pointer overflow-hidden rounded-lg shadow-sm transition-all duration-300 hover:shadow-md',
+          'hover:-translate-y-0.5 relative cursor-pointer overflow-hidden rounded-lg shadow-xs transition-all duration-300 hover:shadow-md',
           isSmall ? 'h-20' : 'h-48'
         )}
       >
@@ -260,7 +260,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
           exit={{ opacity: 0 }}
           className="px-4 pb-4"
         >
-          <div className="relative w-full overflow-hidden rounded-lg bg-primary/5 p-4 shadow-sm transition-all duration-300">
+          <div className="relative w-full overflow-hidden rounded-lg bg-primary/5 p-4 shadow-xs transition-all duration-300">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <p className="font-medium text-sm">
@@ -303,7 +303,7 @@ export function MediaPreviews({ attachments }: MediaPreviewsProps) {
         {/* biome-ignore lint/a11y/useKeyWithClickEvents:  */}
         <div
           onClick={() => setShowAll(true)}
-          className="relative w-full cursor-pointer overflow-hidden rounded-lg bg-primary/5 shadow-sm transition-all duration-300 hover:bg-primary/10 hover:shadow-md"
+          className="relative w-full cursor-pointer overflow-hidden rounded-lg bg-primary/5 shadow-xs transition-all duration-300 hover:bg-primary/10 hover:shadow-md"
         >
           <div className="flex h-32 items-center justify-between p-4">
             <div className="flex items-center gap-4">

@@ -16,7 +16,7 @@ const ProfileRightSideBar: React.FC<ProfileRightSideBarProps> = ({
   loggedInUserId,
 }) => {
   return (
-    <aside className="w-96 flex-shrink-0 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-card-foreground">
+    <aside className="w-96 shrink-0 overflow-y-auto bg-[hsl(var(--background-alt))] p-4 text-card-foreground">
       <div className="space-y-4">
         <UserDetails userData={userData} loggedInUserId={loggedInUserId} />
         <ContributeCard isCollapsed={false} />

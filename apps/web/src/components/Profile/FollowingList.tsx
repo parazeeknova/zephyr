@@ -95,7 +95,7 @@ export default function FollowingList({
           <SearchIcon className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search following..."
-            className="border-accent/20 bg-background/50 pl-9 backdrop-blur-sm focus:border-primary/50"
+            className="border-accent/20 bg-background/50 pl-9 backdrop-blur-xs focus:border-primary/50"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -115,8 +115,8 @@ export default function FollowingList({
                   >
                     <div className="h-10 w-10 rounded-full bg-muted" />
                     <div className="flex-1 space-y-2">
-                      <div className="h-4 w-24 rounded bg-muted" />
-                      <div className="h-3 w-32 rounded bg-muted" />
+                      <div className="h-4 w-24 rounded-sm bg-muted" />
+                      <div className="h-3 w-32 rounded-sm bg-muted" />
                     </div>
                   </motion.div>
                 ))}
@@ -147,7 +147,7 @@ export default function FollowingList({
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="group relative flex items-center justify-between rounded-lg p-3 backdrop-blur-sm transition-all duration-200 hover:bg-accent/50"
+                    className="group relative flex items-center justify-between rounded-lg p-3 backdrop-blur-xs transition-all duration-200 hover:bg-accent/50"
                   >
                     <div className="flex items-center space-x-3">
                       <UserAvatar

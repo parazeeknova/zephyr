@@ -14,6 +14,8 @@
     "**/*.ts",
     "**/*.tsx",
     "./assets/**/*",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../packages/ui/components/ui/gooey-text-morphing.tsx",
+    "../../packages/ui/components/ui/spiral-animation.tsx"
   ]
 }

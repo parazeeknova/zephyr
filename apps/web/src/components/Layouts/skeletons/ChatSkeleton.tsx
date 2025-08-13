@@ -4,8 +4,8 @@ import StickyFooter from '@/components/Layouts/StinkyFooter';
 
 const ChatSkeleton = () => {
   return (
-    <main className="flex h-[calc(100vh-4rem)] w-full min-w-0 gap-5 overflow-hidden shadow-sm">
-      <aside className="sticky top-[5rem] hidden h-full w-72 flex-shrink-0 overflow-y-auto bg-muted md:block">
+    <main className="flex h-[calc(100vh-4rem)] w-full min-w-0 gap-5 overflow-hidden shadow-xs">
+      <aside className="sticky top-[5rem] hidden h-full w-72 shrink-0 overflow-y-auto bg-muted md:block">
         <div className="mt-5 mr-2 ml-2">
           <NavigationCard
             isCollapsed={false}
@@ -32,8 +32,8 @@ const ChatSkeleton = () => {
                 <div key={i} className="flex items-center space-x-3">
                   <div className="h-12 w-12 rounded-full bg-muted" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 w-24 rounded bg-muted" />
-                    <div className="h-3 w-32 rounded bg-muted" />
+                    <div className="h-4 w-24 rounded-sm bg-muted" />
+                    <div className="h-3 w-32 rounded-sm bg-muted" />
                   </div>
                   <div className="h-2 w-2 rounded-full bg-muted" />
                 </div>
@@ -45,8 +45,8 @@ const ChatSkeleton = () => {
             <div className="flex items-center space-x-3 border-border border-b p-4">
               <div className="h-10 w-10 rounded-full bg-muted" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 w-32 rounded bg-muted" />
-                <div className="h-3 w-24 rounded bg-muted" />
+                <div className="h-4 w-32 rounded-sm bg-muted" />
+                <div className="h-3 w-24 rounded-sm bg-muted" />
               </div>
             </div>
 
@@ -63,10 +63,10 @@ const ChatSkeleton = () => {
                     className={`space-y-2 ${i % 2 === 0 ? 'items-end' : 'items-start'}`}
                   >
                     <div
-                      className={`h-4 w-48 rounded bg-muted ${i % 2 === 0 ? 'ml-auto' : ''}`}
+                      className={`h-4 w-48 rounded-sm bg-muted ${i % 2 === 0 ? 'ml-auto' : ''}`}
                     />
                     <div
-                      className={`h-4 w-32 rounded bg-muted ${i % 2 === 0 ? 'ml-auto' : ''}`}
+                      className={`h-4 w-32 rounded-sm bg-muted ${i % 2 === 0 ? 'ml-auto' : ''}`}
                     />
                   </div>
                   {i % 2 === 0 && (

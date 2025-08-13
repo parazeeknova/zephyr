@@ -142,7 +142,7 @@ export const AttachmentPreview = memo(function AttachmentPreview({
         <button
           type="button"
           onClick={onRemoveClick}
-          className="absolute top-3 right-3 rounded-full bg-foreground p-1.5 text-background transition-colors hover:bg-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary"
+          className="absolute top-3 right-3 rounded-full bg-foreground p-1.5 text-background transition-colors hover:bg-foreground/60 focus:outline-hidden focus:ring-2 focus:ring-primary"
           aria-label="Remove attachment"
         >
           <X size={20} />

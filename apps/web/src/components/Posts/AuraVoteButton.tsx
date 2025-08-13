@@ -134,8 +134,8 @@ export default function AuraVoteButton({
         variant="ghost"
         onClick={() => mutate(1)}
         className={cn(
-          'group rounded-md p-1 text-muted-foreground hover:border hover:border-orange-500 hover:bg-orange-100 hover:bg-opacity-10 hover:shadow-md',
-          data.userVote === 1 && 'bg-orange-100 bg-opacity-10'
+          'group rounded-md p-1 text-muted-foreground hover:border hover:border-orange-500 hover:bg-orange-100 hover:bg-orange/10 hover:shadow-md',
+          data.userVote === 1 && 'bg-orange-100/10'
         )}
       >
         <div className="flex items-center overflow-hidden hover:text-orange-500">
@@ -155,8 +155,8 @@ export default function AuraVoteButton({
         variant="ghost"
         onClick={() => mutate(-1)}
         className={cn(
-          'group rounded-md p-1 text-muted-foreground hover:border hover:border-violet-500 hover:bg-violet-100 hover:bg-opacity-10 hover:shadow-md',
-          data.userVote === -1 && 'bg-violet-100 bg-opacity-10'
+          'group rounded-md p-1 text-muted-foreground hover:border hover:border-violet-500 hover:bg-violet-100 hover:bg-violet/10 hover:shadow-md',
+          data.userVote === -1 && 'bg-violet-100/10'
         )}
       >
         <div className="flex items-center overflow-hidden hover:text-violet-500">
