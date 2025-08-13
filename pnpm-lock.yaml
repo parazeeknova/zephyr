@@ -249,9 +249,6 @@ importers:
       '@zephyr/next':
         specifier: workspace:*
         version: link:../../packages/next
-      postcss:
-        specifier: ^8.5.6
-        version: 8.5.6
       tailwindcss:
         specifier: ^4.1.11
         version: 4.1.11
@@ -675,9 +672,6 @@ importers:
       '@zephyr/tailwind':
         specifier: workspace:*
         version: link:../tailwind
-      postcss:
-        specifier: ^8.5.6
-        version: 8.5.6
       tailwindcss:
         specifier: ^4.1.11
         version: 4.1.11
