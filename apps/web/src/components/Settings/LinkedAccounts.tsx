@@ -63,7 +63,7 @@ export default function LinkedAccounts({ user, onLink }: LinkedAccountsProps) {
     <motion.div
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      className={`group relative overflow-hidden rounded-lg border border-border/50 p-4 backdrop-blur-sm transition-colors ${
+      className={`group relative overflow-hidden rounded-lg border border-border/50 p-4 backdrop-blur-xs transition-colors ${
         isComingSoon ? 'opacity-50' : ''
       }`}
     >

@@ -100,8 +100,8 @@ export default function Chat() {
 
   return (
     <ChatThemeProvider>
-      <main className="flex h-[calc(100vh-4rem)] w-full min-w-0 gap-5 overflow-hidden shadow-sm">
-        <aside className="sticky top-[5rem] hidden h-full w-72 flex-shrink-0 overflow-y-auto bg-muted md:block">
+      <main className="flex h-[calc(100vh-4rem)] w-full min-w-0 gap-5 overflow-hidden shadow-xs">
+        <aside className="sticky top-[5rem] hidden h-full w-72 shrink-0 overflow-y-auto bg-muted md:block">
           <div className="mt-5 mr-2 ml-2">
             <NavigationCard
               isCollapsed={false}

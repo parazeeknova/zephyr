@@ -115,7 +115,7 @@ export default function SecuritySettings({ user }: SecuritySettingsProps) {
                           type="email"
                           disabled={isEmailSent}
                           placeholder="Enter your email to reset password"
-                          className="bg-background/50 backdrop-blur-sm transition-all duration-200 hover:bg-background/70 focus:bg-background/70"
+                          className="bg-background/50 backdrop-blur-xs transition-all duration-200 hover:bg-background/70 focus:bg-background/70"
                         />
                       </FormControl>
                       <FormMessage />

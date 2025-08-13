@@ -227,7 +227,7 @@ export default function LoginForm() {
                   onClick={handleResendVerification}
                   className="group relative w-full"
                 >
-                  <div className="-inset-0.5 absolute rounded-lg bg-primary opacity-10 blur transition group-hover:opacity-20" />
+                  <div className="-inset-0.5 absolute rounded-lg bg-primary opacity-10 blur-sm transition group-hover:opacity-20" />
                   <div className="relative flex items-center justify-center gap-2 rounded-lg border border-primary/20 bg-background/80 px-4 py-2 text-primary transition-colors hover:bg-background/90">
                     <Mail className="h-4 w-4" />
                     <span>

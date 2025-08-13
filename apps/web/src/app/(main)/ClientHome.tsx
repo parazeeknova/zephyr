@@ -82,7 +82,7 @@ const ClientHome: React.FC<ClientHomeProps> = ({ userData }) => {
                   <span className="relative z-10 flex items-center gap-2">
                     <span className="relative">
                       <Globe2Icon className="h-4 w-4 transition-all duration-300 group-data-[state=active]:text-primary" />
-                      <span className="absolute inset-0 rounded-full bg-primary/20 opacity-0 blur-sm transition-opacity group-hover:opacity-30 group-data-[state=active]:opacity-50" />
+                      <span className="absolute inset-0 rounded-full bg-primary/20 opacity-0 blur-xs transition-opacity group-hover:opacity-30 group-data-[state=active]:opacity-50" />
                     </span>
                     <span className="transition-all duration-300 group-data-[state=active]:font-semibold">
                       Globals
@@ -97,7 +97,7 @@ const ClientHome: React.FC<ClientHomeProps> = ({ userData }) => {
                   <span className="relative z-10 flex items-center gap-2">
                     <span className="relative">
                       <UsersIcon className="h-4 w-4 transition-all duration-300 group-data-[state=active]:text-primary" />
-                      <span className="absolute inset-0 rounded-full bg-primary/20 opacity-0 blur-sm transition-opacity group-hover:opacity-30 group-data-[state=active]:opacity-50" />
+                      <span className="absolute inset-0 rounded-full bg-primary/20 opacity-0 blur-xs transition-opacity group-hover:opacity-30 group-data-[state=active]:opacity-50" />
                     </span>
                     <span className="transition-all duration-300 group-data-[state=active]:font-semibold">
                       Following

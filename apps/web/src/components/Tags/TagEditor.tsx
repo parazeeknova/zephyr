@@ -187,7 +187,7 @@ export function TagEditor({
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 placeholder="Search tags or create new..."
-                className="h-11 flex-1 border-0 bg-transparent text-sm outline-none placeholder:text-muted-foreground/70 focus:ring-0"
+                className="h-11 flex-1 border-0 bg-transparent text-sm outline-hidden placeholder:text-muted-foreground/70 focus:ring-0"
               />
             </div>
             <Command.List className="max-h-[180px] overflow-y-auto p-2">

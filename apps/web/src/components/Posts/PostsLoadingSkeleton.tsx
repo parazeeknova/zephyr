@@ -3,7 +3,7 @@ import { Skeleton } from '@zephyr/ui/shadui/skeleton';
 import type React from 'react';
 
 const StoryCardSkeleton: React.FC = () => (
-  <Card className="h-[300px] w-[200px] flex-shrink-0 overflow-hidden bg-card shadow-lg">
+  <Card className="h-[300px] w-[200px] shrink-0 overflow-hidden bg-card shadow-lg">
     <CardContent className="flex h-full flex-col overflow-x-hidden p-0">
       <Skeleton className="h-[220px] w-full" />
       <div className="flex flex-grow items-center space-x-2 p-3">

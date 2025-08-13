@@ -64,7 +64,7 @@ const TrendingTopics: React.FC = () => {
 
   if (error) {
     return (
-      <Card className="bg-card/50 shadow-sm backdrop-blur-sm">
+      <Card className="bg-card/50 shadow-xs backdrop-blur-sm">
         <CardContent className="p-4">
           <div className="flex flex-col gap-2">
             <p className="text-red-500 text-sm">{error}</p>
@@ -87,7 +87,7 @@ const TrendingTopics: React.FC = () => {
   }
 
   return (
-    <Card className="relative overflow-hidden border-rose-500/20 bg-gradient-to-br from-rose-500/[0.02] to-orange-500/[0.02] shadow-sm backdrop-blur-sm">
+    <Card className="relative overflow-hidden border-rose-500/20 bg-gradient-to-br from-rose-500/[0.02] to-orange-500/[0.02] shadow-xs backdrop-blur-sm">
       <CardContent className="p-3">
         {/* Header */}
         <div className="mb-3 flex items-center justify-between">
@@ -164,7 +164,7 @@ const TrendingTopics: React.FC = () => {
 
                   <div className="relative z-10 flex items-center justify-between">
                     <div className="flex min-w-0 items-center">
-                      <div className="flex h-5 w-5 items-center justify-center rounded bg-gradient-to-br from-rose-500/10 to-orange-500/10">
+                      <div className="flex h-5 w-5 items-center justify-center rounded-sm bg-gradient-to-br from-rose-500/10 to-orange-500/10">
                         <span className="font-medium text-rose-500 text-xs">
                           {index + 1}
                         </span>

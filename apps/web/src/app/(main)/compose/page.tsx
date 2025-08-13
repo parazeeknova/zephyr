@@ -18,7 +18,7 @@ export default async function Page() {
 
   return (
     <main className="flex w-full min-w-0 gap-5">
-      <aside className="sticky top-[5rem] ml-1 hidden h-[calc(100vh-5.25rem)] w-72 flex-shrink-0 md:block">
+      <aside className="sticky top-[5rem] ml-1 hidden h-[calc(100vh-5.25rem)] w-72 shrink-0 md:block">
         <div className="flex h-full flex-col">
           <NavigationCard
             isCollapsed={false}
@@ -38,7 +38,7 @@ export default async function Page() {
       </div>
 
       <div className="sticky top-[5rem] hidden h-fit w-80 flex-none lg:block">
-        <div className="space-y-5 rounded-2xl border border-border bg-card/30 p-5 shadow-sm backdrop-blur-sm">
+        <div className="space-y-5 rounded-2xl border border-border bg-card/30 p-5 shadow-xs backdrop-blur-sm">
           <h2 className="font-bold text-xl">Compose</h2>
           <p className="text-muted-foreground">
             Share your thoughts with the community

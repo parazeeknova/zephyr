@@ -202,7 +202,7 @@ export function HNFeed() {
                 <TabsContent
                   key={tab.id}
                   value={tab.id}
-                  className="mt-0 focus-visible:outline-none focus-visible:ring-0"
+                  className="mt-0 focus-visible:outline-hidden focus-visible:ring-0"
                 >
                   {isLoading ? (
                     <LoadingState />
@@ -290,8 +290,8 @@ function LoadingState() {
       {[...new Array(5)].map((_, i) => (
         <Card key={i} className="bg-background/50 p-4 backdrop-blur-sm">
           <div className="space-y-3">
-            <div className="h-6 w-3/4 animate-pulse rounded bg-muted" />
-            <div className="h-4 w-1/4 animate-pulse rounded bg-muted" />
+            <div className="h-6 w-3/4 animate-pulse rounded-sm bg-muted" />
+            <div className="h-4 w-1/4 animate-pulse rounded-sm bg-muted" />
           </div>
         </Card>
       ))}

@@ -9,7 +9,7 @@ const CommentsSkeleton = () => {
           <div className="flex-1">
             <div className="h-24 animate-pulse rounded-md bg-muted" />
             <div className="mt-3 flex justify-between">
-              <div className="h-4 w-24 animate-pulse rounded bg-muted" />
+              <div className="h-4 w-24 animate-pulse rounded-sm bg-muted" />
               <div className="h-9 w-20 animate-pulse rounded-md bg-muted" />
             </div>
           </div>

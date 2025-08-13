@@ -15,7 +15,7 @@ export function LegalLinksCard({ className }: LegalLinksCardProps) {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Link
           href="/toc"
-          className="group flex items-center gap-3 rounded-lg border border-primary/5 bg-background/80 p-4 transition-all hover:bg-accent hover:shadow-sm"
+          className="group flex items-center gap-3 rounded-lg border border-primary/5 bg-background/80 p-4 transition-all hover:bg-accent hover:shadow-xs"
         >
           <div className="rounded-full bg-primary/10 p-2.5 transition-colors group-hover:bg-primary/20">
             <FileText className="h-5 w-5 text-primary" />
@@ -32,7 +32,7 @@ export function LegalLinksCard({ className }: LegalLinksCardProps) {
 
         <Link
           href="/privacy"
-          className="group flex items-center gap-3 rounded-lg border border-primary/5 bg-background/80 p-4 transition-all hover:bg-accent hover:shadow-sm"
+          className="group flex items-center gap-3 rounded-lg border border-primary/5 bg-background/80 p-4 transition-all hover:bg-accent hover:shadow-xs"
         >
           <div className="rounded-full bg-primary/10 p-2.5 transition-colors group-hover:bg-primary/20">
             <Shield className="h-5 w-5 text-primary" />

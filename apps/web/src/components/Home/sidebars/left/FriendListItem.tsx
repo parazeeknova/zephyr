@@ -100,7 +100,7 @@ export const FriendListItem: React.FC<FriendListItemProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`group relative rounded-xl bg-card/50 backdrop-blur-sm transition-all duration-300 hover:bg-card/80 ${viewType === 'grid' ? 'p-3' : 'flex items-center p-2'}
+      className={`group relative rounded-xl bg-card/50 backdrop-blur-xs transition-all duration-300 hover:bg-card/80 ${viewType === 'grid' ? 'p-3' : 'flex items-center p-2'}
         ${isHovered ? 'z-40' : 'z-0'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -129,7 +129,7 @@ export const FriendListItem: React.FC<FriendListItemProps> = ({
           viewType === 'grid' ? 'text-center' : 'flex flex-1 items-center gap-3'
         }
       >
-        <div className="relative flex-shrink-0">
+        <div className="relative shrink-0">
           <Link href={`/users/${user.username}`}>
             <UserAvatar
               avatarUrl={getAvatarUrl(user.avatarUrl)}

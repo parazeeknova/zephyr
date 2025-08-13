@@ -211,7 +211,7 @@ const Header: React.FC<HeaderProps> = ({
             whileHover={{ scale: 1.05 }}
             className="group relative mt-2"
           >
-            <div className="-inset-[1px] absolute rounded-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 opacity-0 blur transition duration-500 group-hover:opacity-100" />
+            <div className="-inset-[1px] absolute rounded-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 opacity-0 blur-sm transition duration-500 group-hover:opacity-100" />
             <div className="relative z-50">
               <UserButton />
             </div>

@@ -128,7 +128,7 @@ export function CodePreview({
   }
 
   const CodeHeader = () => (
-    <div className="flex items-center justify-between border-b bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="flex items-center justify-between border-b bg-background/95 px-4 py-2 backdrop-blur-xs supports-[backdrop-filter]:bg-background/60">
       <div className="flex items-center gap-2">
         <FileIcon className="h-4 w-4 text-muted-foreground" />
         <span className="font-medium">{fileName || `Code.${language}`}</span>

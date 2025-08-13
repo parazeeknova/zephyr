@@ -3,9 +3,7 @@
 import AnimatedAuthLink from '@/components/Auth/AnimatedAuthLink';
 import AuthButtonWrapper from '@/components/Auth/AuthButtonWrapper';
 import LoginForm from '@/components/Auth/LoginForm';
-// @ts-expect-error - no types for image files
 import loginImage from '@assets/auth/login-image.jpg';
-// @ts-expect-error - no types for image files
 import signupImage from '@assets/previews/signup.png';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, FileText, Shield } from 'lucide-react';
@@ -262,7 +260,7 @@ export default function ClientLoginPage() {
                     <div className="grid grid-cols-2 gap-3">
                       <Link
                         href="/toc"
-                        className="group flex flex-col gap-2 rounded-lg border border-primary/5 bg-background/80 p-3 transition-all hover:bg-accent hover:shadow-sm"
+                        className="group flex flex-col gap-2 rounded-lg border border-primary/5 bg-background/80 p-3 transition-all hover:bg-accent hover:shadow-xs"
                       >
                         <div className="flex items-center gap-2">
                           <div className="rounded-full bg-primary/10 p-1.5 transition-colors group-hover:bg-primary/20">
@@ -279,7 +277,7 @@ export default function ClientLoginPage() {
 
                       <Link
                         href="/privacy"
-                        className="group flex flex-col gap-2 rounded-lg border border-primary/5 bg-background/80 p-3 transition-all hover:bg-accent hover:shadow-sm"
+                        className="group flex flex-col gap-2 rounded-lg border border-primary/5 bg-background/80 p-3 transition-all hover:bg-accent hover:shadow-xs"
                       >
                         <div className="flex items-center gap-2">
                           <div className="rounded-full bg-primary/10 p-1.5 transition-colors group-hover:bg-primary/20">

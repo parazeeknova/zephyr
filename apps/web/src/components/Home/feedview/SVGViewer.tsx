@@ -370,7 +370,7 @@ export function SVGViewer({
         </div>
       )}
 
-      <div className="absolute bottom-4 left-4 rounded bg-background/80 px-2 py-1 text-sm">
+      <div className="absolute bottom-4 left-4 rounded-sm bg-background/80 px-2 py-1 text-sm">
         {(scale * 100).toFixed(0)}%
       </div>
     </div>

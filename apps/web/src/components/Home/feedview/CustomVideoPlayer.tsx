@@ -256,7 +256,7 @@ export const CustomVideoPlayer = ({
       <video
         ref={videoRef}
         src={src}
-        className="h-full w-full select-none outline-none focus:outline-none focus-visible:outline-none"
+        className="h-full w-full select-none outline-hidden focus:outline-hidden focus-visible:outline-none"
         onLoadedData={onLoadedData}
         onError={onError}
         onClick={handlePlayPause}
@@ -406,7 +406,7 @@ export const CustomVideoPlayer = ({
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={toggleFullscreen}
-                      className="rounded-full bg-black/30 p-2 backdrop-blur-sm transition-colors hover:bg-black/70"
+                      className="rounded-full bg-black/30 p-2 backdrop-blur-xs transition-colors hover:bg-black/70"
                     >
                       {isFullscreen ? (
                         <MinimizeIcon className="h-4 w-4 text-white/90" />
@@ -456,7 +456,7 @@ export const CustomVideoPlayer = ({
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           onClick={() => skip(-10)}
-                          className="rounded-full bg-black/50 p-2 backdrop-blur-sm transition-colors hover:bg-black/70"
+                          className="rounded-full bg-black/50 p-2 backdrop-blur-xs transition-colors hover:bg-black/70"
                         >
                           <Rewind className="h-5 w-5 text-white" />
                         </motion.button>
@@ -474,7 +474,7 @@ export const CustomVideoPlayer = ({
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           onClick={handlePlayPause}
-                          className="rounded-full bg-black/50 p-3 backdrop-blur-sm transition-colors hover:bg-black/70"
+                          className="rounded-full bg-black/50 p-3 backdrop-blur-xs transition-colors hover:bg-black/70"
                         >
                           {isPlaying ? (
                             <Pause className="h-6 w-6 text-white" />
@@ -496,7 +496,7 @@ export const CustomVideoPlayer = ({
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           onClick={() => skip(10)}
-                          className="rounded-full bg-black/50 p-2 backdrop-blur-sm transition-colors hover:bg-black/70"
+                          className="rounded-full bg-black/50 p-2 backdrop-blur-xs transition-colors hover:bg-black/70"
                         >
                           <FastForward className="h-5 w-5 text-white" />
                         </motion.button>
@@ -624,7 +624,7 @@ export const CustomVideoPlayer = ({
             className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
             onClick={() => setShowHotkeys(false)}
           >
-            <div className="grid max-w-md gap-8 rounded-lg bg-black/90 p-6 text-white backdrop-blur-sm sm:grid-cols-2">
+            <div className="grid max-w-md gap-8 rounded-lg bg-black/90 p-6 text-white backdrop-blur-xs sm:grid-cols-2">
               <div>
                 <h3 className="mb-2 font-semibold">Keyboard Shortcuts</h3>
                 <ul className="space-y-1 text-sm text-white/80">

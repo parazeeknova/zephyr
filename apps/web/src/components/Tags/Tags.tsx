@@ -89,7 +89,7 @@ const hashIconVariants = {
 };
 
 const baseTagClass =
-  'flex items-center gap-1.5 rounded-full border px-3 py-1 shadow-sm h-7';
+  'flex items-center gap-1.5 rounded-full border px-3 py-1 shadow-xs h-7';
 
 export function Tags({
   tags: initialTags,
@@ -185,7 +185,7 @@ export function Tags({
                     baseTagClass,
                     getTagWidth(tag),
                     'border-primary/20 bg-primary/5 text-primary hover:border-primary/30 hover:bg-primary/10',
-                    'backdrop-blur-sm backdrop-filter'
+                    'backdrop-blur-xs backdrop-filter'
                   )}
                 >
                   <motion.div

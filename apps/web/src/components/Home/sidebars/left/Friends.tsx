@@ -92,7 +92,7 @@ const Friends: React.FC<FriendsProps> = ({ isCollapsed }) => {
   return (
     <>
       <Card
-        className={`bg-card/80 backdrop-blur-sm transition-all duration-300 ease-in-out ${
+        className={`bg-card/80 backdrop-blur-xs transition-all duration-300 ease-in-out ${
           isCollapsed ? 'w-12 overflow-hidden' : 'w-full'
         }`}
       >

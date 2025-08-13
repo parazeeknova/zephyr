@@ -3,7 +3,7 @@ import { LucideTrendingUp } from 'lucide-react';
 
 const TrendingTopicsSkeleton = () => {
   return (
-    <Card className="bg-card shadow-sm">
+    <Card className="bg-card shadow-xs">
       <CardContent className="p-4">
         <CardTitle className="mt-1 mb-4 flex items-center font-semibold text-muted-foreground text-sm uppercase">
           Trending Topics

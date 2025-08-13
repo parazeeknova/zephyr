@@ -98,7 +98,7 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
                     <FormControl>
                       <Input
                         {...field}
-                        className="bg-background/50 backdrop-blur-sm transition-all duration-200 hover:bg-background/70 focus:bg-background/70"
+                        className="bg-background/50 backdrop-blur-xs transition-all duration-200 hover:bg-background/70 focus:bg-background/70"
                       />
                     </FormControl>
                     <FormMessage />
@@ -122,7 +122,7 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
                       <Textarea
                         {...field}
                         placeholder="Tell us about yourself"
-                        className="min-h-[120px] resize-none bg-background/50 backdrop-blur-sm transition-all duration-200 hover:bg-background/70 focus:bg-background/70"
+                        className="min-h-[120px] resize-none bg-background/50 backdrop-blur-xs transition-all duration-200 hover:bg-background/70 focus:bg-background/70"
                       />
                     </FormControl>
                     <FormMessage />

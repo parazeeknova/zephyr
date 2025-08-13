@@ -329,7 +329,7 @@ function AvatarInput({
               (e.target as HTMLImageElement).src = avatarPlaceholder.src;
             }}
           />
-          <span className="absolute inset-0 m-auto flex size-12 items-center justify-center rounded-full bg-black bg-opacity-30 text-white transition-colors duration-200 group-hover:bg-opacity-25">
+          <span className="absolute inset-0 m-auto flex size-12 items-center justify-center rounded-full bg-black/30 text-white transition-colors duration-200 group-hover:bg-black/25">
             {isUploading ? (
               <span className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
             ) : (

@@ -1,13 +1,3 @@
-import base from '@zephyr/tailwind/configs/config';
-import type { Config } from 'tailwindcss';
-
-const config: Config = {
-  ...base,
-  content: [
-    './components/**/*.{js,ts,jsx,tsx}',
-    './shadui/*.{js,ts,jsx,tsx}',
-    './**/*.{js,ts,jsx,tsx}',
-  ],
-};
-
-export default config;
+// Tailwind v4 uses CSS-first config via @import "tailwindcss" and @config in CSS.
+// This file is no longer necessary and can be removed.
+export default {};
