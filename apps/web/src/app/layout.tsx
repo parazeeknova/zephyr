@@ -90,7 +90,11 @@ type RootLayoutProperties = {
 };
 
 const RootLayout = ({ children }: RootLayoutProperties) => (
-  <html lang="en" suppressHydrationWarning>
+  <html
+    lang="en"
+    suppressHydrationWarning
+    className={`${SofiaProSoft.className} ${SofiaProSoft.variable}`}
+  >
     <head>
       <link
         rel="icon"
@@ -138,9 +142,7 @@ const RootLayout = ({ children }: RootLayoutProperties) => (
         data-website-id="fcacb118-4db6-446b-909f-0f95a3ccf0a3"
       />
     </head>
-    <body
-      className={`${SofiaProSoft.variable} min-h-screen font-sofiaProSoft antialiased`}
-    >
+    <body className={'min-h-screen font-sans antialiased'}>
       <DesignSystemProvider>{children}</DesignSystemProvider>
     </body>
   </html>

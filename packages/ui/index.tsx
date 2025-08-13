@@ -6,9 +6,13 @@ import { VerificationProvider } from './providers/verification';
 import { Toaster } from './shadui/toaster';
 
 export const SofiaProSoft = localFont({
-  src: './fonts/SofiaProSoftReg.woff2',
+  src: [
+    { path: './fonts/SofiaProSoftReg.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/SofiaProSoftMed.woff2', weight: '500', style: 'normal' },
+    { path: './fonts/SofiaProSoftBold.woff2', weight: '700', style: 'normal' },
+  ],
   variable: '--font-sofia-pro-soft',
-  weight: '100 900',
+  display: 'swap',
 });
 
 type DesignSystemProviderProperties = ThemeProviderProps;
