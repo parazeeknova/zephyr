@@ -38,7 +38,7 @@ export const minioClient = new S3Client({
         }),
 });
 
-export const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || 'zephyr';
+export const MINIO_BUCKET = process.env.MINIO_BUCKET_NAME || 'uploads';
 
 export const getPublicUrl = (key: string) => {
   if (!key) {
@@ -111,6 +111,11 @@ export const uploadToMinio = async (file: File, userId: string) => {
     });
 
     validateFile(file);
+
+    const bucketOk = await validateBucket();
+    if (!bucketOk) {
+      throw new Error(`MinIO bucket "${MINIO_BUCKET}" does not exist`);
+    }
 
     const fileConfig = getFileConfigFromMime(file.type);
     const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');

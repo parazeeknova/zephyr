@@ -1,5 +1,5 @@
 x-common-labels: &common-labels
-  maintainer: "Parazeeknova"
+  maintainer: "parazeeknova"
   environment: "development"
 
 x-common-deploy: &common-deploy
@@ -28,7 +28,7 @@ services:
       - postgres_data_dev:/var/lib/postgresql/data
       - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
       - ./docker/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
-    command: 
+    command:
       - "postgres"
       - "-c"
       - "config_file=/etc/postgresql/postgresql.conf"
@@ -65,21 +65,21 @@ services:
         condition: service_healthy
     command: >
       bash -c '
-      echo "⏳ Waiting for PostgreSQL..." &&
+      echo "Waiting for PostgreSQL..." &&
       until PGPASSWORD=postgres psql -h postgres-dev -U postgres -d zephyr -c "\q"; do
         echo "Waiting for PostgreSQL to be ready..."
         sleep 2
       done &&
-      echo "✅ PostgreSQL is ready" &&
-      echo "⏳ Initializing extensions..." &&
+      echo "PostgreSQL is ready" &&
+      echo "Initializing extensions..." &&
       PGPASSWORD=postgres psql -h postgres-dev -U postgres -d zephyr -c "
         CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";
         CREATE EXTENSION IF NOT EXISTS \"pgcrypto\";
         CREATE EXTENSION IF NOT EXISTS \"pg_stat_statements\";
         ALTER DATABASE zephyr SET timezone TO '\''UTC'\'';
       " &&
-      echo "✅ PostgreSQL extensions initialized successfully" &&
-      echo "🎉 Database initialization complete!"
+      echo "PostgreSQL extensions initialized successfully" &&
+      echo "Database initialization complete!"
       '
 
   prisma-migrate:
@@ -104,27 +104,27 @@ services:
         condition: service_healthy
     command: >
       sh -c "
-      echo '⏳ Installing required packages...' &&
+      echo 'Installing required packages...' &&
       apk add --no-cache postgresql-client netcat-openbsd &&
-      echo '⏳ Setting up Prisma...' &&
+      echo 'Setting up Prisma...' &&
       npm install -g pnpm &&
       cd /app &&
-      echo '⏳ Installing dependencies...' &&
+      echo 'Installing dependencies...' &&
       pnpm install --frozen-lockfile &&
       cd packages/db &&
-      echo '⏳ Waiting for PostgreSQL...' &&
+      echo 'Waiting for PostgreSQL...' &&
       until pg_isready -h postgres-dev -p 5432 -U postgres; do
         echo 'Waiting for PostgreSQL to be ready...'
         sleep 2
       done &&
-      echo '✅ PostgreSQL is ready' &&
-      echo '⏳ Running Prisma migrations...' &&
+      echo 'PostgreSQL is ready' &&
+      echo 'Running Prisma migrations...' &&
       pnpm prisma generate &&
-      echo '✅ Prisma Client generated' &&
+      echo 'Prisma Client generated' &&
       sleep 2 &&
       PRISMA_CLIENT_ENGINE_TYPE=binary DEBUG='*' pnpm prisma db push --accept-data-loss --skip-generate &&
-      echo '✅ Prisma migrations completed!' &&
-      echo '🎉 Database initialization complete!'"
+      echo 'Prisma migrations completed!' &&
+      echo 'Database initialization complete!'"
 
   redis-dev:
     container_name: zephyr-redis-dev
@@ -170,12 +170,7 @@ services:
       - "9080:9000"
       - "9001:9001"
     environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin
       - MINIO_BROWSER_REDIRECT_URL=http://localhost:9001
-      - MINIO_CONSOLE_ADDRESS=:9001
-      - MINIO_API_ADDRESS=:9000
-      - MINIO_ENABLE_OBJECT_LOCKING=on
     volumes:
       - minio_data_dev:/data
     networks:
@@ -213,13 +208,13 @@ services:
       - MINIO_ROOT_PASSWORD=minioadmin
     entrypoint: >
       /bin/sh -c '
-      echo "⏳ Waiting for MinIO..." &&
+      echo "Waiting for MinIO..." &&
       sleep 15 &&
       until mc alias set minio http://minio-dev:9000 minioadmin minioadmin; do
         echo "Waiting for MinIO to be ready..."
         sleep 5
       done &&
-      echo "✅ MinIO is ready" &&
+      echo "MinIO is ready" &&
       mc mb minio/uploads || true &&
       mc anonymous set download minio/uploads || true &&
       mc version enable minio/uploads || true &&
