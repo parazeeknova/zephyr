@@ -17,6 +17,7 @@ import { FileInput } from './FileInput';
 import './styles.css';
 import { MentionTags } from '@/components/Tags/MentionTags';
 import { Tags } from '@/components/Tags/Tags';
+import kyInstance from '@/lib/ky';
 import { useQuery } from '@tanstack/react-query';
 import type { TagWithCount, UserData } from '@zephyr/db';
 import { useHNShareStore } from '@zephyr/ui/store/hnShareStore';
@@ -61,6 +62,7 @@ export default function PostEditor() {
 
   const { data: userData } = useQuery({
     queryKey: ['user', user.id],
+    queryFn: () => kyInstance.get(`/api/users/${user.id}`).json<UserData>(),
     initialData: user,
     staleTime: 1000 * 60 * 5,
   });

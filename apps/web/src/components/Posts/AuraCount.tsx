@@ -1,3 +1,4 @@
+import kyInstance from '@/lib/ky';
 import { useQuery } from '@tanstack/react-query';
 import type { VoteInfo } from '@zephyr/db';
 import {
@@ -20,6 +21,8 @@ export default function AuraCount({ postId, initialAura }: AuraCountProps) {
 
   const { data } = useQuery<VoteInfo>({
     queryKey,
+    queryFn: () =>
+      kyInstance.get(`/api/posts/${postId}/votes`).json<VoteInfo>(),
     initialData: { aura: initialAura, userVote: 0 },
     staleTime: Number.POSITIVE_INFINITY,
     enabled: false,
