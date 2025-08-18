@@ -164,19 +164,19 @@ export default function UserButton({
 
         <MobileUserMenu
           isOpen={isMobileMenuOpen}
-          onClose={() => setIsMobileMenuOpen(false)}
+          onCloseAction={() => setIsMobileMenuOpen(false)}
           user={{
             ...user,
             avatarUrl: avatarData?.url,
             email: user.email || 'No email provided',
           }}
           theme={theme}
-          setTheme={setTheme}
-          onLogout={handleOpenDialog}
+          setThemeAction={setTheme}
+          onLogoutAction={handleOpenDialog}
         />
 
         <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-          <DialogContent className="fixed top-[50%] left-[50%] w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] border border-border/50 bg-background/95 p-6 backdrop-blur-md duration-200 sm:w-full sm:max-w-md">
+          <DialogContent className="fixed top-[50%] left-[50%] w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-2xl border border-border/50 bg-background/95 p-6 backdrop-blur-md duration-200 sm:w-full sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="text-center font-semibold text-xl">
                 Leaving so soon?
@@ -335,7 +335,7 @@ export default function UserButton({
                   <span>Theme</span>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
-                  <DropdownMenuSubContent className="animate-in cursor-pointer bg-background/90 shadow-lg backdrop-blur-xl">
+                  <DropdownMenuSubContent className="animate-in cursor-pointer rounded-xl border border-border/50 bg-background/90 shadow-lg backdrop-blur-xl">
                     {[
                       { icon: Monitor, label: 'System', value: 'system' },
                       { icon: Sun, label: 'Light', value: 'light' },
@@ -409,7 +409,7 @@ export default function UserButton({
       </DropdownMenu>
 
       <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <DialogContent className="fixed top-[50%] left-[50%] w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] border border-border/50 bg-background/95 p-6 backdrop-blur-md duration-200 sm:w-full sm:max-w-md">
+        <DialogContent className="fixed top-[50%] left-[50%] w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-2xl border border-border/50 bg-background/95 p-6 backdrop-blur-md duration-200 sm:w-full sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-left font-semibold text-xl">
               Leaving so soon?

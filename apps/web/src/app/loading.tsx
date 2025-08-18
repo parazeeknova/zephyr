@@ -27,7 +27,7 @@ export default function Loading() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 hidden md:block">
         <SpiralAnimation />
       </div>
 

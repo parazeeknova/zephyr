@@ -19,7 +19,7 @@ import type React from 'react';
 
 interface MobileUserMenuProps {
   isOpen: boolean;
-  onClose: () => void;
+  onCloseAction: () => void;
   user: {
     id: string;
     username: string;
@@ -27,10 +27,11 @@ interface MobileUserMenuProps {
     bio?: string;
     avatarUrl?: string | null;
     avatarKey?: string | null;
+    displayName?: string;
   };
   theme?: string;
-  setTheme: (theme: string) => void;
-  onLogout: () => void;
+  setThemeAction: (theme: string) => void;
+  onLogoutAction: () => void;
 }
 
 const menuVariants: Variants = {
@@ -61,11 +62,11 @@ const menuVariants: Variants = {
 
 export function MobileUserMenu({
   isOpen,
-  onClose,
+  onCloseAction,
   user,
   theme,
-  setTheme,
-  onLogout,
+  setThemeAction,
+  onLogoutAction,
 }: MobileUserMenuProps) {
   const { data: avatarData } = useQuery({
     queryKey: ['avatar', user.id],
@@ -104,7 +105,7 @@ export function MobileUserMenu({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 bg-background/90 backdrop-blur-lg"
-            onClick={onClose}
+            onClick={onCloseAction}
           />
           <div className="fixed inset-0 z-[201] flex items-start justify-center p-4 pt-20">
             <div className="w-full max-w-md">
@@ -119,7 +120,7 @@ export function MobileUserMenu({
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    onClick={onClose}
+                    onClick={onCloseAction}
                     className="absolute top-4 right-4 rounded-full p-2 text-muted-foreground hover:bg-primary/10"
                   >
                     <X className="size-6" />
@@ -132,17 +133,24 @@ export function MobileUserMenu({
                       className="relative"
                     >
                       <div className="-inset-4 absolute rounded-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 opacity-75 blur-md" />
-                      <UserAvatar
-                        avatarUrl={avatarData?.url}
-                        size={100}
-                        className="relative border-4 border-background shadow-xl"
-                        priority
-                      />
+                      <Link
+                        href={`/users/${user.username}`}
+                        onClick={onCloseAction}
+                      >
+                        <UserAvatar
+                          avatarUrl={avatarData?.url}
+                          size={100}
+                          className="relative border-4 border-background shadow-xl"
+                          priority
+                        />
+                      </Link>
                     </motion.div>
                     <div className="text-center">
-                      <h3 className="font-medium text-lg">@{user.username}</h3>
+                      <h3 className="font-medium text-lg">
+                        {user.displayName}
+                      </h3>
                       <p className="text-muted-foreground text-sm">
-                        {user.email}
+                        @{user.username}
                       </p>
                       {user.bio && (
                         <div className="mt-2 flex items-center justify-center gap-1 text-muted-foreground/60">
@@ -168,14 +176,14 @@ export function MobileUserMenu({
                       icon={<UserIcon className="size-5" />}
                       href={`/users/${user.username}`}
                       label="Profile"
-                      onClick={onClose}
+                      onClick={onCloseAction}
                     />
 
                     <MobileMenuItem
                       icon={<Settings2Icon className="size-5" />}
                       href="/settings"
                       label="Settings"
-                      onClick={onClose}
+                      onClick={onCloseAction}
                     />
 
                     <div className="rounded-lg border border-border/50 p-3">
@@ -194,8 +202,8 @@ export function MobileUserMenu({
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => {
-                              setTheme(value);
-                              onClose();
+                              setThemeAction(value);
+                              onCloseAction();
                             }}
                             className={`flex flex-col items-center gap-1 rounded-lg p-3 transition-colors ${
                               theme === value
@@ -213,7 +221,7 @@ export function MobileUserMenu({
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={onLogout}
+                      onClick={onLogoutAction}
                       className="w-full rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-red-500 transition-colors hover:bg-red-500/20"
                     >
                       <div className="flex items-center justify-center gap-2">

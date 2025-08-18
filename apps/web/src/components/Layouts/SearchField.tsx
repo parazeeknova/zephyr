@@ -13,7 +13,9 @@ import type React from 'react';
 import { SearchCommandList } from '../Search/SearchCommandList';
 import { searchMutations } from '../Search/mutations';
 
-export default function SearchField() {
+export default function SearchField({
+  onAfterSearch,
+}: { onAfterSearch?: () => void } = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [input, setInput] = useState('');
@@ -89,6 +91,7 @@ export default function SearchField() {
       return;
     }
     setOpen(false);
+    onAfterSearch?.();
     searchMutation.mutate(searchQuery.trim());
     router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
   };
@@ -142,7 +145,7 @@ export default function SearchField() {
           }}
           onBlur={() => setIsFocused(false)}
           placeholder=""
-          className="rounded-xl bg-muted pl-9 outline-none ring-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="h-10 rounded-xl bg-muted pl-9 outline-none ring-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 md:h-11"
           autoComplete="off"
           aria-label="Search"
         />
@@ -168,7 +171,10 @@ export default function SearchField() {
       </form>
 
       {open && (input || (history && history.length > 0)) && (
-        <div ref={commandRef} className="absolute top-full z-50 mt-2 w-full">
+        <div
+          ref={commandRef}
+          className="-translate-x-1/2 absolute left-1/2 z-[205] mt-2 w-[min(90vw,28rem)] md:left-0 md:z-50 md:w-full md:translate-x-0"
+        >
           <SearchCommandList
             input={input}
             suggestions={suggestions}

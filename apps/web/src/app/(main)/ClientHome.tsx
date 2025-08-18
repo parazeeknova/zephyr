@@ -33,6 +33,13 @@ const ClientHome: React.FC<ClientHomeProps> = ({ userData }) => {
   const rightSidebarRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const shouldRenderMobile = isMounted && isMobile;
   const selectedTab = (searchParams.get('tab') || 'for-you') as
     | 'for-you'
     | 'following';
@@ -71,7 +78,7 @@ const ClientHome: React.FC<ClientHomeProps> = ({ userData }) => {
             !showLeftSidebar && !showRightSidebar ? 'w-full' : ''
           }`}
         >
-          {isMobile ? (
+          {shouldRenderMobile ? (
             <Tabs defaultValue="for-you" className="w-full bg-background">
               <div className="mt-4 mb-2 flex w-full justify-center px-4 sm:px-6">
                 <TabsList className="relative flex gap-2 rounded-full border bg-muted/30 p-0 shadow-inner shadow-white/5 ring-1 ring-white/10 backdrop-blur-xl dark:shadow-black/10 dark:ring-black/20">
