@@ -1,7 +1,7 @@
 {
   "name": "@zephyr/next",
   "description": "Zephyr Next.js package contains shared configs for Next.js",
-  "version": "2.0.22-dev",
+  "version": "2.0.23-dev",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
