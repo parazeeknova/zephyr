@@ -39,6 +39,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
+import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
 import { getRandomJoke } from './constants/LogoutMessages';
@@ -46,9 +47,15 @@ import { MobileUserMenu } from './mobile/MobileUserMenu';
 
 interface UserButtonProps {
   className?: string;
+  asChild?: boolean;
+  children?: React.ReactNode | ((open: boolean) => React.ReactNode);
 }
 
-export default function UserButton({ className }: UserButtonProps) {
+export default function UserButton({
+  className,
+  asChild = false,
+  children,
+}: UserButtonProps) {
   const { user } = useSession();
   const { theme, setTheme } = useTheme();
   const queryClient = useQueryClient();
@@ -91,6 +98,7 @@ export default function UserButton({ className }: UserButtonProps) {
   }, []);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const [menuOpen, setMenuOpen] = useState(false);
 
   if (!isMounted) {
     return null;
@@ -131,7 +139,7 @@ export default function UserButton({ className }: UserButtonProps) {
       <Button
         variant="ghost"
         className={cn(
-          'relative flex-none rounded-full border border-border/50 bg-background/40 p-0 shadow-xs backdrop-blur-md transition-all duration-200 hover:border-border/80 hover:bg-background/60 hover:shadow-md',
+          'relative flex-none cursor-pointer rounded-full border border-border/50 bg-background/40 p-0 shadow-xs backdrop-blur-md transition-all duration-200 hover:border-border/80 hover:bg-background/60 hover:shadow-md',
           className
         )}
       >
@@ -160,6 +168,7 @@ export default function UserButton({ className }: UserButtonProps) {
           user={{
             ...user,
             avatarUrl: avatarData?.url,
+            email: user.email || 'No email provided',
           }}
           theme={theme}
           setTheme={setTheme}
@@ -200,15 +209,32 @@ export default function UserButton({ className }: UserButtonProps) {
 
   return (
     <>
-      <DropdownMenu modal={false}>
+      <DropdownMenu modal={false} open={menuOpen} onOpenChange={setMenuOpen}>
         <DropdownMenuTrigger asChild>
-          <div className="z-40">
-            <UserTrigger />
-          </div>
+          {asChild ? (
+            <div
+              className={cn(
+                'z-40 flex cursor-pointer items-center gap-2',
+                className
+              )}
+            >
+              <UserAvatar
+                avatarUrl={avatarData?.url}
+                size={32}
+                className="transition-transform duration-200"
+                priority
+              />
+              {typeof children === 'function' ? children(menuOpen) : children}
+            </div>
+          ) : (
+            <div className="z-40">
+              <UserTrigger />
+            </div>
+          )}
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="z-50 w-56 overflow-hidden bg-background/75 shadow-lg backdrop-blur-xl"
+          className="z-50 w-56 overflow-hidden rounded-xl border border-border/50 bg-background/75 shadow-lg backdrop-blur-xl"
           sideOffset={8}
         >
           <motion.div
@@ -251,8 +277,7 @@ export default function UserButton({ className }: UserButtonProps) {
             >
               <DropdownMenuLabel className="relative font-normal">
                 <div className="flex flex-col space-y-1 p-2">
-                  {/* @ts-expect-error */}
-                  {user.name && (
+                  {user.displayName && (
                     <motion.div
                       variants={{
                         closed: { opacity: 0, x: -20 },
@@ -268,8 +293,7 @@ export default function UserButton({ className }: UserButtonProps) {
                       }}
                     >
                       <p className="font-medium text-sm leading-none">
-                        {/* @ts-expect-error */}
-                        {user.name}
+                        {user.displayName}
                       </p>
                     </motion.div>
                   )}
@@ -288,27 +312,7 @@ export default function UserButton({ className }: UserButtonProps) {
                       },
                     }}
                   >
-                    <p className="text-muted-foreground text-sm leading-none">
-                      @{user.username}
-                    </p>
-                  </motion.div>
-                  <motion.div
-                    variants={{
-                      closed: { opacity: 0, x: -20 },
-                      open: {
-                        opacity: 1,
-                        x: 0,
-                        transition: {
-                          type: 'spring',
-                          stiffness: 400,
-                          damping: 25,
-                          delay: 0.1,
-                        },
-                      },
-                    }}
-                  >
                     <p className="text-muted-foreground text-xs leading-none">
-                      {/* @ts-expect-error */}
                       {user.email}
                     </p>
                   </motion.div>

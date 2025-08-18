@@ -29,7 +29,7 @@ export function SearchCommandList({
   onRemoveHistoryItem,
 }: SearchCommandListProps) {
   return (
-    <Command className="rounded-lg border bg-popover shadow-md">
+    <Command className="rounded-xl border bg-popover/95 shadow-lg backdrop-blur-xl">
       <CommandList>
         {!input && !suggestions?.length && !history?.length && (
           <CommandEmpty className="py-6 text-center text-sm">
@@ -38,13 +38,13 @@ export function SearchCommandList({
         )}
 
         {suggestions && suggestions.length > 0 && (
-          <CommandGroup heading="Suggestions">
+          <CommandGroup heading="Suggestions" className="space-y-1.5">
             {suggestions.map((suggestion) => (
               <CommandItem
                 key={suggestion.query}
                 value={suggestion.query}
                 onSelect={onSelectAction}
-                className="flex cursor-pointer items-center gap-2 px-4 py-2"
+                className="flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 hover:bg-primary/10"
               >
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
                 <span>{suggestion.query}</span>
@@ -57,7 +57,7 @@ export function SearchCommandList({
         )}
 
         {!input && history && history.length > 0 && (
-          <CommandGroup>
+          <CommandGroup className="space-y-1.5">
             <div className="flex items-center justify-between px-2 pb-2">
               <span className="font-medium text-sm">Recent Searches</span>
               {onClearHistory && (
@@ -79,7 +79,7 @@ export function SearchCommandList({
                 key={query}
                 value={query}
                 onSelect={onSelectAction}
-                className="group flex cursor-pointer items-center gap-2 px-4 py-2"
+                className="group flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 hover:bg-primary/10"
               >
                 <History className="h-4 w-4 text-muted-foreground" />
                 <span className="flex-1">{query}</span>

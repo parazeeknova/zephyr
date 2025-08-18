@@ -5,7 +5,8 @@ import kyInstance from '@/lib/ky';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { SearchSuggestion } from '@zephyr/db';
 import { Input } from '@zephyr/ui/shadui/input';
-import { SearchIcon } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { HashIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import type React from 'react';
@@ -97,10 +98,36 @@ export default function SearchField() {
     handleSearch(input);
   };
 
+  const placeholders = [
+    "Type a thought… maybe it's brilliant, maybe it's coffee.",
+    'Find posts, people, and probably your next obsession.',
+    'Ask me anything… except my browser history.',
+    'Searching is caring. Start caring loudly.',
+    'What’s on your mind? Don’t say ‘nothing’.',
+    'Discover whispers, rants, and everything in between.',
+    'Pro tip: type faster, look smarter.',
+    'Find the needle. Ignore the haystack.',
+  ];
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlaceholderIndex((prev) => {
+        let next = prev;
+        while (next === prev) {
+          next = Math.floor(Math.random() * placeholders.length);
+        }
+        return next;
+      });
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="relative w-full max-w-2xl">
+    <div className="relative w-full max-w-md">
       <form onSubmit={handleSubmit} className="relative">
-        <SearchIcon className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
+        <HashIcon className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
         <Input
           ref={inputRef}
           type="text"
@@ -109,11 +136,35 @@ export default function SearchField() {
             setInput(e.target.value);
             setOpen(true);
           }}
-          onFocus={() => setOpen(true)}
-          placeholder="Search..."
-          className="rounded-full bg-muted pl-9"
+          onFocus={() => {
+            setOpen(true);
+            setIsFocused(true);
+          }}
+          onBlur={() => setIsFocused(false)}
+          placeholder=""
+          className="rounded-xl bg-muted pl-9 outline-none ring-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
           autoComplete="off"
+          aria-label="Search"
         />
+
+        {!input && !isFocused && (
+          <div className="pointer-events-none absolute inset-0 flex items-center pl-9">
+            <div className="relative h-4 overflow-hidden">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={placeholderIndex}
+                  initial={{ y: 8, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -8, opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="block w-full truncate pr-2 text-muted-foreground text-xs"
+                >
+                  {placeholders[placeholderIndex]}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+          </div>
+        )}
       </form>
 
       {open && (input || (history && history.length > 0)) && (
@@ -122,7 +173,7 @@ export default function SearchField() {
             input={input}
             suggestions={suggestions}
             history={history}
-            onSelect={(value) => {
+            onSelectAction={(value) => {
               setInput(value);
               handleSearch(value);
             }}

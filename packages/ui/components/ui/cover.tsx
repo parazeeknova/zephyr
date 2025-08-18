@@ -26,7 +26,7 @@ export const Cover = ({
       setContainerWidth(ref.current?.clientWidth ?? 0);
 
       const height = ref.current?.clientHeight ?? 0;
-      const numberOfBeams = Math.floor(height / 10); // Adjust the divisor to control the spacing
+      const numberOfBeams = Math.floor(height / 10);
       const positions = Array.from(
         { length: numberOfBeams },
         (_, i) => (i + 1) * (height / (numberOfBeams + 1))
@@ -75,7 +75,7 @@ export const Cover = ({
                 maxSize={1}
                 particleDensity={500}
                 className="h-full w-full"
-                particleColor="#FFFFFF"
+                particleColor="hsl(var(--primary))"
               />
               <SparklesCore
                 background="transparent"
@@ -83,7 +83,7 @@ export const Cover = ({
                 maxSize={1}
                 particleDensity={500}
                 className="h-full w-full"
-                particleColor="#FFFFFF"
+                particleColor="hsl(var(--primary))"
               />
             </motion.div>
           </motion.div>
@@ -134,7 +134,7 @@ export const Cover = ({
           },
         }}
         className={cn(
-          'relative z-20 inline-block text-neutral-900 transition duration-200 group-hover/cover:text-white dark:text-white',
+          'relative z-20 inline-block text-foreground transition duration-200 group-hover/cover:text-primary',
           className
         )}
       >
@@ -205,9 +205,9 @@ export const Beam = ({
             repeatDelay: hovered ? Math.random() * (2 - 1) + 1 : (delay ?? 1),
           }}
         >
-          <stop stopColor="#2EB9DF" stopOpacity="0" />
-          <stop stopColor="#3b82f6" />
-          <stop offset="1" stopColor="#3b82f6" stopOpacity="0" />
+          <stop stopColor="hsl(var(--primary))" stopOpacity="0" />
+          <stop stopColor="hsl(var(--primary))" />
+          <stop offset="1" stopColor="hsl(var(--primary))" stopOpacity="0" />
         </motion.linearGradient>
       </defs>
     </motion.svg>

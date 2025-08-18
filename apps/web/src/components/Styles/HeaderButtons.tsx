@@ -29,7 +29,7 @@ export function HeaderIconButton({
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
-              className="relative rounded-full border border-border/50 bg-background/40 shadow-xs backdrop-blur-md transition-all duration-200 hover:border-border/80 hover:bg-background/60 hover:shadow-md"
+              className="relative rounded-full bg-transparent p-2 text-muted-foreground transition-colors duration-200 hover:bg-background/60 hover:text-foreground"
               asChild
             >
               <Link href={href} className="block">
@@ -39,7 +39,7 @@ export function HeaderIconButton({
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="-right-1 -top-1 absolute flex h-4 w-4 items-center justify-center rounded-full bg-primary font-medium text-[10px] text-primary-foreground shadow-xs"
+                      className="-right-1 -top-1 absolute flex h-4 w-4 items-center justify-center rounded-full bg-primary font-medium text-[10px] text-primary-foreground"
                     >
                       {count}
                     </motion.span>

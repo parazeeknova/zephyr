@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@zephyr/ui/shadui/card';
 import { Separator } from '@zephyr/ui/shadui/separator';
 import { Skeleton } from '@zephyr/ui/shadui/skeleton';
-import { TabsList, TabsTrigger } from '@zephyr/ui/shadui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@zephyr/ui/shadui/tabs';
 
 const PostCardSkeleton = () => {
   return (
@@ -47,32 +47,38 @@ export default function FeedViewSkeleton() {
           <Skeleton className="mb-4 h-4 w-72" />
 
           <div className="mb-4 flex justify-center sm:mb-6">
-            <TabsList className="grid w-full max-w-md grid-cols-4">
-              <TabsTrigger value="all" disabled className="cursor-not-allowed">
-                All
-              </TabsTrigger>
-              <TabsTrigger
-                value="scribbles"
-                disabled
-                className="cursor-not-allowed"
-              >
-                Scribbles
-              </TabsTrigger>
-              <TabsTrigger
-                value="snapshots"
-                disabled
-                className="cursor-not-allowed"
-              >
-                Snapshots
-              </TabsTrigger>
-              <TabsTrigger
-                value="reels"
-                disabled
-                className="cursor-not-allowed"
-              >
-                Reels
-              </TabsTrigger>
-            </TabsList>
+            <Tabs defaultValue="all" className="w-full">
+              <TabsList className="grid w-full max-w-md grid-cols-4">
+                <TabsTrigger
+                  value="all"
+                  disabled
+                  className="cursor-not-allowed"
+                >
+                  All
+                </TabsTrigger>
+                <TabsTrigger
+                  value="scribbles"
+                  disabled
+                  className="cursor-not-allowed"
+                >
+                  Scribbles
+                </TabsTrigger>
+                <TabsTrigger
+                  value="snapshots"
+                  disabled
+                  className="cursor-not-allowed"
+                >
+                  Snapshots
+                </TabsTrigger>
+                <TabsTrigger
+                  value="reels"
+                  disabled
+                  className="cursor-not-allowed"
+                >
+                  Reels
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
 
           <div className="flex justify-center">

@@ -1,7 +1,6 @@
 'use client';
 
 import SearchField from '@/components/Layouts/SearchField';
-import UserButton from '@/components/Layouts/UserButton';
 import { cn } from '@/lib/utils';
 import { Cover } from '@zephyr/ui/components/ui/cover';
 import { Badge } from '@zephyr/ui/shadui/badge';
@@ -12,22 +11,29 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@zephyr/ui/shadui/dropdown-menu';
+import { Tabs, TabsList, TabsTrigger } from '@zephyr/ui/shadui/tabs';
 import { motion } from 'framer-motion';
 import {
   Bookmark,
   Compass,
+  Globe2Icon,
   Home,
   MessageSquare,
   MoreHorizontal,
   Newspaper,
   Settings,
+  UsersIcon,
 } from 'lucide-react';
+import { Playwrite_CA } from 'next/font/google';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type React from 'react';
 import MessagesButton from '../Messages/MessagesButton';
 import { HeaderIconButton } from '../Styles/HeaderButtons';
 import NotificationsButton from './NotificationsButton';
+import UserButtonWrapper from './UserButtonWrapper';
+
+const playwriteCA = Playwrite_CA({ weight: '400' });
 
 interface HeaderProps {
   bookmarkCount: number;
@@ -41,6 +47,9 @@ const Header: React.FC<HeaderProps> = ({
   unreadMessageCount,
 }) => {
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tab = (searchParams.get('tab') || 'for-you') as 'for-you' | 'following';
   const isActivePath = (path: string) => {
     return pathname === path;
   };
@@ -170,36 +179,84 @@ const Header: React.FC<HeaderProps> = ({
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="fixed top-0 right-0 left-0 z-30 flex h-14 items-center justify-between border-border border-b bg-background/60 px-4 backdrop-blur-md sm:px-6"
+        className="fixed top-0 right-0 left-0 z-30 flex h-14 items-center justify-between bg-background px-4 sm:px-6"
       >
-        <Link href="/">
-          <motion.h1
-            whileHover={{ scale: 1.05 }}
-            className="mr-1 font-bold text-2xl"
-          >
-            <Cover className="text-primary">Zephyr</Cover>
-          </motion.h1>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/">
+            <motion.h1
+              whileHover={{ scale: 1.05 }}
+              className="-rotate-10 mr-1 font-bold text-2xl"
+            >
+              <span className={playwriteCA.className}>
+                <Cover className="text-primary">zephyr.</Cover>
+              </span>
+            </motion.h1>
+          </Link>
+          <div className="hidden w-[300px] md:block">
+            <SearchField />
+          </div>
+        </div>
 
-        <motion.div
-          initial={{ y: -10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="mx-auto max-w-xl flex-1 px-4"
-        >
-          <SearchField />
-        </motion.div>
+        <div className="hidden flex-1 items-center justify-center gap-8 md:flex">
+          {isActivePath('/') && (
+            <Tabs
+              value={tab}
+              onValueChange={(value) => {
+                const next = value === 'for-you' ? '/' : '/?tab=following';
+                router.push(next);
+              }}
+              className="w-auto"
+            >
+              <TabsList className="flex items-center gap-7 bg-transparent p-0">
+                <TabsTrigger
+                  value="for-you"
+                  className="group relative flex items-center justify-center rounded-full p-2 text-muted-foreground transition-colors duration-200 hover:bg-background/60 hover:text-foreground data-[state=active]:text-primary"
+                >
+                  <span className="relative z-10 flex items-center">
+                    <Globe2Icon className="h-5 w-5" />
+                  </span>
+                  <span className="-bottom-1 -translate-x-1/2 pointer-events-none absolute left-1/2 h-1.5 w-1.5 rounded-full bg-primary opacity-0 transition-opacity group-data-[state=active]:opacity-100" />
+                </TabsTrigger>
+                <TabsTrigger
+                  value="following"
+                  className="group relative flex items-center justify-center rounded-full p-2 text-muted-foreground transition-colors duration-200 hover:bg-background/60 hover:text-foreground data-[state=active]:text-primary"
+                >
+                  <span className="relative z-10 flex items-center">
+                    <UsersIcon className="h-5 w-5" />
+                  </span>
+                  <span className="-bottom-1 -translate-x-1/2 pointer-events-none absolute left-1/2 h-1.5 w-1.5 rounded-full bg-primary opacity-0 transition-opacity group-data-[state=active]:opacity-100" />
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          )}
+          <div className="hidden items-center gap-7 md:flex">
+            <HeaderIconButton
+              href="/bookmarks"
+              icon={<Bookmark className="h-5 w-5" />}
+              count={bookmarkCount}
+              title="Bookmarks"
+            />
+            <MessagesButton
+              initialState={{ unreadCount: unreadMessageCount }}
+            />
+            <NotificationsButton
+              initialState={{ unreadCount: unreadNotificationCount }}
+            />
+          </div>
+        </div>
 
-        <div className="flex items-center space-x-2 sm:space-x-3">
-          <NotificationsButton
-            initialState={{ unreadCount: unreadNotificationCount }}
-          />
-          <div className="hidden md:flex">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="md:hidden">
+            <NotificationsButton
+              initialState={{ unreadCount: unreadNotificationCount }}
+            />
+          </div>
+          <div className="md:hidden">
             <MessagesButton
               initialState={{ unreadCount: unreadMessageCount }}
             />
           </div>
-          <div className="hidden md:flex">
+          <div className="md:hidden">
             <HeaderIconButton
               href="/bookmarks"
               icon={<Bookmark className="h-5 w-5" />}
@@ -207,15 +264,7 @@ const Header: React.FC<HeaderProps> = ({
               title="Bookmarks"
             />
           </div>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="group relative mt-2"
-          >
-            <div className="-inset-[1px] absolute rounded-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 opacity-0 blur-sm transition duration-500 group-hover:opacity-100" />
-            <div className="relative z-50">
-              <UserButton />
-            </div>
-          </motion.div>
+          <UserButtonWrapper />
         </div>
       </motion.header>
 
