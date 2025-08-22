@@ -1,7 +1,7 @@
 {
   "name": "@zephyr/db",
   "description": "Zephyr's database & cache package",
-  "version": "2.0.26-dev",
+  "version": "2.0.29-dev",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.14.0",
+    "@prisma/extension-accelerate": "^2.0.2",
     "@t3-oss/env-nextjs": "^0.13.8",
     "date-fns": "^4.1.0",
     "ioredis": "^5.7.0",

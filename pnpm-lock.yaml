@@ -65,6 +65,9 @@ importers:
       '@prisma/client':
         specifier: ^6.14.0
         version: 6.14.0(prisma@6.14.0(typescript@5.9.2))(typescript@5.9.2)
+      '@prisma/extension-accelerate':
+        specifier: ^2.0.2
+        version: 2.0.2(@prisma/client@6.14.0(prisma@6.14.0(typescript@5.9.2))(typescript@5.9.2))
       '@radix-ui/react-icons':
         specifier: ^1.3.2
         version: 1.3.2(react@19.0.0)
@@ -126,8 +129,8 @@ importers:
         specifier: 1.0.4
         version: 1.0.4(@types/react-dom@19.0.3(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       cropperjs:
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: v2.0.0-alpha.2
+        version: 2.0.0-alpha.2
       crypto-browserify:
         specifier: ^3.12.1
         version: 3.12.1
@@ -355,6 +358,9 @@ importers:
       '@prisma/client':
         specifier: ^6.14.0
         version: 6.14.0(prisma@6.14.0(typescript@5.9.2))(typescript@5.9.2)
+      '@prisma/extension-accelerate':
+        specifier: ^2.0.2
+        version: 2.0.2(@prisma/client@6.14.0(prisma@6.14.0(typescript@5.9.2))(typescript@5.9.2))
       '@t3-oss/env-nextjs':
         specifier: ^0.13.8
         version: 0.13.8(typescript@5.9.2)(zod@4.0.17)
@@ -956,39 +962,6 @@ packages:
 
   '@clack/prompts@0.11.0':
     resolution: {integrity: sha512-pMN5FcrEw9hUkZA4f+zLlzivQSeQf5dRGJjSUbvVYDLvpKCdQx5OaknvKzgbtXOizhP+SJJJjqEbOe55uKKfAw==}
-
-  '@cropper/element-canvas@2.0.1':
-    resolution: {integrity: sha512-OKxq/O0HL9W2JegOsc2zh1NRpERZcLM5+M8aQ/eXdmMcfi1lzosPftag3Irp6pTsVpwV6B6ypIxKESzJ4ci9Fw==}
-
-  '@cropper/element-crosshair@2.0.1':
-    resolution: {integrity: sha512-bS5msU9cTU/jf1/kDw+QJmEM9/rw8IgOdpolR85iMVUCR8sRcLa0wgom42MBHcpBYB6hvL5YfiOeXZ7lHIYMpw==}
-
-  '@cropper/element-grid@2.0.1':
-    resolution: {integrity: sha512-ayqCvYQJ+GVT31HhFpttzHabW1T/LsIwLJY5PLTMG0cEZLw/E8ihg8mxctjZbo852D7oEePbz6/2SeuCb1018Q==}
-
-  '@cropper/element-handle@2.0.1':
-    resolution: {integrity: sha512-fdifyyPIaR9S2eQ7qPHuM8fX8uToAfBsi8vQlR9EM+oJkDNil0uO4rWyArLWEtlr0/q7U0OvsufcuJ7ffqfmpg==}
-
-  '@cropper/element-image@2.0.1':
-    resolution: {integrity: sha512-gPj5Sl2T8Cno198Cz3F3TDfcYoALW3yJ3fV6PHXmhMnX8sBkL7J441do7Vwkg0mEd2CogCtTLAf+p7ljdV0kgA==}
-
-  '@cropper/element-selection@2.0.1':
-    resolution: {integrity: sha512-atv+Aeq2N2eWawelIRPGh1kYFdNrpb0QkUPPheGxz1ImfxpLdcHO9gb9T5noQijizUW2G0pNvts4ZaITQ0I71Q==}
-
-  '@cropper/element-shade@2.0.1':
-    resolution: {integrity: sha512-YIYgJ690NdFQ6wJLRFh/EySNVxGFKArncQ4FrsJ3yHU+ShgtOKz4FpjFLpqJRJB9swoVbD3WKTimGyzXrwjZrQ==}
-
-  '@cropper/element-viewer@2.0.1':
-    resolution: {integrity: sha512-HDj25l08pWi/AO6El/OqfQHBpBC4Lh5NEnQN1SOldsmxEwt27Ubv6ndDsF8LkTK7XPwjjZRpyQPyfig4w8L2JQ==}
-
-  '@cropper/element@2.0.1':
-    resolution: {integrity: sha512-Jn1hR7XWzWQM/QfXRGMGzdkJ2gG/UcLdQPZQ7OKs0JiFfRzKpzu4u/nYrXHeH3MM2iOslLqh2kqYju6mjZLMJQ==}
-
-  '@cropper/elements@2.0.1':
-    resolution: {integrity: sha512-paFbBLXTKXNngn1yDi2ZIf+FO1pIEQXyBntmqOjuxqtG73KuEKv633wsJPFpj958bgcfSakgBbF80j+3nHbPug==}
-
-  '@cropper/utils@2.0.1':
-    resolution: {integrity: sha512-A9RnAFmgNF5aZk5q2VZnFnHtXWu1kPyEN0LVsX8wJ2LBRu2nyETKwz+ZXVsVWliktToCaYojHKrS+6/HODyEZA==}
 
   '@date-fns/tz@1.2.0':
     resolution: {integrity: sha512-LBrd7MiJZ9McsOgxqWX7AaxrDjcFVjWH/tIKJd7pnR7McaslGYOP1QmmiBXdJH/H/yLCT+rcQ7FaPBUxRGUtrg==}
@@ -1672,6 +1645,12 @@ packages:
 
   '@prisma/engines@6.14.0':
     resolution: {integrity: sha512-LhJjqsALFEcoAtF07nSaOkVguaxw/ZsgfROIYZ8bAZDobe7y8Wy+PkYQaPOK1iLSsFgV2MhCO/eNrI1gdSOj6w==}
+
+  '@prisma/extension-accelerate@2.0.2':
+    resolution: {integrity: sha512-yZK6/k7uOEFpEsKoZezQS1CKDboPtBCQ0NyI70e1Un8tDiRgg80iWGyjsJmRpps2ZIut3MroHP+dyR3wVKh8lA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@prisma/client': '>=4.16.1'
 
   '@prisma/fetch-engine@6.14.0':
     resolution: {integrity: sha512-MPzYPOKMENYOaY3AcAbaKrfvXVlvTc6iHmTXsp9RiwCX+bPyfDMqMFVUSVXPYrXnrvEzhGHfyiFy0PRLHPysNg==}
@@ -3548,8 +3527,8 @@ packages:
   cropperjs@1.6.2:
     resolution: {integrity: sha512-nhymn9GdnV3CqiEHJVai54TULFAE3VshJTXSqSJKa8yXAKyBKDWdhHarnlIPrshJ0WMFTGuFvG02YjLXfPiuOA==}
 
-  cropperjs@2.0.1:
-    resolution: {integrity: sha512-hiJwk2SCPZqxMA7aR3byzLpYUqOrQo+ihMk8k/WRm/xe/LX8wNzAIzMwEB/NEGJYA6sbewxW9TUlrRUYi/2Ipg==}
+  cropperjs@2.0.0-alpha.2:
+    resolution: {integrity: sha512-+BgGcEUl3drut056DfupvJVLzoST1V24MltejH8Ql1BqY05VEcsRb1xhbrJ8TdUcoPaq/mZrnV9g3HI5TRFmAw==}
 
   crypto-browserify@3.12.1:
     resolution: {integrity: sha512-r4ESw/IlusD17lgQi1O20Fa3qNnsckR126TdUuBgAu7GBYSIPvdNyONd3Zrxh0xCwA4+6w/TDArBPsMvhur+KQ==}
@@ -6181,72 +6160,6 @@ snapshots:
       picocolors: 1.1.1
       sisteransi: 1.0.5
 
-  '@cropper/element-canvas@2.0.1':
-    dependencies:
-      '@cropper/element': 2.0.1
-      '@cropper/utils': 2.0.1
-
-  '@cropper/element-crosshair@2.0.1':
-    dependencies:
-      '@cropper/element': 2.0.1
-      '@cropper/utils': 2.0.1
-
-  '@cropper/element-grid@2.0.1':
-    dependencies:
-      '@cropper/element': 2.0.1
-      '@cropper/utils': 2.0.1
-
-  '@cropper/element-handle@2.0.1':
-    dependencies:
-      '@cropper/element': 2.0.1
-      '@cropper/utils': 2.0.1
-
-  '@cropper/element-image@2.0.1':
-    dependencies:
-      '@cropper/element': 2.0.1
-      '@cropper/element-canvas': 2.0.1
-      '@cropper/utils': 2.0.1
-
-  '@cropper/element-selection@2.0.1':
-    dependencies:
-      '@cropper/element': 2.0.1
-      '@cropper/element-canvas': 2.0.1
-      '@cropper/element-image': 2.0.1
-      '@cropper/utils': 2.0.1
-
-  '@cropper/element-shade@2.0.1':
-    dependencies:
-      '@cropper/element': 2.0.1
-      '@cropper/element-canvas': 2.0.1
-      '@cropper/element-selection': 2.0.1
-      '@cropper/utils': 2.0.1
-
-  '@cropper/element-viewer@2.0.1':
-    dependencies:
-      '@cropper/element': 2.0.1
-      '@cropper/element-canvas': 2.0.1
-      '@cropper/element-image': 2.0.1
-      '@cropper/element-selection': 2.0.1
-      '@cropper/utils': 2.0.1
-
-  '@cropper/element@2.0.1':
-    dependencies:
-      '@cropper/utils': 2.0.1
-
-  '@cropper/elements@2.0.1':
-    dependencies:
-      '@cropper/element': 2.0.1
-      '@cropper/element-canvas': 2.0.1
-      '@cropper/element-crosshair': 2.0.1
-      '@cropper/element-grid': 2.0.1
-      '@cropper/element-handle': 2.0.1
-      '@cropper/element-image': 2.0.1
-      '@cropper/element-selection': 2.0.1
-      '@cropper/element-shade': 2.0.1
-      '@cropper/element-viewer': 2.0.1
-
-  '@cropper/utils@2.0.1': {}
-
   '@date-fns/tz@1.2.0': {}
 
   '@discoveryjs/json-ext@0.5.7': {}
@@ -6809,6 +6722,10 @@ snapshots:
       '@prisma/engines-version': 6.14.0-25.717184b7b35ea05dfa71a3236b7af656013e1e49
       '@prisma/fetch-engine': 6.14.0
       '@prisma/get-platform': 6.14.0
+
+  '@prisma/extension-accelerate@2.0.2(@prisma/client@6.14.0(prisma@6.14.0(typescript@5.9.2))(typescript@5.9.2))':
+    dependencies:
+      '@prisma/client': 6.14.0(prisma@6.14.0(typescript@5.9.2))(typescript@5.9.2)
 
   '@prisma/fetch-engine@6.14.0':
     dependencies:
@@ -8943,10 +8860,7 @@ snapshots:
 
   cropperjs@1.6.2: {}
 
-  cropperjs@2.0.1:
-    dependencies:
-      '@cropper/elements': 2.0.1
-      '@cropper/utils': 2.0.1
+  cropperjs@2.0.0-alpha.2: {}
 
   crypto-browserify@3.12.1:
     dependencies:
