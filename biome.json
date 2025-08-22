@@ -3,10 +3,10 @@
   "extends": ["ultracite"],
   "files": {
     "includes": [
-      "!packages/ui/shadui/**",
+      "!packages/ui/shadui",
       "!packages/ui/hooks/use-toast.ts",
       "!packages/ui/hooks/use-mobile.tsx",
-      "!packages/ui/styles/**",
+      "!packages/ui/styles",
       "!.vscode/extensions.json",
       "!.vscode/settings.json",
       "!apps/web/src/components/Messages/Theme.css"
