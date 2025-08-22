@@ -154,7 +154,7 @@ export default function ClientLoginPage() {
                 >
                   Singularity Works
                 </Link>{' '}
-                UI revamp. Some services may be intermittently unavailable; you may encounter errors. Thanks for your patience.
+                UI revamp. Some services may be intermittently unavailable; you may encounter errors ex: signup using email does not work, use google or github etc. Thanks for your patience.
               </p>
             </div>
           </div>
