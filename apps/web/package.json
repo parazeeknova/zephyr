@@ -37,7 +37,7 @@
     "buffer": "^6.0.3",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
-    "cropperjs": "^2.0.1",
+    "cropperjs": "v2.0.0-alpha.2",
     "crypto-browserify": "^3.12.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.12",
