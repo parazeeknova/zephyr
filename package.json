@@ -11,12 +11,17 @@
     "url": "git+https://github.com/parazeeknova/zephyr"
   },
   "readme": ".github/README.md",
-  "keywords": ["socialmedia", "aggregator", "zephyr"],
+  "keywords": [
+    "socialmedia",
+    "aggregator",
+    "zephyr"
+  ],
   "private": true,
   "scripts": {
     "lint": "ultracite lint",
     "format": "ultracite format",
     "build": "pnpm run lint && turbo build",
+    "postinstall": "cd packages/db && pnpm dlx prisma generate",
     "dep:check": "pnpm dlx sherif@latest",
     "dep:fix": "pnpm dlx sherif@latest --fix",
     "env:check": "node scripts/checkENV.js",
@@ -33,21 +38,20 @@
     "dev:aio": "pnpm install && pnpm run format && pnpm run env:local && pnpm run docker:dev && pnpm run prisma:up"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@types/node": "^22.17.1",
+    "@biomejs/biome": "^2.2.0",
+    "@types/node": "^22.17.2",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.3",
-    "dotenv": "^16.6.1",
+    "dotenv": "^17.2.1",
     "husky": "^9.1.7",
     "import-in-the-middle": "^1.14.2",
-    "prettier": "^3.6.2",
     "react-markdown": "9.0.3",
     "require-in-the-middle": "^7.5.2",
-    "turbo": "^2.5.5",
+    "turbo": "^2.5.6",
     "typescript": "^5.9.2",
-    "ultracite": "^4.2.13"
+    "ultracite": "^5.2.5"
   },
-  "packageManager": "pnpm@10.10.0+sha512.d615db246fe70f25dcfea6d8d73dee782ce23e2245e3c4f6f888249fb568149318637dca73c2c5c8ef2a4ca0d5657fb9567188bfab47f566d1ee6ce987815c39",
+  "packageManager": "pnpm@10.15.0",
   "pnpm": {
     "onlyBuiltDependencies": [
       "@biomejs/biome",

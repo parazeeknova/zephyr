@@ -12,8 +12,8 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.11",
+    "@tailwindcss/postcss": "^4.1.12",
     "@zephyr/config": "workspace:*",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.12"
   }
 }
