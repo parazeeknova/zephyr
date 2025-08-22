@@ -7,6 +7,7 @@ import loginImage from '@assets/auth/login-image.jpg';
 import signupImage from '@assets/previews/signup.png';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, FileText, Shield } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import DiscordSignInButton from './DiscordSignInButton';
@@ -133,6 +134,31 @@ export default function ClientLoginPage() {
         variants={fadeIn}
       >
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/5 via-background to-background/95" />
+
+        <motion.div
+          className="absolute top-0 left-0 z-20 w-full"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+        >
+          <div className="mx-auto w-full max-w-5xl p-2 sm:p-3">
+            <div className="flex items-start gap-2 rounded-md border border-amber-500/20 bg-amber-50/90 px-3 py-2 text-amber-900 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-amber-50/60 sm:items-center dark:border-amber-400/20 dark:bg-amber-950/40 dark:text-amber-200">
+              <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500 sm:h-4 sm:w-4 dark:text-amber-300" />
+              <p className="leading-snug text-xs sm:text-sm">
+                We’re collaborating on a Zephyr ×{' '}
+                <Link
+                  href="https://singularityworks.xyz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2 decoration-amber-400/60 hover:decoration-amber-400"
+                >
+                  Singularity Works
+                </Link>{' '}
+                UI revamp. Some services may be intermittently unavailable; you may encounter errors. Thanks for your patience.
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
         <motion.div
           className="absolute left-20 hidden h-full items-center md:flex"
